@@ -6,7 +6,7 @@ namespace LingoLabs.Domain.Entities.Languages
     {
         public Guid LanguageLevelId { get; private set; }
         public string LanguageLevelName { get; private set; } 
-        public string LanguageLevelAlis { get; private set; } 
+        public string LanguageLevelAlias { get; private set; } 
         public string? LanguageLevelDescription { get; private set; } = string.Empty;
         public string? LanguageLevelVideoLink { get; private set; } = string.Empty;
         public List<Chapter>? LanguageChapters { get; private set; } = new();
@@ -23,7 +23,7 @@ namespace LingoLabs.Domain.Entities.Languages
         {
             LanguageLevelId = Guid.NewGuid();
             LanguageLevelName = languageLevelName;
-            LanguageLevelAlis = languageLevelAlias;
+            LanguageLevelAlias = languageLevelAlias;
         }
 
         public static Result<LanguageLevel> Create(string languageLevelName, string languageLevelAlias)
@@ -74,7 +74,7 @@ namespace LingoLabs.Domain.Entities.Languages
             if (string.IsNullOrWhiteSpace(languageLevelName))
                 LanguageLevelName = languageLevelName;
             if (string.IsNullOrWhiteSpace(languageLevelAlias))
-                LanguageLevelAlis = languageLevelAlias;
+                LanguageLevelAlias = languageLevelAlias;
             if (!string.IsNullOrWhiteSpace(languageLevelDescription))
                 LanguageLevelDescription = languageLevelDescription;
             if (!string.IsNullOrWhiteSpace(languageLevelVideoLink))
