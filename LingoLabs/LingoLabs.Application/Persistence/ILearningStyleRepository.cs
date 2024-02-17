@@ -2,7 +2,7 @@
 
 namespace LingoLabs.Application.Persistence
 {
-    internal interface ILearningStyleRepository: IAsyncRepository<LearningStyle>
+    public interface ILearningStyleRepository: IAsyncRepository<LearningStyle>
     {
     }
 }
