@@ -18,6 +18,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LanguageDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LanguageVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -77,6 +78,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     LanguageLevelName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LanguageLevelAlis = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LanguageLevelDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LanguageLevelVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -102,6 +104,8 @@ namespace LingoLabs.Infrastructure.Migrations
                     ChapterName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ChapterDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ChapterNumber = table.Column<int>(type: "int", nullable: true),
+                    ChapterImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    ChapterVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -155,6 +159,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageCompetenceName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LanguageCompetenceDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LanguageCompetenceVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageCompetenceType = table.Column<int>(type: "int", nullable: false),
                     ChapterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -218,7 +223,12 @@ namespace LingoLabs.Infrastructure.Migrations
                     LessonRequirement = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LessonContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LessonType = table.Column<int>(type: "int", nullable: false),
+                    LessonVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LessonImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
+                    AudioContents = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Accents = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -350,7 +360,10 @@ namespace LingoLabs.Infrastructure.Migrations
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionRequirement = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     QuestionLearningType = table.Column<int>(type: "int", nullable: false),
+                    QuestionImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    QuestionVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LessonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -427,6 +440,30 @@ namespace LingoLabs.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "WordPair",
+                columns: table => new
+                {
+                    WordPairId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    KeyWord = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ValueWord = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MatchingWordsQuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WordPair", x => x.WordPairId);
+                    table.ForeignKey(
+                        name: "FK_WordPair_Questions_MatchingWordsQuestionId",
+                        column: x => x.MatchingWordsQuestionId,
+                        principalTable: "Questions",
+                        principalColumn: "QuestionId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "QuestionResults",
                 columns: table => new
                 {
@@ -434,6 +471,11 @@ namespace LingoLabs.Infrastructure.Migrations
                     IsCorrect = table.Column<bool>(type: "bit", nullable: false),
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LessonResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
+                    AudioData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    RecognizedText = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    WritingQuestionResult_RecognizedText = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -584,6 +626,11 @@ namespace LingoLabs.Infrastructure.Migrations
                 name: "IX_UserLanguageLevel_LanguageLevelId",
                 table: "UserLanguageLevel",
                 column: "LanguageLevelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WordPair_MatchingWordsQuestionId",
+                table: "WordPair",
+                column: "MatchingWordsQuestionId");
         }
 
         /// <inheritdoc />
@@ -602,13 +649,16 @@ namespace LingoLabs.Infrastructure.Migrations
                 name: "UserLanguageLevel");
 
             migrationBuilder.DropTable(
+                name: "WordPair");
+
+            migrationBuilder.DropTable(
                 name: "LessonResults");
 
             migrationBuilder.DropTable(
-                name: "Questions");
+                name: "LearningStyles");
 
             migrationBuilder.DropTable(
-                name: "LearningStyles");
+                name: "Questions");
 
             migrationBuilder.DropTable(
                 name: "LanguageCompetenceResults");

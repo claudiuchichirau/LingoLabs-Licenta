@@ -4,8 +4,8 @@ namespace LingoLabs.Domain.Entities.Languages
 {
     public class MatchingWordsQuestion : Question
     {
-        public Dictionary<string, string>? WordPairs { get; private set; } = new();
-        
+        public ICollection<WordPair>? WordPairs { get; private set; } = new List<WordPair>();
+
         private MatchingWordsQuestion(string questionRequirement, LearningType questionLearningType) : base(questionRequirement, questionLearningType)
         {
         }
@@ -15,30 +15,25 @@ namespace LingoLabs.Domain.Entities.Languages
             if (string.IsNullOrWhiteSpace(questionRequirement))
                 return Result<MatchingWordsQuestion>.Failure("QuestionRequirement is required");
 
-            if (!IsValidLearningType(questionLearningType))
-                return Result<MatchingWordsQuestion>.Failure("Invalid LearningType");
-
             return Result<MatchingWordsQuestion>.Success(new MatchingWordsQuestion(questionRequirement, questionLearningType));
         }
 
-        public void AttachWordPairs(string word, string translation)
-        {
-            if (WordPairs == null)
-                WordPairs = new Dictionary<string, string> { { word, translation } };
-            else
-                WordPairs.Add(word, translation);
-        }
-
-        public void RemoveWordPair(string word)
+        public void AttachWordPair(WordPair wordPair)
         {
             if (WordPairs != null)
-                WordPairs.Remove(word);
+                WordPairs.Add(wordPair);
         }
 
-        public bool IsWordPairCorrect(string word, string translation)
+        public void RemoveWordPair(WordPair wordPair)
         {
             if (WordPairs != null)
-                return WordPairs.ContainsKey(word) && WordPairs[word] == translation;
+                WordPairs.Remove(wordPair);
+        }
+
+        public bool IsWordPairExist(WordPair wordPair)
+        {
+            if (WordPairs != null)
+                return WordPairs.Contains(wordPair);
             return false;
         }
     }

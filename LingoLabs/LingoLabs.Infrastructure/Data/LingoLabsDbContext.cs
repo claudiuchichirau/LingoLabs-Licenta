@@ -14,11 +14,15 @@ namespace LingoLabs.Infrastructure.Data
         public DbSet<LanguageCompetenceResult> LanguageCompetenceResults { get; set; }
         public DbSet<LessonResult> LessonResults { get; set; }
         public DbSet<QuestionResult> QuestionResults { get; set; }
+        public DbSet<ReadingQuestionResult> ReadingQuestionResults { get; set; }
+        public DbSet<WritingQuestionResult> WritingQuestionResults { get; set; }
         public DbSet<Language> Languages { get; set; }
         public DbSet<LanguageLevel> LanguageLevels { get; set; }
         public DbSet<Chapter> Chapters { get; set; }
         public DbSet<LanguageCompetence> LanguageCompetences { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<ListeningLesson> ListeningLessons { get; set; }
+        public DbSet<MatchingWordsQuestion> MatchingWordsQuestions { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Choice> Choices { get; set; }
         public DbSet<Tag> Tags { get; set; }

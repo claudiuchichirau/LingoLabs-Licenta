@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj": {}
+    "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj": {}
   },
   "projects": {
-    "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj": {
+    "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj",
+        "projectUniqueName": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj",
         "projectName": "LingoLabs.Application",
-        "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj",
+        "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Application\\obj\\",
+        "outputPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -29,8 +29,8 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj": {
-                "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj"
+              "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj": {
+                "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj"
               }
             }
           }
@@ -82,14 +82,14 @@
         }
       }
     },
-    "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj": {
+    "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj",
+        "projectUniqueName": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj",
         "projectName": "LingoLabs.Domain",
-        "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj",
+        "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\obj\\",
+        "outputPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -138,14 +138,14 @@
         }
       }
     },
-    "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj": {
+    "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj",
+        "projectUniqueName": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj",
         "projectName": "LingoLabs.Infrastructure",
-        "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj",
+        "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Infrastructure\\obj\\",
+        "outputPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -163,11 +163,11 @@
           "net8.0": {
             "targetAlias": "net8.0",
             "projectReferences": {
-              "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj": {
-                "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj"
+              "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj": {
+                "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj"
               },
-              "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj": {
-                "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj"
+              "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj": {
+                "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj"
               }
             }
           }

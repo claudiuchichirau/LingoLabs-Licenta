@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LingoLabs.Infrastructure.Migrations
 {
     [DbContext(typeof(LingoLabsDbContext))]
-    [Migration("20240215145518_InitialCreate")]
+    [Migration("20240217093214_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -212,6 +212,11 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
+
                     b.Property<bool>("IsCorrect")
                         .HasColumnType("bit");
 
@@ -234,6 +239,10 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("QuestionResults");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("QuestionResult");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.UserLanguageLevel", b =>
@@ -277,12 +286,18 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<string>("ChapterDescription")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("ChapterImageData")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("ChapterName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ChapterNumber")
                         .HasColumnType("int");
+
+                    b.Property<string>("ChapterVideoLink")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -360,6 +375,9 @@ namespace LingoLabs.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("LanguageVideoLink")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -395,6 +413,9 @@ namespace LingoLabs.Infrastructure.Migrations
 
                     b.Property<int>("LanguageCompetenceType")
                         .HasColumnType("int");
+
+                    b.Property<string>("LanguageCompetenceVideoLink")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("LanguageId")
                         .HasColumnType("uniqueidentifier");
@@ -440,6 +461,9 @@ namespace LingoLabs.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("LanguageLevelVideoLink")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -465,6 +489,11 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
+
                     b.Property<Guid>("LanguageCompetenceId")
                         .HasColumnType("uniqueidentifier");
 
@@ -480,6 +509,9 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<string>("LessonDescription")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("LessonImageData")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("LessonRequirement")
                         .HasColumnType("nvarchar(max)");
 
@@ -490,11 +522,18 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<int>("LessonType")
                         .HasColumnType("int");
 
+                    b.Property<string>("LessonVideoLink")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("LessonId");
 
                     b.HasIndex("LanguageCompetenceId");
 
                     b.ToTable("Lessons");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Lesson");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Question", b =>
@@ -509,6 +548,11 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
+
                     b.Property<Guid?>("LanguageId")
                         .HasColumnType("uniqueidentifier");
 
@@ -521,11 +565,17 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<Guid>("LessonId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<byte[]>("QuestionImageData")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<int>("QuestionLearningType")
                         .HasColumnType("int");
 
                     b.Property<string>("QuestionRequirement")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("QuestionVideoLink")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("QuestionId");
@@ -535,6 +585,10 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasIndex("LessonId");
 
                     b.ToTable("Questions");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Question");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Tag", b =>
@@ -589,6 +643,42 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.WordPair", b =>
+                {
+                    b.Property<Guid>("WordPairId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("KeyWord")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastModifiedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("MatchingWordsQuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ValueWord")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("WordPairId");
+
+                    b.HasIndex("MatchingWordsQuestionId");
+
+                    b.ToTable("WordPair");
+                });
+
             modelBuilder.Entity("LingoLabs.Domain.Entities.LearningStyle", b =>
                 {
                     b.Property<Guid>("LearningStyleId")
@@ -620,6 +710,58 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasKey("LearningStyleId");
 
                     b.ToTable("LearningStyles");
+                });
+
+            modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.ReadingQuestionResult", b =>
+                {
+                    b.HasBaseType("LingoLabs.Domain.Entities.Enrollments.QuestionResult");
+
+                    b.Property<byte[]>("AudioData")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("RecognizedText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("ReadingQuestionResult");
+                });
+
+            modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.WritingQuestionResult", b =>
+                {
+                    b.HasBaseType("LingoLabs.Domain.Entities.Enrollments.QuestionResult");
+
+                    b.Property<byte[]>("ImageData")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("RecognizedText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.ToTable("QuestionResults", t =>
+                        {
+                            t.Property("RecognizedText")
+                                .HasColumnName("WritingQuestionResult_RecognizedText");
+                        });
+
+                    b.HasDiscriminator().HasValue("WritingQuestionResult");
+                });
+
+            modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.ListeningLesson", b =>
+                {
+                    b.HasBaseType("LingoLabs.Domain.Entities.Languages.Lesson");
+
+                    b.Property<string>("Accents")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AudioContents")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasDiscriminator().HasValue("ListeningLesson");
+                });
+
+            modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.MatchingWordsQuestion", b =>
+                {
+                    b.HasBaseType("LingoLabs.Domain.Entities.Languages.Question");
+
+                    b.HasDiscriminator().HasValue("MatchingWordsQuestion");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.ChapterResult", b =>
@@ -856,6 +998,17 @@ namespace LingoLabs.Infrastructure.Migrations
                         .HasForeignKey("LearningStyleId");
                 });
 
+            modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.WordPair", b =>
+                {
+                    b.HasOne("LingoLabs.Domain.Entities.Languages.MatchingWordsQuestion", "MatchingWordsQuestion")
+                        .WithMany("WordPairs")
+                        .HasForeignKey("MatchingWordsQuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MatchingWordsQuestion");
+                });
+
             modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.ChapterResult", b =>
                 {
                     b.Navigation("LanguageCompetenceResults");
@@ -928,6 +1081,11 @@ namespace LingoLabs.Infrastructure.Migrations
             modelBuilder.Entity("LingoLabs.Domain.Entities.LearningStyle", b =>
                 {
                     b.Navigation("LearningStyleKeyWords");
+                });
+
+            modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.MatchingWordsQuestion", b =>
+                {
+                    b.Navigation("WordPairs");
                 });
 #pragma warning restore 612, 618
         }

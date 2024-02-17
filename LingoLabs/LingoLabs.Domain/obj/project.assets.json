@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj",
+      "projectUniqueName": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj",
       "projectName": "LingoLabs.Domain",
-      "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj",
+      "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Domain\\obj\\",
+      "outputPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",

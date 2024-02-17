@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "sxMIXjSsFpd8JTo1nWO9lBYUQS8Fjdk04HUPSkzafOzzfUC6+JtLaE7mvOfFNK5cvEW0Ncy62UqIZrP/ZJE7Ng==",
+  "dgSpecHash": "YLv+McK4vJuYkPanT0CODaZJAY3h2KwXu3eV+xa5ZwhyuB0cy1xEuBswsR6SbglLdEc3M7Dg4cEV8rThYx0WrQ==",
   "success": true,
-  "projectFilePath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj",
+  "projectFilePath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",

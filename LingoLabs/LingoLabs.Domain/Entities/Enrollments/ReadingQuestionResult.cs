@@ -7,17 +7,17 @@ namespace LingoLabs.Domain.Entities.Enrollments
         public byte[]? AudioData { get; private set; }
         public string? RecognizedText { get; private set; }
 
-        private ReadingQuestionResult(Guid questionId, Guid userId, bool isCorrect) : base(questionId, userId, isCorrect)
+        private ReadingQuestionResult(Guid questionId, Guid lessonResultId, bool isCorrect) : base(questionId, lessonResultId, isCorrect)
         {
         }
 
-        public static Result<ReadingQuestionResult> Create(Guid questionId, Guid userId, bool isCorrect)
+        public static Result<ReadingQuestionResult> Create(Guid questionId, Guid lessonResultId, bool isCorrect)
         {
             if (questionId == default)
                 return Result<ReadingQuestionResult>.Failure("QuestionId is required");
-            if (userId == default)
-                return Result<ReadingQuestionResult>.Failure("UserId is required");
-            return Result<ReadingQuestionResult>.Success(new ReadingQuestionResult(questionId, userId, isCorrect));
+            if (lessonResultId == default)
+                return Result<ReadingQuestionResult>.Failure("LessonResultId is required");
+            return Result<ReadingQuestionResult>.Success(new ReadingQuestionResult(questionId, lessonResultId, isCorrect));
         }
 
         public void AttachAudioData(byte[] audioData)

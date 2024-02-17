@@ -7,17 +7,17 @@ namespace LingoLabs.Domain.Entities.Enrollments
         public byte[]? ImageData { get; private set; }
         public string? RecognizedText { get; private set; }
 
-        private WritingQuestionResult(Guid questionId, Guid userId, bool isCorrect) : base(questionId, userId, isCorrect)
+        private WritingQuestionResult(Guid questionId, Guid lessonResultId, bool isCorrect) : base(questionId, lessonResultId, isCorrect)
         {
         }
 
-        public static Result<WritingQuestionResult> Create(Guid questionId, Guid userId, bool isCorrect)
+        public static Result<WritingQuestionResult> Create(Guid questionId, Guid lessonResultId, bool isCorrect)
         {
             if (questionId == default)
                 return Result<WritingQuestionResult>.Failure("QuestionId is required");
-            if (userId == default)
-                return Result<WritingQuestionResult>.Failure("UserId is required");
-            return Result<WritingQuestionResult>.Success(new WritingQuestionResult(questionId, userId, isCorrect));
+            if (lessonResultId == default)
+                return Result<WritingQuestionResult>.Failure("LessonResultId is required");
+            return Result<WritingQuestionResult>.Success(new WritingQuestionResult(questionId, lessonResultId, isCorrect));
         }
 
         public void AttachImageData(byte[] imageData)

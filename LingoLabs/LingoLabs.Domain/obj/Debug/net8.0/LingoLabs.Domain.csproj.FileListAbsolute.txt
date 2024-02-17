@@ -9,3 +9,15 @@ D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs\Li
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\refint\LingoLabs.Domain.dll
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\LingoLabs.Domain.pdb
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\ref\LingoLabs.Domain.dll
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\bin\Debug\net8.0\LingoLabs.Domain.deps.json
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\bin\Debug\net8.0\LingoLabs.Domain.dll
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\bin\Debug\net8.0\LingoLabs.Domain.pdb
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\LingoLabs.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\LingoLabs.Domain.AssemblyInfoInputs.cache
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\LingoLabs.Domain.AssemblyInfo.cs
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\LingoLabs.Domain.csproj.CoreCompileInputs.cache
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\LingoLabs.Domain.sourcelink.json
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\LingoLabs.Domain.dll
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\refint\LingoLabs.Domain.dll
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\LingoLabs.Domain.pdb
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Domain\obj\Debug\net8.0\ref\LingoLabs.Domain.dll
