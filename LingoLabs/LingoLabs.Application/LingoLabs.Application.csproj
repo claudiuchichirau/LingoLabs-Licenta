@@ -12,7 +12,47 @@
 
   <ItemGroup>
     <Folder Include="Contracts\" />
-    <Folder Include="Features\Languages\Queries\" />
+    <Folder Include="Features\EnrollmentsFeatures\ChapterResults\Commands\" />
+    <Folder Include="Features\EnrollmentsFeatures\ChapterResults\Queries\" />
+    <Folder Include="Features\EnrollmentsFeatures\EnrollmentResults\Commands\" />
+    <Folder Include="Features\EnrollmentsFeatures\EnrollmentResults\Queries\" />
+    <Folder Include="Features\EnrollmentsFeatures\LanguageCompetenceResults\Commands\" />
+    <Folder Include="Features\EnrollmentsFeatures\LanguageCompetenceResults\Queries\" />
+    <Folder Include="Features\EnrollmentsFeatures\LanguageLevelResults\Commands\" />
+    <Folder Include="Features\EnrollmentsFeatures\LanguageLevelResults\Queries\" />
+    <Folder Include="Features\EnrollmentsFeatures\LessonResults\Commands\" />
+    <Folder Include="Features\EnrollmentsFeatures\LessonResults\Queries\" />
+    <Folder Include="Features\EnrollmentsFeatures\QuestionResults\Commands\" />
+    <Folder Include="Features\EnrollmentsFeatures\QuestionResults\Queries\" />
+    <Folder Include="Features\EnrollmentsFeatures\ReadingQuestionResults\Commands\" />
+    <Folder Include="Features\EnrollmentsFeatures\ReadingQuestionResults\Queries\" />
+    <Folder Include="Features\EnrollmentsFeatures\UserLanguageLevels\Commands\" />
+    <Folder Include="Features\EnrollmentsFeatures\UserLanguageLevels\Queries\" />
+    <Folder Include="Features\EnrollmentsFeatures\WritingQuestionResults\Commands\" />
+    <Folder Include="Features\EnrollmentsFeatures\WritingQuestionResults\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\Chapters\Commands\" />
+    <Folder Include="Features\LanguagesFeatures\Chapters\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\Choices\Commands\" />
+    <Folder Include="Features\LanguagesFeatures\Choices\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\LanguageCompetences\Commands\" />
+    <Folder Include="Features\LanguagesFeatures\LanguageCompetences\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\LanguageLevels\Commands\" />
+    <Folder Include="Features\LanguagesFeatures\LanguageLevels\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\Languages\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\Lessons\Commands\" />
+    <Folder Include="Features\LanguagesFeatures\Lessons\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\ListeningLessons\Commands\" />
+    <Folder Include="Features\LanguagesFeatures\ListeningLessons\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\MatchingWordsQuestions\Commands\" />
+    <Folder Include="Features\LanguagesFeatures\MatchingWordsQuestions\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\Questions\Commands\" />
+    <Folder Include="Features\LanguagesFeatures\Questions\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\Tags\Commands\" />
+    <Folder Include="Features\LanguagesFeatures\Tags\Queries\" />
+    <Folder Include="Features\LanguagesFeatures\WordPairs\Commands\" />
+    <Folder Include="Features\LanguagesFeatures\WordPairs\Queries\" />
+    <Folder Include="Features\LearningStyles\Commands\" />
+    <Folder Include="Features\LearningStyles\Queries\" />
   </ItemGroup>
 
   <ItemGroup>

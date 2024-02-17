@@ -1,6 +1,6 @@
 ﻿using LingoLabs.Application.Responses;
 
-namespace LingoLabs.Application.Features.Languages.Commands.CreateLanguage
+namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.CreateLanguage
 {
     public class CreateLanguageCommandResponse : BaseResponse
     {

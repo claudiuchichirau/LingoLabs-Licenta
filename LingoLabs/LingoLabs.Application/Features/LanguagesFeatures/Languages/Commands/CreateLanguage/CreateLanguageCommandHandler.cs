@@ -1,8 +1,9 @@
-﻿using LingoLabs.Application.Persistence.Languages;
+﻿using LingoLabs.Application.Features.Languages.Commands.CreateLanguage;
+using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
-namespace LingoLabs.Application.Features.Languages.Commands.CreateLanguage
+namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.CreateLanguage
 {
     public class CreateLanguageCommandHandler : IRequestHandler<CreateLanguageCommand, CreateLanguageCommandResponse>
     {
@@ -18,7 +19,7 @@ namespace LingoLabs.Application.Features.Languages.Commands.CreateLanguage
             var validator = new CreateLanguageCommandValidator();
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-            if(!validationResult.IsValid)
+            if (!validationResult.IsValid)
             {
                 return new CreateLanguageCommandResponse
                 {

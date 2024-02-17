@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace LingoLabs.Application.Features.Languages.Commands.CreateLanguage
+namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.CreateLanguage
 {
     public class CreateLanguageCommandValidator : AbstractValidator<CreateLanguageCommand>
     {
