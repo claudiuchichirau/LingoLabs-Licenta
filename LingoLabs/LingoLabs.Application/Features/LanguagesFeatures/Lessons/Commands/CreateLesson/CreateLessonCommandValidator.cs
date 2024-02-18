@@ -14,7 +14,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
 
             RuleFor(p => p.LessonType)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotNull();
+                .NotNull()
+                .Must(type => type == LanguageCompetenceType.Grammar || type == LanguageCompetenceType.Listening || type == LanguageCompetenceType.Reading || type == LanguageCompetenceType.Writing)
+                .WithMessage("{PropertyName} must have one of the following values: Grammar, Listening, Reading, Writing");
         }
     }
 }

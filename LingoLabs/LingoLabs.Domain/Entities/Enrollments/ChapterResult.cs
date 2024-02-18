@@ -7,7 +7,7 @@ namespace LingoLabs.Domain.Entities.Enrollments
     {
         public Guid ChapterResultId { get; private set; }
         public List<LanguageCompetenceResult> LanguageCompetenceResults { get; private set; } = new();
-        public bool? IsCompleted { get; private set; }
+        public bool IsCompleted { get; private set; }
         public Guid ChapterId { get; private set; }
         public Chapter? Chapter { get; set; }
         public Guid LanguageLevelResultId { get; private set; }
@@ -18,6 +18,7 @@ namespace LingoLabs.Domain.Entities.Enrollments
             ChapterResultId = Guid.NewGuid();
             ChapterId = chapterId;
             LanguageLevelResultId = languageLevelResultId;
+            IsCompleted = false;
         }
 
         public static Result<ChapterResult> Create(Guid chapterId, Guid languageLevelResultId)

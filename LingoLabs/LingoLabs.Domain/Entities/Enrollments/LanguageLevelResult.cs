@@ -18,6 +18,7 @@ namespace LingoLabs.Domain.Entities.Enrollments
             LanguageLevelResultId = Guid.NewGuid();
             LanguageLevelId = languageLevelId;
             EnrollmentId = enrollmentId;
+            IsCompleted = false;
         }
 
         public static Result<LanguageLevelResult> Create(Guid languageLevelId, Guid enrollmentId)

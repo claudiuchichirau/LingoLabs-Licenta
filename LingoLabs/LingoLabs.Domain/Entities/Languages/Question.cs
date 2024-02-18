@@ -5,8 +5,8 @@ namespace LingoLabs.Domain.Entities.Languages
     public class Question : AuditableEntity
     {
         public Guid QuestionId { get; private set; }
-        public string QuestionRequirement { get; private set; }
-        public LearningType QuestionLearningType { get; private set; }
+        public string QuestionRequirement { get; protected set; }
+        public LearningType QuestionLearningType { get; protected set; }
         public List<Choice>? QuestionChoices { get; private set; } = new();
         public byte[]? QuestionImageData { get; private set; }
         public string? QuestionVideoLink { get; private set; } = string.Empty;

@@ -8,8 +8,8 @@ namespace LingoLabs.Domain.Entities
         public Guid LearningStyleId { get; private set; }
         public string LearningStyleName { get; private set; }
         public string? LearningStyleDescription { get; private set; }
-        public List<Tag>? LearningStyleKeyWords { get; private set; } = new ();
         public LearningType LearningType { get; private set; }
+        public List<Tag>? LearningStyleKeyWords { get; private set; }
 
         private LearningStyle(string learningStyleName, LearningType learningType)
         {

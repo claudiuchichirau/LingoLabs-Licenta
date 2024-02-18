@@ -4,18 +4,26 @@ namespace LingoLabs.Domain.Entities.Languages
 {
     public class MatchingWordsQuestion : Question
     {
-        public ICollection<WordPair>? WordPairs { get; private set; } = new List<WordPair>();
+        public List<WordPair> WordPairs { get; private set; }
 
-        private MatchingWordsQuestion(string questionRequirement, LearningType questionLearningType) : base(questionRequirement, questionLearningType)
+        private MatchingWordsQuestion(string questionRequirement, LearningType questionLearningType, List<WordPair> wordPairs) : base(questionRequirement, questionLearningType)
         {
+            if (wordPairs != null || wordPairs.Count > 0)
+                WordPairs = wordPairs;
         }
 
-        public static Result<MatchingWordsQuestion> Create(string questionRequirement, LearningType questionLearningType)
+        public static Result<MatchingWordsQuestion> Create(string questionRequirement, LearningType questionLearningType, List<WordPair> wordPairs)
         {
             if (string.IsNullOrWhiteSpace(questionRequirement))
                 return Result<MatchingWordsQuestion>.Failure("QuestionRequirement is required");
 
-            return Result<MatchingWordsQuestion>.Success(new MatchingWordsQuestion(questionRequirement, questionLearningType));
+            if (!IsValidLearningType(questionLearningType))
+                return Result<MatchingWordsQuestion>.Failure("Invalid LearningType");
+
+            if (wordPairs == null || wordPairs.Count == 0)
+                return Result<MatchingWordsQuestion>.Failure("WordPairs is required");
+
+            return Result<MatchingWordsQuestion>.Success(new MatchingWordsQuestion(questionRequirement, questionLearningType, wordPairs));
         }
 
         public void AttachWordPair(WordPair wordPair)

@@ -5,12 +5,12 @@ namespace LingoLabs.Domain.Entities.Languages
     public class Tag : AuditableEntity
     {
         public Guid TagId { get; private set; }
-        public string Content { get; private set; }
+        public string TagContent { get; private set; }
 
         private Tag(string content)
         {
             TagId = Guid.NewGuid();
-            Content = content;
+            TagContent = content;
         }
 
         public static Result<Tag> Create(string content)

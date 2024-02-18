@@ -5,11 +5,11 @@ namespace LingoLabs.Domain.Entities.Languages
     public class Lesson : AuditableEntity
     {
         public Guid LessonId { get; private set; }
-        public string LessonTitle { get; private set; }
+        public string LessonTitle { get; protected set; }
         public string? LessonDescription { get; private set; } = string.Empty; 
         public string? LessonRequirement { get; private set; } = string.Empty;      // This is a requirement for the lesson
         public string? LessonContent { get; private set; } = string.Empty;         // This is the content of the lesson
-        public LanguageCompetenceType LessonType { get; private set; }
+        public LanguageCompetenceType LessonType { get; protected set; }
         public string? LessonVideoLink { get; private set; } = string.Empty;
         public byte[]? LessonImageData { get; private set; }
         public List<Question>? LessonQuestions { get; private set; } = new();

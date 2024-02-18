@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Folder Include="Contracts\" />
-    <Folder Include="Features\EnrollmentsFeatures\ChapterResults\Commands\" />
     <Folder Include="Features\EnrollmentsFeatures\ChapterResults\Queries\" />
     <Folder Include="Features\EnrollmentsFeatures\EnrollmentResults\Commands\" />
     <Folder Include="Features\EnrollmentsFeatures\EnrollmentResults\Queries\" />
@@ -36,17 +35,11 @@
     <Folder Include="Features\LanguagesFeatures\LanguageLevels\Queries\" />
     <Folder Include="Features\LanguagesFeatures\Languages\Queries\" />
     <Folder Include="Features\LanguagesFeatures\Lessons\Queries\" />
-    <Folder Include="Features\LanguagesFeatures\ListeningLessons\Commands\" />
     <Folder Include="Features\LanguagesFeatures\ListeningLessons\Queries\" />
-    <Folder Include="Features\LanguagesFeatures\MatchingWordsQuestions\Commands\" />
     <Folder Include="Features\LanguagesFeatures\MatchingWordsQuestions\Queries\" />
-    <Folder Include="Features\LanguagesFeatures\Questions\Commands\" />
     <Folder Include="Features\LanguagesFeatures\Questions\Queries\" />
-    <Folder Include="Features\LanguagesFeatures\Tags\Commands\" />
     <Folder Include="Features\LanguagesFeatures\Tags\Queries\" />
-    <Folder Include="Features\LanguagesFeatures\WordPairs\Commands\" />
     <Folder Include="Features\LanguagesFeatures\WordPairs\Queries\" />
-    <Folder Include="Features\LearningStyles\Commands\" />
     <Folder Include="Features\LearningStyles\Queries\" />
   </ItemGroup>
 

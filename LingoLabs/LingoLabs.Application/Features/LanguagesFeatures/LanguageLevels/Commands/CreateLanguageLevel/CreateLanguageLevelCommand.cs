@@ -4,7 +4,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
 {
     public class CreateLanguageLevelCommand: IRequest<CreateLanguageLevelCommandResponse>
     {
-        public string LanguageLevelName { get; set; }
-        public string LanguageLevelAlias { get; set; }
+        public string LanguageLevelName { get; set; } = default!;
+        public string LanguageLevelAlias { get; set; } = default!;
     }
 }

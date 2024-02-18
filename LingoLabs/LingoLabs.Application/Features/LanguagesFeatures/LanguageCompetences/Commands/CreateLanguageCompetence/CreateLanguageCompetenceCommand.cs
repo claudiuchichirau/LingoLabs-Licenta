@@ -5,7 +5,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
 {
     public class CreateLanguageCompetenceCommand: IRequest<CreateLanguageCompetenceCommandResponse>
     {
-        public string LanguageCompetenceName { get; set; }
+        public string LanguageCompetenceName { get; set; } = default!;
         public LanguageCompetenceType LanguageCompetenceType { get; set; }
     }
 }

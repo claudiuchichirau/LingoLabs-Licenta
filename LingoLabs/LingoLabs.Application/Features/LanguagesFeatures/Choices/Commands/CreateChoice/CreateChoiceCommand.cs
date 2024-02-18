@@ -4,7 +4,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.Crea
 {
     public class CreateChoiceCommand: IRequest<CreateChoiceCommandResponse>
     {
-        public string ChoiceContent { get; set; }
+        public string ChoiceContent { get; set; } = default!;
         public bool IsCorrect { get; set; }
     }
 }

@@ -18,6 +18,7 @@ namespace LingoLabs.Domain.Entities.Enrollments
             LessonResultId = Guid.NewGuid();
             LessonId = lessonId;
             LanguageCompetenceResultId = languageCompetenceResultId;
+            IsCompleted = false;
         }
 
         public static Result<LessonResult> Create(Guid lessonId, Guid languageCompetenceResultId)
