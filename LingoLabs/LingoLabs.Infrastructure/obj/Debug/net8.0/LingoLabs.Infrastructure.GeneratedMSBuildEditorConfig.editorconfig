@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = LingoLabs.Infrastructure
-build_property.ProjectDir = D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\
+build_property.ProjectDir = C:\Users\G1\Desktop\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 

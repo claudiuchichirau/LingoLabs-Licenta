@@ -1,15 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "yrdjRnQWFtLKltXzPELa0F+9+oIYEDIblZe6BF6I0ch/S9UNMPj1toJgmspuQXMLTZaAXx+ynWIFbWv0f4/d4Q==",
+  "dgSpecHash": "89VDwko/PVX4CmS1GEjlRFC6fPujJx5dxP/K5gRq1Vr8nIsSgGoM2mKWO57y4YltIHtSYKS2jNblTO1FFO0xsg==",
   "success": true,
-  "projectFilePath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj",
+  "projectFilePath": "C:\\Users\\G1\\Desktop\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\Admin\\.nuget\\packages\\fluentvalidation\\11.9.0\\fluentvalidation.11.9.0.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.0\\fluentvalidation.dependencyinjectionextensions.11.9.0.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\mediatr\\11.1.0\\mediatr.11.1.0.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\mediatr.contracts\\1.0.1\\mediatr.contracts.1.0.1.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\mediatr.extensions.microsoft.dependencyinjection\\11.1.0\\mediatr.extensions.microsoft.dependencyinjection.11.1.0.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512"
+    "C:\\Users\\G1\\.nuget\\packages\\fluentvalidation\\11.9.0\\fluentvalidation.11.9.0.nupkg.sha512",
+    "C:\\Users\\G1\\.nuget\\packages\\fluentvalidation.dependencyinjectionextensions\\11.9.0\\fluentvalidation.dependencyinjectionextensions.11.9.0.nupkg.sha512",
+    "C:\\Users\\G1\\.nuget\\packages\\mediatr\\11.1.0\\mediatr.11.1.0.nupkg.sha512",
+    "C:\\Users\\G1\\.nuget\\packages\\mediatr.contracts\\1.0.1\\mediatr.contracts.1.0.1.nupkg.sha512",
+    "C:\\Users\\G1\\.nuget\\packages\\mediatr.extensions.microsoft.dependencyinjection\\11.1.0\\mediatr.extensions.microsoft.dependencyinjection.11.1.0.nupkg.sha512",
+    "C:\\Users\\G1\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\7.0.0\\microsoft.extensions.dependencyinjection.abstractions.7.0.0.nupkg.sha512"
   ],
   "logs": []
 }
