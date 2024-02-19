@@ -10,7 +10,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull();
 
-            RuleFor(p => p.LanguageCompetenceResults)
+            RuleFor(p => p.LanguageLevelResultId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull();
         }

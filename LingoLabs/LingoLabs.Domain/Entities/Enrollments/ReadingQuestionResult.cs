@@ -4,20 +4,25 @@ namespace LingoLabs.Domain.Entities.Enrollments
 {
     public class ReadingQuestionResult : QuestionResult
     {
-        public byte[]? AudioData { get; private set; }
+        public byte[] AudioData { get; private set; }
         public string? RecognizedText { get; private set; }
 
-        private ReadingQuestionResult(Guid questionId, Guid lessonResultId, bool isCorrect) : base(questionId, lessonResultId, isCorrect)
+        private ReadingQuestionResult(Guid questionId, Guid lessonResultId, bool isCorrect, byte[] audioData) : base(questionId, lessonResultId, isCorrect)
         {
+            AudioData = audioData;
         }
 
-        public static Result<ReadingQuestionResult> Create(Guid questionId, Guid lessonResultId, bool isCorrect)
+        public static Result<ReadingQuestionResult> Create(Guid questionId, Guid lessonResultId, bool isCorrect, byte[] audioData)
         {
             if (questionId == default)
                 return Result<ReadingQuestionResult>.Failure("QuestionId is required");
             if (lessonResultId == default)
                 return Result<ReadingQuestionResult>.Failure("LessonResultId is required");
-            return Result<ReadingQuestionResult>.Success(new ReadingQuestionResult(questionId, lessonResultId, isCorrect));
+            if (isCorrect == default)
+                return Result<ReadingQuestionResult>.Failure("IsCorrect is required");
+            if (audioData == null || audioData.Length == 0)
+                return Result<ReadingQuestionResult>.Failure("AudioData is required");
+            return Result<ReadingQuestionResult>.Success(new ReadingQuestionResult(questionId, lessonResultId, isCorrect, audioData));
         }
 
         public void AttachAudioData(byte[] audioData)

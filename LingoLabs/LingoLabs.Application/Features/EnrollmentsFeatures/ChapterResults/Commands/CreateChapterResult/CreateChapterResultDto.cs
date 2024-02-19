@@ -6,6 +6,6 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
     {
         public Guid ChapterResultId { get; set; }
         public Guid? ChapterId { get; set; }
-        public List<LanguageCompetenceResult>? LanguageCompetenceResults { get; set; }
+        public Guid? LanguageLevelResultId { get; set; }
     }
 }

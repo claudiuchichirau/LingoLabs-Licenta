@@ -6,7 +6,7 @@ namespace LingoLabs.Domain.Entities.Enrollments
     public class ChapterResult : AuditableEntity
     {
         public Guid ChapterResultId { get; private set; }
-        public List<LanguageCompetenceResult> LanguageCompetenceResults { get; private set; } = new();
+        public List<LanguageCompetenceResult>? LanguageCompetenceResults { get; private set; } = new();
         public bool IsCompleted { get; private set; }
         public Guid ChapterId { get; private set; }
         public Chapter? Chapter { get; set; }

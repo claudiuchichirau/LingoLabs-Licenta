@@ -6,6 +6,6 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
     public class CreateChapterResultCommand: IRequest<CreateChapterResultCommandResponse>
     {
         public Guid ChapterId { get; set; }
-        public List<LanguageCompetenceResult> LanguageCompetenceResults { get; set; }
+        public Guid LanguageLevelResultId { get; set; }
     }
 }

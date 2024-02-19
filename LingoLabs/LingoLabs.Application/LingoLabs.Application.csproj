@@ -13,21 +13,13 @@
   <ItemGroup>
     <Folder Include="Contracts\" />
     <Folder Include="Features\EnrollmentsFeatures\ChapterResults\Queries\" />
-    <Folder Include="Features\EnrollmentsFeatures\EnrollmentResults\Commands\" />
-    <Folder Include="Features\EnrollmentsFeatures\EnrollmentResults\Queries\" />
-    <Folder Include="Features\EnrollmentsFeatures\LanguageCompetenceResults\Commands\" />
+    <Folder Include="Features\EnrollmentsFeatures\Enrollments\Queries\" />
     <Folder Include="Features\EnrollmentsFeatures\LanguageCompetenceResults\Queries\" />
-    <Folder Include="Features\EnrollmentsFeatures\LanguageLevelResults\Commands\" />
     <Folder Include="Features\EnrollmentsFeatures\LanguageLevelResults\Queries\" />
-    <Folder Include="Features\EnrollmentsFeatures\LessonResults\Commands\" />
     <Folder Include="Features\EnrollmentsFeatures\LessonResults\Queries\" />
-    <Folder Include="Features\EnrollmentsFeatures\QuestionResults\Commands\" />
     <Folder Include="Features\EnrollmentsFeatures\QuestionResults\Queries\" />
-    <Folder Include="Features\EnrollmentsFeatures\ReadingQuestionResults\Commands\" />
     <Folder Include="Features\EnrollmentsFeatures\ReadingQuestionResults\Queries\" />
-    <Folder Include="Features\EnrollmentsFeatures\UserLanguageLevels\Commands\" />
     <Folder Include="Features\EnrollmentsFeatures\UserLanguageLevels\Queries\" />
-    <Folder Include="Features\EnrollmentsFeatures\WritingQuestionResults\Commands\" />
     <Folder Include="Features\EnrollmentsFeatures\WritingQuestionResults\Queries\" />
     <Folder Include="Features\LanguagesFeatures\Chapters\Queries\" />
     <Folder Include="Features\LanguagesFeatures\Choices\Queries\" />

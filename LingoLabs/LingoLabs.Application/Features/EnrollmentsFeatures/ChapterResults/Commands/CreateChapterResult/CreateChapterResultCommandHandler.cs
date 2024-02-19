@@ -1,4 +1,4 @@
-﻿using LingoLabs.Application.Persistence.Languages;
+﻿using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Domain.Entities.Enrollments;
 using MediatR;
 
@@ -6,13 +6,13 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
 {
     public class CreateChapterResultCommandHandler : IRequestHandler<CreateChapterResultCommand, CreateChapterResultCommandResponse>
     {
-        private readonly IChapterRepository repository;
+        private readonly IChapterResultRepository repository;
 
-        public CreateChapterResultCommandHandler(IChapterRepository repository)
+        public CreateChapterResultCommandHandler(IChapterResultRepository repository)
         {
             this.repository = repository;
         }
-        
+
         public async Task<CreateChapterResultCommandResponse> Handle(CreateChapterResultCommand request, CancellationToken cancellationToken)
         {
             var validator = new CreateChapterResultCommandValidator();
@@ -27,8 +27,27 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
                 };
             }
 
-            var chapterResult = ChapterResult.Create(request.ChapterId, request.LanguageCompetenceResults);
+            var chapterResult = ChapterResult.Create(request.ChapterId, request.LanguageLevelResultId);
 
+            if (chapterResult.IsSuccess)
+            {
+                await repository.AddAsync(chapterResult.Value);
+                return new CreateChapterResultCommandResponse
+                {
+                    ChapterResult = new CreateChapterResultDto
+                    {
+                        ChapterResultId = chapterResult.Value.ChapterResultId,
+                        ChapterId = chapterResult.Value.ChapterId,
+                        LanguageLevelResultId = chapterResult.Value.LanguageLevelResultId
+                    }
+                };
+            }
+
+            return new CreateChapterResultCommandResponse
+            {
+                Success = false,
+                ValidationsErrors = new List<string> { chapterResult.Error }
+            };
         }
     }
 }
