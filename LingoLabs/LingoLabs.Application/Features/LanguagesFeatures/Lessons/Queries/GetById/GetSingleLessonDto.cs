@@ -1,0 +1,14 @@
+﻿using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries;
+
+namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetById
+{
+    public class GetSingleLessonDto: LessonDto
+    {
+        public string LessonDescription { get; set; } = string.Empty;
+        public string LessonRequirement { get; set; } = string.Empty;      
+        public string LessonContent { get; set; } = string.Empty;
+        public string LessonVideoLink { get; set; } = string.Empty;
+        public byte[] LessonImageData { get; set; } = [];
+        public List<QuestionDto> LessonQuestions { get; set; } = [];
+    }
+}

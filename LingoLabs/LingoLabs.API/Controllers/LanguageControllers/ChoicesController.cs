@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.CreateChoice;
+using LingoLabs.Application.Features.LanguagesFeatures.Choices.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LingoLabs.API.Controllers.LanguageControllers
@@ -7,7 +8,6 @@ namespace LingoLabs.API.Controllers.LanguageControllers
     {
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create(CreateChoiceCommand command)
         {
             var result = await Mediator.Send(command);
@@ -15,6 +15,21 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             {
                 return BadRequest(result.Message);
             }
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var result = await Mediator.Send(new GetByIdChoiceQuery(id));
+
+            if (result.ChoiceId == Guid.Empty)
+            {
+                return NotFound(result);
+            }
+
             return Ok(result);
         }
     }
