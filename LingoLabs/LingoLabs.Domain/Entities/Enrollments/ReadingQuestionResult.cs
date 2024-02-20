@@ -9,6 +9,10 @@ namespace LingoLabs.Domain.Entities.Enrollments
 
         private ReadingQuestionResult(Guid questionId, Guid lessonResultId, bool isCorrect, byte[] audioData) : base(questionId, lessonResultId, isCorrect)
         {
+            QuestionResultId = Guid.NewGuid();
+            QuestionId = questionId;
+            LessonResultId = lessonResultId;
+            IsCorrect = isCorrect;
             AudioData = audioData;
         }
 

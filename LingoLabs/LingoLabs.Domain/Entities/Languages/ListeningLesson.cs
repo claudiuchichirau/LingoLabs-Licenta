@@ -7,19 +7,26 @@ namespace LingoLabs.Domain.Entities.Languages
         public List<byte[]> AudioContents { get; private set; }
         public List<string> Accents { get; private set; }
 
-        private ListeningLesson(string lessonTitle, LanguageCompetenceType lessonType, List<byte[]> audioContents, List<string> accents) : base(lessonTitle, lessonType)
+        private ListeningLesson(string lessonTitle, LanguageCompetenceType lessonType, Guid languageCompetenceId, List<byte[]> audioContents, List<string> accents) : base(lessonTitle, lessonType, languageCompetenceId)
         {
+            LessonId = Guid.NewGuid();
+            LessonTitle = lessonTitle;
+            LessonType = lessonType;
+            LanguageCompetenceId = languageCompetenceId;
             AudioContents = audioContents;
             Accents = accents;
         }
 
-        public static Result<ListeningLesson> Create(string lessonTitle, LanguageCompetenceType lessonType, List<byte[]> audioContents, List<string> accents)
+        public static Result<ListeningLesson> Create(string lessonTitle, LanguageCompetenceType lessonType, Guid languageCompetenceId, List<byte[]> audioContents, List<string> accents)
         {
             if(string.IsNullOrWhiteSpace(lessonTitle))
                 return Result<ListeningLesson>.Failure("LessonTitle is required");
 
             if (!IsValidLessonType(lessonType))
                 return Result<ListeningLesson>.Failure("Invalid LessonType");
+
+            if (languageCompetenceId == default)
+                return Result<ListeningLesson>.Failure("Invalid LanguageCompetenceId");
             
             if (audioContents == null || audioContents.Count == 0)
                 return Result<ListeningLesson>.Failure("AudioContents is required");
@@ -27,7 +34,7 @@ namespace LingoLabs.Domain.Entities.Languages
             if (accents == null || accents.Count == 0)
                 return Result<ListeningLesson>.Failure("Accents is required");
 
-            return Result<ListeningLesson>.Success(new ListeningLesson(lessonTitle, lessonType, audioContents, accents));
+            return Result<ListeningLesson>.Success(new ListeningLesson(lessonTitle, lessonType, languageCompetenceId, audioContents, accents));
         }
 
         public void AttachAudioContent(byte[] audioContent)

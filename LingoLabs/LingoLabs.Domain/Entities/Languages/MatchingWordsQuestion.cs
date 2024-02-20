@@ -4,15 +4,17 @@ namespace LingoLabs.Domain.Entities.Languages
 {
     public class MatchingWordsQuestion : Question
     {
-        public List<WordPair> WordPairs { get; private set; }
+        public List<WordPair>? WordPairs { get; private set; }
 
-        private MatchingWordsQuestion(string questionRequirement, LearningType questionLearningType, List<WordPair> wordPairs) : base(questionRequirement, questionLearningType)
+        private MatchingWordsQuestion(string questionRequirement, LearningType questionLearningType, Guid lessonId) : base(questionRequirement, questionLearningType, lessonId)
         {
-            if (wordPairs != null || wordPairs.Count > 0)
-                WordPairs = wordPairs;
+            QuestionId = Guid.NewGuid();
+            QuestionRequirement = questionRequirement;
+            QuestionLearningType = questionLearningType;
+            LessonId = lessonId;
         }
 
-        public static Result<MatchingWordsQuestion> Create(string questionRequirement, LearningType questionLearningType, List<WordPair> wordPairs)
+        public static Result<MatchingWordsQuestion> Create(string questionRequirement, LearningType questionLearningType, Guid lessonId)
         {
             if (string.IsNullOrWhiteSpace(questionRequirement))
                 return Result<MatchingWordsQuestion>.Failure("QuestionRequirement is required");
@@ -20,10 +22,10 @@ namespace LingoLabs.Domain.Entities.Languages
             if (!IsValidLearningType(questionLearningType))
                 return Result<MatchingWordsQuestion>.Failure("Invalid LearningType");
 
-            if (wordPairs == null || wordPairs.Count == 0)
-                return Result<MatchingWordsQuestion>.Failure("WordPairs is required");
+            if (lessonId == default)
+                return Result<MatchingWordsQuestion>.Failure("LessonId is required");
 
-            return Result<MatchingWordsQuestion>.Success(new MatchingWordsQuestion(questionRequirement, questionLearningType, wordPairs));
+            return Result<MatchingWordsQuestion>.Success(new MatchingWordsQuestion(questionRequirement, questionLearningType, lessonId));
         }
 
         public void AttachWordPair(WordPair wordPair)

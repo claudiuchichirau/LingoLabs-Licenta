@@ -2,6 +2,7 @@
 using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
+
 namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.CreateLanguage
 {
     public class CreateLanguageCommandHandler : IRequestHandler<CreateLanguageCommand, CreateLanguageCommandResponse>

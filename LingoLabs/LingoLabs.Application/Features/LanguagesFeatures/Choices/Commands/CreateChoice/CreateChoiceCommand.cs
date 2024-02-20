@@ -6,5 +6,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.Crea
     {
         public string ChoiceContent { get; set; } = default!;
         public bool IsCorrect { get; set; }
+        public Guid QuestionId { get; set; }
     }
 }

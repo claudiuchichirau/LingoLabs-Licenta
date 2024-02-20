@@ -17,6 +17,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Cr
                 .NotNull()
                 .Must(type => type == LearningType.Auditory || type == LearningType.Visual || type == LearningType.Kinesthetic || type == LearningType.Logical)
                 .WithMessage("{PropertyName} must have one of the following values: Auditory, Visual, Kinesthetic, Logical");
+
+            RuleFor(p => p.LessonId)
+                .NotEmpty().WithMessage("{PropertyName} is required.")
+                .NotNull()
+                .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
         }
     }
 }

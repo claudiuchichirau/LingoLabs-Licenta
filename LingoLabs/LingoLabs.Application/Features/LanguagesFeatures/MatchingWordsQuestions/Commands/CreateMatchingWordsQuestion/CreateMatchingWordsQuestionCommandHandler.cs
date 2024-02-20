@@ -27,7 +27,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.MatchingWordsQuestion
                 };
             }
 
-            var matchingWordsQuestion = MatchingWordsQuestion.Create(request.QuestionRequirement, request.QuestionLearningType, request.WordPairs);
+            var matchingWordsQuestion = MatchingWordsQuestion.Create(request.QuestionRequirement, request.QuestionLearningType, request.LessonId);
 
             if (matchingWordsQuestion.IsSuccess)
             {
@@ -39,7 +39,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.MatchingWordsQuestion
                         QuestionId = matchingWordsQuestion.Value.QuestionId,
                         QuestionRequirement = matchingWordsQuestion.Value.QuestionRequirement,
                         QuestionLearningType = matchingWordsQuestion.Value.QuestionLearningType,
-                        WordPairs = matchingWordsQuestion.Value.WordPairs
+                        LessonId = matchingWordsQuestion.Value.LessonId
                     }
                 };
             }

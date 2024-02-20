@@ -2,7 +2,7 @@
 
 namespace LingoLabs.Application.Features.EnrollmentsFeatures.WritingQuestionResults.Commands.CreateWritingQuestionResult
 {
-    public class CreateWritingQuestionResultCommandValidator: AbstractValidator<CreateWritingQuestioResultCommand>
+    public class CreateWritingQuestionResultCommandValidator : AbstractValidator<CreateWritingQuestioResultCommand>
     {
         public CreateWritingQuestionResultCommandValidator()
         {
@@ -22,11 +22,15 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.WritingQuestionResu
 
             RuleFor(p => p.ImageData)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotNull();
+                .NotNull()
+                .When(p => p.RecognizedText == null)
+                .WithMessage("Either {PropertyName} or RecognizedText must be provided, but not both.");
 
             RuleFor(p => p.RecognizedText)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
+                .When(p => p.ImageData == null)
+                .WithMessage("Either {PropertyName} or ImageData must be provided, but not both.")
                 .MaximumLength(2000).WithMessage("{PropertyName} must not exceed 2000 characters.");
         }
     }

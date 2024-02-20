@@ -27,7 +27,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Cr
                 };
             }
 
-            var question = Question.Create(request.QuestionRequirement, request.QuestionLearningType);
+            var question = Question.Create(request.QuestionRequirement, request.QuestionLearningType, request.LessonId);
             if (question.IsSuccess)
             {
                 await repository.AddAsync(question.Value);
@@ -37,7 +37,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Cr
                     {
                         QuestionId = question.Value.QuestionId,
                         QuestionRequirement = question.Value.QuestionRequirement,
-                        QuestionLearningType = question.Value.QuestionLearningType
+                        QuestionLearningType = question.Value.QuestionLearningType,
+                        LessonId = question.Value.LessonId
                     }
                 };
             }

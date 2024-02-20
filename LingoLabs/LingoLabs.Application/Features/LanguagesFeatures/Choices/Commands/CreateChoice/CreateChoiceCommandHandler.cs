@@ -26,7 +26,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.Crea
                 };
             }
 
-            var choice = Choice.Create(request.ChoiceContent, request.IsCorrect);
+            var choice = Choice.Create(request.ChoiceContent, request.IsCorrect, request.QuestionId);
             if (choice.IsSuccess)
             {
                 await repository.AddAsync(choice.Value);

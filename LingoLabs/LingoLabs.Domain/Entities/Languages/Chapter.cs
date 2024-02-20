@@ -15,17 +15,20 @@ namespace LingoLabs.Domain.Entities.Languages
         public Guid LanguageLevelId { get; private set; }
         public LanguageLevel? LanguageLevel { get; set; }
 
-        private Chapter(string chapterName)
+        private Chapter(string chapterName, Guid languageLevelId)
         {
             ChapterId = Guid.NewGuid();
             ChapterName = chapterName;
+            LanguageLevelId = languageLevelId;
         }
 
-        public static Result<Chapter> Create(string chapterName)
+        public static Result<Chapter> Create(string chapterName, Guid languageLevelId)
         {
             if (string.IsNullOrWhiteSpace(chapterName))
                 return Result<Chapter>.Failure("ChapterName is required");
-            return Result<Chapter>.Success(new Chapter(chapterName));
+            if (languageLevelId == default)
+                return Result<Chapter>.Failure("LanguageLevelId is required");
+            return Result<Chapter>.Success(new Chapter(chapterName, languageLevelId));
         }
 
         public void AttachDescription(string chapterDescription)

@@ -4277,27 +4277,28 @@
       "Microsoft.EntityFrameworkCore >= 8.0.2",
       "Microsoft.EntityFrameworkCore.Design >= 8.0.2",
       "Microsoft.EntityFrameworkCore.SqlServer >= 8.0.2",
-      "Microsoft.EntityFrameworkCore.Tools >= 8.0.2"
+      "Microsoft.EntityFrameworkCore.Tools >= 8.0.2",
+      "Microsoft.SqlServer.Server >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\G1\\.nuget\\packages\\": {},
+    "C:\\Users\\Admin\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\G1\\Desktop\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj",
+      "projectUniqueName": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj",
       "projectName": "LingoLabs.Infrastructure",
-      "projectPath": "C:\\Users\\G1\\Desktop\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj",
-      "packagesPath": "C:\\Users\\G1\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\G1\\Desktop\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\obj\\",
+      "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\LingoLabs.Infrastructure.csproj",
+      "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
+      "outputPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Infrastructure\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\G1\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -4313,11 +4314,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\G1\\Desktop\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj": {
-              "projectPath": "C:\\Users\\G1\\Desktop\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj"
+            "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj": {
+              "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Application\\LingoLabs.Application.csproj"
             },
-            "C:\\Users\\G1\\Desktop\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj": {
-              "projectPath": "C:\\Users\\G1\\Desktop\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj"
+            "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj": {
+              "projectPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs.Domain\\LingoLabs.Domain.csproj"
             }
           }
         }
@@ -4356,6 +4357,10 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[8.0.2, )"
+          },
+          "Microsoft.SqlServer.Server": {
+            "target": "Package",
+            "version": "[1.0.0, )"
           }
         },
         "imports": [
@@ -4374,7 +4379,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.201/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

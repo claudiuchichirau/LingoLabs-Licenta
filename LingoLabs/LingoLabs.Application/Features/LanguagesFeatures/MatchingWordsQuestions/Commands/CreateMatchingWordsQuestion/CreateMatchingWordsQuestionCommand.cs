@@ -8,6 +8,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.MatchingWordsQuestion
     {
         public string QuestionRequirement { get; set; } = default!;
         public LearningType QuestionLearningType { get; set; }
-        public List<WordPair> WordPairs { get; private set; } = default!;
+        public Guid LessonId { get; set; }
     }
 }

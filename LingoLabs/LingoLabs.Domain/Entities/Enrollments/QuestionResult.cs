@@ -5,11 +5,11 @@ namespace LingoLabs.Domain.Entities.Enrollments
 {
     public class QuestionResult : AuditableEntity
     {
-        public Guid QuestionResultId { get; private set; }
-        public bool IsCorrect { get; private set; }
-        public Guid QuestionId { get; private set; }
+        public Guid QuestionResultId { get; protected set; }
+        public bool IsCorrect { get; protected set; }
+        public Guid QuestionId { get; protected set; }
         public Question? Question { get; set; }
-        public Guid LessonResultId { get; private set; }
+        public Guid LessonResultId { get; protected set; }
         public LessonResult? LessonResult { get; set; }
 
         protected QuestionResult(Guid questionId, Guid lessonResultId, bool isCorrect)

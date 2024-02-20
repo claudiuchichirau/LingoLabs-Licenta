@@ -7,20 +7,20 @@ namespace LingoLabs.Domain.Entities.Languages
         public Guid TagId { get; private set; }
         public string TagContent { get; private set; }
 
-        private Tag(string content)
+        private Tag(string tagContent)
         {
             TagId = Guid.NewGuid();
-            TagContent = content;
+            TagContent = tagContent;
         }
 
-        public static Result<Tag> Create(string content)
+        public static Result<Tag> Create(string tagContent)
         {
-            if (string.IsNullOrEmpty(content))
+            if (string.IsNullOrEmpty(tagContent))
             {
                 return Result<Tag>.Failure("Content is required");
             }
 
-            return Result<Tag>.Success(new Tag(content));
+            return Result<Tag>.Success(new Tag(tagContent));
         }
     }
 }

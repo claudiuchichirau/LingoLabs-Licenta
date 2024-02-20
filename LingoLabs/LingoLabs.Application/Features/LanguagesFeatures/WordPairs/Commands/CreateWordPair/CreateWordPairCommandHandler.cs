@@ -27,7 +27,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.WordPairs.Commands.Cr
                 };
             }
 
-            var wordPair = WordPair.Create(request.KeyWord, request.ValueWord);
+            var wordPair = WordPair.Create(request.KeyWord, request.ValueWord, request.MatchingWordsQuestionId);
             if (wordPair.IsSuccess)
             {
                 await repository.AddAsync(wordPair.Value);
@@ -37,7 +37,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.WordPairs.Commands.Cr
                     {
                         WordPairId = wordPair.Value.WordPairId,
                         KeyWord = wordPair.Value.KeyWord,
-                        ValueWord = wordPair.Value.ValueWord
+                        ValueWord = wordPair.Value.ValueWord,
+                        MatchingWordsQuestionId = wordPair.Value.MatchingWordsQuestionId
                     }
                 };
             }

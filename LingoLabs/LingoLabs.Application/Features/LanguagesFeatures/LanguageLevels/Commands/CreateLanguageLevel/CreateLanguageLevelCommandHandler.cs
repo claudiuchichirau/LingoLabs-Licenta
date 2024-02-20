@@ -27,7 +27,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
                 };
             }
 
-            var languageLevel = LanguageLevel.Create(request.LanguageLevelName, request.LanguageLevelAlias);
+            var languageLevel = LanguageLevel.Create(request.LanguageLevelName, request.LanguageLevelAlias, request.LanguageId);
             if(languageLevel.IsSuccess)
             {
                 await repository.AddAsync(languageLevel.Value);
@@ -37,7 +37,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
                     {
                         LanguageLevelId = languageLevel.Value.LanguageLevelId,
                         LanguageLevelName = languageLevel.Value.LanguageLevelName,
-                        LanguageLevelAlias = languageLevel.Value.LanguageLevelAlias
+                        LanguageLevelAlias = languageLevel.Value.LanguageLevelAlias,
+                        LanguageId = languageLevel.Value.LanguageId
                     }
                 };
             }

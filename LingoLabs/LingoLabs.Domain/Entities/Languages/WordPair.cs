@@ -10,14 +10,15 @@ namespace LingoLabs.Domain.Entities.Languages
         public Guid MatchingWordsQuestionId { get; private set; }
         public MatchingWordsQuestion? MatchingWordsQuestion { get; private set; }
 
-        private WordPair(string keyWord, string valueWord)
+        private WordPair(string keyWord, string valueWord, Guid matchingWordsQuestionId)
         {
             WordPairId = Guid.NewGuid();
             KeyWord = keyWord;
             ValueWord = valueWord;
+            MatchingWordsQuestionId = matchingWordsQuestionId;
         }
 
-        public static Result<WordPair> Create(string keyWord, string valueWord)
+        public static Result<WordPair> Create(string keyWord, string valueWord, Guid matchingWordsQuestionId)
         {
             if (string.IsNullOrWhiteSpace(keyWord))
                 return Result<WordPair>.Failure("KeyWord is required");
@@ -25,7 +26,10 @@ namespace LingoLabs.Domain.Entities.Languages
             if (string.IsNullOrWhiteSpace(valueWord))
                 return Result<WordPair>.Failure("ValueWord is required");
 
-            return Result<WordPair>.Success(new WordPair(keyWord, valueWord));
+            if (matchingWordsQuestionId == default)
+                return Result<WordPair>.Failure("MatchingWordsQuestionId is required");
+
+            return Result<WordPair>.Success(new WordPair(keyWord, valueWord, matchingWordsQuestionId));
         }
 
         public void Update(string keyWord, string valueWord)

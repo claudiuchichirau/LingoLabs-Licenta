@@ -6,5 +6,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
     {
         public string LanguageLevelName { get; set; } = default!;
         public string LanguageLevelAlias { get; set; } = default!;
+        public Guid LanguageId { get; set; }
     }
 }

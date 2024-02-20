@@ -14,6 +14,16 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
             RuleFor(p => p.LanguageCompetenceType)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull();
+
+            RuleFor(p => p.LanguageId)
+                .NotEmpty().WithMessage("{PropertyName} is required.")
+                .NotNull()
+                .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
+
+            RuleFor(p => p.ChapterId)
+                .NotEmpty().WithMessage("{PropertyName} is required.")
+                .NotNull()
+                .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
         }
     }
 }

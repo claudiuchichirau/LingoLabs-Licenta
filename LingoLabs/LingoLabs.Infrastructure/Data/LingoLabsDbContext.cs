@@ -27,10 +27,14 @@ namespace LingoLabs.Infrastructure.Data
         public DbSet<Choice> Choices { get; set; }
         public DbSet<Tag> Tags { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public LingoLabsDbContext(DbContextOptions<LingoLabsDbContext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=LingoLabsDB;Trusted_Connection=True;");
         }
+
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=LingoLabsDB;Trusted_Connection=True;");
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

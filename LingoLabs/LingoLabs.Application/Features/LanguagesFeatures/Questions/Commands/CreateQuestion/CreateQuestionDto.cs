@@ -7,5 +7,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Cr
         public Guid QuestionId { get; set; }
         public string? QuestionRequirement { get; set; }
         public LearningType? QuestionLearningType { get; set; }
+        public Guid? LessonId { get; set; }
     }
 }

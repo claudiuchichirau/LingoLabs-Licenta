@@ -5,5 +5,6 @@
         public Guid WordPairId { get; set; }
         public string? KeyWord { get; set; }
         public string? ValueWord { get; set; }
+        public Guid? MatchingWordsQuestionId { get; set; }
     }
 }

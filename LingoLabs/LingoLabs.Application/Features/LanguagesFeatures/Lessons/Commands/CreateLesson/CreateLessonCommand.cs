@@ -5,7 +5,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
 {
     public class CreateLessonCommand: IRequest<CreateLessonCommandResponse>
     {
-        public string LessonTitle { get; private set; }
-        public LanguageCompetenceType LessonType { get; private set; }
+        public string LessonTitle { get; set; } = string.Empty;
+        public LanguageCompetenceType LessonType { get; set; }
+        public Guid LanguageCompetenceId { get; set; }
     }
 }

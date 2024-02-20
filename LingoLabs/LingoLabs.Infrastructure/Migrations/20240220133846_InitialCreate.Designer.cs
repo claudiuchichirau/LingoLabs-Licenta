@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LingoLabs.Infrastructure.Migrations
 {
     [DbContext(typeof(LingoLabsDbContext))]
-    [Migration("20240217093214_InitialCreate")]
+    [Migration("20240220133846_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -40,7 +40,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("IsCompleted")
+                    b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
                     b.Property<Guid>("LanguageLevelResultId")
@@ -450,7 +450,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<Guid>("LanguageId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("LanguageLevelAlis")
+                    b.Property<string>("LanguageLevelAlias")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -600,10 +600,6 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<Guid?>("ChapterId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -627,6 +623,10 @@ namespace LingoLabs.Infrastructure.Migrations
 
                     b.Property<Guid?>("LearningStyleId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TagContent")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TagId");
 
@@ -717,6 +717,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasBaseType("LingoLabs.Domain.Entities.Enrollments.QuestionResult");
 
                     b.Property<byte[]>("AudioData")
+                        .IsRequired()
                         .HasColumnType("varbinary(max)");
 
                     b.Property<string>("RecognizedText")
@@ -749,9 +750,11 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasBaseType("LingoLabs.Domain.Entities.Languages.Lesson");
 
                     b.Property<string>("Accents")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AudioContents")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("ListeningLesson");

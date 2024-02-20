@@ -19,11 +19,10 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.MatchingWordsQuestion
                 .Must(type => type == LearningType.Auditory || type == LearningType.Visual || type == LearningType.Kinesthetic || type == LearningType.Logical)
                 .WithMessage("{PropertyName} must have one of the following values: Auditory, Visual, Kinesthetic, Logical");
 
-            RuleFor(p => p.WordPairs)
+            RuleFor(p => p.LessonId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
-                .Must(words => words.Count >= 3)
-                .WithMessage("{PropertyName} must have at least 3 words.");
+                .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
         }
     }
 }

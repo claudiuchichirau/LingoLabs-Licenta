@@ -14,25 +14,23 @@ namespace LingoLabs.Domain.Entities.Languages
         public Guid LanguageId { get; private set; }
         public Language? Language { get; set; }
 
-        private LanguageLevel() 
-        {
-            LanguageLevelId = Guid.Empty;
-        }
-
-        private LanguageLevel(string languageLevelName, string languageLevelAlias)
+        private LanguageLevel(string languageLevelName, string languageLevelAlias, Guid languageId)
         {
             LanguageLevelId = Guid.NewGuid();
             LanguageLevelName = languageLevelName;
             LanguageLevelAlias = languageLevelAlias;
+            LanguageId = languageId;
         }
 
-        public static Result<LanguageLevel> Create(string languageLevelName, string languageLevelAlias)
+        public static Result<LanguageLevel> Create(string languageLevelName, string languageLevelAlias, Guid languageId)
         {
             if (string.IsNullOrWhiteSpace(languageLevelName))
                 return Result<LanguageLevel>.Failure("LanguageLevelName is required");
             if (string.IsNullOrWhiteSpace(languageLevelAlias))
                 return Result<LanguageLevel>.Failure("LanguageLevelAlias is required");
-            return Result<LanguageLevel>.Success(new LanguageLevel(languageLevelName, languageLevelAlias));
+            if (languageId == default)
+                return Result<LanguageLevel>.Failure("LanguageId is required");
+            return Result<LanguageLevel>.Success(new LanguageLevel(languageLevelName, languageLevelAlias, languageId));
         }
 
         public void AttachDescription(string languageLevelDescription)

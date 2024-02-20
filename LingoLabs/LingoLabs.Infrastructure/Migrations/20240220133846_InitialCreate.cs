@@ -76,7 +76,7 @@ namespace LingoLabs.Infrastructure.Migrations
                 {
                     LanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageLevelName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LanguageLevelAlis = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LanguageLevelAlias = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LanguageLevelDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageLevelVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -189,7 +189,7 @@ namespace LingoLabs.Infrastructure.Migrations
                 columns: table => new
                 {
                     ChapterResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsCompleted = table.Column<bool>(type: "bit", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
                     ChapterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageLevelResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -250,7 +250,7 @@ namespace LingoLabs.Infrastructure.Migrations
                 columns: table => new
                 {
                     TagId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TagContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ChapterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),

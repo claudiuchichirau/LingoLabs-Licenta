@@ -4,23 +4,24 @@ namespace LingoLabs.Domain.Entities.Languages
 {
     public class Question : AuditableEntity
     {
-        public Guid QuestionId { get; private set; }
+        public Guid QuestionId { get; protected set; }
         public string QuestionRequirement { get; protected set; }
         public LearningType QuestionLearningType { get; protected set; }
         public List<Choice>? QuestionChoices { get; private set; } = new();
         public byte[]? QuestionImageData { get; private set; }
         public string? QuestionVideoLink { get; private set; } = string.Empty;
-        public Guid LessonId { get; private set; }
+        public Guid LessonId { get; protected set; }
         public Lesson? Lesson { get; set; }
 
-        protected Question(string questionRequirement, LearningType questionLearningType)
+        protected Question(string questionRequirement, LearningType questionLearningType, Guid lessonId)
         {
             QuestionId = Guid.NewGuid();
             QuestionRequirement = questionRequirement;
             QuestionLearningType = questionLearningType;
+            LessonId = lessonId;
         }
 
-        public static Result<Question> Create(string questionRequirement, LearningType questionLearningType)
+        public static Result<Question> Create(string questionRequirement, LearningType questionLearningType, Guid lessonId)
         {
             if (string.IsNullOrWhiteSpace(questionRequirement))
                 return Result<Question>.Failure("QuestionRequirement is required");
@@ -28,7 +29,10 @@ namespace LingoLabs.Domain.Entities.Languages
             if (!IsValidLearningType(questionLearningType))
                 return Result<Question>.Failure("Invalid LearningType");
 
-            return Result<Question>.Success(new Question(questionRequirement, questionLearningType));
+            if (lessonId == default)
+                return Result<Question>.Failure("LessonId is required");
+
+            return Result<Question>.Success(new Question(questionRequirement, questionLearningType, lessonId));
         }
 
         public static bool IsValidLearningType(LearningType learningType)

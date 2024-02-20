@@ -5,5 +5,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Cre
     public class CreateChapterCommand : IRequest<CreateChapterCommandResponse>
     {
         public string ChapterName { get; set; } = default!;
+        public Guid LanguageLevelId { get; set; }
     }
 }

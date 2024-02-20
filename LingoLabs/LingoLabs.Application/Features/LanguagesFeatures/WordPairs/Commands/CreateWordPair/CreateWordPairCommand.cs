@@ -6,5 +6,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.WordPairs.Commands.Cr
     {
         public string KeyWord { get; set; } = default!;
         public string ValueWord { get; set; } = default!;
+        public Guid MatchingWordsQuestionId { get; set; }
     }
 }

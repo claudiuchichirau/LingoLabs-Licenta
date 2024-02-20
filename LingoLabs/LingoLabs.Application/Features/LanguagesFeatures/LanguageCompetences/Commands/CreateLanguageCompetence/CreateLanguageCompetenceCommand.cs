@@ -7,5 +7,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
     {
         public string LanguageCompetenceName { get; set; } = default!;
         public LanguageCompetenceType LanguageCompetenceType { get; set; }
+        public Guid ChapterId { get; set; }
+        public Guid LanguageId { get; set; }
     }
 }

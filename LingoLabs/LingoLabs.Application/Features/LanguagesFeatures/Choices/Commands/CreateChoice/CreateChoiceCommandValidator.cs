@@ -10,8 +10,14 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.Crea
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(500).WithMessage("{PropertyName} must not exceed 500 characters.");
+
             RuleFor(p => p.IsCorrect)
                 .NotNull().WithMessage("{PropertyName} is required.");
+
+            RuleFor(p => p.QuestionId)
+                .NotEmpty().WithMessage("{PropertyName} is required.")
+                .NotNull()
+                .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
         }
     }
 }

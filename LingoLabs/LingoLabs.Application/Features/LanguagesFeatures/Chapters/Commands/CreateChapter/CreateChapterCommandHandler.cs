@@ -27,7 +27,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Cre
                 };
             }
 
-            var chapter = Chapter.Create(request.ChapterName);
+            var chapter = Chapter.Create(request.ChapterName, request.LanguageLevelId);
             if (chapter.IsSuccess)
             {
                 await repository.AddAsync(chapter.Value);
@@ -36,7 +36,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Cre
                     Chapter = new CreateChapterDto
                     {
                         ChapterId = chapter.Value.ChapterId,
-                        ChapterName = chapter.Value.ChapterName
+                        ChapterName = chapter.Value.ChapterName,
+                        LanguageLevelId = chapter.Value.LanguageLevelId
                     }
                 };
             }
