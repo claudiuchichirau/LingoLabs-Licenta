@@ -7,15 +7,17 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
     public class CreateLessonCommandHandler: IRequestHandler<CreateLessonCommand, CreateLessonCommandResponse>
     {
         private readonly ILessonRepository repository;
+        private readonly ILanguageCompetenceRepository _languageCompetenceRepository;
 
-        public CreateLessonCommandHandler(ILessonRepository repository)
+        public CreateLessonCommandHandler(ILessonRepository repository, ILanguageCompetenceRepository languageCompetenceRepository)
         {
             this.repository = repository;
+            _languageCompetenceRepository = languageCompetenceRepository;
         }
 
         public async Task<CreateLessonCommandResponse> Handle(CreateLessonCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateLessonCommandValidator();
+            var validator = new CreateLessonCommandValidator(_languageCompetenceRepository);
             var validationResult = await validator.ValidateAsync(request);
 
             if(!validationResult.IsValid)

@@ -4,5 +4,6 @@ namespace LingoLabs.Application.Persistence.Languages
 {
     public interface ILanguageRepository : IAsyncRepository<Language>
     {
+        Task<bool> ExistsLanguageAsync(string languageName);
     }
 }

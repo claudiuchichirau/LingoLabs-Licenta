@@ -21,7 +21,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.MatchingWordsQuestion
                 {
                     QuestionId = matchingQuestion.QuestionId,
                     QuestionRequirement = matchingQuestion.QuestionRequirement,
-                    QuestionLearningType = matchingQuestion.QuestionLearningType
+                    QuestionLearningType = matchingQuestion.QuestionLearningType,
+                    LessonId = matchingQuestion.LessonId
                 }).ToList();
             }
 

@@ -7,7 +7,7 @@ namespace LingoLabs.Infrastructure.Repositories
 {
     public class BaseRepository<T> : IAsyncRepository<T> where T : class
     {
-        private readonly LingoLabsDbContext context;
+        protected readonly LingoLabsDbContext context;
 
         public BaseRepository(LingoLabsDbContext context)
         {

@@ -15,7 +15,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Cre
         
         public async Task<CreateChapterCommandResponse> Handle(CreateChapterCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateChapterCommandValidator();
+            var validator = new CreateChapterCommandValidator(repository);
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (!validationResult.IsValid)

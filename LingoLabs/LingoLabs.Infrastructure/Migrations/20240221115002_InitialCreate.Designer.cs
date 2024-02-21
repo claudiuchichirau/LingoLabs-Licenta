@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LingoLabs.Infrastructure.Migrations
 {
     [DbContext(typeof(LingoLabsDbContext))]
-    [Migration("20240220133846_InitialCreate")]
+    [Migration("20240221115002_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -676,7 +676,7 @@ namespace LingoLabs.Infrastructure.Migrations
 
                     b.HasIndex("MatchingWordsQuestionId");
 
-                    b.ToTable("WordPair");
+                    b.ToTable("WordPairs");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.LearningStyle", b =>

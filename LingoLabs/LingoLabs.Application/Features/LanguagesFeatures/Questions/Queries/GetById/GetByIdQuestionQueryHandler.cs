@@ -32,7 +32,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.Get
                     }).ToList(),
 
                     QuestionImageData = question.Value.QuestionImageData,
-                    QuestionVideoLink = question.Value.QuestionVideoLink
+                    QuestionVideoLink = question.Value.QuestionVideoLink,
+                    LessonId = question.Value.LessonId
                 };
             }
 

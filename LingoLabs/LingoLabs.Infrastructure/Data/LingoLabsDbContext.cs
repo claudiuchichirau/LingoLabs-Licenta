@@ -26,6 +26,7 @@ namespace LingoLabs.Infrastructure.Data
         public DbSet<Question> Questions { get; set; }
         public DbSet<Choice> Choices { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<WordPair> WordPairs { get; set; }
 
         public LingoLabsDbContext(DbContextOptions<LingoLabsDbContext> options) : base(options)
         {

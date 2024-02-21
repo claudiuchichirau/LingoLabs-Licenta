@@ -673,7 +673,7 @@ namespace LingoLabs.Infrastructure.Migrations
 
                     b.HasIndex("MatchingWordsQuestionId");
 
-                    b.ToTable("WordPair");
+                    b.ToTable("WordPairs");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.LearningStyle", b =>

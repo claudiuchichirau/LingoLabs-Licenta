@@ -14,7 +14,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.MatchingWordsQuestion
                 .MaximumLength(500).WithMessage("{PropertyName} must not exceed 100 characters.");
 
             RuleFor(p => p.QuestionLearningType)
-                .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .Must(type => type == LearningType.Auditory || type == LearningType.Visual || type == LearningType.Kinesthetic || type == LearningType.Logical)
                 .WithMessage("{PropertyName} must have one of the following values: Auditory, Visual, Kinesthetic, Logical");

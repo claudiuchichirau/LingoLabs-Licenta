@@ -22,16 +22,17 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.MatchingWordsQuestion
                     QuestionId = matchingQuestion.Value.QuestionId,
                     QuestionRequirement = matchingQuestion.Value.QuestionRequirement,
                     QuestionLearningType = matchingQuestion.Value.QuestionLearningType,
-                    QuestionChoices = matchingQuestion.Value.QuestionChoices.Select(c => new Choices.Queries.ChoiceDto
+
+                    WordPairs = matchingQuestion.Value.WordPairs.Select(wordPair => new WordPairs.Queries.WordPairDto
                     {
-                        ChoiceId = c.ChoiceId,
-                        ChoiceContent = c.ChoiceContent,
-                        IsCorrect = c.IsCorrect,
-                        QuestionId = c.QuestionId
+                        WordPairId = wordPair.WordPairId,
+                        KeyWord = wordPair.KeyWord,
+                        ValueWord = wordPair.ValueWord
                     }).ToList(),
 
                     QuestionImageData = matchingQuestion.Value.QuestionImageData,
-                    QuestionVideoLink = matchingQuestion.Value.QuestionVideoLink
+                    QuestionVideoLink = matchingQuestion.Value.QuestionVideoLink,
+                    LessonId = matchingQuestion.Value.LessonId
                 };
             }
 

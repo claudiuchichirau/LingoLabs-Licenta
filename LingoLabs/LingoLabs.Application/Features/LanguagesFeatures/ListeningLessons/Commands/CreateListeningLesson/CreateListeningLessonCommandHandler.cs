@@ -7,15 +7,17 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
     public class CreateListeningLessonCommandHandler: IRequestHandler<CreateListeningLessonCommand, CreateListeningLessonCommandResponse>
     {
         private readonly IListeningLessonRepository repository;
+        private readonly ILanguageCompetenceRepository _languageCompetenceRepository;
 
-        public CreateListeningLessonCommandHandler(IListeningLessonRepository repository)
+        public CreateListeningLessonCommandHandler(IListeningLessonRepository repository, ILanguageCompetenceRepository _languageCompetenceRepository)
         {
             this.repository = repository;
+            this._languageCompetenceRepository = _languageCompetenceRepository;
         }
         
         public async Task<CreateListeningLessonCommandResponse> Handle(CreateListeningLessonCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateListeningLessonCommandValidator();
+            var validator = new CreateListeningLessonCommandValidator(_languageCompetenceRepository);
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if (!validationResult.IsValid)

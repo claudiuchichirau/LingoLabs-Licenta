@@ -440,7 +440,7 @@ namespace LingoLabs.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "WordPair",
+                name: "WordPairs",
                 columns: table => new
                 {
                     WordPairId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -454,9 +454,9 @@ namespace LingoLabs.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WordPair", x => x.WordPairId);
+                    table.PrimaryKey("PK_WordPairs", x => x.WordPairId);
                     table.ForeignKey(
-                        name: "FK_WordPair_Questions_MatchingWordsQuestionId",
+                        name: "FK_WordPairs_Questions_MatchingWordsQuestionId",
                         column: x => x.MatchingWordsQuestionId,
                         principalTable: "Questions",
                         principalColumn: "QuestionId",
@@ -628,8 +628,8 @@ namespace LingoLabs.Infrastructure.Migrations
                 column: "LanguageLevelId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WordPair_MatchingWordsQuestionId",
-                table: "WordPair",
+                name: "IX_WordPairs_MatchingWordsQuestionId",
+                table: "WordPairs",
                 column: "MatchingWordsQuestionId");
         }
 
@@ -649,7 +649,7 @@ namespace LingoLabs.Infrastructure.Migrations
                 name: "UserLanguageLevel");
 
             migrationBuilder.DropTable(
-                name: "WordPair");
+                name: "WordPairs");
 
             migrationBuilder.DropTable(
                 name: "LessonResults");

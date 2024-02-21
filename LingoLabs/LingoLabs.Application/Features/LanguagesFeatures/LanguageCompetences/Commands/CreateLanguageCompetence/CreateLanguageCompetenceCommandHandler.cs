@@ -15,7 +15,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
 
         public async Task<CreateLanguageCompetenceCommandResponse> Handle(CreateLanguageCompetenceCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateLanguageCompetenceCommandValidator();
+            var validator = new CreateLanguageCompetenceCommandValidator(repository);
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if(!validationResult.IsValid)
