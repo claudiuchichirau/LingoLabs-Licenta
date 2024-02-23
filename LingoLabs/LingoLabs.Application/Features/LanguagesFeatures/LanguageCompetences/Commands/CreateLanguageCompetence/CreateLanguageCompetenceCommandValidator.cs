@@ -10,13 +10,15 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
 
         public CreateLanguageCompetenceCommandValidator(ILanguageCompetenceRepository repository)
         {
+            this.repository = repository;
+
             RuleFor(p => p.LanguageCompetenceName)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidateLanguageCompetence(p.LanguageCompetenceName, p.LanguageCompetenceType, repository))
+                .MustAsync((p, cancellation) => ValidateLanguageCompetence(p.LanguageCompetenceName, p.LanguageCompetenceType, p.ChapterId))
                 .WithMessage("{PropertyName} must have one of the following values: Grammar, Listening, Reading, Writing and must be the same as LanguageCompetenceName");
 
             RuleFor(p => p.LanguageId)
@@ -30,11 +32,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
                 .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
         }
 
-        private async Task<bool> ValidateLanguageCompetence(string name, LanguageCompetenceType type, ILanguageCompetenceRepository repository)
+        private async Task<bool> ValidateLanguageCompetence(string name, LanguageCompetenceType type, Guid chapterId)
         {
-            if(await repository.ExistsLanguageCompetenceAsync(type))
+            if (await repository.ExistsLanguageCompetenceAsync(type, chapterId))
                 return false;
-            
+
             if (name == "Listening" && type != LanguageCompetenceType.Listening)
                 return false;
             if (name == "Grammar" && type != LanguageCompetenceType.Grammar)

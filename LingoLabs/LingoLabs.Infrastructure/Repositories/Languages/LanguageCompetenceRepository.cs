@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LingoLabs.Infrastructure.Repositories.Languages
 {
-    public class LanguageCompetenceRepository: BaseRepository<LanguageCompetence>, ILanguageCompetenceRepository
+    public class LanguageCompetenceRepository : BaseRepository<LanguageCompetence>, ILanguageCompetenceRepository
     {
         public LanguageCompetenceRepository(LingoLabsDbContext context) : base(context)
         {
@@ -29,9 +29,9 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             return Result<LanguageCompetence>.Success(result);
         }
 
-        public async Task<bool> ExistsLanguageCompetenceAsync(LanguageCompetenceType languageCompetenceType)
+        public async Task<bool> ExistsLanguageCompetenceAsync(LanguageCompetenceType languageCompetenceType, Guid chapterId)
         {
-            return await context.LanguageCompetences.AnyAsync(competence => competence.LanguageCompetenceType == languageCompetenceType);
+            return await context.LanguageCompetences.AnyAsync(competence => competence.LanguageCompetenceType == languageCompetenceType && competence.ChapterId == chapterId);
         }
 
         public async Task<LanguageCompetenceType> GetLanguageCompetenceTypeAsync(Guid id)

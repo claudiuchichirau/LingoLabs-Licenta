@@ -15,7 +15,7 @@ namespace LingoLabs.Application.Features.LearningStyles.Commands.CreateLearningS
 
         public async Task<CreateLearningStyleCommandResponse> Handle(CreateLearningStyleCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateLearningStyleCommandValidator();
+            var validator = new CreateLearningStyleCommandValidator(repository);
             var validationResult = await validator.ValidateAsync(request);
 
             if(!validationResult.IsValid)
