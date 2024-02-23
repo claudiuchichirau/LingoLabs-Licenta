@@ -38,7 +38,8 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
                     {
                         ChapterResultId = chapterResult.Value.ChapterResultId,
                         ChapterId = chapterResult.Value.ChapterId,
-                        LanguageLevelResultId = chapterResult.Value.LanguageLevelResultId
+                        LanguageLevelResultId = chapterResult.Value.LanguageLevelResultId,
+                        IsCompleted = false
                     }
                 };
             }

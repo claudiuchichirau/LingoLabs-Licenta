@@ -6,5 +6,6 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResult
     {
         public Guid LanguageLevelId { get; set; }
         public Guid EnrollmentId { get; set; }
+        public bool IsCompleted { get; set; }
     }
 }

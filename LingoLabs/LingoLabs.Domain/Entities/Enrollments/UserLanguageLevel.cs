@@ -5,6 +5,7 @@ namespace LingoLabs.Domain.Entities.Enrollments
 {
     public class UserLanguageLevel : AuditableEntity
     {
+        public Guid UserLanguageLevelId { get; private set; }
         public Guid EnrollmentId { get; private set; }
         public Enrollment? Enrollment { get; set; }
         public Guid LanguageCompetenceId { get; private set; }
@@ -14,6 +15,7 @@ namespace LingoLabs.Domain.Entities.Enrollments
 
         private UserLanguageLevel(Guid enrollmentId, Guid languageCompetenceId, Guid languageLevelId)
         {
+            UserLanguageLevelId = Guid.NewGuid();
             EnrollmentId = enrollmentId;
             LanguageCompetenceId = languageCompetenceId;
             LanguageLevelId = languageLevelId;

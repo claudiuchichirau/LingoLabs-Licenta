@@ -7,7 +7,7 @@ namespace LingoLabs.Domain.Entities.Enrollments
     {
         public Guid LanguageLevelResultId { get; private set; }
         public List<ChapterResult>? ChapterResults { get; private set; } = new();
-        public bool? IsCompleted { get; private set; }
+        public bool IsCompleted { get; private set; }
         public Guid LanguageLevelId { get; private set; }
         public LanguageLevel? LanguageLevel { get; set; }
         public Guid EnrollmentId { get; private set; }

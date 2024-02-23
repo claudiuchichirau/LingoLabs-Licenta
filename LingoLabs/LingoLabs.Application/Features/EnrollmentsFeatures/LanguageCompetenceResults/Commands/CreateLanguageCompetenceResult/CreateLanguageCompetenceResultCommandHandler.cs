@@ -37,7 +37,8 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
                     {
                         LanguageCompetenceResultId = languageCompetenceResult.Value.LanguageCompetenceResultId,
                         LanguageCompetenceId = languageCompetenceResult.Value.LanguageCompetenceId,
-                        ChapterResultId = languageCompetenceResult.Value.ChapterResultId
+                        ChapterResultId = languageCompetenceResult.Value.ChapterResultId,
+                        IsCompleted = false
                     }
                 };
             }

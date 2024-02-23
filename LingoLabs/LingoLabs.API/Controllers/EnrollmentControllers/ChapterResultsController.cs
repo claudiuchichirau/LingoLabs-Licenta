@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Commands.CreateChapterResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LingoLabs.API.Controllers.EnrollmentControllers
@@ -15,6 +16,21 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             {
                 return BadRequest(result.Message);
             }
+            return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var result = await Mediator.Send(new GetByIdChapterResultQuery(id));
+
+            if (result.ChapterResultId == Guid.Empty)
+            {
+                return NotFound(result);
+            }
+
             return Ok(result);
         }
     }

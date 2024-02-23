@@ -36,6 +36,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.
                 {
                     UserLanguageLevel = new CreateUserLanguageLevelDto
                     {
+                        UserLanguageLevelId = userLanguageLevel.Value.UserLanguageLevelId,
                         EnrollmentId = userLanguageLevel.Value.EnrollmentId,
                         LanguageCompetenceId = userLanguageLevel.Value.LanguageCompetenceId,
                         LanguageLevelId = userLanguageLevel.Value.LanguageLevelId

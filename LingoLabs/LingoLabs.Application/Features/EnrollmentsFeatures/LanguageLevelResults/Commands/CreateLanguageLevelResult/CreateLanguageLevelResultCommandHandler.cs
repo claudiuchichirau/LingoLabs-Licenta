@@ -36,7 +36,8 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResult
                     {
                         LanguageLevelResultId = languageLevelResult.Value.LanguageLevelResultId,
                         LanguageLevelId = languageLevelResult.Value.LanguageLevelId,
-                        EnrollmentId = languageLevelResult.Value.EnrollmentId
+                        EnrollmentId = languageLevelResult.Value.EnrollmentId,
+                        IsCompleted = false 
                     }
                 };
             }

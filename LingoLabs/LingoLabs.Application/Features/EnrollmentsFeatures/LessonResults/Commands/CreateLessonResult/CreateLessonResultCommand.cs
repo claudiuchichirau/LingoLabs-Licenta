@@ -6,5 +6,6 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
     {
         public Guid LessonId { get; set; }
         public Guid LanguageCompetenceResultId { get; set; }
+        public bool IsCompleted { get; set; }
     }
 }

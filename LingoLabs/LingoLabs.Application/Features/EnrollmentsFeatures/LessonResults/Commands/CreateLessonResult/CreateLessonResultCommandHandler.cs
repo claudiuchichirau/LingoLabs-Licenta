@@ -36,7 +36,8 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
                     {
                         LessonResultId = lessonResult.Value.LessonResultId,
                         LessonId = lessonResult.Value.LessonId,
-                        LanguageCompetenceResultId = lessonResult.Value.LanguageCompetenceResultId
+                        LanguageCompetenceResultId = lessonResult.Value.LanguageCompetenceResultId,
+                        IsCompleted = false
                     }
                 };
             }

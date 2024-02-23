@@ -128,7 +128,7 @@ namespace LingoLabs.Infrastructure.Migrations
                 columns: table => new
                 {
                     LanguageLevelResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsCompleted = table.Column<bool>(type: "bit", nullable: true),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
                     LanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EnrollmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -292,12 +292,13 @@ namespace LingoLabs.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserLanguageLevel",
+                name: "UserLanguageLevels",
                 columns: table => new
                 {
                     EnrollmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserLanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -305,19 +306,19 @@ namespace LingoLabs.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserLanguageLevel", x => new { x.EnrollmentId, x.LanguageCompetenceId, x.LanguageLevelId });
+                    table.PrimaryKey("PK_UserLanguageLevels", x => new { x.EnrollmentId, x.LanguageCompetenceId, x.LanguageLevelId });
                     table.ForeignKey(
-                        name: "FK_UserLanguageLevel_Enrollments_EnrollmentId",
+                        name: "FK_UserLanguageLevels_Enrollments_EnrollmentId",
                         column: x => x.EnrollmentId,
                         principalTable: "Enrollments",
                         principalColumn: "EnrollmentId");
                     table.ForeignKey(
-                        name: "FK_UserLanguageLevel_LanguageCompetences_LanguageCompetenceId",
+                        name: "FK_UserLanguageLevels_LanguageCompetences_LanguageCompetenceId",
                         column: x => x.LanguageCompetenceId,
                         principalTable: "LanguageCompetences",
                         principalColumn: "LanguageCompetenceId");
                     table.ForeignKey(
-                        name: "FK_UserLanguageLevel_LanguageLevels_LanguageLevelId",
+                        name: "FK_UserLanguageLevels_LanguageLevels_LanguageLevelId",
                         column: x => x.LanguageLevelId,
                         principalTable: "LanguageLevels",
                         principalColumn: "LanguageLevelId",
@@ -618,13 +619,13 @@ namespace LingoLabs.Infrastructure.Migrations
                 column: "LearningStyleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserLanguageLevel_LanguageCompetenceId",
-                table: "UserLanguageLevel",
+                name: "IX_UserLanguageLevels_LanguageCompetenceId",
+                table: "UserLanguageLevels",
                 column: "LanguageCompetenceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserLanguageLevel_LanguageLevelId",
-                table: "UserLanguageLevel",
+                name: "IX_UserLanguageLevels_LanguageLevelId",
+                table: "UserLanguageLevels",
                 column: "LanguageLevelId");
 
             migrationBuilder.CreateIndex(
@@ -646,7 +647,7 @@ namespace LingoLabs.Infrastructure.Migrations
                 name: "Tags");
 
             migrationBuilder.DropTable(
-                name: "UserLanguageLevel");
+                name: "UserLanguageLevels");
 
             migrationBuilder.DropTable(
                 name: "WordPairs");

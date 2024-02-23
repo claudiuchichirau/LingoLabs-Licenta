@@ -5,5 +5,6 @@
         public Guid LanguageLevelResultId { get; set; }
         public Guid? LanguageLevelId { get; set; }
         public Guid? EnrollmentId { get; set; }
+        public bool? IsCompleted { get; set; }
     }
 }

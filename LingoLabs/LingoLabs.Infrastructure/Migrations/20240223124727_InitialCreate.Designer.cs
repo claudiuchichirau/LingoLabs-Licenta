@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LingoLabs.Infrastructure.Migrations
 {
     [DbContext(typeof(LingoLabsDbContext))]
-    [Migration("20240221115002_InitialCreate")]
+    [Migration("20240223124727_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -143,7 +143,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<Guid>("EnrollmentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool?>("IsCompleted")
+                    b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
                     b.Property<Guid>("LanguageLevelId")
@@ -268,13 +268,16 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<Guid>("UserLanguageLevelId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("EnrollmentId", "LanguageCompetenceId", "LanguageLevelId");
 
                     b.HasIndex("LanguageCompetenceId");
 
                     b.HasIndex("LanguageLevelId");
 
-                    b.ToTable("UserLanguageLevel");
+                    b.ToTable("UserLanguageLevels");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Chapter", b =>
