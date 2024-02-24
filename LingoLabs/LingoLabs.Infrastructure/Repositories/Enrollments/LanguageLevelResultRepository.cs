@@ -1,6 +1,7 @@
 ﻿using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Domain.Common;
 using LingoLabs.Domain.Entities.Enrollments;
+using LingoLabs.Domain.Entities.Languages;
 using LingoLabs.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,5 +26,23 @@ namespace LingoLabs.Infrastructure.Repositories.Enrollments
 
             return Result<LanguageLevelResult>.Success(languageLevelResult);
         }
+
+        public async Task<bool> CheckLanguageLevel(Guid enrollmentId, Guid languageLevelId)
+        {
+            var enrollment = await context.Enrollments.FindAsync(enrollmentId);
+            if (enrollment == null)
+            {
+                return false;
+            }
+
+            var language = enrollment.Language;
+            if (language == null)
+            {
+                return false;
+            }
+
+            return language.LanguageLevels.Any(ll => ll.LanguageLevelId == languageLevelId);
+        }
+
     }
 }
