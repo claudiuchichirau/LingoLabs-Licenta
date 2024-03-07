@@ -28,5 +28,11 @@ namespace LingoLabs.Domain.Entities.Enrollments
                 return Result<QuestionResult>.Failure("LessonResultId is required");
             return Result<QuestionResult>.Success(new QuestionResult(questionId, lessonResultId, isCorrect));
         }
+
+        public void UpdateQuestionResult(bool isCorrect)
+        {
+            if (isCorrect != default)
+                IsCorrect = isCorrect;
+        }
     }
 }

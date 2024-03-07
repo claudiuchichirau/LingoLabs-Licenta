@@ -1,4 +1,6 @@
 ﻿using LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.CreateQuestion;
+using LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.DeleteQuestion;
+using LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.UpdateQuestion;
 using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.GetAll;
 using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +41,33 @@ namespace LingoLabs.API.Controllers.LanguageControllers
                 return NotFound(result);
             }
 
+            return Ok(result);
+        }
+
+        [HttpPut()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(UpdateQuestionCommand command)
+        {
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result);
+            }
+            return Ok(result.UpdateQuestion);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await Mediator.Send(new DeleteQuestionCommand { QuestionId = id });
+            if (!result.Success)
+            {
+                return NoContent();     // Question not found
+            }
             return Ok(result);
         }
     }

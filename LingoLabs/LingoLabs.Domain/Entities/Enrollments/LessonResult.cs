@@ -6,14 +6,14 @@ namespace LingoLabs.Domain.Entities.Enrollments
     public class LessonResult : AuditableEntity
     {
         public Guid LessonResultId { get; private set; }
-        public bool? IsCompleted { get; private set; }
+        public bool IsCompleted { get; private set; }
         public List<QuestionResult>? QuestionResults { get; private set; } = new();
         public Guid LessonId { get; private set; }
         public Lesson? Lesson { get; set; }
         public Guid LanguageCompetenceResultId { get; private set; }
         public LanguageCompetenceResult? LanguageCompetenceResult { get; set; }
 
-        private LessonResult(Guid lessonId, Guid languageCompetenceResultId)
+        private LessonResult(Guid lessonId, Guid languageCompetenceResultId, bool isCompleted)
         {
             LessonResultId = Guid.NewGuid();
             LessonId = lessonId;
@@ -21,13 +21,13 @@ namespace LingoLabs.Domain.Entities.Enrollments
             IsCompleted = false;
         }
 
-        public static Result<LessonResult> Create(Guid lessonId, Guid languageCompetenceResultId)
+        public static Result<LessonResult> Create(Guid lessonId, Guid languageCompetenceResultId, bool isCompleted)
         {
             if(lessonId == default)
                 return Result<LessonResult>.Failure("LessonId is required");
             if(languageCompetenceResultId == default)
                 return Result<LessonResult>.Failure("LanguageCompetenceResultId is required");
-            return Result<LessonResult>.Success(new LessonResult(lessonId, languageCompetenceResultId));
+            return Result<LessonResult>.Success(new LessonResult(lessonId, languageCompetenceResultId, isCompleted));
         }
 
         public void AttachQuestionResult(QuestionResult questionResult)
@@ -41,9 +41,9 @@ namespace LingoLabs.Domain.Entities.Enrollments
             }
         }
 
-        public void MakeCompletedLesson()
+        public void UpdateLessonResult(bool isCompleted)
         {
-            IsCompleted = true;
+            IsCompleted = isCompleted;
         }
     }
 }

@@ -41,9 +41,9 @@ namespace LingoLabs.Domain.Entities.Enrollments
             }
         }
 
-        public void MakeCompletedLanguageLevel()
+        public void UpdateLanguageLevelResult(bool isCompleted)
         {
-            IsCompleted = true;
+            IsCompleted = isCompleted;
         }
     }
 }

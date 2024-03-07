@@ -1,4 +1,8 @@
-﻿using LingoLabs.Application.Persistence;
+﻿using LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Commands.DeleteChapterResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceResults.Commands.DeleteLanguageCompetenceResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.DeleteLessonResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Commands.DeleteQuestionResult;
+using LingoLabs.Application.Persistence;
 using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Infrastructure.Repositories;
@@ -42,6 +46,11 @@ namespace LingoLabs.Infrastructure.Data
             services.AddScoped<IWritingQuestionResultRepository, WritingQuestionResultRepository>();
             services.AddScoped<IUserLanguageLevelRepository, UserLanguageLevelRepository>();
             services.AddScoped<ILearningStyleRepository, LearningStyleRepository>();
+
+            services.AddTransient<DeleteQuestionResultCommandHandler>();
+            services.AddTransient<DeleteLessonResultCommandHandler>();
+            services.AddTransient<DeleteLanguageCompetenceResultCommandHandler>();
+            services.AddTransient<DeleteChapterResultCommandHandler>();
 
 
             return services;

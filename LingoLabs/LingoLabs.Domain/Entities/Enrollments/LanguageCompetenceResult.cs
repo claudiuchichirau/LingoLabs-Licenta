@@ -6,14 +6,14 @@ namespace LingoLabs.Domain.Entities.Enrollments
     public class LanguageCompetenceResult : AuditableEntity
     {
         public Guid LanguageCompetenceResultId { get; private set; }
-        public bool? IsCompleted { get; private set; }
+        public bool IsCompleted { get; private set; }
         public List<LessonResult>? LessonsResults { get; private set; } = new();
         public Guid LanguageCompetenceId { get; private set; }
         public LanguageCompetence? LanguageCompetence { get; set; }
         public Guid ChapterResultId { get; private set; }
         public ChapterResult? ChapterResult { get; set; }
 
-        private LanguageCompetenceResult(Guid languageCompetenceId, Guid chapterResultId)
+        private LanguageCompetenceResult(Guid languageCompetenceId, Guid chapterResultId, bool isCompleted)
         {
             LanguageCompetenceResultId = Guid.NewGuid();
             LanguageCompetenceId = languageCompetenceId;
@@ -21,13 +21,13 @@ namespace LingoLabs.Domain.Entities.Enrollments
             IsCompleted = false;
         }
 
-        public static Result<LanguageCompetenceResult> Create( Guid languageCompetenceId, Guid chapterResultId)
+        public static Result<LanguageCompetenceResult> Create( Guid languageCompetenceId, Guid chapterResultId, bool isCompleted)
         {
             if(languageCompetenceId == default)
                 return Result<LanguageCompetenceResult>.Failure("LanguageCompetenceId is required");
             if(chapterResultId == default)
                 return Result<LanguageCompetenceResult>.Failure("ChapterResultId is required");
-            return Result<LanguageCompetenceResult>.Success(new LanguageCompetenceResult(languageCompetenceId, chapterResultId));
+            return Result<LanguageCompetenceResult>.Success(new LanguageCompetenceResult(languageCompetenceId, chapterResultId, isCompleted));
         }
 
         public void AttachLessonResult(LessonResult lessonResult)
@@ -41,9 +41,9 @@ namespace LingoLabs.Domain.Entities.Enrollments
             }
         }
 
-        public void MakeCompletedLanguageCompetence()
+        public void UpdateLanguageCompetenceResult(bool isCompleted)
         {
-            IsCompleted = true;
+            IsCompleted = isCompleted;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
                 };
             }
 
-            var lessonResult = LessonResult.Create(request.LessonId, request.LanguageCompetenceResultId);
+            var lessonResult = LessonResult.Create(request.LessonId, request.LanguageCompetenceResultId, request.IsCompleted);
             if(lessonResult.IsSuccess)
             {
                 await repository.AddAsync(lessonResult.Value);

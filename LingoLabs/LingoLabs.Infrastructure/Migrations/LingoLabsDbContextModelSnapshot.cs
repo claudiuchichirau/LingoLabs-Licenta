@@ -772,13 +772,13 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasOne("LingoLabs.Domain.Entities.Languages.Chapter", "Chapter")
                         .WithMany()
                         .HasForeignKey("ChapterId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LingoLabs.Domain.Entities.Enrollments.LanguageLevelResult", "LanguageLevelResult")
                         .WithMany("ChapterResults")
                         .HasForeignKey("LanguageLevelResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Chapter");
@@ -802,13 +802,13 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasOne("LingoLabs.Domain.Entities.Enrollments.ChapterResult", "ChapterResult")
                         .WithMany("LanguageCompetenceResults")
                         .HasForeignKey("ChapterResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("LingoLabs.Domain.Entities.Languages.LanguageCompetence", "LanguageCompetence")
                         .WithMany()
                         .HasForeignKey("LanguageCompetenceId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ChapterResult");
@@ -840,13 +840,13 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasOne("LingoLabs.Domain.Entities.Enrollments.LanguageCompetenceResult", "LanguageCompetenceResult")
                         .WithMany("LessonsResults")
                         .HasForeignKey("LanguageCompetenceResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("LingoLabs.Domain.Entities.Languages.Lesson", "Lesson")
                         .WithMany()
                         .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("LanguageCompetenceResult");
@@ -859,13 +859,13 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasOne("LingoLabs.Domain.Entities.Enrollments.LessonResult", "LessonResult")
                         .WithMany("QuestionResults")
                         .HasForeignKey("LessonResultId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("LingoLabs.Domain.Entities.Languages.Question", "Question")
                         .WithMany()
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("LessonResult");

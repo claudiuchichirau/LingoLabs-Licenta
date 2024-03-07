@@ -28,7 +28,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Quer
                         LanguageCompetenceResultId = lc.LanguageCompetenceResultId,
                         LanguageCompetenceId = lc.LanguageCompetenceId,
                         ChapterResultId = lc.ChapterResultId,
-                        IsCompleted = lc.IsCompleted ?? false,
+                        IsCompleted = lc.IsCompleted,
                     }).ToList()
 
                 };

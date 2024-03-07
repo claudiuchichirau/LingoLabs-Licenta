@@ -1,4 +1,6 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Commands.CreateChapterResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Commands.DeleteChapterResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Commands.UpdateChapterResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +31,37 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             if (result.ChapterResultId == Guid.Empty)
             {
                 return NotFound(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await Mediator.Send(new DeleteChapterResultCommand { ChapterResultId = id });
+
+            if (!result.Success)
+            {
+                return NotFound(result.ValidationsErrors);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPut()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(UpdateChapterResultCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
             }
 
             return Ok(result);

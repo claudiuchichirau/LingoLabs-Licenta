@@ -29,14 +29,14 @@ namespace LingoLabs.Domain.Entities.Enrollments
             return Result<ReadingQuestionResult>.Success(new ReadingQuestionResult(questionId, lessonResultId, isCorrect, audioData));
         }
 
-        public void AttachAudioData(byte[] audioData)
+        public void UpdateReadingQuestionResult(bool isCorrect, byte[] audioData, string? recognizedText)
         {
-            AudioData = audioData;
-        }
-
-        public void AttachRecognizedText(string recognizedText)
-        {
-            RecognizedText = recognizedText;
+            if (isCorrect != default)
+                IsCorrect = isCorrect;
+            if (audioData != null && audioData.Length > 0)
+                AudioData = audioData;
+            if (recognizedText != null)
+                RecognizedText = recognizedText;
         }
     }
 }

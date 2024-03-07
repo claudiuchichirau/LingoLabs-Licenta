@@ -1,4 +1,6 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResults.Commands.CreateLanguageLevelResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResults.Commands.DeleteLanguageLevelResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResults.Commands.UpdateLanguageLevelResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResults.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,6 +31,37 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             if (result.LanguageLevelResultId == Guid.Empty)
             {
                 return NotFound(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await Mediator.Send(new DeleteLanguageLevelResultCommand { LanguageLevelResultId = id });
+
+            if (!result.Success)
+            {
+                return NotFound(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPut()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(UpdateLanguageLevelResultCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if (!result.Success)
+            {
+                return BadRequest(result);
             }
 
             return Ok(result);

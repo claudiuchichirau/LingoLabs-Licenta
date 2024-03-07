@@ -68,13 +68,13 @@ namespace LingoLabs.Infrastructure.Data
             modelBuilder.Entity<ChapterResult>()
                 .HasOne(c => c.LanguageLevelResult)
                 .WithMany(l => l.ChapterResults)
-                .HasForeignKey(c => c.LanguageLevelResultId);
+                .HasForeignKey(c => c.LanguageLevelResultId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<ChapterResult>()
                 .HasOne(c => c.Chapter)
                 .WithMany()
-                .HasForeignKey(c => c.ChapterId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(c => c.ChapterId);
 
             modelBuilder.Entity<ChapterResult>()
                 .HasMany(c => c.LanguageCompetenceResults)
@@ -84,13 +84,13 @@ namespace LingoLabs.Infrastructure.Data
             modelBuilder.Entity<LanguageCompetenceResult>()
                 .HasOne(l => l.ChapterResult)
                 .WithMany(c => c.LanguageCompetenceResults)
-                .HasForeignKey(l => l.ChapterResultId);
+                .HasForeignKey(l => l.ChapterResultId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<LanguageCompetenceResult>()
                 .HasOne(l => l.LanguageCompetence)
                 .WithMany()
-                .HasForeignKey(l => l.LanguageCompetenceId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(l => l.LanguageCompetenceId);
 
             modelBuilder.Entity<LanguageCompetenceResult>()
                 .HasMany(l => l.LessonsResults)
@@ -100,13 +100,13 @@ namespace LingoLabs.Infrastructure.Data
             modelBuilder.Entity<LessonResult>()
                 .HasOne(l => l.LanguageCompetenceResult)
                 .WithMany(l => l.LessonsResults)
-                .HasForeignKey(l => l.LanguageCompetenceResultId);
+                .HasForeignKey(l => l.LanguageCompetenceResultId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<LessonResult>()
                 .HasOne(l => l.Lesson)
                 .WithMany()
-                .HasForeignKey(l => l.LessonId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(l => l.LessonId);
 
             modelBuilder.Entity<LessonResult>()
                 .HasMany(l => l.QuestionResults)
@@ -116,13 +116,13 @@ namespace LingoLabs.Infrastructure.Data
             modelBuilder.Entity<QuestionResult>()
                 .HasOne(q => q.LessonResult)
                 .WithMany(l => l.QuestionResults)
-                .HasForeignKey(q => q.LessonResultId);
+                .HasForeignKey(q => q.LessonResultId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<QuestionResult>()
                 .HasOne(q => q.Question)
                 .WithMany()
-                .HasForeignKey(q => q.QuestionId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(q => q.QuestionId);
 
             modelBuilder.Entity<UserLanguageLevel>()
                 .HasKey(u => new { u.EnrollmentId, u.LanguageCompetenceId, u.LanguageLevelId });
@@ -210,7 +210,8 @@ namespace LingoLabs.Infrastructure.Data
             modelBuilder.Entity<LanguageCompetence>()
                 .HasMany(l => l.Lessons)
                 .WithOne()
-                .HasForeignKey("LanguageCompetenceId");
+                .HasForeignKey("LanguageCompetenceId")
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<LanguageCompetence>()
                 .HasMany(l => l.LearningCompetenceKeyWords)

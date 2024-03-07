@@ -41,9 +41,9 @@ namespace LingoLabs.Domain.Entities.Enrollments
             }
         }
 
-        public void MakeCompletedChapter()
+        public void UpdateChapterResult(bool isCompleted)
         {
-            IsCompleted = true;
+            IsCompleted = isCompleted;
         }
     }
 }

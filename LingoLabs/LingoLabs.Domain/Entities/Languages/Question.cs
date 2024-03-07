@@ -68,7 +68,7 @@ namespace LingoLabs.Domain.Entities.Languages
                 QuestionVideoLink = videoLink;
         }
 
-        public void UpdateLesson(string questionRequirement, LearningType questionLearningType, byte[] imageData, string videoLink)
+        public void UpdateQuestion(string questionRequirement, LearningType questionLearningType, byte[] imageData, string videoLink)
         {
             if (!string.IsNullOrWhiteSpace(questionRequirement))
                 QuestionRequirement = questionRequirement;

@@ -7,7 +7,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public Guid ChapterId { get; private set; }
         public string ChapterName { get; private set; }
         public string? ChapterDescription { get; private set; } = string.Empty;
-        public int? ChapterNumber { get; private set; } = null;
+        public int? ChapterNumber { get; private set; } 
         public byte[]? ChapterImageData { get; private set; }
         public string? ChapterVideoLink { get; private set; } = string.Empty;
         public List<LanguageCompetence>? languageCompetences { get; private set; } = new();

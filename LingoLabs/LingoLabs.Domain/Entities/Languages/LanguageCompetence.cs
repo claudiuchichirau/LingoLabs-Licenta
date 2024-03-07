@@ -87,14 +87,10 @@ namespace LingoLabs.Domain.Entities.Languages
                 LanguageCompetenceVideoLink = languageCompetenceVideoLink;
         }
 
-        public void UpdateLanguageCompetence(string languageCompetenceName, string languageCompetenceDescription, LanguageCompetenceType languageCompetenceType, string languageCompetenceVideoLink)
+        public void UpdateLanguageCompetence(string languageCompetenceDescription, string languageCompetenceVideoLink)
         {
-            if (!string.IsNullOrWhiteSpace(languageCompetenceName))
-                LanguageCompetenceName = languageCompetenceName;
             if (!string.IsNullOrWhiteSpace(languageCompetenceDescription))
                 LanguageCompetenceDescription = languageCompetenceDescription;
-            if (IsValidLanguageCompetenceType(languageCompetenceType))
-                LanguageCompetenceType = languageCompetenceType;
             if (!string.IsNullOrWhiteSpace(languageCompetenceVideoLink))
                 LanguageCompetenceVideoLink = languageCompetenceVideoLink;
         }

@@ -22,13 +22,13 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
                     LanguageCompetenceResultId = languageCompetenceResult.Value.LanguageCompetenceResultId,
                     LanguageCompetenceId = languageCompetenceResult.Value.LanguageCompetenceId,
                     ChapterResultId = languageCompetenceResult.Value.ChapterResultId,
-                    IsCompleted = languageCompetenceResult.Value.IsCompleted ?? false,
+                    IsCompleted = languageCompetenceResult.Value.IsCompleted,
                     LessonsResults = languageCompetenceResult.Value.LessonsResults.Select(l => new LessonResults.Queries.LessonResultDto
                     {
                         LessonResultId = l.LessonResultId,
                         LessonId = l.LessonId,
                         LanguageCompetenceResultId = l.LanguageCompetenceResultId,
-                        IsCompleted = l.IsCompleted ?? false,
+                        IsCompleted = l.IsCompleted
                     }).ToList()
                 };
             }

@@ -23,7 +23,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
                     ChapterName = chapter.Value.ChapterName,
                     LanguageLevelId = chapter.Value.LanguageLevelId,
                     ChapterDescription = chapter.Value.ChapterDescription,
-                    ChapterNumber = chapter.Value.ChapterNumber.HasValue ? chapter.Value.ChapterNumber.Value : 0,
+                    ChapterNumber = chapter.Value.ChapterNumber ?? 0,
                     ChapterImageData = chapter.Value.ChapterImageData,
                     ChapterVideoLink = chapter.Value.ChapterVideoLink,
 

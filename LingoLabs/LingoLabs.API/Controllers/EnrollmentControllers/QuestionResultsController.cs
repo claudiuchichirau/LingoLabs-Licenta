@@ -1,4 +1,6 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Commands.CreateQuestionResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Commands.DeleteQuestionResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Commands.UpdateQuestionResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +16,7 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             var result = await Mediator.Send(command);
             if (!result.Success)
             {
-                return BadRequest(result.Message);
+                return BadRequest(result);
             }
             return Ok(result);
         }
@@ -32,6 +34,33 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             }
 
             return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await Mediator.Send(new DeleteQuestionResultCommand { QuestionResultId = id });
+            if (!result.Success)
+            {
+                return NoContent();
+            }
+            return Ok(result);
+        }
+
+        [HttpPut()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(UpdateQuestionResultCommand command)
+        {
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return NotFound(result);
+            }
+            return Ok(result.UpdateQuestionResult);
         }
     }
 }

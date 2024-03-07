@@ -16,12 +16,13 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Queri
             var lessonResult = await lessonResultRepository.FindByIdAsync(request.Id);
             if(lessonResult.IsSuccess)
             {
+                Console.WriteLine($"\n\nIsCompleted: {lessonResult.Value.IsCompleted}"); 
                 return new GetSingleLessonResultDto
                 {
                     LessonResultId = lessonResult.Value.LessonResultId,
                     LessonId = lessonResult.Value.LessonId,
                     LanguageCompetenceResultId = lessonResult.Value.LanguageCompetenceResultId,
-                    IsCompleted = lessonResult.Value.IsCompleted ?? false,
+                    IsCompleted = lessonResult.Value.IsCompleted,
                     QuestionResults = lessonResult.Value.QuestionResults?.Select(q => new QuestionResults.Queries.QuestionResultDto
                     {
                         QuestionResultId = q.QuestionResultId,

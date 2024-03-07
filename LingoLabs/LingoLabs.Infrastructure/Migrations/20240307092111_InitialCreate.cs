@@ -204,13 +204,13 @@ namespace LingoLabs.Infrastructure.Migrations
                         name: "FK_ChapterResults_Chapters_ChapterId",
                         column: x => x.ChapterId,
                         principalTable: "Chapters",
-                        principalColumn: "ChapterId");
+                        principalColumn: "ChapterId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ChapterResults_LanguageLevelResults_LanguageLevelResultId",
                         column: x => x.LanguageLevelResultId,
                         principalTable: "LanguageLevelResults",
-                        principalColumn: "LanguageLevelResultId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "LanguageLevelResultId");
                 });
 
             migrationBuilder.CreateTable(
@@ -345,13 +345,13 @@ namespace LingoLabs.Infrastructure.Migrations
                         name: "FK_LanguageCompetenceResults_ChapterResults_ChapterResultId",
                         column: x => x.ChapterResultId,
                         principalTable: "ChapterResults",
-                        principalColumn: "ChapterResultId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ChapterResultId");
                     table.ForeignKey(
                         name: "FK_LanguageCompetenceResults_LanguageCompetences_LanguageCompetenceId",
                         column: x => x.LanguageCompetenceId,
                         principalTable: "LanguageCompetences",
-                        principalColumn: "LanguageCompetenceId");
+                        principalColumn: "LanguageCompetenceId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -407,13 +407,13 @@ namespace LingoLabs.Infrastructure.Migrations
                         name: "FK_LessonResults_LanguageCompetenceResults_LanguageCompetenceResultId",
                         column: x => x.LanguageCompetenceResultId,
                         principalTable: "LanguageCompetenceResults",
-                        principalColumn: "LanguageCompetenceResultId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "LanguageCompetenceResultId");
                     table.ForeignKey(
                         name: "FK_LessonResults_Lessons_LessonId",
                         column: x => x.LessonId,
                         principalTable: "Lessons",
-                        principalColumn: "LessonId");
+                        principalColumn: "LessonId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -489,13 +489,13 @@ namespace LingoLabs.Infrastructure.Migrations
                         name: "FK_QuestionResults_LessonResults_LessonResultId",
                         column: x => x.LessonResultId,
                         principalTable: "LessonResults",
-                        principalColumn: "LessonResultId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "LessonResultId");
                     table.ForeignKey(
                         name: "FK_QuestionResults_Questions_QuestionId",
                         column: x => x.QuestionId,
                         principalTable: "Questions",
-                        principalColumn: "QuestionId");
+                        principalColumn: "QuestionId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
