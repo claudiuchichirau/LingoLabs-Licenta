@@ -13,6 +13,18 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
         }
         public async Task<UpdateLanguageCompetenceResultCommandResponse> Handle(UpdateLanguageCompetenceResultCommand request, CancellationToken cancellationToken)
         {
+            var validator = new UpdateLanguageCompetenceResultComandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if(!validatorResult.IsValid)
+            {
+                return new UpdateLanguageCompetenceResultCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
+                };
+            }
+
             var languageCompetenceResult = await languageCompetenceResultRepository.FindByIdAsync(request.LanguageCompetenceResultId);
 
             if(!languageCompetenceResult.IsSuccess)

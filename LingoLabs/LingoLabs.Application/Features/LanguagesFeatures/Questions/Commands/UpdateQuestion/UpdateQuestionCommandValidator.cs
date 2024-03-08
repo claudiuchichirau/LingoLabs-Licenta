@@ -23,7 +23,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                 .WithMessage("{PropertyName} must have one of the following values: Auditory, Visual, Kinesthetic, Logical");
 
             RuleFor(p => p.UpdateQuestionDto.QuestionImageData)
-                .Must(BeJpgOrPng).When(p => p.UpdateQuestionDto.QuestionImageData != null)
+                .Must(BeJpgOrPng).When(p => p.UpdateQuestionDto.QuestionImageData != null && p.UpdateQuestionDto.QuestionImageData.Length > 0)
                 .WithMessage("{PropertyName} should be a .jpg or .png image if it exists.");
 
             RuleFor(p => p.UpdateQuestionDto.QuestionVideoLink)
@@ -50,7 +50,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
         private bool BeValidUrl(string url)
         {
             return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
-                   && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+               && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
+               && (uriResult.Host == "www.youtube.com" || uriResult.Host == "youtu.be");
         }
 
     }

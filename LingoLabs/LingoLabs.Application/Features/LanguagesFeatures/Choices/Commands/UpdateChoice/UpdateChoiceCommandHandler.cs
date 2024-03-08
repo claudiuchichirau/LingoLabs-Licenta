@@ -13,6 +13,18 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.Upda
         }
         public async Task<UpdateChoiceCommandResponse> Handle(UpdateChoiceCommand request, CancellationToken cancellationToken)
         {
+            var validator = new UpdateChoiceCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if(!validatorResult.IsValid)
+            {
+                return new UpdateChoiceCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
+                };
+            }
+
             var choice = await choiceRepository.FindByIdAsync(request.ChoiceId);
 
             if(!choice.IsSuccess)

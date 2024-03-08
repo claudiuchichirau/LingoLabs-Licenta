@@ -16,7 +16,7 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             var result = await Mediator.Send(command);
             if (!result.Success)
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.ValidationsErrors);
             }
             return Ok(result);
         }
@@ -38,14 +38,14 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await Mediator.Send(new DeleteLanguageCompetenceResultCommand { LanguageCompetenceResultId = id });
 
             if (!result.Success)
             {
-                return NotFound(result);
+                return BadRequest(result.ValidationsErrors);
             }
 
             return Ok(result);
@@ -61,7 +61,7 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
 
             if (!result.Success)
             {
-                return BadRequest(result);
+                return BadRequest(result.ValidationsErrors);
             }
 
             return Ok(result);

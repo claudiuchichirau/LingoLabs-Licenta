@@ -7,12 +7,13 @@ namespace LingoLabs.Domain.Entities.Languages
         public Guid LessonId { get; protected set; }
         public string LessonTitle { get; protected set; }
         public string? LessonDescription { get; private set; } = string.Empty; 
-        public string? LessonRequirement { get; private set; } = string.Empty;      // This is a requirement for the lesson
-        public string? LessonContent { get; private set; } = string.Empty;         // This is the content of the lesson
+        public string? LessonRequirement { get; private set; } = string.Empty;     
+        public string? LessonContent { get; private set; } = string.Empty;        
         public LanguageCompetenceType LessonType { get; protected set; }
         public string? LessonVideoLink { get; private set; } = string.Empty;
         public byte[]? LessonImageData { get; private set; }
-        public List<Question>? LessonQuestions { get; private set; } = new();
+        public List<Question>? LessonQuestions { get; private set; } = [];
+        public List<Tag > LessonTags { get; private set; } = [];
         public Guid LanguageCompetenceId { get; protected set; }
         public LanguageCompetence? LanguageCompetence { get; set; }
 
@@ -90,7 +91,18 @@ namespace LingoLabs.Domain.Entities.Languages
                 LessonVideoLink = videoLink;
         }
 
-        public void UpdateLesson(string lessonTitle, string lessonDescription, string lessonRequirement, string lessonContent, LanguageCompetenceType lessonType, byte[] imageData, string videoLink)
+        public void AttachTag(Tag tag)
+        {
+            if (tag != null)
+            {
+                if (LessonTags == null)
+                    LessonTags = new List<Tag> { tag };
+                else
+                    LessonTags.Add(tag);
+            }
+        }
+
+        public void UpdateLesson(string lessonTitle, string lessonDescription, string lessonRequirement, string lessonContent, byte[] imageData, string videoLink)
         {
             if (!string.IsNullOrWhiteSpace(lessonTitle))
                 LessonTitle = lessonTitle;
@@ -100,8 +112,6 @@ namespace LingoLabs.Domain.Entities.Languages
                 LessonRequirement = lessonRequirement;
             if (!string.IsNullOrWhiteSpace(lessonContent))
                 LessonContent = lessonContent;
-            if (IsValidLessonType(lessonType))
-                LessonType = lessonType;
             if (imageData != null && imageData.Length > 0)
                 LessonImageData = imageData;
             if (!string.IsNullOrWhiteSpace(videoLink))

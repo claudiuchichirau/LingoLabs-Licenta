@@ -22,11 +22,9 @@ namespace LingoLabs.Infrastructure.Data
         public DbSet<LanguageCompetence> LanguageCompetences { get; set; }
         public DbSet<Lesson> Lessons { get; set; }
         public DbSet<ListeningLesson> ListeningLessons { get; set; }
-        public DbSet<MatchingWordsQuestion> MatchingWordsQuestions { get; set; }
         public DbSet<Question> Questions { get; set; }
         public DbSet<Choice> Choices { get; set; }
         public DbSet<Tag> Tags { get; set; }
-        public DbSet<WordPair> WordPairs { get; set; }
         public DbSet<UserLanguageLevel> UserLanguageLevels { get; set; }
 
         public LingoLabsDbContext(DbContextOptions<LingoLabsDbContext> options) : base(options)

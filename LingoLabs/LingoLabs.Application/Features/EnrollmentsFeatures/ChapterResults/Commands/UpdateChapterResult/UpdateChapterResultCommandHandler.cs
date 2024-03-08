@@ -13,6 +13,18 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
         }
         public async Task<UpdateChapterResultCommandResponse> Handle(UpdateChapterResultCommand request, CancellationToken cancellationToken)
         {
+            var validator = new UpdateChapterResultCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if(!validatorResult.IsValid)
+            {
+                return new UpdateChapterResultCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
+                };
+            }
+
             var chapterResult = await chapterResultRepository.FindByIdAsync(request.ChapterResultId);
 
             if(!chapterResult.IsSuccess)

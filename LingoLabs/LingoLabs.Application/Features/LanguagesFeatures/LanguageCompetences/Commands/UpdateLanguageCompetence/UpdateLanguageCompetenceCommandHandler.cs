@@ -14,6 +14,18 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
 
         public async Task<UpdateLanguageCompetenceCommandResponse> Handle(UpdateLanguageCompetenceCommand request, CancellationToken cancellationToken)
         {
+            var validator = new UpdateLanguageCompetenceCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if(!validatorResult.IsValid)
+            {
+                return new UpdateLanguageCompetenceCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
+                };
+            }
+
             var languageCompetence = await languageCompetenceRepository.FindByIdAsync(request.LanguageCompetenceId);
 
             if(!languageCompetence.IsSuccess)

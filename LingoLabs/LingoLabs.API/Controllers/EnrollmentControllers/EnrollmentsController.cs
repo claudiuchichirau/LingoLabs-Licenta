@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Commands.CreateEnrollment;
+using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Commands.DeleteEnrollment;
 using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Queries.GetAll;
 using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             var result = await Mediator.Send(command);
             if (!result.Success)
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.ValidationsErrors);
             }
             return Ok(result);
         }
@@ -38,6 +39,21 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             if (result.EnrollmentId == Guid.Empty)
             {
                 return NotFound(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await Mediator.Send(new DeleteEnrollmentCommand { EnrollmentId = id });
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ValidationsErrors);
             }
 
             return Ok(result);

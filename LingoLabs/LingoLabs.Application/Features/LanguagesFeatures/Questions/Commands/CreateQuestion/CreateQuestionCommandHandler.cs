@@ -1,4 +1,5 @@
-﻿using LingoLabs.Application.Persistence.Languages;
+﻿using LingoLabs.Application.Features.LanguagesFeatures.Choices.Queries;
+using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
@@ -27,7 +28,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Cr
                 };
             }
 
-            var question = Question.Create(request.QuestionRequirement, request.QuestionLearningType, request.LessonId);
+            var question = Question.Create(
+                request.QuestionRequirement, 
+                request.QuestionLearningType, 
+                request.LessonId);
+
             if (question.IsSuccess)
             {
                 await repository.AddAsync(question.Value);

@@ -15,7 +15,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             var result = await Mediator.Send(command);
             if (!result.Success)
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.ValidationsErrors);
             }
             return Ok(result);
         }
@@ -44,7 +44,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             var result = await Mediator.Send(command);
             if (!result.Success)
             {
-                return BadRequest(result);
+                return BadRequest(result.ValidationsErrors);
             }
             return Ok(result.UpdateChoiceDto);
         }
@@ -52,13 +52,13 @@ namespace LingoLabs.API.Controllers.LanguageControllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await Mediator.Send(new DeleteChoiceCommand { ChoiceId = id });
             if (!result.Success)
             {
-                return NoContent();     // Choice not found
+                return BadRequest(result.ValidationsErrors);     // Choice not found
             }
             return Ok(result);
         }

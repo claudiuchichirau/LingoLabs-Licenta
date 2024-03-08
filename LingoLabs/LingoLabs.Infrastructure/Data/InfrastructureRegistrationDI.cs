@@ -1,7 +1,9 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Commands.DeleteChapterResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceResults.Commands.DeleteLanguageCompetenceResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResults.Commands.DeleteLanguageLevelResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.DeleteLessonResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Commands.DeleteQuestionResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.DeleteUserLanguageLevel;
 using LingoLabs.Application.Persistence;
 using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
@@ -32,10 +34,8 @@ namespace LingoLabs.Infrastructure.Data
             services.AddScoped<ILessonRepository, LessonRepository>();
             services.AddScoped<IListeningLessonRepository, ListeningLessonRepository>();
             services.AddScoped<IQuestionRepository, QuestionRepository>();
-            services.AddScoped<IMatchingWordsQuestionRepository, MatchingWordsQuestionRepository>();
             services.AddScoped<IChoiceRepository, ChoiceRepository>();
             services.AddScoped<ITagRepository, TagRepository>();
-            services.AddScoped<IWordPairRepository, WordPairRepository>();
             services.AddScoped<IEnrollmentRepository, EnrollmentRepository>();
             services.AddScoped<ILanguageLevelResultRepository, LanguageLevelResultRepository>();
             services.AddScoped<IChapterResultRepository, ChapterResultRepository>();
@@ -51,6 +51,8 @@ namespace LingoLabs.Infrastructure.Data
             services.AddTransient<DeleteLessonResultCommandHandler>();
             services.AddTransient<DeleteLanguageCompetenceResultCommandHandler>();
             services.AddTransient<DeleteChapterResultCommandHandler>();
+            services.AddTransient<DeleteLanguageLevelResultCommandHandler>();
+            services.AddTransient<DeleteUserLanguageLevelCommandHandler>();
 
 
             return services;

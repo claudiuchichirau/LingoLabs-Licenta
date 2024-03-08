@@ -104,7 +104,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("IsCompleted")
+                    b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
                     b.Property<Guid>("LanguageCompetenceId")
@@ -173,7 +173,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool?>("IsCompleted")
+                    b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
                     b.Property<Guid>("LanguageCompetenceResultId")
@@ -548,11 +548,6 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
-
                     b.Property<Guid?>("LanguageId")
                         .HasColumnType("uniqueidentifier");
 
@@ -585,10 +580,6 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasIndex("LessonId");
 
                     b.ToTable("Questions");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Question");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Tag", b =>
@@ -624,6 +615,9 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<Guid?>("LearningStyleId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("LessonId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("TagContent")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -640,43 +634,9 @@ namespace LingoLabs.Infrastructure.Migrations
 
                     b.HasIndex("LearningStyleId");
 
+                    b.HasIndex("LessonId");
+
                     b.ToTable("Tags");
-                });
-
-            modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.WordPair", b =>
-                {
-                    b.Property<Guid>("WordPairId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("KeyWord")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("LastModifiedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("MatchingWordsQuestionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ValueWord")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("WordPairId");
-
-                    b.HasIndex("MatchingWordsQuestionId");
-
-                    b.ToTable("WordPairs");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.LearningStyle", b =>
@@ -758,13 +718,6 @@ namespace LingoLabs.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("ListeningLesson");
-                });
-
-            modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.MatchingWordsQuestion", b =>
-                {
-                    b.HasBaseType("LingoLabs.Domain.Entities.Languages.Question");
-
-                    b.HasDiscriminator().HasValue("MatchingWordsQuestion");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.ChapterResult", b =>
@@ -999,17 +952,10 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.HasOne("LingoLabs.Domain.Entities.LearningStyle", null)
                         .WithMany("LearningStyleKeyWords")
                         .HasForeignKey("LearningStyleId");
-                });
 
-            modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.WordPair", b =>
-                {
-                    b.HasOne("LingoLabs.Domain.Entities.Languages.MatchingWordsQuestion", "MatchingWordsQuestion")
-                        .WithMany("WordPairs")
-                        .HasForeignKey("MatchingWordsQuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MatchingWordsQuestion");
+                    b.HasOne("LingoLabs.Domain.Entities.Languages.Lesson", null)
+                        .WithMany("LessonTags")
+                        .HasForeignKey("LessonId");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.ChapterResult", b =>
@@ -1074,6 +1020,8 @@ namespace LingoLabs.Infrastructure.Migrations
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Lesson", b =>
                 {
                     b.Navigation("LessonQuestions");
+
+                    b.Navigation("LessonTags");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Question", b =>
@@ -1084,11 +1032,6 @@ namespace LingoLabs.Infrastructure.Migrations
             modelBuilder.Entity("LingoLabs.Domain.Entities.LearningStyle", b =>
                 {
                     b.Navigation("LearningStyleKeyWords");
-                });
-
-            modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.MatchingWordsQuestion", b =>
-                {
-                    b.Navigation("WordPairs");
                 });
 #pragma warning restore 612, 618
         }

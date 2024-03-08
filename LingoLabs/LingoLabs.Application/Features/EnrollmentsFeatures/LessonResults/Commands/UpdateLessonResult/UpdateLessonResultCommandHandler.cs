@@ -13,6 +13,18 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
         }
         public async Task<UpdateLessonResultCommandResponse> Handle(UpdateLessonResultCommand request, CancellationToken cancellationToken)
         {
+            var validator = new UpdateLessonResultCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if(!validatorResult.IsValid)
+            {
+                return new UpdateLessonResultCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
+                };
+            }
+
             var lessonResult = await lessonResultRepository.FindByIdAsync(request.LessonResultId);
 
             if(!lessonResult.IsSuccess)

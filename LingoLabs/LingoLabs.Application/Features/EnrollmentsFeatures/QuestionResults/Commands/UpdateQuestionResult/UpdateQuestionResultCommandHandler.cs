@@ -13,6 +13,18 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Com
         }
         public async Task<UpdateQuestionResultCommandResponse> Handle(UpdateQuestionResultCommand request, CancellationToken cancellationToken)
         {
+            var validator = new UpdateQuestionResultCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if(!validatorResult.IsValid)
+            {
+                return new UpdateQuestionResultCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
+                };
+            }
+
             var questionResult = await questionResultRepository.FindByIdAsync(request.QuestionResultId);
 
             if(!questionResult.IsSuccess) 

@@ -4,6 +4,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
 {
     public class UpdateLanguageCompetenceDto
     {
+        public string LanguageCompetenceName { get; set; } = string.Empty;
         public string LanguageCompetenceDescription { get; set; } = string.Empty;
         public string LanguageCompetenceVideoLink { get; set; } = string.Empty;
     }

@@ -16,7 +16,7 @@ namespace LingoLabs.API.Controllers
             var result = await Mediator.Send(command);
             if (!result.Success)
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.ValidationsErrors);
             }
             return Ok(result);
         }

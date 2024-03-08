@@ -13,6 +13,18 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResult
         }
         public async Task<UpdateLanguageLevelResultCommandResponse> Handle(UpdateLanguageLevelResultCommand request, CancellationToken cancellationToken)
         {
+            var validator = new UpdateLanguageLevelResultCommandValidator();
+            var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+
+            if(!validatorResult.IsValid)
+            {
+                return new UpdateLanguageLevelResultCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = validatorResult.Errors.Select(e => e.ErrorMessage).ToList()
+                };
+            }
+
             var languageLevelResult = await languageLevelResultRepository.FindByIdAsync(request.LanguageLevelResultId);
 
             if(!languageLevelResult.IsSuccess)

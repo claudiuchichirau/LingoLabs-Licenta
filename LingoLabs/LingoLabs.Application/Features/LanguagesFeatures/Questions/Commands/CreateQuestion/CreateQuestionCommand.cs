@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Domain.Entities;
+using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.CreateQuestion

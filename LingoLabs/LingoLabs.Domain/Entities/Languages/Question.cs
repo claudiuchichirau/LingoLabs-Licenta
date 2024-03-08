@@ -7,7 +7,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public Guid QuestionId { get; protected set; }
         public string QuestionRequirement { get; protected set; }
         public LearningType QuestionLearningType { get; protected set; }
-        public List<Choice>? QuestionChoices { get; private set; } = new();
+        public List<Choice>? QuestionChoices { get; protected set; } = [];
         public byte[]? QuestionImageData { get; private set; }
         public string? QuestionVideoLink { get; private set; } = string.Empty;
         public Guid LessonId { get; protected set; }
@@ -41,31 +41,6 @@ namespace LingoLabs.Domain.Entities.Languages
                    learningType == LearningType.Visual ||
                    learningType == LearningType.Kinesthetic ||
                    learningType == LearningType.Logical;
-        }
-
-        public void AttachChoices(Choice choice)
-        {
-            if (choice != null)
-            {
-                if (QuestionChoices == null)
-                    QuestionChoices = new List<Choice> { choice };
-                else
-                    QuestionChoices.Add(choice);
-            }
-        }
-
-        public void AttachImageData(byte[] imageData)
-        {
-            if (imageData != null && imageData.Length > 0)
-            {
-                QuestionImageData = imageData;
-            }
-        }
-
-        public void AttachVideoLink(string videoLink)
-        {
-            if (!string.IsNullOrWhiteSpace(videoLink))
-                QuestionVideoLink = videoLink;
         }
 
         public void UpdateQuestion(string questionRequirement, LearningType questionLearningType, byte[] imageData, string videoLink)
