@@ -6,7 +6,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
     {
         public string QuestionRequirement { get; set; } = string.Empty;
         public LearningType QuestionLearningType { get; set; }
-        public Guid LessonId { get; set; }
         public List<ChoiceDtoForQuiz> Choices { get; set; } = [];
     }
 }

@@ -835,7 +835,7 @@ namespace LingoLabs.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("LingoLabs.Domain.Entities.Languages.LanguageCompetence", "LanguageCompetence")
-                        .WithMany()
+                        .WithMany("UserLanguageLevels")
                         .HasForeignKey("LanguageCompetenceId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
@@ -1008,6 +1008,8 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Navigation("LearningCompetenceKeyWords");
 
                     b.Navigation("Lessons");
+
+                    b.Navigation("UserLanguageLevels");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.LanguageLevel", b =>

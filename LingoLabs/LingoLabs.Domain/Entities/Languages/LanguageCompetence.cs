@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Domain.Common;
+using LingoLabs.Domain.Entities.Enrollments;
 
 namespace LingoLabs.Domain.Entities.Languages
 {
@@ -15,6 +16,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public Chapter? Chapter { get; set; }
         public Guid LanguageId { get; private set; }
         public Language? Language { get; set; }
+        public List<UserLanguageLevel>? UserLanguageLevels { get; private set; } = [];
 
         private LanguageCompetence(string languageCompetenceName, LanguageCompetenceType languageCompetenceType, Guid chapterId, Guid languageId)
         {

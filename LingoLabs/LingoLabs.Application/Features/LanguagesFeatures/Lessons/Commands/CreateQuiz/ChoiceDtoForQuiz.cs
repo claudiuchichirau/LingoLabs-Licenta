@@ -4,6 +4,5 @@
     {
         public string ChoiceContent { get; set; } = string.Empty;
         public bool IsCorrect { get; set; }
-        public Guid QuestionId { get; set; }
     }
 }

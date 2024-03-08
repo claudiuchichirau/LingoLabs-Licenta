@@ -1,4 +1,5 @@
-﻿using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries;
+﻿using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Queries;
+using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries;
 using LingoLabs.Application.Features.LanguagesFeatures.Tags.Queries;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Queries.GetById

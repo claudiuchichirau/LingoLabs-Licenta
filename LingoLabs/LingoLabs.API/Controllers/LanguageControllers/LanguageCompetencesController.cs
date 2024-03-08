@@ -60,13 +60,13 @@ namespace LingoLabs.API.Controllers.LanguageControllers
 
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await Mediator.Send(new DeleteLanguageCompetenceCommand { LanguageCompetenceId = id });
             if (!result.Success)
             {
-                return BadRequest(result.ValidationsErrors);
+                return NotFound(result.ValidationsErrors);
             }
             return Ok(result);
         }

@@ -1,4 +1,7 @@
-﻿using LingoLabs.Application.Persistence.Languages;
+﻿using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.DeleteUserLanguageLevel;
+using LingoLabs.Application.Persistence.Enrollments;
+using LingoLabs.Application.Persistence.Languages;
+using LingoLabs.Domain.Entities.Enrollments;
 using MediatR;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.DeleteLanguageCompetence
@@ -6,10 +9,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
     public class DeleteLanguageCompetenceCommandHandler: IRequestHandler<DeleteLanguageCompetenceCommand, DeleteLanguageCompetenceCommandResponse>
     {
         private readonly ILanguageCompetenceRepository languageCompetenceRepository;
+        private readonly DeleteUserLanguageLevelCommandHandler deleteUserLanguageLevelCommandHandler;
 
-        public DeleteLanguageCompetenceCommandHandler(ILanguageCompetenceRepository languageCompetenceRepository)
+        public DeleteLanguageCompetenceCommandHandler(ILanguageCompetenceRepository languageCompetenceRepository, DeleteUserLanguageLevelCommandHandler deleteUserLanguageLevelCommandHandler)
         {
             this.languageCompetenceRepository = languageCompetenceRepository;
+            this.deleteUserLanguageLevelCommandHandler = deleteUserLanguageLevelCommandHandler;
         }
 
         public async Task<DeleteLanguageCompetenceCommandResponse> Handle(DeleteLanguageCompetenceCommand request, CancellationToken cancellationToken)
@@ -34,6 +39,23 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
                     Success = false,
                     ValidationsErrors = new List<string> { languageCompetence.Error }
                 };
+            }
+
+            var userLanguageLevels = languageCompetence.Value.UserLanguageLevels.ToList();
+
+            foreach (UserLanguageLevel userLanguageLevel in userLanguageLevels)
+            {
+                var deleteUserLanguageLevelCommand = new DeleteUserLanguageLevelCommand { UserLanguageLevelId = userLanguageLevel.UserLanguageLevelId };
+                var deleteUserLanguageLevelCommandResponse = await deleteUserLanguageLevelCommandHandler.Handle(deleteUserLanguageLevelCommand, cancellationToken);
+
+                if(!deleteUserLanguageLevelCommandResponse.Success)
+                {
+                    return new DeleteLanguageCompetenceCommandResponse
+                    {
+                        Success = false,
+                        ValidationsErrors = deleteUserLanguageLevelCommandResponse.ValidationsErrors
+                    };
+                }   
             }
 
             await languageCompetenceRepository.DeleteAsync(request.LanguageCompetenceId);

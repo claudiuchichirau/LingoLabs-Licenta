@@ -39,7 +39,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                     {
                         TagId = tag.TagId,
                         TagContent = tag.TagContent
-                    }).ToList()
+                    }).ToList(),
                 };
             }
 
