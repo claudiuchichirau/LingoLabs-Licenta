@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.DeleteUserLanguageLevel;
+using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Queries.GetById;
 using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities.Enrollments;
@@ -10,11 +11,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
     {
         private readonly ILanguageCompetenceRepository languageCompetenceRepository;
         private readonly DeleteUserLanguageLevelCommandHandler deleteUserLanguageLevelCommandHandler;
+        private readonly IUserLanguageLevelRepository userLanguageLevelRepository;
 
-        public DeleteLanguageCompetenceCommandHandler(ILanguageCompetenceRepository languageCompetenceRepository, DeleteUserLanguageLevelCommandHandler deleteUserLanguageLevelCommandHandler)
+        public DeleteLanguageCompetenceCommandHandler(ILanguageCompetenceRepository languageCompetenceRepository, DeleteUserLanguageLevelCommandHandler deleteUserLanguageLevelCommandHandler, IUserLanguageLevelRepository userLanguageLevelRepository)
         {
             this.languageCompetenceRepository = languageCompetenceRepository;
             this.deleteUserLanguageLevelCommandHandler = deleteUserLanguageLevelCommandHandler;
+            this.userLanguageLevelRepository = userLanguageLevelRepository;
         }
 
         public async Task<DeleteLanguageCompetenceCommandResponse> Handle(DeleteLanguageCompetenceCommand request, CancellationToken cancellationToken)
@@ -41,7 +44,19 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
                 };
             }
 
-            var userLanguageLevels = languageCompetence.Value.UserLanguageLevels.ToList();
+            var userLanguageLevelsResult = await userLanguageLevelRepository.FindByLanguageCompetenceIdAsync(request.LanguageCompetenceId);
+
+            if (!userLanguageLevelsResult.IsSuccess)
+            {
+                // Gestionați eroarea aici
+                return new DeleteLanguageCompetenceCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { userLanguageLevelsResult.Error }
+                };
+            }
+
+            var userLanguageLevels = userLanguageLevelsResult.Value;
 
             foreach (UserLanguageLevel userLanguageLevel in userLanguageLevels)
             {

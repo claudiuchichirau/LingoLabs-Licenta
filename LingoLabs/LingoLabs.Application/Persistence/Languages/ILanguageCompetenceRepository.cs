@@ -1,4 +1,5 @@
-﻿using LingoLabs.Domain.Entities.Languages;
+﻿using LingoLabs.Domain.Common;
+using LingoLabs.Domain.Entities.Languages;
 
 namespace LingoLabs.Application.Persistence.Languages
 {

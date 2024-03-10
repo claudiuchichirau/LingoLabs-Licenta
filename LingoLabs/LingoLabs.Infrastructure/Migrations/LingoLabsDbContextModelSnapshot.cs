@@ -244,6 +244,16 @@ namespace LingoLabs.Infrastructure.Migrations
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.UserLanguageLevel", b =>
                 {
+                    b.Property<Guid>("UserLanguageLevelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid>("EnrollmentId")
                         .HasColumnType("uniqueidentifier");
 
@@ -253,22 +263,15 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<Guid>("LanguageLevelId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("UserLanguageLevelId")
-                        .HasColumnType("uniqueidentifier");
+                    b.HasKey("UserLanguageLevelId");
 
-                    b.HasKey("EnrollmentId", "LanguageCompetenceId", "LanguageLevelId");
+                    b.HasIndex("EnrollmentId");
 
                     b.HasIndex("LanguageCompetenceId");
 

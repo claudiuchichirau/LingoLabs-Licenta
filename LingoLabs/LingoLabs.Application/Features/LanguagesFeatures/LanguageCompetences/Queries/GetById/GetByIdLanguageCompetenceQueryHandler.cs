@@ -1,4 +1,5 @@
-﻿using LingoLabs.Application.Persistence.Languages;
+﻿using LingoLabs.Application.Persistence.Enrollments;
+using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
@@ -7,16 +8,28 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
     public class GetByIdLanguageCompetenceQueryHandler : IRequestHandler<GetByIdLanguageCompetenceQuery, GetSingleLanguageCompetenceDto>
     {
         private readonly ILanguageCompetenceRepository repository;
+        private readonly IUserLanguageLevelRepository userLanguageLevelRepository;
 
-        public GetByIdLanguageCompetenceQueryHandler(ILanguageCompetenceRepository repository)
+        public GetByIdLanguageCompetenceQueryHandler(ILanguageCompetenceRepository repository, IUserLanguageLevelRepository userLanguageLevelRepository)
         {
             this.repository = repository;
+            this.userLanguageLevelRepository = userLanguageLevelRepository;
         }
         public async Task<GetSingleLanguageCompetenceDto> Handle(GetByIdLanguageCompetenceQuery request, CancellationToken cancellationToken)
         {
             var languageCompetence = await repository.FindByIdAsync(request.Id);
             if(languageCompetence.IsSuccess)
             {
+                var userLanguageLevelsResult = await userLanguageLevelRepository.FindByLanguageCompetenceIdAsync(request.Id);
+
+                if (!userLanguageLevelsResult.IsSuccess)
+                {
+                    // Gestionați eroarea aici
+                    return new GetSingleLanguageCompetenceDto();
+                }
+
+                var userLanguageLevels = userLanguageLevelsResult.Value;
+
                 return new GetSingleLanguageCompetenceDto
                 {
                     LanguageCompetenceId = languageCompetence.Value.LanguageCompetenceId,
@@ -40,6 +53,14 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                         TagId = tag.TagId,
                         TagContent = tag.TagContent
                     }).ToList(),
+
+                    UserLanguageLevels = userLanguageLevels.Select(userLanguageLevel => new EnrollmentsFeatures.UserLanguageLevels.Queries.UserLanguageLevelDto
+                    {
+                        UserLanguageLevelId = userLanguageLevel.UserLanguageLevelId,
+                        EnrollmentId = userLanguageLevel.EnrollmentId,
+                        LanguageLevelId = userLanguageLevel.LanguageLevelId,
+                        LanguageCompetenceId = userLanguageLevel.LanguageCompetenceId
+                    }).ToList()
                 };
             }
 

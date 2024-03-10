@@ -249,10 +249,10 @@ namespace LingoLabs.Infrastructure.Migrations
                 name: "UserLanguageLevels",
                 columns: table => new
                 {
+                    UserLanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EnrollmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     LanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserLanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -260,7 +260,7 @@ namespace LingoLabs.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserLanguageLevels", x => new { x.EnrollmentId, x.LanguageCompetenceId, x.LanguageLevelId });
+                    table.PrimaryKey("PK_UserLanguageLevels", x => x.UserLanguageLevelId);
                     table.ForeignKey(
                         name: "FK_UserLanguageLevels_Enrollments_EnrollmentId",
                         column: x => x.EnrollmentId,
@@ -603,6 +603,11 @@ namespace LingoLabs.Infrastructure.Migrations
                 name: "IX_Tags_LessonId",
                 table: "Tags",
                 column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserLanguageLevels_EnrollmentId",
+                table: "UserLanguageLevels",
+                column: "EnrollmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLanguageLevels_LanguageCompetenceId",
