@@ -33,5 +33,15 @@ namespace LingoLabs.Domain.Entities.Languages
             ChoiceContent = choiceContent;
             IsCorrect = isCorrect;
         }
+
+        public void UpdateContent(string choiceContent)
+        {
+            ChoiceContent = choiceContent;
+        }
+
+        public void UpdateCorrectness(bool isCorrect)
+        {
+            IsCorrect = isCorrect;
+        }
     }
 }

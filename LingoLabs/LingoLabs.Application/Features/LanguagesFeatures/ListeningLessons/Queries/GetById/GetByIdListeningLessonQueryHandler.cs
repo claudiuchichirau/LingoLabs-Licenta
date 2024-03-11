@@ -35,7 +35,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
                         QuestionLearningType = c.QuestionLearningType,
                         LessonId = c.LessonId
                     }).ToList(),
-                    AudioContents = listeningLesson.Value.AudioContents,
+                    TextScript = listeningLesson.Value.TextScript,
                     Accents = listeningLesson.Value.Accents
                 };
             }

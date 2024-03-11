@@ -34,6 +34,15 @@ namespace LingoLabs.Infrastructure.Repositories.Enrollments
             return Result<IReadOnlyList<UserLanguageLevel>>.Success(userLanguageLevels);
         }
 
+        public async Task<Result<IReadOnlyList<UserLanguageLevel>>> FindByLanguageLevelIdAsync(Guid languageLevelId)
+        {
+            var userLanguageLevels = await context.UserLanguageLevels
+                                .Where(ull => ull.LanguageLevelId == languageLevelId)
+                                .ToListAsync();
+
+            return Result<IReadOnlyList<UserLanguageLevel>>.Success(userLanguageLevels);
+        }
+
 
         //public async Task<Result<UserLanguageLevel>> GetUserLanguageLevelByEnrollmentId(Guid enrollmentId)
         //{

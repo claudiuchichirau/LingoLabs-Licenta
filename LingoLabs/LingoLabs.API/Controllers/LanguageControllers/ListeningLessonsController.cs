@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Commands.CreateListeningLesson;
+using LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Commands.UpdateListeningLesson;
 using LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Queries.GetAll;
 using LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
@@ -39,6 +40,20 @@ namespace LingoLabs.API.Controllers.LanguageControllers
                 return NotFound(result);
             }
 
+            return Ok(result);
+        }
+
+        [HttpPut()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(UpdateListeningLessonCommand command)
+        {
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result.ValidationsErrors);
+            }
             return Ok(result);
         }
     }

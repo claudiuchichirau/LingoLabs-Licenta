@@ -30,13 +30,16 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                 .NotNull()
                 .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
 
-            RuleFor(p => p.AudioContents)
+            RuleFor(p => p.TextScript)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotNull();
+                .NotNull()
+                .MaximumLength(1000).WithMessage("{PropertyName} must not exceed 1000 characters.");
 
             RuleFor(p => p.Accents)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotNull();
+                .NotNull()
+                .Must(accents => accents.Count >= 2).WithMessage("{PropertyName} must contain at least 2 elements.");
+
         }
     }
 }

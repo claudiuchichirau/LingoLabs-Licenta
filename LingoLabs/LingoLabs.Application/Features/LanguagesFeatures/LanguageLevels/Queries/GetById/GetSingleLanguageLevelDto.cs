@@ -1,4 +1,5 @@
-﻿using LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries;
+﻿using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Queries;
+using LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries;
 using LingoLabs.Application.Features.LanguagesFeatures.Tags.Queries;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Queries.GetById
@@ -9,5 +10,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
         public string LanguageLevelVideoLink { get; set; } = string.Empty;
         public List<ChapterDto> LanguageChapters { get; set; } = [];
         public List<TagDto> LanguageLeveKeyWords { get; set; } = [];
+        public List<UserLanguageLevelDto> UserLanguageLevels { get; set; } = [];
     }
 }

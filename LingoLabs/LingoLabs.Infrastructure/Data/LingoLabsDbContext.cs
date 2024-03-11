@@ -133,13 +133,13 @@ namespace LingoLabs.Infrastructure.Data
 
             modelBuilder.Entity<UserLanguageLevel>()
                 .HasOne(u => u.LanguageCompetence)
-                .WithMany()
+                .WithMany(e => e.UserLanguageLevels)
                 .HasForeignKey(u => u.LanguageCompetenceId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<UserLanguageLevel>()
                 .HasOne(u => u.LanguageLevel)
-                .WithMany()
+                .WithMany(e => e.UserLanguageLevels)
                 .HasForeignKey(u => u.LanguageLevelId);
 
             // LANGUAGE

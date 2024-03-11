@@ -1,6 +1,4 @@
-﻿using LingoLabs.Domain.Entities.Languages;
-
-namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.CreateQuiz
+﻿namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.CreateQuiz
 {
     public class QuizDto
     {

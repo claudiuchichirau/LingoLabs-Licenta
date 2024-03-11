@@ -1,10 +1,12 @@
 ﻿using FluentValidation;
+using LingoLabs.Application.Persistence.Languages;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.UpdateChapter
 {
     public class UpdateChapterCommandValidator: AbstractValidator<UpdateChapterCommandCommand>
     {
-        public UpdateChapterCommandValidator()
+        private readonly IChapterRepository chapterRepository;
+        public UpdateChapterCommandValidator(IChapterRepository chapterRepository)
         {
             RuleFor(p => p.ChapterId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
@@ -15,6 +17,18 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Upd
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(100).WithMessage("{PropertyName} must not exceed 100 characters.");
+
+            RuleFor(p => p)
+                .MustAsync((p, cancellation) => ValidateChapter(p.UpdateChapterDto.ChapterName, chapterRepository))
+                .WithMessage("ChapterName must be unique.");
+            this.chapterRepository = chapterRepository;
+        }
+
+        private async Task<bool> ValidateChapter(string name, IChapterRepository chapterRepository)
+        {
+            if (await chapterRepository.ExistChapterByNameAsync(name))
+                return false;
+            return true;
         }
     }
 }

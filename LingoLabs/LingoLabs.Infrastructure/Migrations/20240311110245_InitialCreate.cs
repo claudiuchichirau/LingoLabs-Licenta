@@ -227,7 +227,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     LessonImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
-                    AudioContents = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TextScript = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Accents = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),

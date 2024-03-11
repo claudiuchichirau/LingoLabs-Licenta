@@ -57,5 +57,28 @@ namespace LingoLabs.Domain.Entities.Languages
             if (!string.IsNullOrWhiteSpace(videoLink))
                 QuestionVideoLink = videoLink;
         }
+
+        public void UpdateQuestionRequirement(string questionRequirement)
+        {
+            QuestionRequirement = questionRequirement;
+        }
+
+        public void UpdateQuestionLearningType(LearningType questionLearningType)
+        {
+            if (IsValidLearningType(questionLearningType))
+                QuestionLearningType = questionLearningType;
+        }
+
+        public void UpdateQuestionImageData(byte[] imageData)
+        {
+            if (imageData != null && imageData.Length > 0)
+                QuestionImageData = imageData;
+        }
+
+        public void UpdateQuestionVideoLink(string videoLink)
+        {
+            if (!string.IsNullOrWhiteSpace(videoLink))
+                QuestionVideoLink = videoLink;
+        }
     }
 }

@@ -6,13 +6,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
 {
     public class CreateQuizCommandHandler : IRequestHandler<CreateQuizCommand, CreateQuizCommandResponse>
     {
-        private readonly ILessonRepository lessonRepository;
         private readonly IQuestionRepository questionRepository;
         private readonly IChoiceRepository choiceRepository;
 
-        public CreateQuizCommandHandler(ILessonRepository lessonRepository, IQuestionRepository questionRepository, IChoiceRepository choiceRepository)
+        public CreateQuizCommandHandler(IQuestionRepository questionRepository, IChoiceRepository choiceRepository)
         {
-            this.lessonRepository = lessonRepository;
             this.questionRepository = questionRepository;
             this.choiceRepository = choiceRepository;
         }

@@ -8,7 +8,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
         public string? LessonTitle { get; set; }
         public LanguageCompetenceType? LessonType { get; set; }
         public Guid? LanguageCompetenceId { get; set; }
-        public List<byte[]>? AudioContents { get; set; }
+        public string? TextScript { get; set; } = string.Empty;
         public List<string>? Accents { get; set; }
     }
 }

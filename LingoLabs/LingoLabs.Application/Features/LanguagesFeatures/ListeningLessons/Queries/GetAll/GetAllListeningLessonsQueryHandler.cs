@@ -23,7 +23,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
                     LessonTitle = lesson.LessonTitle,
                     LessonType = lesson.LessonType,
                     LanguageCompetenceId = lesson.LanguageCompetenceId,
-                    AudioContents = lesson.AudioContents,
+                    TextScript = lesson.TextScript,
                     Accents = lesson.Accents
                 }).ToList();
             }

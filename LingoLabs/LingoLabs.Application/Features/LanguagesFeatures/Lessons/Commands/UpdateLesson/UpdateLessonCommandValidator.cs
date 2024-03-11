@@ -8,7 +8,10 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
     {
         public UpdateLessonCommandValidator()
         {
-
+            RuleFor(p => p.LessonId)
+                .NotEmpty().WithMessage("{PropertyName} is required.")
+                .NotNull()
+                .NotEqual(Guid.Empty).WithMessage("{PropertyName} is required.");
 
             RuleFor(p => p.UpdateLessonDto.LessonTitle)
                 .NotEmpty().WithMessage("{PropertyName} is required.")

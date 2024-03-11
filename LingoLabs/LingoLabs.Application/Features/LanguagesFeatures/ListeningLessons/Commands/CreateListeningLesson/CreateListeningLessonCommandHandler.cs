@@ -29,7 +29,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                 };
             }
 
-            var listeningLesson = ListeningLesson.Create(request.LessonTitle, request.LessonType, request.LanguageCompetenceId, request.AudioContents, request.Accents);
+            var listeningLesson = ListeningLesson.Create(request.LessonTitle, request.LessonType, request.LanguageCompetenceId, request.TextScript, request.Accents);
             if (listeningLesson.IsSuccess)
             {
                 await repository.AddAsync(listeningLesson.Value);
@@ -41,7 +41,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                         LessonTitle = listeningLesson.Value.LessonTitle,
                         LanguageCompetenceId = listeningLesson.Value.LanguageCompetenceId,
                         LessonType = listeningLesson.Value.LessonType,
-                        AudioContents = listeningLesson.Value.AudioContents,
+                        TextScript = listeningLesson.Value.TextScript,
                         Accents = listeningLesson.Value.Accents
                     }
                 };

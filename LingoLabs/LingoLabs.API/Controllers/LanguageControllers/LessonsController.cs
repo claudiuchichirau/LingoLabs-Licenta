@@ -1,7 +1,9 @@
 ﻿using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.CreateLesson;
 using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.CreateQuiz;
 using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.DeleteLesson;
+using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.DeleteQuiz;
 using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.UpdateLesson;
+using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.UpdateQuiz;
 using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetAll;
 using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +33,21 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             {
                 return BadRequest(result.ValidationsErrors);
             }
+            return Ok(result);
+        }
+
+        [HttpDelete("delete-quiz/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeleteQuiz(Guid id)
+        {
+            var result = await Mediator.Send(new DeleteQuizCommand { LessonId = id });
+
+            if (!result.Success)
+            {
+                return NotFound(result.ValidationsErrors);
+            }
+
             return Ok(result);
         }
 
@@ -76,6 +93,21 @@ namespace LingoLabs.API.Controllers.LanguageControllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(UpdateLessonCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if (!result.Success)
+            {
+                return NotFound(result.ValidationsErrors);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPut("update-quiz")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdateQuiz(UpdateQuizCommand command)
         {
             var result = await Mediator.Send(command);
 

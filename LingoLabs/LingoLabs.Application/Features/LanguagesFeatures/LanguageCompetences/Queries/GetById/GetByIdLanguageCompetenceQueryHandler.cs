@@ -1,6 +1,5 @@
 ﻿using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
-using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Queries.GetById

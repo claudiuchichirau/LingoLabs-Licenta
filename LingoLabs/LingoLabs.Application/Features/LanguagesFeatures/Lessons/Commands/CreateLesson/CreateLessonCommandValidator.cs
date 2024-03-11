@@ -9,6 +9,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
         private readonly ILanguageCompetenceRepository _languageCompetenceRepository;
         public CreateLessonCommandValidator(ILanguageCompetenceRepository _languageCompetenceRepository)
         {
+            this._languageCompetenceRepository = _languageCompetenceRepository;
+
             RuleFor(p => p.LessonTitle)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()

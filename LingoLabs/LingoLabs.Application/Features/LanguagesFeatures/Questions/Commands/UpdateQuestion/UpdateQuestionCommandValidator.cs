@@ -29,9 +29,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
             RuleFor(p => p.UpdateQuestionDto.QuestionVideoLink)
                 .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateQuestionDto.QuestionVideoLink))
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
-
-            RuleFor(p => p.UpdateQuestionDto.QuestionVideoLink)
-                .MaximumLength(500).WithMessage("{PropertyName} must not exceed 500 characters.");
         }
 
         private bool BeJpgOrPng(byte[] imageData)

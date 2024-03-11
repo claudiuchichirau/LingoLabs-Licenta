@@ -6,14 +6,14 @@ namespace LingoLabs.Domain.Entities.Languages
     {
         public Guid LessonId { get; protected set; }
         public string LessonTitle { get; protected set; }
-        public string? LessonDescription { get; private set; } = string.Empty; 
-        public string? LessonRequirement { get; private set; } = string.Empty;     
-        public string? LessonContent { get; private set; } = string.Empty;        
+        public string? LessonDescription { get; protected set; } = string.Empty; 
+        public string? LessonRequirement { get; protected set; } = string.Empty;     
+        public string? LessonContent { get; protected set; } = string.Empty;        
         public LanguageCompetenceType LessonType { get; protected set; }
-        public string? LessonVideoLink { get; private set; } = string.Empty;
-        public byte[]? LessonImageData { get; private set; }
-        public List<Question>? LessonQuestions { get; private set; } = [];
-        public List<Tag > LessonTags { get; private set; } = [];
+        public string? LessonVideoLink { get; protected set; } = string.Empty;
+        public byte[]? LessonImageData { get; protected set; }
+        public List<Question>? LessonQuestions { get; protected set; } = [];
+        public List<Tag > LessonTags { get; protected set; } = [];
         public Guid LanguageCompetenceId { get; protected set; }
         public LanguageCompetence? LanguageCompetence { get; set; }
 
@@ -116,6 +116,11 @@ namespace LingoLabs.Domain.Entities.Languages
                 LessonImageData = imageData;
             if (!string.IsNullOrWhiteSpace(videoLink))
                 LessonVideoLink = videoLink;
+        }
+
+        public void UpdateQuestions(List<Question> questions)
+        {
+            LessonQuestions = questions;
         }
     }
 }

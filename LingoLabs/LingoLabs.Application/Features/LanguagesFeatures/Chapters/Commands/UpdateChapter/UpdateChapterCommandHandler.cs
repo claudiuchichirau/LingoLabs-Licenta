@@ -13,7 +13,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Upd
         }
         public async Task<UpdateChapterCommandResponse> Handle(UpdateChapterCommandCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateChapterCommandValidator();
+            var validator = new UpdateChapterCommandValidator(chapterRepository);
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
 
             if(!validatorResult.IsValid)

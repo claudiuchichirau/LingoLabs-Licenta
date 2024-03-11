@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LingoLabs.Infrastructure.Migrations
 {
     [DbContext(typeof(LingoLabsDbContext))]
-    [Migration("20240310190003_InitialCreate")]
+    [Migration("20240311110245_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -719,7 +719,7 @@ namespace LingoLabs.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("AudioContents")
+                    b.Property<string>("TextScript")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -847,7 +847,7 @@ namespace LingoLabs.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("LingoLabs.Domain.Entities.Languages.LanguageLevel", "LanguageLevel")
-                        .WithMany()
+                        .WithMany("UserLanguageLevels")
                         .HasForeignKey("LanguageLevelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1023,6 +1023,8 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Navigation("LanguageChapters");
 
                     b.Navigation("LanguageLeveKeyWords");
+
+                    b.Navigation("UserLanguageLevels");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Lesson", b =>

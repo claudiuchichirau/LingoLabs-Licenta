@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Domain.Common;
+using LingoLabs.Domain.Entities.Enrollments;
 
 namespace LingoLabs.Domain.Entities.Languages
 {
@@ -9,8 +10,9 @@ namespace LingoLabs.Domain.Entities.Languages
         public string LanguageLevelAlias { get; private set; } 
         public string? LanguageLevelDescription { get; private set; } = string.Empty;
         public string? LanguageLevelVideoLink { get; private set; } = string.Empty;
-        public List<Chapter>? LanguageChapters { get; private set; } = new();
-        public List<Tag>? LanguageLeveKeyWords { get; private set; } = new();
+        public List<Chapter>? LanguageChapters { get; private set; } = [];
+        public List<Tag>? LanguageLeveKeyWords { get; private set; } = [];
+        public List<UserLanguageLevel>? UserLanguageLevels { get; private set; } = [];
         public Guid LanguageId { get; private set; }
         public Language? Language { get; set; }
 
@@ -67,16 +69,11 @@ namespace LingoLabs.Domain.Entities.Languages
                 LanguageLevelVideoLink = languageLevelVideoLink;
         }
 
-        public void UpdateLanguage(string languageLevelName, string languageLevelAlias, string languageLevelDescription, string languageLevelVideoLink)
+        public void UpdateLanguageLevel(string languageLevelAlias, string languageLevelDescription, string languageLevelVideoLink)
         {
-            if (string.IsNullOrWhiteSpace(languageLevelName))
-                LanguageLevelName = languageLevelName;
-            if (string.IsNullOrWhiteSpace(languageLevelAlias))
-                LanguageLevelAlias = languageLevelAlias;
-            if (!string.IsNullOrWhiteSpace(languageLevelDescription))
-                LanguageLevelDescription = languageLevelDescription;
-            if (!string.IsNullOrWhiteSpace(languageLevelVideoLink))
-                LanguageLevelVideoLink = languageLevelVideoLink;
+            LanguageLevelAlias = languageLevelAlias;
+            LanguageLevelDescription = languageLevelDescription;
+            LanguageLevelVideoLink = languageLevelVideoLink;
         }
     }
 }
