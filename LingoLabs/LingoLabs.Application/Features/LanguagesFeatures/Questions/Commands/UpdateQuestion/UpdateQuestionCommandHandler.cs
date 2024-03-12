@@ -7,14 +7,16 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
     public class UpdateQuestionCommandHandler : IRequestHandler<UpdateQuestionCommand, UpdateQuestionCommandResponse>
     {
         private readonly IQuestionRepository questionRepository;
+        private readonly ILanguageRepository languageRepository;
 
-        public UpdateQuestionCommandHandler(IQuestionRepository questionRepository)
+        public UpdateQuestionCommandHandler(IQuestionRepository questionRepository, ILanguageRepository languageRepository)
         {
             this.questionRepository = questionRepository;
+            this.languageRepository = languageRepository;
         }
         public async Task<UpdateQuestionCommandResponse> Handle(UpdateQuestionCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateQuestionCommandValidator();
+            var validator = new UpdateQuestionCommandValidator(languageRepository);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
@@ -43,7 +45,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                 updateQuestioDto.QuestionRequirement,
                 updateQuestioDto.QuestionLearningType,
                 updateQuestioDto.QuestionImageData,
-                updateQuestioDto.QuestionVideoLink);
+                updateQuestioDto.QuestionVideoLink,
+                updateQuestioDto.LanguageId);
 
             await questionRepository.UpdateAsync(question.Value);
 

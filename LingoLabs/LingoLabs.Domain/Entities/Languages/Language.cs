@@ -54,7 +54,7 @@ namespace LingoLabs.Domain.Entities.Languages
             }
         }
 
-        public void AttachPlacementTest(Question question)
+        public void UpdatePlacementTest(Question question)
         {
             if (question != null)
             {

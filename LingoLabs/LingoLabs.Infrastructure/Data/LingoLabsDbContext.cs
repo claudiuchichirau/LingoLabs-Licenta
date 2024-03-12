@@ -242,6 +242,11 @@ namespace LingoLabs.Infrastructure.Data
                 .WithOne()
                 .HasForeignKey("QuestionId");
 
+            modelBuilder.Entity<Question>()
+                .HasOne(q => q.Language)
+                .WithMany(l => l.PlacementTest)
+                .HasForeignKey(q => q.LanguageId);
+
             modelBuilder.Entity<Choice>()
                 .HasOne(c => c.Question)
                 .WithMany(q => q.QuestionChoices)

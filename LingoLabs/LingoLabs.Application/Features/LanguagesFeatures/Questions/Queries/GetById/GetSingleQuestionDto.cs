@@ -7,5 +7,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.Get
         public List<ChoiceDto> QuestionChoices { get; set; } = [];
         public byte[] QuestionImageData { get; set; } = [];
         public string QuestionVideoLink { get; set; } = string.Empty;
+        public Guid? LanguageId { get; set; }
     }
 }

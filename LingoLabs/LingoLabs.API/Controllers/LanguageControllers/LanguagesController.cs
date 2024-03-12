@@ -1,6 +1,9 @@
 ﻿using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.CreateLanguage;
+using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.CreatePlacementTest;
 using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.DeleteLanguage;
+using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.DeletePlacementTest;
 using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.UpdateLanguage;
+using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.UpdatePlacementTest;
 using LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.GetAll;
 using LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
@@ -65,6 +68,49 @@ namespace LingoLabs.API.Controllers.LanguageControllers
         public async Task<IActionResult> Delete(Guid id)
         {
             var result = await Mediator.Send(new DeleteLanguageCommand { LanguageId = id });
+
+            if (!result.Success)
+            {
+                return NotFound(result.ValidationsErrors);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("placement-test")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<IActionResult> CreatePlacementTest(CreatePlacementTestCommand command)
+        {
+            var result = await Mediator.Send(command);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.ValidationsErrors);
+            }
+            return Ok(result);
+        }
+
+        [HttpDelete("placement-test/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> DeletePlacementTest(Guid id)
+        {
+            var result = await Mediator.Send(new DeletePlacementTestCommand { LanguageId = id });
+
+            if (!result.Success)
+            {
+                return NotFound(result.ValidationsErrors);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPut("placement-test")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> UpdatePlacementTest(UpdatePlacementTestCommand command)
+        {
+            var result = await Mediator.Send(command);
 
             if (!result.Success)
             {

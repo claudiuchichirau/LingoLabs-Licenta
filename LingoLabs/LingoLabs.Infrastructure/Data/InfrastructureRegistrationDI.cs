@@ -5,6 +5,7 @@ using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.
 using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Commands.DeleteQuestionResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.DeleteUserLanguageLevel;
 using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.DeleteLanguageCompetence;
+using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.DeletePlacementTest;
 using LingoLabs.Application.Persistence;
 using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
@@ -55,6 +56,7 @@ namespace LingoLabs.Infrastructure.Data
             services.AddTransient<DeleteLanguageLevelResultCommandHandler>();
             services.AddTransient<DeleteUserLanguageLevelCommandHandler>();
             services.AddTransient<DeleteLanguageCompetenceCommandHandler>();
+            services.AddTransient<DeletePlacementTestCommandHandler>();
 
 
             return services;

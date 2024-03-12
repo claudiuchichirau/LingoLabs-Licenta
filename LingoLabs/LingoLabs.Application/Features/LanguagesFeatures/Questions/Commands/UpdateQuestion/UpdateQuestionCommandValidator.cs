@@ -1,12 +1,16 @@
 ﻿using FluentValidation;
+using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.UpdateQuestion
 {
     public class UpdateQuestionCommandValidator: AbstractValidator<UpdateQuestionCommand>
     {
-        public UpdateQuestionCommandValidator()
+        private readonly ILanguageRepository languageRepository;
+        public UpdateQuestionCommandValidator(ILanguageRepository languageRepository)
         {
+            this.languageRepository = languageRepository;
+
             RuleFor(p => p.QuestionId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
@@ -29,6 +33,17 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
             RuleFor(p => p.UpdateQuestionDto.QuestionVideoLink)
                 .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateQuestionDto.QuestionVideoLink))
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
+
+            RuleFor(p => p.UpdateQuestionDto.LanguageId)
+                .MustAsync(async (languageId, cancellation) =>
+                {
+                    if (languageId == Guid.Empty)
+                        return true;
+
+                    var language = await languageRepository.FindByIdAsync(languageId);
+                    return language.IsSuccess;
+                })
+                .WithMessage("LanguageId must exist.");
         }
 
         private bool BeJpgOrPng(byte[] imageData)

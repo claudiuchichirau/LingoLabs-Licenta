@@ -921,7 +921,7 @@ namespace LingoLabs.Infrastructure.Migrations
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Question", b =>
                 {
-                    b.HasOne("LingoLabs.Domain.Entities.Languages.Language", null)
+                    b.HasOne("LingoLabs.Domain.Entities.Languages.Language", "Language")
                         .WithMany("PlacementTest")
                         .HasForeignKey("LanguageId");
 
@@ -930,6 +930,8 @@ namespace LingoLabs.Infrastructure.Migrations
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Language");
 
                     b.Navigation("Lesson");
                 });
