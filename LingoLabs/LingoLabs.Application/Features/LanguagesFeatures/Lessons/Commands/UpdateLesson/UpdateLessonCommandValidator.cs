@@ -6,8 +6,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
 {
     public class UpdateLessonCommandValidator: AbstractValidator<UpdateLessonCommand>
     {
-        public UpdateLessonCommandValidator()
+        private readonly ILessonRepository lessonRepository;
+        public UpdateLessonCommandValidator(ILessonRepository lessonRepository)
         {
+            this.lessonRepository = lessonRepository;
+
             RuleFor(p => p.LessonId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
@@ -17,6 +20,10 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
+
+            RuleFor(p => p)
+                .MustAsync((p, cancellation) => ValidateLesson(p.UpdateLessonDto.LessonTitle, lessonRepository, p.LessonId))
+                .WithMessage("{PropertyName} must be unique.");
 
             RuleFor(p => p.UpdateLessonDto.LessonDescription)
                 .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.UpdateLessonDto.LessonDescription))
@@ -58,6 +65,14 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
             return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
                && (uriResult.Host == "www.youtube.com" || uriResult.Host == "youtu.be");
+        }
+
+        private async Task<bool> ValidateLesson(string lessonTitle, ILessonRepository lessonRepository, Guid lessonId)
+        {
+
+            if (await lessonRepository.ExistsLessonForUpdateAsync(lessonTitle, lessonId) == true)
+                return false;
+            return true;
         }
     }
 }

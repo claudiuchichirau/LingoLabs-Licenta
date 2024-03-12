@@ -34,5 +34,17 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         {
             return await context.Languages.AnyAsync(language => language.LanguageName == languageName);
         }
+
+        public async Task<bool> ExistsLanguageForUpdateAsync(string languageName, Guid languageId)
+        {
+            var language = await context.Languages.FirstOrDefaultAsync(l => l.LanguageId == languageId);
+
+            var duplicateLanguage = await context.Languages
+                .AnyAsync(l => l.LanguageName == languageName && l.LanguageId != languageId);
+
+            if(!duplicateLanguage)
+                return false;
+            return true;
+        }
     }
 }

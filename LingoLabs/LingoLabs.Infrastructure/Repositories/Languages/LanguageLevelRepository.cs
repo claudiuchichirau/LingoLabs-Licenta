@@ -33,5 +33,17 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         {
             return await context.LanguageLevels.AnyAsync(languageLevel => languageLevel.LanguageLevelName == languageLevelName);
         }
+
+        public async Task<bool> ExistLanguageLevelUpdateAsync(string languageLevelName, Guid languageLevelId)
+        {
+            var languageLevel = await context.LanguageLevels.FirstOrDefaultAsync(l => l.LanguageLevelId == languageLevelId);
+
+            var duplicateLanguageLevel = await context.LanguageLevels
+                .AnyAsync(l => l.LanguageLevelName == languageLevelName && l.LanguageLevelId != languageLevelId);
+
+            if (!duplicateLanguageLevel)
+                return false;
+            return true;
+        }
     }
 }

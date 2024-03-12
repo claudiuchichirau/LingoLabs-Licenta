@@ -26,5 +26,22 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
 
             return Result<Lesson>.Success(result);
         }
+
+        public async Task<bool> ExistsLessonAsync(string lessonTitle)
+        {
+            return await context.Lessons.AnyAsync(lesson => lesson.LessonTitle == lessonTitle);
+        }
+
+        public async Task<bool> ExistsLessonForUpdateAsync(string lessonTitle, Guid lessonId)
+        {
+            var lesson = await context.Lessons.FirstOrDefaultAsync(l => l.LessonId == lessonId);
+
+            var duplicateLesson = await context.Lessons
+                .AnyAsync(l => l.LessonTitle == lessonTitle && l.LessonId != lessonId);
+
+            if (!duplicateLesson)
+                return false;
+            return true;
+        }
     }
 }

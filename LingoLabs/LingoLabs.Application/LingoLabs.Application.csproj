@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <Folder Include="Contracts\" />
-    <Folder Include="Features\LanguagesFeatures\LanguageLevels\Commands\AttachChapter\" />
     <Folder Include="Features\LanguagesFeatures\Lessons\Commands\AttachTags\" />
   </ItemGroup>
 

@@ -17,7 +17,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
 
         public async Task<CreateLessonCommandResponse> Handle(CreateLessonCommand request, CancellationToken cancellationToken)
         {
-            var validator = new CreateLessonCommandValidator(_languageCompetenceRepository);
+            var validator = new CreateLessonCommandValidator(_languageCompetenceRepository, repository);
             var validationResult = await validator.ValidateAsync(request);
 
             if(!validationResult.IsValid)

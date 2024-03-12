@@ -13,7 +13,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
         }
         public async Task<UpdateLessonCommandResponse> Handle(UpdateLessonCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateLessonCommandValidator();
+            var validator = new UpdateLessonCommandValidator(lessonRepository);
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
 
             if(!validatorResult.IsValid)

@@ -19,14 +19,14 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Upd
                 .MaximumLength(100).WithMessage("{PropertyName} must not exceed 100 characters.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidateChapter(p.UpdateChapterDto.ChapterName, chapterRepository))
+                .MustAsync((p, cancellation) => ValidateChapter(p.UpdateChapterDto.ChapterName, chapterRepository, p.ChapterId))
                 .WithMessage("ChapterName must be unique.");
             this.chapterRepository = chapterRepository;
         }
 
-        private async Task<bool> ValidateChapter(string name, IChapterRepository chapterRepository)
+        private async Task<bool> ValidateChapter(string name, IChapterRepository chapterRepository, Guid chapterId)
         {
-            if (await chapterRepository.ExistChapterByNameAsync(name))
+            if (await chapterRepository.ExistChapterByNameForUpdateAsync(name, chapterId))
                 return false;
             return true;
         }

@@ -13,7 +13,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
         }
         public async Task<UpdateLanguageLevelCommandResponse> Handle(UpdateLanguageLevelCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateLanguageLevelCommandValidator();
+            var validator = new UpdateLanguageLevelCommandValidator(languageLevelRepository);
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if(!validationResult.IsValid) 

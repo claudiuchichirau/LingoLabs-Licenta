@@ -32,5 +32,17 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         {
             return await context.Chapters.AnyAsync(c => c.ChapterName == name);
         }
+
+        public async Task<bool> ExistChapterByNameForUpdateAsync(string chapterName, Guid chapterId)
+        {
+            var chapter = await context.Chapters.FirstOrDefaultAsync(l => l.ChapterId == chapterId);
+
+            var duplicateLanguage = await context.Chapters
+                .AnyAsync(l => l.ChapterName == chapterName && l.ChapterId != chapterId);
+
+            if (!duplicateLanguage)
+                return false;
+            return true;
+        }
     }
 }
