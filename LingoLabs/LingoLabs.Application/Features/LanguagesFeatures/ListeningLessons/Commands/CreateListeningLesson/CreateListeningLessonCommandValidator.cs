@@ -9,6 +9,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
         private readonly ILanguageCompetenceRepository _languageCompetenceRepository;
         public CreateListeningLessonCommandValidator(ILanguageCompetenceRepository _languageCompetenceRepository)
         {
+            this._languageCompetenceRepository = _languageCompetenceRepository;
+
             RuleFor(p => p.LessonTitle)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()

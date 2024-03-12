@@ -8,6 +8,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
         private readonly ILanguageLevelRepository repository;
         public CreateLanguageLevelCommandValidator(ILanguageLevelRepository repository)
         {
+            this.repository = repository;
+
             RuleFor(p => p.LanguageLevelName)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()

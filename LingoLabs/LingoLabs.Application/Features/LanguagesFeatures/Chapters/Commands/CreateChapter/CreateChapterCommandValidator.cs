@@ -8,6 +8,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Cre
         private readonly IChapterRepository chapterRepository;
         public CreateChapterCommandValidator(IChapterRepository chapterRepository)
         {
+            this.chapterRepository = chapterRepository;
+
             RuleFor(p => p.ChapterName)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
