@@ -23,6 +23,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.Get
                     QuestionId = question.Value.QuestionId,
                     QuestionRequirement = question.Value.QuestionRequirement,
                     QuestionLearningType = question.Value.QuestionLearningType,
+                    QuestionPriorityNumber = question.Value.QuestionPriorityNumber,
                     QuestionChoices = question.Value.QuestionChoices.Select(c => new Choices.Queries.ChoiceDto
                     {
                         ChoiceId = c.ChoiceId,

@@ -44,5 +44,13 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                 return false;
             return true;
         }
+
+        public async Task<bool> ExistsChapterPriorityNumberAsync(int priorityNumber, Guid chapterId)
+        {
+            var chapterFound = await context.Chapters.FirstOrDefaultAsync(chapter => chapter.ChapterId == chapterId);
+
+            return await context.Chapters
+                .AnyAsync(chapter => chapter.ChapterPriorityNumber == priorityNumber && chapter.LanguageLevelId == chapterFound.LanguageLevelId && chapter.ChapterId != chapterFound.ChapterId);
+        }
     }
 }

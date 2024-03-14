@@ -10,5 +10,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
         public string LessonContent { get; set; } = string.Empty;
         public string LessonVideoLink { get; set; } = string.Empty;
         public byte[] LessonImageData { get; set; } = [];
+        public int? LessonPriorityNumber { get; set; }
     }
 }

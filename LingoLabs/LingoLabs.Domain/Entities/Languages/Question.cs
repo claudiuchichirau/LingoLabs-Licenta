@@ -10,6 +10,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public List<Choice>? QuestionChoices { get; protected set; } = [];
         public byte[]? QuestionImageData { get; private set; }
         public string? QuestionVideoLink { get; private set; } = string.Empty;
+        public int? QuestionPriorityNumber { get; private set; }
         public Guid LessonId { get; protected set; }
         public Lesson? Lesson { get; set; }
         public Guid? LanguageId { get; protected set; }
@@ -45,7 +46,7 @@ namespace LingoLabs.Domain.Entities.Languages
                    learningType == LearningType.Logical;
         }
 
-        public void UpdateQuestion(string questionRequirement, LearningType questionLearningType, byte[] imageData, string videoLink, Guid languageId)
+        public void UpdateQuestion(string questionRequirement, LearningType questionLearningType, byte[] imageData, string videoLink, Guid languageId, int? questionPriorityNumber)
         {
             if (!string.IsNullOrWhiteSpace(questionRequirement))
                 QuestionRequirement = questionRequirement;
@@ -61,6 +62,8 @@ namespace LingoLabs.Domain.Entities.Languages
 
             if (languageId != default)
                 LanguageId = languageId;
+
+            QuestionPriorityNumber = questionPriorityNumber;
         }
 
         public void UpdateQuestionLanguageId(Guid languageId)

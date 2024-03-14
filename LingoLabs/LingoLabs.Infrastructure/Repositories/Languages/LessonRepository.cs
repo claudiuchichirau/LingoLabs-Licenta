@@ -43,5 +43,13 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                 return false;
             return true;
         }
+
+        public async Task<bool> ExistsLessonPriorityNumberAsync(int priorityNumber, Guid lessonId)
+        {
+            var lessonFound = await context.Lessons.FirstOrDefaultAsync(lesson => lesson.LessonId == lessonId);
+
+            return await context.Lessons
+                .AnyAsync(lesson => lesson.LessonPriorityNumber == priorityNumber && lesson.LanguageCompetenceId == lessonFound.LanguageCompetenceId && lesson.LessonId != lessonFound.LessonId);
+        }
     }
 }

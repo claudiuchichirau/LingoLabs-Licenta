@@ -48,7 +48,7 @@ namespace LingoLabs.Domain.Entities.Languages
             }
         }
 
-        public void UpdateListeningLanguage(string lessonTitle, string lessonDescription, string lessonRequirement, string lessonContent, byte[] imageData, string videoLink, string textScript, List<string> accents)
+        public void UpdateListeningLanguage(string lessonTitle, string lessonDescription, string lessonRequirement, string lessonContent, byte[] imageData, string videoLink, string textScript, List<string> accents, int? lessonPriorityNumber)
         {
             LessonTitle = lessonTitle;
             LessonDescription = lessonDescription;
@@ -59,6 +59,7 @@ namespace LingoLabs.Domain.Entities.Languages
             TextScript = textScript;
             if (accents != null && accents.Count > 0)
                 Accents = accents;
+            LessonPriorityNumber = lessonPriorityNumber;
         }
 
         private static bool IsValidLessonType(LanguageCompetenceType languageCompetenceType)

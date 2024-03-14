@@ -6,9 +6,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
     public class UpdateLanguageLevelCommandValidator: AbstractValidator<UpdateLanguageLevelCommand>
     {
         private readonly ILanguageLevelRepository languageLevelRepository;
-        public UpdateLanguageLevelCommandValidator(ILanguageLevelRepository languageLevelRepository)
+        private readonly ILanguageRepository languageRepository;
+        public UpdateLanguageLevelCommandValidator(ILanguageLevelRepository languageLevelRepository, ILanguageRepository languageRepository)
         {
             this.languageLevelRepository = languageLevelRepository;
+            this.languageRepository = languageRepository;
 
             RuleFor(p => p.LanguageLevelId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
@@ -34,7 +36,16 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
             RuleFor(p => p.UpdateLanguageLevelDto.LanguageLevelVideoLink)
                 .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateLanguageLevelDto.LanguageLevelVideoLink))
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
-            this.languageLevelRepository = languageLevelRepository;
+
+            RuleFor(p => p.UpdateLanguageLevelDto.PriorityNumber)
+                .GreaterThan(0).When(p => p.UpdateLanguageLevelDto.PriorityNumber.HasValue)
+                .WithMessage("{PropertyName} must be greater than 0.");
+
+            RuleFor(p => p)
+                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.UpdateLanguageLevelDto.PriorityNumber.Value, p.LanguageLevelId, languageLevelRepository, languageRepository))
+                .When(p => p.UpdateLanguageLevelDto.PriorityNumber.HasValue && p.UpdateLanguageLevelDto.PriorityNumber.Value > 0)
+                .WithMessage("PriorityNumber must be unique.");
+
         }
         private bool BeValidUrl(string url)
         {
@@ -47,6 +58,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
         {
 
             if (await languageLevelRepository.ExistLanguageLevelUpdateAsync(languageLevelName, languageLevelId) == true)
+                return false;
+            return true;
+        }
+
+        private async Task<bool> ValidatePriorityNumber(int priorityNumber, Guid languageLevelId, ILanguageLevelRepository languageLevelRepository, ILanguageRepository languageRepository)
+        {
+            if (await languageRepository.ExistsLanguageLevelPriorityNumberAsync(priorityNumber, languageLevelId) == true)
                 return false;
             return true;
         }

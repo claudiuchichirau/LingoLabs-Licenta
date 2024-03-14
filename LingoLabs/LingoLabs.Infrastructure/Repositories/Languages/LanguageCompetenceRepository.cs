@@ -41,5 +41,13 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                 .Select(competence => competence.LanguageCompetenceType)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<bool> ExistsLanguageCompetencePriorityNumberAsync(int priorityNumber, Guid languageCompetenceId)
+        {
+            var languageCompetenceFound = await context.LanguageCompetences.FirstOrDefaultAsync(languageCompetence => languageCompetence.LanguageCompetenceId == languageCompetenceId);
+
+            return await context.LanguageCompetences
+                .AnyAsync(languageCompetence => languageCompetence.LanguageCompetencePriorityNumber == priorityNumber && languageCompetence.ChapterId == languageCompetenceFound.ChapterId && languageCompetence.LanguageCompetenceId != languageCompetenceFound.LanguageCompetenceId);
+        }
     }
 }

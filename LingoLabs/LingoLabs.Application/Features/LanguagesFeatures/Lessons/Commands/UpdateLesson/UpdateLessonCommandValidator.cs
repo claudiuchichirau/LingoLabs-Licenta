@@ -44,6 +44,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
             RuleFor(p => p.UpdateLessonDto.LessonImageData)
                 .Must(BeJpgOrPng).When(p => p.UpdateLessonDto.LessonImageData != null && p.UpdateLessonDto.LessonImageData.Length > 0)
                 .WithMessage("{PropertyName} should be a .jpg or .png image if it exists.");
+
+            RuleFor(p => p)
+                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.UpdateLessonDto.LessonPriorityNumber.Value, p.LessonId, lessonRepository))
+                .When(p => p.UpdateLessonDto.LessonPriorityNumber.HasValue && p.UpdateLessonDto.LessonPriorityNumber.Value > 0)
+                .WithMessage("PriorityNumber must be unique.");
         }
 
 
@@ -71,6 +76,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
         {
 
             if (await lessonRepository.ExistsLessonForUpdateAsync(lessonTitle, lessonId) == true)
+                return false;
+            return true;
+        }
+
+        private async Task<bool> ValidatePriorityNumber(int priorityNumber, Guid lessonId, ILessonRepository lessonRepository)
+        {
+            if (await lessonRepository.ExistsLessonPriorityNumberAsync(priorityNumber, lessonId) == true)
                 return false;
             return true;
         }

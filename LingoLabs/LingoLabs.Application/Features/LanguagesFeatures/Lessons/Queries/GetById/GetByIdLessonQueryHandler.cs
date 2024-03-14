@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Application.Persistence.Languages;
+using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetById
@@ -16,6 +17,16 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
             var lesson = await repository.FindByIdAsync(request.Id);
             if(lesson.IsSuccess)
             {
+                var sortedLessonQuestions = lesson.Value.LessonQuestions
+                    .OrderBy(question => question.QuestionPriorityNumber ?? int.MaxValue)
+                    .Select(question => new Questions.Queries.QuestionDto
+                    {
+                        QuestionId = question.QuestionId,
+                        QuestionRequirement = question.QuestionRequirement,
+                        QuestionLearningType = question.QuestionLearningType,
+                        LessonId = question.LessonId
+                    }).ToList();
+
                 return new GetSingleLessonDto
                 {
                     LessonId = lesson.Value.LessonId,
@@ -27,13 +38,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
                     LessonVideoLink = lesson.Value.LessonVideoLink,
                     LessonImageData = lesson.Value.LessonImageData,
                     LanguageCompetenceId = lesson.Value.LanguageCompetenceId,
-                    LessonQuestions = lesson.Value.LessonQuestions.Select(c => new Questions.Queries.QuestionDto
-                    {
-                        QuestionId = c.QuestionId,
-                        QuestionRequirement = c.QuestionRequirement,
-                        QuestionLearningType = c.QuestionLearningType,
-                        LessonId = c.LessonId
-                    }).ToList()
+                    LessonPriorityNumber = lesson.Value.LessonPriorityNumber,
+                    LessonQuestions = sortedLessonQuestions
                 };
             }
             

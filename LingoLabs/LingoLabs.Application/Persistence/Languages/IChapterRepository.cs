@@ -6,5 +6,6 @@ namespace LingoLabs.Application.Persistence.Languages
     {
         Task<bool> ExistChapterByNameAsync(string name);
         Task<bool> ExistChapterByNameForUpdateAsync(string chapterName, Guid chapterId);
+        Task<bool> ExistsChapterPriorityNumberAsync(int priorityNumber, Guid chapterId);
     }
 }

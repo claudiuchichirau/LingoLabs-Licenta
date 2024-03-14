@@ -7,9 +7,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
     public class UpdateQuestionCommandValidator: AbstractValidator<UpdateQuestionCommand>
     {
         private readonly ILanguageRepository languageRepository;
-        public UpdateQuestionCommandValidator(ILanguageRepository languageRepository)
+        private readonly IQuestionRepository questionRepository;
+        public UpdateQuestionCommandValidator(ILanguageRepository languageRepository, IQuestionRepository questionRepository)
         {
             this.languageRepository = languageRepository;
+            this.questionRepository = questionRepository;
 
             RuleFor(p => p.QuestionId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
@@ -44,6 +46,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                     return language.IsSuccess;
                 })
                 .WithMessage("LanguageId must exist.");
+
+            RuleFor(p => p)
+                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.UpdateQuestionDto.QuestionPriorityNumber.Value, p.QuestionId, questionRepository))
+                .When(p => p.UpdateQuestionDto.QuestionPriorityNumber.HasValue && p.UpdateQuestionDto.QuestionPriorityNumber.Value > 0)
+                .WithMessage("PriorityNumber must be unique.");
+
         }
 
         private bool BeJpgOrPng(byte[] imageData)
@@ -64,6 +72,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
             return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
                && (uriResult.Host == "www.youtube.com" || uriResult.Host == "youtu.be");
+        }
+
+        private async Task<bool> ValidatePriorityNumber(int priorityNumber, Guid questionId, IQuestionRepository questionRepository)
+        {
+            if (await questionRepository.ExistsQuestionPriorityNumberAsync(priorityNumber, questionId) == true)
+                return false;
+            return true;
         }
 
     }

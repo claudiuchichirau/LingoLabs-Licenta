@@ -1,5 +1,6 @@
 ﻿using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
+using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Queries.GetById
@@ -29,6 +30,16 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
 
                 var userLanguageLevels = userLanguageLevelsResult.Value;
 
+                var sortedLessons = languageCompetence.Value.Lessons
+                    .OrderBy(lesson => lesson.LessonPriorityNumber ?? int.MaxValue)
+                    .Select(lesson => new Lessons.Queries.LessonDto
+                    {
+                        LessonId = lesson.LessonId,
+                        LessonTitle = lesson.LessonTitle,
+                        LessonType = lesson.LessonType,
+                        LanguageCompetenceId = lesson.LanguageCompetenceId
+                    }).ToList();
+
                 return new GetSingleLanguageCompetenceDto
                 {
                     LanguageCompetenceId = languageCompetence.Value.LanguageCompetenceId,
@@ -38,14 +49,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                     LanguageId = languageCompetence.Value.LanguageId,
                     LanguageCompetenceDescription = languageCompetence.Value.LanguageCompetenceDescription,
                     LanguageCompetenceVideoLink = languageCompetence.Value.LanguageCompetenceVideoLink,
+                    LanguageCompetencePriorityNumber = languageCompetence.Value.LanguageCompetencePriorityNumber,
 
-                    Lessons = languageCompetence.Value.Lessons.Select(lesson => new Lessons.Queries.LessonDto
-                    {
-                        LessonId = lesson.LessonId,
-                        LessonTitle = lesson.LessonTitle,
-                        LessonType = lesson.LessonType,
-                        LanguageCompetenceId = lesson.LanguageCompetenceId
-                    }).ToList(),
+                    Lessons = sortedLessons,
 
                     LearningCompetenceKeyWords = languageCompetence.Value.LearningCompetenceKeyWords.Select(tag => new Tags.Queries.TagDto
                     {

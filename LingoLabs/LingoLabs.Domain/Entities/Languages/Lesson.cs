@@ -8,7 +8,8 @@ namespace LingoLabs.Domain.Entities.Languages
         public string LessonTitle { get; protected set; }
         public string? LessonDescription { get; protected set; } = string.Empty; 
         public string? LessonRequirement { get; protected set; } = string.Empty;     
-        public string? LessonContent { get; protected set; } = string.Empty;        
+        public string? LessonContent { get; protected set; } = string.Empty;    
+        public int? LessonPriorityNumber { get; protected set; }
         public LanguageCompetenceType LessonType { get; protected set; }
         public string? LessonVideoLink { get; protected set; } = string.Empty;
         public byte[]? LessonImageData { get; protected set; }
@@ -102,7 +103,7 @@ namespace LingoLabs.Domain.Entities.Languages
             }
         }
 
-        public void UpdateLesson(string lessonTitle, string lessonDescription, string lessonRequirement, string lessonContent, byte[] imageData, string videoLink)
+        public void UpdateLesson(string lessonTitle, string lessonDescription, string lessonRequirement, string lessonContent, byte[] imageData, string videoLink, int? lessonPriorityNumber)
         {
             if (!string.IsNullOrWhiteSpace(lessonTitle))
                 LessonTitle = lessonTitle;
@@ -116,6 +117,8 @@ namespace LingoLabs.Domain.Entities.Languages
                 LessonImageData = imageData;
             if (!string.IsNullOrWhiteSpace(videoLink))
                 LessonVideoLink = videoLink;
+
+            LessonPriorityNumber = lessonPriorityNumber;
         }
 
         public void UpdateQuestions(List<Question> questions)

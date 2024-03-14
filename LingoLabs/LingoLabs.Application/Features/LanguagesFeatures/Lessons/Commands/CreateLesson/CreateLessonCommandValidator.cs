@@ -23,8 +23,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
                 .WithMessage("{PropertyName} must be unique.");
 
             RuleFor(p => p.LessonType)
-                .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotNull()
+                //.NotEmpty().WithMessage("{PropertyName} is required.")
                 .Must(type => type == LanguageCompetenceType.Grammar || type == LanguageCompetenceType.Reading || type == LanguageCompetenceType.Writing)
                 .WithMessage("{PropertyName} must have one of the following values: Grammar, Reading, Writing");
 

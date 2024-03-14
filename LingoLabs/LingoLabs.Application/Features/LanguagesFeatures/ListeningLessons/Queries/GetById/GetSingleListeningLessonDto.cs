@@ -9,6 +9,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
         public string LessonContent { get; set; } = string.Empty;
         public string LessonVideoLink { get; set; } = string.Empty;
         public byte[] LessonImageData { get; set; } = [];
+        public int? LessonPriorityNumber { get; set; }
         public List<QuestionDto> LessonQuestions { get; set; } = [];
     }
 }

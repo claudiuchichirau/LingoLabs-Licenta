@@ -8,6 +8,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
     {
         public string LanguageCompetenceDescription { get; set; } = string.Empty;
         public string LanguageCompetenceVideoLink { get; set; } = string.Empty;
+        public int? LanguageCompetencePriorityNumber { get; set; }
         public List<LessonDto> Lessons { get; set; } = [];
         public List<TagDto> LearningCompetenceKeyWords { get; set; } = [];
         public List<UserLanguageLevelDto> UserLanguageLevels { get; set; } = [];

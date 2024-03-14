@@ -1,11 +1,15 @@
 ﻿using FluentValidation;
+using LingoLabs.Application.Persistence.Languages;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Commands.UpdateListeningLesson
 {
     public class UpdateListeningLessonCommandValidator: AbstractValidator<UpdateListeningLessonCommand>
     {
-        public UpdateListeningLessonCommandValidator()
+        private readonly ILessonRepository lessonRepository;
+        public UpdateListeningLessonCommandValidator(ILessonRepository lessonRepository)
         {
+            this.lessonRepository = lessonRepository;
+
             RuleFor(p => p.LessonId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
@@ -46,6 +50,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                 .NotNull()
                 .Must(accents => accents.Count >= 2).WithMessage("{PropertyName} must contain at least 2 elements.");
 
+            RuleFor(p => p)
+                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.UpdateListeningLessonDto.LessonPriorityNumber.Value, p.LessonId, lessonRepository))
+                .When(p => p.UpdateListeningLessonDto.LessonPriorityNumber.HasValue && p.UpdateListeningLessonDto.LessonPriorityNumber.Value > 0)
+                .WithMessage("PriorityNumber must be unique.");
+
         }
 
         private bool BeJpgOrPng(byte[] imageData)
@@ -66,6 +75,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
             return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
                && (uriResult.Host == "www.youtube.com" || uriResult.Host == "youtu.be");
+        }
+
+        private async Task<bool> ValidatePriorityNumber(int priorityNumber, Guid lessonId, ILessonRepository lessonRepository)
+        {
+            if (await lessonRepository.ExistsLessonPriorityNumberAsync(priorityNumber, lessonId) == true)
+                return false;
+            return true;
         }
     }
 }

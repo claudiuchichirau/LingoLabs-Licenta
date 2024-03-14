@@ -1,6 +1,7 @@
 ﻿using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Queries.GetById;
 using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
+using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Queries.GetById
@@ -30,6 +31,15 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
 
                 var userLanguageLevels = userLanguageLevelsResult.Value;
 
+                var languageChapterSorted = languageLevel.Value.LanguageChapters
+                    .OrderBy(chapter => chapter.ChapterPriorityNumber ?? int.MaxValue)
+                    .Select(chapter => new Chapters.Queries.ChapterDto
+                    {
+                        ChapterId = chapter.ChapterId,
+                        ChapterName = chapter.ChapterName,
+                        LanguageLevelId = chapter.LanguageLevelId
+                    }).ToList();
+
                 return new GetSingleLanguageLevelDto
                 {
                     LanguageLevelId = languageLevel.Value.LanguageLevelId,
@@ -38,13 +48,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
                     LanguageId = languageLevel.Value.LanguageId,
                     LanguageLevelDescription = languageLevel.Value.LanguageLevelDescription,
                     LanguageLevelVideoLink = languageLevel.Value.LanguageLevelVideoLink,
+                    PriorityNumber = languageLevel.Value.PriorityNumber,
 
-                    LanguageChapters = languageLevel.Value.LanguageChapters.Select(chapter => new Chapters.Queries.ChapterDto
-                    {
-                        ChapterId = chapter.ChapterId,
-                        ChapterName = chapter.ChapterName,
-                        LanguageLevelId = chapter.LanguageLevelId
-                    }).ToList(),
+                    LanguageChapters = languageChapterSorted,
 
                     LanguageLeveKeyWords = languageLevel.Value.LanguageLeveKeyWords.Select(tag => new Tags.Queries.TagDto
                     {

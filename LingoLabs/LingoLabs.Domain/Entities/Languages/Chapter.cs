@@ -7,7 +7,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public Guid ChapterId { get; private set; }
         public string ChapterName { get; private set; }
         public string? ChapterDescription { get; private set; } = string.Empty;
-        public int? ChapterNumber { get; private set; } 
+        public int? ChapterPriorityNumber { get; private set; }
         public byte[]? ChapterImageData { get; private set; }
         public string? ChapterVideoLink { get; private set; } = string.Empty;
         public List<LanguageCompetence>? languageCompetences { get; private set; } = new();
@@ -35,12 +35,6 @@ namespace LingoLabs.Domain.Entities.Languages
         {
             if (!string.IsNullOrWhiteSpace(chapterDescription))
                 ChapterDescription = chapterDescription;
-        }
-
-        public void AttachChapterNumber(int chapterNumber)
-        {
-            if (chapterNumber > 0)
-                ChapterNumber = chapterNumber;
         }
 
         public void AttachLanguageCompetence(LanguageCompetence languageCompetence)
@@ -77,18 +71,17 @@ namespace LingoLabs.Domain.Entities.Languages
                 ChapterVideoLink = chapterVideoLink;
         }
 
-        public void UpdateChapter(string chapterName, string chapterDescription, int chapterNumber, byte[] chapterImageData, string chapterVideoLink)
+        public void UpdateChapter(string chapterName, string chapterDescription, byte[] chapterImageData, string chapterVideoLink, int? chapterPrioriryNumber)
         {
             if (!string.IsNullOrWhiteSpace(chapterName))
                 ChapterName = chapterName;
             if (!string.IsNullOrWhiteSpace(chapterDescription))
                 ChapterDescription = chapterDescription;
-            if (chapterNumber > 0)
-                ChapterNumber = chapterNumber;
             if (chapterImageData != null && chapterImageData.Length > 0)
                 ChapterImageData = chapterImageData;
             if (!string.IsNullOrWhiteSpace(chapterVideoLink))
                 ChapterVideoLink = chapterVideoLink;
+            ChapterPriorityNumber = chapterPrioriryNumber;
         }
     }
 }

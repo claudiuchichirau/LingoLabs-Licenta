@@ -9,6 +9,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public string LanguageCompetenceName { get; private set; }
         public string? LanguageCompetenceDescription { get; private set; } = string.Empty;
         public string? LanguageCompetenceVideoLink { get; private set; } = string.Empty;
+        public int? LanguageCompetencePriorityNumber { get; private set; }
         public LanguageCompetenceType LanguageCompetenceType { get; private set; }
         public List<Lesson>? Lessons { get; private set; } = new();
         public List<Tag>? LearningCompetenceKeyWords { get; private set; } = new();
@@ -89,12 +90,13 @@ namespace LingoLabs.Domain.Entities.Languages
                 LanguageCompetenceVideoLink = languageCompetenceVideoLink;
         }
 
-        public void UpdateLanguageCompetence(string languageCompetenceDescription, string languageCompetenceVideoLink)
+        public void UpdateLanguageCompetence(string languageCompetenceDescription, string languageCompetenceVideoLink, int? languageCompetencePriorityNumber)
         {
             if (!string.IsNullOrWhiteSpace(languageCompetenceDescription))
                 LanguageCompetenceDescription = languageCompetenceDescription;
             if (!string.IsNullOrWhiteSpace(languageCompetenceVideoLink))
                 LanguageCompetenceVideoLink = languageCompetenceVideoLink;
+            LanguageCompetencePriorityNumber = languageCompetencePriorityNumber;
         }
     }
 }

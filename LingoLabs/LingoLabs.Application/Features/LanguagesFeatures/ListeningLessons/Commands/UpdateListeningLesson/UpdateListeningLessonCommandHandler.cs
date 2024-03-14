@@ -6,14 +6,16 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
     public class UpdateListeningLessonCommandHandler : IRequestHandler<UpdateListeningLessonCommand, UpdateListeningLessonCommandResponse>
     {
         private readonly IListeningLessonRepository listeningLessonRepository;
+        private readonly ILessonRepository lessonRepository;
 
-        public UpdateListeningLessonCommandHandler(IListeningLessonRepository listeningLessonRepository)
+        public UpdateListeningLessonCommandHandler(IListeningLessonRepository listeningLessonRepository, ILessonRepository lessonRepository)
         {
             this.listeningLessonRepository = listeningLessonRepository;
+            this.lessonRepository = lessonRepository;
         }
         public async Task<UpdateListeningLessonCommandResponse> Handle(UpdateListeningLessonCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateListeningLessonCommandValidator();
+            var validator = new UpdateListeningLessonCommandValidator(lessonRepository);
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if(!validationResult.IsValid) 
@@ -46,7 +48,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                 updateListeningLessonDto.LessonImageData,
                 updateListeningLessonDto.LessonVideoLink,
                 updateListeningLessonDto.TextScript,
-                updateListeningLessonDto.Accents);
+                updateListeningLessonDto.Accents,
+                updateListeningLessonDto.LessonPriorityNumber);
 
             await listeningLessonRepository.UpdateAsync(listeningLesson.Value);
 
@@ -61,6 +64,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                     LessonContent = updateListeningLessonDto.LessonContent,
                     LessonImageData = updateListeningLessonDto.LessonImageData,
                     LessonVideoLink = updateListeningLessonDto.LessonVideoLink,
+                    LessonPriorityNumber = updateListeningLessonDto.LessonPriorityNumber,
                     TextScript = updateListeningLessonDto.TextScript,
                     Accents = updateListeningLessonDto.Accents
                 }

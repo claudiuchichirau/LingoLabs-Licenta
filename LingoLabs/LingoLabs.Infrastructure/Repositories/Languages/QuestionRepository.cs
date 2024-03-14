@@ -88,5 +88,13 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             return Result<IReadOnlyList<Question>>.Success(questions);
         }
 
+        public async Task<bool> ExistsQuestionPriorityNumberAsync(int priorityNumber, Guid questionId)
+        {
+            var questionFound = await context.Questions.FirstOrDefaultAsync(question => question.QuestionId == questionId);
+
+            return await context.Questions
+                .AnyAsync(question => question.QuestionPriorityNumber == priorityNumber && question.LessonId == questionFound.LessonId && question.QuestionId != questionFound.QuestionId);
+        }
+
     }
 }

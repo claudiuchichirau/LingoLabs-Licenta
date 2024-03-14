@@ -17,6 +17,16 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
             var listeningLesson = await repository.FindByIdAsync(request.Id);
             if(listeningLesson.IsSuccess)
             {
+                var sortedLessonQuestions = listeningLesson.Value.LessonQuestions
+                    .OrderBy(question => question.QuestionPriorityNumber ?? int.MaxValue)
+                    .Select(question => new Questions.Queries.QuestionDto
+                    {
+                        QuestionId = question.QuestionId,
+                        QuestionRequirement = question.QuestionRequirement,
+                        QuestionLearningType = question.QuestionLearningType,
+                        LessonId = question.LessonId
+                    }).ToList();
+
                 return new GetSingleListeningLessonDto
                 {
                     LessonId = listeningLesson.Value.LessonId,
@@ -27,14 +37,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
                     LessonType = listeningLesson.Value.LessonType,
                     LessonVideoLink = listeningLesson.Value.LessonVideoLink,
                     LessonImageData = listeningLesson.Value.LessonImageData,
+                    LessonPriorityNumber = listeningLesson.Value.LessonPriorityNumber,
                     LanguageCompetenceId = listeningLesson.Value.LanguageCompetenceId,
-                    LessonQuestions = listeningLesson.Value.LessonQuestions.Select(c => new Questions.Queries.QuestionDto
-                    {
-                        QuestionId = c.QuestionId,
-                        QuestionRequirement = c.QuestionRequirement,
-                        QuestionLearningType = c.QuestionLearningType,
-                        LessonId = c.LessonId
-                    }).ToList(),
+                    LessonQuestions = sortedLessonQuestions,
                     TextScript = listeningLesson.Value.TextScript,
                     Accents = listeningLesson.Value.Accents
                 };

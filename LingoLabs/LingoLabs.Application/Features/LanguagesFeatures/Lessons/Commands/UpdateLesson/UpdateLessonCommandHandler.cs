@@ -44,7 +44,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 updateLessonDto.LessonRequirement,
                 updateLessonDto.LessonContent,
                 updateLessonDto.LessonImageData,
-                updateLessonDto.LessonVideoLink);
+                updateLessonDto.LessonVideoLink,
+                updateLessonDto.LessonPriorityNumber);
 
             await lessonRepository.UpdateAsync(lesson.Value);
 
@@ -58,7 +59,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                     LessonRequirement = updateLessonDto.LessonRequirement,
                     LessonContent = updateLessonDto.LessonContent,
                     LessonImageData = updateLessonDto.LessonImageData,
-                    LessonVideoLink = updateLessonDto.LessonVideoLink
+                    LessonVideoLink = updateLessonDto.LessonVideoLink,
+                    LessonPriorityNumber = updateLessonDto.LessonPriorityNumber
                 }
             };
         }

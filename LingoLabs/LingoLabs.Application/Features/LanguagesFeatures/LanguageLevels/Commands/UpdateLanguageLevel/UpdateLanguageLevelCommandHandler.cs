@@ -6,14 +6,16 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
     public class UpdateLanguageLevelCommandHandler : IRequestHandler<UpdateLanguageLevelCommand, UpdateLanguageLevelCommandResponse>
     {
         private readonly ILanguageLevelRepository languageLevelRepository;
+        private readonly ILanguageRepository languageRepository;
 
-        public UpdateLanguageLevelCommandHandler(ILanguageLevelRepository languageLevelRepository)
+        public UpdateLanguageLevelCommandHandler(ILanguageLevelRepository languageLevelRepository, ILanguageRepository languageRepository)
         {
             this.languageLevelRepository = languageLevelRepository;
+            this.languageRepository = languageRepository;
         }
         public async Task<UpdateLanguageLevelCommandResponse> Handle(UpdateLanguageLevelCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateLanguageLevelCommandValidator(languageLevelRepository);
+            var validator = new UpdateLanguageLevelCommandValidator(languageLevelRepository, languageRepository);
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
             if(!validationResult.IsValid) 
@@ -41,7 +43,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
             languageLevel.Value.UpdateLanguageLevel(
                 updateLanguageLevelDto.LanguageLevelAlias,
                 updateLanguageLevelDto.LanguageLevelDescription,
-                updateLanguageLevelDto.LanguageLevelVideoLink);
+                updateLanguageLevelDto.LanguageLevelVideoLink, 
+                updateLanguageLevelDto.PriorityNumber);
 
             await languageLevelRepository.UpdateAsync(languageLevel.Value);
 
@@ -52,7 +55,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
                 {
                     LanguageLevelAlias = languageLevel.Value.LanguageLevelAlias,
                     LanguageLevelDescription = languageLevel.Value.LanguageLevelDescription,
-                    LanguageLevelVideoLink = languageLevel.Value.LanguageLevelVideoLink
+                    LanguageLevelVideoLink = languageLevel.Value.LanguageLevelVideoLink,
+                    PriorityNumber = languageLevel.Value.PriorityNumber
                 }
             };
         }

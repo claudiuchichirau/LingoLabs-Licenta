@@ -14,7 +14,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
 
         public async Task<UpdateLanguageCompetenceCommandResponse> Handle(UpdateLanguageCompetenceCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateLanguageCompetenceCommandValidator();
+            var validator = new UpdateLanguageCompetenceCommandValidator(languageCompetenceRepository);
             var validatorResult = await validator.ValidateAsync(request, cancellationToken);
 
             if(!validatorResult.IsValid)
@@ -41,7 +41,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
             languageCompetence.Value.UpdateLanguageCompetence
             (
                 updateLanguageCompetenceDto.LanguageCompetenceDescription,
-                updateLanguageCompetenceDto.LanguageCompetenceVideoLink
+                updateLanguageCompetenceDto.LanguageCompetenceVideoLink,
+                updateLanguageCompetenceDto.LanguageCompetencePriorityNumber
             );
 
             await languageCompetenceRepository.UpdateAsync(languageCompetence.Value);
@@ -52,7 +53,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
                 UpdateLanguageCompetenceDto = new UpdateLanguageCompetenceDto
                 {
                     LanguageCompetenceDescription = languageCompetence.Value.LanguageCompetenceDescription,
-                    LanguageCompetenceVideoLink = languageCompetence.Value.LanguageCompetenceVideoLink
+                    LanguageCompetenceVideoLink = languageCompetence.Value.LanguageCompetenceVideoLink,
+                    LanguageCompetencePriorityNumber = languageCompetence.Value.LanguageCompetencePriorityNumber
                 }
             };
         }

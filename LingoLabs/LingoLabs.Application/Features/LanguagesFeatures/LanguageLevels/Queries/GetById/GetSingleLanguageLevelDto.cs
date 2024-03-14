@@ -8,6 +8,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
     {
         public string LanguageLevelDescription { get; set; } = string.Empty;
         public string LanguageLevelVideoLink { get; set; } = string.Empty;
+        public int? PriorityNumber { get; set; }
         public List<ChapterDto> LanguageChapters { get; set; } = [];
         public List<TagDto> LanguageLeveKeyWords { get; set; } = [];
         public List<UserLanguageLevelDto> UserLanguageLevels { get; set; } = [];

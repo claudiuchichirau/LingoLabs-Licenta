@@ -296,7 +296,7 @@ namespace LingoLabs.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ChapterNumber")
+                    b.Property<int?>("ChapterPriorityNumber")
                         .HasColumnType("int");
 
                     b.Property<string>("ChapterVideoLink")
@@ -414,6 +414,9 @@ namespace LingoLabs.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("LanguageCompetencePriorityNumber")
+                        .HasColumnType("int");
+
                     b.Property<int>("LanguageCompetenceType")
                         .HasColumnType("int");
 
@@ -473,6 +476,9 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<DateTime>("LastModifiedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("PriorityNumber")
+                        .HasColumnType("int");
+
                     b.HasKey("LanguageLevelId");
 
                     b.HasIndex("LanguageId");
@@ -514,6 +520,9 @@ namespace LingoLabs.Infrastructure.Migrations
 
                     b.Property<byte[]>("LessonImageData")
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<int?>("LessonPriorityNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("LessonRequirement")
                         .HasColumnType("nvarchar(max)");
@@ -567,6 +576,9 @@ namespace LingoLabs.Infrastructure.Migrations
                         .HasColumnType("varbinary(max)");
 
                     b.Property<int>("QuestionLearningType")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("QuestionPriorityNumber")
                         .HasColumnType("int");
 
                     b.Property<string>("QuestionRequirement")

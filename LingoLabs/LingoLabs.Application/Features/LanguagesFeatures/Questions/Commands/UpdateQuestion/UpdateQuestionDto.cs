@@ -9,6 +9,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
         public LearningType QuestionLearningType { get; set; }
         public byte[] QuestionImageData { get; set; } = [];
         public string QuestionVideoLink { get; set; } = string.Empty;
+        public int? QuestionPriorityNumber { get; set; }
         public Guid LanguageId { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Queries;
 using LingoLabs.Application.Persistence.Languages;
+using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetById
@@ -17,24 +18,28 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
             var chapter = await repository.FindByIdAsync(request.Id);
             if(chapter.IsSuccess)
             {
-                return new GetSingleChapterDto
-                {
-                    ChapterId = chapter.Value.ChapterId,
-                    ChapterName = chapter.Value.ChapterName,
-                    LanguageLevelId = chapter.Value.LanguageLevelId,
-                    ChapterDescription = chapter.Value.ChapterDescription,
-                    ChapterNumber = chapter.Value.ChapterNumber ?? 0,
-                    ChapterImageData = chapter.Value.ChapterImageData,
-                    ChapterVideoLink = chapter.Value.ChapterVideoLink,
-
-                    languageCompetences = chapter.Value.languageCompetences.Select(languageCompetence => new LanguageCompetences.Queries.LanguageCompetenceDto
+                var sortedLanguageCompetences = chapter.Value.languageCompetences
+                    .OrderBy(languageCompetence => languageCompetence.LanguageCompetencePriorityNumber ?? int.MaxValue)
+                    .Select(languageCompetence => new LanguageCompetences.Queries.LanguageCompetenceDto
                     {
                         LanguageCompetenceId = languageCompetence.LanguageCompetenceId,
                         LanguageCompetenceName = languageCompetence.LanguageCompetenceName,
                         LanguageCompetenceType = languageCompetence.LanguageCompetenceType,
                         ChapterId = languageCompetence.ChapterId,
                         LanguageId = languageCompetence.LanguageId
-                    }).ToList(),
+                    }).ToList();
+
+                return new GetSingleChapterDto
+                {
+                    ChapterId = chapter.Value.ChapterId,
+                    ChapterName = chapter.Value.ChapterName,
+                    LanguageLevelId = chapter.Value.LanguageLevelId,
+                    ChapterDescription = chapter.Value.ChapterDescription,
+                    ChapterPriorityNumber = chapter.Value.ChapterPriorityNumber,
+                    ChapterImageData = chapter.Value.ChapterImageData,
+                    ChapterVideoLink = chapter.Value.ChapterVideoLink,
+
+                    languageCompetences = sortedLanguageCompetences,
 
                     ChapterKeyWords = chapter.Value.ChapterKeyWords.Select(tag => new Tags.Queries.TagDto
                     {

@@ -17,6 +17,27 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
             var language = await repository.FindByIdAsync(request.Id);
             if (language.IsSuccess)
             {
+                var sortedLanguageLevels = language.Value.LanguageLevels
+                    .OrderBy(languageLevel => languageLevel.PriorityNumber ?? int.MaxValue)
+                    .Select(languageLevel => new LanguageLevels.Queries.LanguageLevelDto
+                    {
+                        LanguageLevelId = languageLevel.LanguageLevelId,
+                        LanguageLevelName = languageLevel.LanguageLevelName,
+                        LanguageLevelAlias = languageLevel.LanguageLevelAlias,
+                        LanguageId = languageLevel.LanguageId
+                    }).ToList();
+
+                var sortedLanguageCompetences = language.Value.LanguageCompetences
+                    .OrderBy(languageCompetence => languageCompetence.LanguageCompetencePriorityNumber ?? int.MaxValue)
+                    .Select(languageCompetence => new LanguageCompetences.Queries.LanguageCompetenceDto
+                    {
+                        LanguageCompetenceId = languageCompetence.LanguageCompetenceId,
+                        LanguageCompetenceName = languageCompetence.LanguageCompetenceName,
+                        LanguageCompetenceType = languageCompetence.LanguageCompetenceType,
+                        ChapterId = languageCompetence.ChapterId,
+                        LanguageId = languageCompetence.LanguageId
+                    }).ToList();
+
                 return new GetSingleLanguageDto
                 {
                     LanguageId = language.Value.LanguageId,
@@ -24,22 +45,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
                     LanguageDescription = language.Value.LanguageDescription,
                     LanguageVideoLink = language.Value.LanguageVideoLink,
 
-                    LanguageLevels = language.Value.LanguageLevels.Select(languageLevel => new LanguageLevels.Queries.LanguageLevelDto
-                    {
-                        LanguageLevelId = languageLevel.LanguageLevelId,
-                        LanguageLevelName = languageLevel.LanguageLevelName,
-                        LanguageLevelAlias = languageLevel.LanguageLevelAlias,
-                        LanguageId = languageLevel.LanguageId
-                    }).ToList(),
+                    LanguageLevels = sortedLanguageLevels,
 
-                    LanguageCompetences = language.Value.LanguageCompetences.Select(languageCompetence => new LanguageCompetences.Queries.LanguageCompetenceDto
-                    {
-                        LanguageCompetenceId = languageCompetence.LanguageCompetenceId,
-                        LanguageCompetenceName = languageCompetence.LanguageCompetenceName,
-                        LanguageCompetenceType = languageCompetence.LanguageCompetenceType,
-                        ChapterId = languageCompetence.ChapterId,
-                        LanguageId = languageCompetence.LanguageId
-                    }).ToList(),
+                    LanguageCompetences = sortedLanguageCompetences,
 
                     LanguageKeyWords = language.Value.LanguageKeyWords.Select(tag => new Tags.Queries.TagDto
                     {

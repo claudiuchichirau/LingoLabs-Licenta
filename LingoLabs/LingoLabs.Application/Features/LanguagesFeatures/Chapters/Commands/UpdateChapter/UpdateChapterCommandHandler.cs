@@ -41,9 +41,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Upd
             chapter.Value.UpdateChapter(
                 updateChapterDto.ChapterName,
                 updateChapterDto.ChapterDescription,
-                updateChapterDto.ChapterNumber,
                 updateChapterDto.ChapterImageData,
-                updateChapterDto.ChapterVideoLink
+                updateChapterDto.ChapterVideoLink,
+                updateChapterDto.ChapterPriorityNumber
             );
 
             await chapterRepository.UpdateAsync(chapter.Value);
@@ -55,7 +55,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Upd
                 {
                     ChapterName = chapter.Value.ChapterName,
                     ChapterDescription = chapter.Value.ChapterDescription,
-                    ChapterNumber = chapter.Value.ChapterNumber ?? 0,
+                    ChapterPriorityNumber = chapter.Value.ChapterPriorityNumber,
                     ChapterImageData = chapter.Value.ChapterImageData,
                     ChapterVideoLink = chapter.Value.ChapterVideoLink
                 }

@@ -16,7 +16,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
         }
         public async Task<UpdateQuestionCommandResponse> Handle(UpdateQuestionCommand request, CancellationToken cancellationToken)
         {
-            var validator = new UpdateQuestionCommandValidator(languageRepository);
+            var validator = new UpdateQuestionCommandValidator(languageRepository, questionRepository);
             var validationResult = await validator.ValidateAsync(request);
 
             if (!validationResult.IsValid)
@@ -46,7 +46,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                 updateQuestioDto.QuestionLearningType,
                 updateQuestioDto.QuestionImageData,
                 updateQuestioDto.QuestionVideoLink,
-                updateQuestioDto.LanguageId);
+                updateQuestioDto.LanguageId,
+                updateQuestioDto.QuestionPriorityNumber);
 
             await questionRepository.UpdateAsync(question.Value);
 
@@ -58,7 +59,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                     QuestionRequirement = question.Value.QuestionRequirement,
                     QuestionLearningType = question.Value.QuestionLearningType,
                     QuestionImageData = question.Value.QuestionImageData,
-                    QuestionVideoLink = question.Value.QuestionVideoLink
+                    QuestionVideoLink = question.Value.QuestionVideoLink,
+                    QuestionPriorityNumber = question.Value.QuestionPriorityNumber,
                 }
             };
         }

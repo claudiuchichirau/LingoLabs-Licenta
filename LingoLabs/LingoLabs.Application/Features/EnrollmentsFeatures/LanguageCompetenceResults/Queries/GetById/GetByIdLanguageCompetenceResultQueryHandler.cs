@@ -3,7 +3,7 @@ using MediatR;
 
 namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceResults.Queries.GetById
 {
-    public class GetByIdLanguageCompetenceResultQueryHandler: IRequestHandler<GetByIdLanguageCompetenceResultQuery, GetSingleLanguageCompetenceResultDto>
+    public class GetByIdLanguageCompetenceResultQueryHandler : IRequestHandler<GetByIdLanguageCompetenceResultQuery, GetSingleLanguageCompetenceResultDto>
     {
         private readonly ILanguageCompetenceResultRepository languageCompetenceResultRepository;
 
@@ -15,7 +15,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
         public async Task<GetSingleLanguageCompetenceResultDto> Handle(GetByIdLanguageCompetenceResultQuery request, CancellationToken cancellationToken)
         {
             var languageCompetenceResult = await languageCompetenceResultRepository.FindByIdAsync(request.Id);
-            if(languageCompetenceResult.IsSuccess)
+            if (languageCompetenceResult.IsSuccess)
             {
                 return new GetSingleLanguageCompetenceResultDto
                 {

@@ -7,5 +7,6 @@ namespace LingoLabs.Application.Persistence.Languages
     {
         Task<bool> ExistsLanguageCompetenceAsync(LanguageCompetenceType languageCompetenceType, Guid chapterIid);
         Task<LanguageCompetenceType> GetLanguageCompetenceTypeAsync(Guid id);
+        Task<bool> ExistsLanguageCompetencePriorityNumberAsync(int priorityNumber, Guid languageCompetenceId);
     }
 }

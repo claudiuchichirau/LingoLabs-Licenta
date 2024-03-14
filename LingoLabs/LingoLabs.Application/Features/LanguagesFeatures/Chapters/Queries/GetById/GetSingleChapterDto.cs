@@ -6,7 +6,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
     public class GetSingleChapterDto: ChapterDto
     {
         public string ChapterDescription { get; set; } = string.Empty;
-        public int ChapterNumber { get; set; } 
+        public int? ChapterPriorityNumber { get; set; } 
         public byte[] ChapterImageData { get; set; } = [];
         public string ChapterVideoLink { get; set; } = string.Empty;
         public List<LanguageCompetenceDto> languageCompetences { get; set; } = [];

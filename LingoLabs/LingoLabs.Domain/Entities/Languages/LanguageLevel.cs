@@ -13,6 +13,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public List<Chapter>? LanguageChapters { get; private set; } = [];
         public List<Tag>? LanguageLeveKeyWords { get; private set; } = [];
         public List<UserLanguageLevel>? UserLanguageLevels { get; private set; } = [];
+        public int? PriorityNumber { get; private set; }
         public Guid LanguageId { get; private set; }
         public Language? Language { get; set; }
 
@@ -69,11 +70,12 @@ namespace LingoLabs.Domain.Entities.Languages
                 LanguageLevelVideoLink = languageLevelVideoLink;
         }
 
-        public void UpdateLanguageLevel(string languageLevelAlias, string languageLevelDescription, string languageLevelVideoLink)
+        public void UpdateLanguageLevel(string languageLevelAlias, string languageLevelDescription, string languageLevelVideoLink, int? priorityNumber)
         {
             LanguageLevelAlias = languageLevelAlias;
             LanguageLevelDescription = languageLevelDescription;
             LanguageLevelVideoLink = languageLevelVideoLink;
+            PriorityNumber = priorityNumber;
         }
     }
 }

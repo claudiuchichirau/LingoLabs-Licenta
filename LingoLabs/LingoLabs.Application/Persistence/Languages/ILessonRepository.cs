@@ -7,5 +7,6 @@ namespace LingoLabs.Application.Persistence.Languages
         Task<bool> ExistsLessonAsync(string lessonTitle);
 
         Task<bool> ExistsLessonForUpdateAsync(string lessonTitle, Guid lessonId);
+        Task<bool> ExistsLessonPriorityNumberAsync(int priorityNumber, Guid lessonId);
     }
 }

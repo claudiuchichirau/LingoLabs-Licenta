@@ -46,5 +46,13 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                 return false;
             return true;
         }
+
+        public async Task<bool> ExistsLanguageLevelPriorityNumberAsync(int priorityNumber, Guid languageLevelId)
+        {
+            var languageLevelFound = await context.LanguageLevels.FirstOrDefaultAsync(languageLevel => languageLevel.LanguageLevelId == languageLevelId);
+            
+            return await context.LanguageLevels
+                .AnyAsync(languageLevel => languageLevel.PriorityNumber == priorityNumber && languageLevel.LanguageId == languageLevelFound.LanguageId && languageLevel.LanguageLevelId != languageLevelFound.LanguageLevelId);
+        }
     }
 }
