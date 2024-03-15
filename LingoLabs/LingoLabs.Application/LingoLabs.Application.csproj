@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\" />
     <Folder Include="Features\LanguagesFeatures\Lessons\Commands\AttachTags\" />
   </ItemGroup>
 
