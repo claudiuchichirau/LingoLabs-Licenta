@@ -31,5 +31,11 @@ namespace LingoLabs.Domain.Entities.Enrollments
                 return Result<UserLanguageLevel>.Failure("LanguageLevelId is required");
             return Result<UserLanguageLevel>.Success(new UserLanguageLevel(enrollmentId, languageCompetenceId, languageLevelId));
         }
+
+        public void Update(Guid languageLevelId)
+        {
+            if(languageLevelId != default)
+                LanguageLevelId = languageLevelId;
+        }
     }
 }

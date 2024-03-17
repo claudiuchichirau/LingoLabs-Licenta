@@ -1,6 +1,7 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Commands.CreateEnrollment;
 using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Commands.DeleteEnrollment;
 using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Queries.GetAll;
+using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Queries.GetAllByUserId;
 using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Queries.GetById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,15 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
         public async Task<IActionResult> GetAll()
         {
             var result = await Mediator.Send(new GetAllEnrollmentsQuery());
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Admin, Student")]
+        [HttpGet("userEnrollments")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllByUserId()
+        {
+            var result = await Mediator.Send(new GetAllEnrollmentsByUserIdQuery());
             return Ok(result);
         }
 

@@ -1,4 +1,5 @@
-﻿using LingoLabs.Application.Persistence.Enrollments;
+﻿using LingoLabs.Application.Contracts.Interfaces;
+using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Domain.Entities.Enrollments;
 using MediatR;
 
@@ -7,10 +8,12 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Command
     public class CreateEnrollmentCommandHandler: IRequestHandler<CreateEnrollmentCommand, CreateEnrollmentCommandResponse>
     {
         private readonly IEnrollmentRepository repository;
+        private readonly ICurrentUserService currentUserService;
 
-        public CreateEnrollmentCommandHandler(IEnrollmentRepository repository)
+        public CreateEnrollmentCommandHandler(IEnrollmentRepository repository, ICurrentUserService currentUserService)
         {
             this.repository = repository;
+            this.currentUserService = currentUserService;
         }
 
         public async Task<CreateEnrollmentCommandResponse> Handle(CreateEnrollmentCommand request, CancellationToken cancellationToken)
@@ -24,6 +27,17 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Command
                 {
                     Success = false,
                     ValidationsErrors = validationResult.Errors.Select(error => error.ErrorMessage).ToList()
+                };
+            }
+
+            var userId = Guid.Parse(currentUserService.UserId);
+
+            if(userId != request.UserId)
+            {
+                return new CreateEnrollmentCommandResponse()
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { "Unauthorized" }
                 };
             }
 

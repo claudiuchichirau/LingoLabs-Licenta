@@ -24,5 +24,19 @@ namespace LingoLabs.Infrastructure.Repositories.Enrollments
 
             return Result<Enrollment>.Success(enrollment);
         }
+
+        public async Task<Result<List<Enrollment>>> GetEnrollmentsByUserIdAsync(Guid userId)
+        {
+            var enrollments = await context.Enrollments
+                .Include(e => e.UserLanguageLevels)
+                .Include(e => e.LanguageLevelResults)
+                .Where(e => e.UserId == userId)
+                .ToListAsync();
+
+            if(enrollments == null)
+                return Result<List<Enrollment>>.Failure($"Enrollments for user with id {userId} not found");
+
+            return Result<List<Enrollment>>.Success(enrollments);
+        }
     }
 }

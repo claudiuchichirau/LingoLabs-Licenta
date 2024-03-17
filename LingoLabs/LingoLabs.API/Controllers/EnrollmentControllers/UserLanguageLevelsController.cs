@@ -1,5 +1,6 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.CreateUserLanguageLevel;
 using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.DeleteUserLanguageLevel;
+using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.UpdateUserLanguageLevel;
 using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Queries.GetById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,21 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
                 return NotFound(result.ValidationsErrors);
             }
 
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Student")]
+        [HttpPut()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Update(UpdateUserLanguageLevelCommand command)
+        {
+            var result = await Mediator.Send(command);
+            if (!result.Success)
+            {
+                return BadRequest(result.ValidationsErrors);
+            }
             return Ok(result);
         }
     }
