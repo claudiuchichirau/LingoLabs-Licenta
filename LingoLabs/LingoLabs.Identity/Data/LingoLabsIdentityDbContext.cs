@@ -26,7 +26,7 @@ namespace LingoLabs.Identity.Data
 
             var adminUserId = Guid.NewGuid().ToString();
             var passwordHasher = new PasswordHasher<ApplicationUser>();
-            var password = passwordHasher.HashPassword(null, "AdminPassword@1");
+            var passwordHash = passwordHasher.HashPassword(null, "AdminPassword@1");
             builder.Entity<ApplicationUser>().HasData(new ApplicationUser
             {
                 Id = adminUserId,
@@ -36,7 +36,8 @@ namespace LingoLabs.Identity.Data
                 LastName = "admin",
                 PhoneNumber = "0000000000",
                 Email = "admin@example.com",
-                NormalizedEmail = "ADMIN@EXAMPLE.COM"
+                NormalizedEmail = "ADMIN@EXAMPLE.COM",
+                PasswordHash = passwordHash
             });
 
             builder.Entity<ApplicationUser>().HasKey(x => new { x.Id });

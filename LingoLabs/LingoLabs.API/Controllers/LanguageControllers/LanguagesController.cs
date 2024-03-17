@@ -6,12 +6,14 @@ using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Update
 using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.UpdatePlacementTest;
 using LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.GetAll;
 using LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LingoLabs.API.Controllers.LanguageControllers
 {
     public class LanguagesController : ApiControllerBase
     {
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create(CreateLanguageCommand command)
@@ -47,6 +49,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -62,6 +65,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -77,6 +81,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("placement-test")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> CreatePlacementTest(CreatePlacementTestCommand command)
@@ -90,6 +95,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("placement-test/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -105,6 +111,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("placement-test")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

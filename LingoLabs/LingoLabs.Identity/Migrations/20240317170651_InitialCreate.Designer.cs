@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LingoLabs.Identity.Migrations
 {
     [DbContext(typeof(LingoLabsIdentityDbContext))]
-    [Migration("20240315202653_InitialCreate")]
+    [Migration("20240317170651_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -49,6 +49,9 @@ namespace LingoLabs.Identity.Migrations
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
@@ -101,19 +104,21 @@ namespace LingoLabs.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "38c1e1bc-9d35-4c1c-a086-59d17cd68c75",
+                            Id = "fa33fac9-2f5c-4a94-847c-c9dfde8be2c4",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "ec1bbde6-c0e7-4044-a83d-7938cefebe63",
+                            ConcurrencyStamp = "1fb1b842-a108-4123-aec8-630356d77636",
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             FirstName = "admin",
+                            IsConfirmed = false,
                             LastName = "admin",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGTDKh1C8xOFvpZ34ETaiz8PlI8L5o6qvPPSQ5bmKDSlFgtsVBaUiM0HOkD2RFrUjQ==",
                             PhoneNumber = "0000000000",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "747c67e5-ae19-476a-9167-da66092fe153",
+                            SecurityStamp = "378ddfa8-e1a6-4079-b3ea-3e780a0f20ea",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -148,7 +153,7 @@ namespace LingoLabs.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "f013c230-0f48-4cc5-84d3-096986b22be5",
+                            Id = "a4cbe362-20a8-40f3-bb6c-b32d1f373b14",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -243,8 +248,8 @@ namespace LingoLabs.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "38c1e1bc-9d35-4c1c-a086-59d17cd68c75",
-                            RoleId = "f013c230-0f48-4cc5-84d3-096986b22be5"
+                            UserId = "fa33fac9-2f5c-4a94-847c-c9dfde8be2c4",
+                            RoleId = "a4cbe362-20a8-40f3-bb6c-b32d1f373b14"
                         });
                 });
 

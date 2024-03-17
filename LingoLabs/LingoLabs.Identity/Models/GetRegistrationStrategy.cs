@@ -22,7 +22,7 @@ namespace LingoLabs.Identity.Models
                 case UserRoles.Student:
                     return new StudentRegistrationServiceStrategy(userManager, roleManager);
                 case UserRoles.Admin:
-                    return new AdminRegistrationServiceStrategy(userManager, roleManager);
+                    return new AdminPendingRegistrationServiceStrategy(userManager, roleManager);
                 default:
                     return new InvalidRoleRegistrationServiceStrategy();
             }

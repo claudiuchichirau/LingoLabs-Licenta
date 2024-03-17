@@ -6,7 +6,7 @@ namespace LingoLabs.Application.Contracts.Interfaces
     {
         string UserId { get; }
         ClaimsPrincipal GetCurrentClaimsPrincipal();
-        string GetCurrentUserId();
+        String GetCurrentUserId();
         bool IsUserAdmin();
     }
 }

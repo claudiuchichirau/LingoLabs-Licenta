@@ -2,12 +2,14 @@
 using LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.DeleteChoice;
 using LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.UpdateChoice;
 using LingoLabs.Application.Features.LanguagesFeatures.Choices.Queries.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LingoLabs.API.Controllers.LanguageControllers
 {
     public class ChoicesController : ApiControllerBase
     {
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create(CreateChoiceCommand command)
@@ -20,6 +22,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin, Student, AdminPending")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -35,6 +38,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -49,6 +53,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result.UpdateChoiceDto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

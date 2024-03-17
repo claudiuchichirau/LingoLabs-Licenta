@@ -5,22 +5,22 @@ using Microsoft.AspNetCore.Identity;
 
 namespace LingoLabs.Identity.Services
 {
-    public class AdminRegistrationServiceStrategy: IRegistrationServiceStrategy
+    public class AdminPendingRegistrationServiceStrategy: IRegistrationServiceStrategy
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
 
-        public AdminRegistrationServiceStrategy(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminPendingRegistrationServiceStrategy(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+            this.userManager = userManager;
+            this.roleManager = roleManager;
         }
 
         public async Task<(int status, string message)> Registration(RegistrationModel model)
         {
             var userExists = await userManager.FindByEmailAsync(model.Email!);
             if (userExists != null)
-                return (UserAuthenticationStatus.REGISTRATION_FAIL, "Username already used");
+                return (UserAuthenticationStatus.REGISTRATION_FAIL, "Email already used");
 
             ApplicationUser user = new ApplicationUser()
             {
@@ -36,11 +36,11 @@ namespace LingoLabs.Identity.Services
             if (!createUserResult.Succeeded)
                 return (UserAuthenticationStatus.REGISTRATION_FAIL, "User creation failed! Please check user details and try again.");
 
-            if (!await roleManager.RoleExistsAsync(model.Role))
-                await roleManager.CreateAsync(new IdentityRole(model.Role));
+            if (!await roleManager.RoleExistsAsync("AdminPending"))
+                await roleManager.CreateAsync(new IdentityRole("AdminPending"));
 
-            if (await roleManager.RoleExistsAsync(UserRoles.Admin))
-                await userManager.AddToRoleAsync(user, model.Role);
+            if (await roleManager.RoleExistsAsync("AdminPending"))
+                await userManager.AddToRoleAsync(user, "AdminPending");
 
             return (UserAuthenticationStatus.REGISTRATION_SUCCES, "User created successfully!");
         }

@@ -9,18 +9,18 @@
         public string LastName { get; private set; }
         public string DefaultLanguage { get; private set; }
 
-        public UserInfoModel(string username, string email, string phoneNumber, string firstName, string lastName)
-        {
-            UserName = username;
+        public UserInfoModel(string userName, string email, string phoneNumber, string firstName, string lastName)
+        { 
+            UserName = userName;
             Email = email;
             PhoneNumber = phoneNumber;
             FirstName = firstName;
             LastName = lastName;
         }
 
-        public void UpdateUserInfo(string username, string email, string phoneNumber, string firstName, string lastName, string defaultLanguage)
+        public void UpdateUserInfo(string userName, string email, string phoneNumber, string firstName, string lastName, string defaultLanguage)
         {
-            UserName = username;
+            UserName = userName;
             Email = email;
             PhoneNumber = phoneNumber;
             FirstName = firstName;

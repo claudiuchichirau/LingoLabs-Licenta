@@ -2,12 +2,14 @@
 using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.DeleteLessonResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.UpdateLessonResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Queries.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LingoLabs.API.Controllers.EnrollmentControllers
 {
     public class LessonResultsController : ApiControllerBase
     {
+        [Authorize(Roles = "Admin, Student")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -21,6 +23,7 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin, Student")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -30,12 +33,13 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
 
             if (result.LessonResultId == Guid.Empty)
             {
-                return NotFound("LessonResult not found.\"");
+                return NotFound(result);
             }
 
             return Ok(result);
         }
 
+        [Authorize(Roles = "Student")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -49,6 +53,7 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Student")]
         [HttpPut()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

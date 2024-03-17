@@ -3,12 +3,14 @@ using LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Commands.D
 using LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Commands.UpdateLanguageLevel;
 using LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Queries.GetAll;
 using LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Queries.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LingoLabs.API.Controllers.LanguageControllers
 {
     public class LanguageLevelsController : ApiControllerBase
     {
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create(CreateLanguageLevelCommand command)
@@ -21,6 +23,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
@@ -29,6 +32,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin, Student, AdminPending")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -44,6 +48,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -59,6 +64,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

@@ -3,10 +3,12 @@ using LingoLabs.Application.Contracts.Identity;
 using LingoLabs.Application.Contracts.Interfaces;
 using LingoLabs.Application.Models.Identity;
 using LingoLabs.Identity.Models;
+using LingoLabs.Identity.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LingoLabs.API.Controllers
+namespace LingoLabs.API.Controllers.UserControllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
@@ -16,13 +18,15 @@ namespace LingoLabs.API.Controllers
         private readonly ILogger<AuthenticationController> _logger;
         private readonly GetRegistrationStrategy _registrationStrategy;
         private readonly ICurrentUserService currentUserService;
+        private readonly IUserService userService;
 
-        public AuthenticationController(ILoginService authService, ILogger<AuthenticationController> logger, GetRegistrationStrategy registrationStrategy, ICurrentUserService currentUserService)
+        public AuthenticationController(ILoginService authService, ILogger<AuthenticationController> logger, GetRegistrationStrategy registrationStrategy, ICurrentUserService currentUserService, IUserService userService)
         {
             _loginService = authService;
             _logger = logger;
             _registrationStrategy = registrationStrategy;
             this.currentUserService = currentUserService;
+            this.userService = userService;
         }
 
         [HttpPost]
@@ -53,9 +57,9 @@ namespace LingoLabs.API.Controllers
         }
 
         [HttpPost]
-        [Route("student-register")]
+        [Route("register")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> StudentRegister(RegistrationModel model)
+        public async Task<IActionResult> Register(RegistrationModel model)
         {
             try
             {
@@ -63,7 +67,7 @@ namespace LingoLabs.API.Controllers
                 {
                     return BadRequest("Invalid payload");
                 }
-                IRegistrationServiceStrategy registrationStrategy = _registrationStrategy.GetRegistrationRoleStrategy("Student");
+                IRegistrationServiceStrategy registrationStrategy = _registrationStrategy.GetRegistrationRoleStrategy(model.Role);
                 var (status, message) = await registrationStrategy.Registration(model);
 
                 if (status == UserAuthenticationStatus.REGISTRATION_FAIL)
@@ -72,36 +76,7 @@ namespace LingoLabs.API.Controllers
                 }
 
 
-                return CreatedAtAction(nameof(StudentRegister), model);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
-        [HttpPost]
-        [Route("admin-register")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> AdminRegister(RegistrationModel model)
-        {
-            try
-            {
-                if (!ModelState.IsValid)
-                {
-                    return BadRequest("Invalid payload");
-                }
-                IRegistrationServiceStrategy registrationStrategy = _registrationStrategy.GetRegistrationRoleStrategy("Admin");
-                var (status, message) = await registrationStrategy.Registration(model);
-
-                if (status == UserAuthenticationStatus.REGISTRATION_FAIL)
-                {
-                    return BadRequest(message);
-                }
-
-
-                return CreatedAtAction(nameof(AdminRegister), model);
+                return CreatedAtAction(nameof(Register), model);
             }
             catch (Exception ex)
             {
@@ -122,7 +97,7 @@ namespace LingoLabs.API.Controllers
         [Route("currentuserinfo")]
         public CurrentUser CurrentUserInfo()
         {
-            if (this.currentUserService.GetCurrentUserId() == null)
+            if (currentUserService.GetCurrentUserId() == null)
             {
                 return new CurrentUser
                 {
@@ -132,9 +107,25 @@ namespace LingoLabs.API.Controllers
             return new CurrentUser
             {
                 IsAuthenticated = true,
-                UserName = this.currentUserService.GetCurrentUserId(),
-                Claims = this.currentUserService.GetCurrentClaimsPrincipal().Claims.ToDictionary(c => c.Type, c => c.Value)
+                UserId = currentUserService.GetCurrentUserId(),
+                Claims = currentUserService.GetCurrentClaimsPrincipal().Claims.ToDictionary(c => c.Type, c => c.Value)
             };
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("approveadmin/{userId}")]
+        public async Task<IActionResult> ApproveAdmin(string userId)
+        {
+            var (status, message) = await userService.ApproveAdmin(userId);
+
+            if (status == UserAuthenticationStatus.REGISTRATION_SUCCES)
+            {
+                return Ok(message);
+            }
+            else
+            {
+                return BadRequest(message);
+            }
         }
     }
 }

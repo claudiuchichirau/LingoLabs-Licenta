@@ -2,12 +2,14 @@
 using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Commands.DeleteEnrollment;
 using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Queries.GetAll;
 using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Queries.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LingoLabs.API.Controllers.EnrollmentControllers
 {
     public class EnrollmentsController : ApiControllerBase
     {
+        [Authorize(Roles = "Admin, Student")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -21,6 +23,7 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
@@ -29,6 +32,7 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin, Student")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -44,6 +48,7 @@ namespace LingoLabs.API.Controllers.EnrollmentControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin, Student")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

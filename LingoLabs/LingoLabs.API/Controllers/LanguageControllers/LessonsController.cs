@@ -6,12 +6,14 @@ using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.UpdateLe
 using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.UpdateQuiz;
 using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetAll;
 using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetById;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LingoLabs.API.Controllers.LanguageControllers
 {
     public class LessonsController : ApiControllerBase
     {
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create(CreateLessonCommand command)
@@ -24,6 +26,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("create-quiz")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> CreateQuiz(CreateQuizCommand command)
@@ -36,6 +39,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("delete-quiz/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -51,6 +55,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]   
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
@@ -59,6 +64,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin, Student, AdminPending")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -74,6 +80,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -89,6 +96,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -104,6 +112,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
             return Ok(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("update-quiz")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]

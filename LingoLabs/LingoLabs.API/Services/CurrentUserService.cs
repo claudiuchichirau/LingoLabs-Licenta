@@ -28,7 +28,7 @@ namespace LingoLabs.API.Services
 
         public string GetCurrentUserId()
         {
-            return GetCurrentClaimsPrincipal()?.GetObjectId()!;
+            return GetCurrentClaimsPrincipal()?.FindFirstValue(ClaimTypes.NameIdentifier);
         }
 
         public bool IsUserAdmin()

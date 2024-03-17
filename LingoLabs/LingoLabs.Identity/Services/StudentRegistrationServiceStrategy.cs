@@ -12,15 +12,15 @@ namespace LingoLabs.Identity.Services
 
         public StudentRegistrationServiceStrategy(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
-            userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+            this.userManager = userManager;  // ?? throw new ArgumentNullException(nameof(userManager));
+            this.roleManager = roleManager;  // ?? throw new ArgumentNullException(nameof(roleManager));
         }
 
         public async Task<(int status, string message)> Registration(RegistrationModel model)
         {
             var userExists = await userManager.FindByEmailAsync(model.Email!);
             if (userExists != null)
-                return (UserAuthenticationStatus.REGISTRATION_FAIL, "Username already used");
+                return (UserAuthenticationStatus.REGISTRATION_FAIL, "Email already used");
 
             ApplicationUser user = new ApplicationUser()
             {

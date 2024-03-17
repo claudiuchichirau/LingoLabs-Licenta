@@ -53,7 +53,7 @@ namespace LingoLabs.Identity.Data
             services.AddScoped<
                 ILoginService, LoginService>();
             services.AddScoped<
-                IRegistrationServiceStrategy, AdminRegistrationServiceStrategy>();
+                IRegistrationServiceStrategy, AdminPendingRegistrationServiceStrategy>();
             services.AddScoped<
                 IRegistrationServiceStrategy, StudentRegistrationServiceStrategy>();
             services.AddScoped<GetRegistrationStrategy>();

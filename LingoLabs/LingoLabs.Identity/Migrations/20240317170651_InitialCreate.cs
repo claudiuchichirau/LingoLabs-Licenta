@@ -33,6 +33,7 @@ namespace LingoLabs.Identity.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DefaultLanguage = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsConfirmed = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -162,17 +163,17 @@ namespace LingoLabs.Identity.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetRoles",
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
-                values: new object[] { "f013c230-0f48-4cc5-84d3-096986b22be5", null, "Admin", "ADMIN" });
+                values: new object[] { "a4cbe362-20a8-40f3-bb6c-b32d1f373b14", null, "Admin", "ADMIN" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
-                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "DefaultLanguage", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { "38c1e1bc-9d35-4c1c-a086-59d17cd68c75", 0, "ec1bbde6-c0e7-4044-a83d-7938cefebe63", null, "admin@example.com", false, "admin", "admin", false, null, "ADMIN@EXAMPLE.COM", "ADMIN", null, "0000000000", false, "747c67e5-ae19-476a-9167-da66092fe153", false, "admin" });
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "DefaultLanguage", "Email", "EmailConfirmed", "FirstName", "IsConfirmed", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[] { "fa33fac9-2f5c-4a94-847c-c9dfde8be2c4", 0, "1fb1b842-a108-4123-aec8-630356d77636", null, "admin@example.com", false, "admin", false, "admin", false, null, "ADMIN@EXAMPLE.COM", "ADMIN", "AQAAAAIAAYagAAAAEGTDKh1C8xOFvpZ34ETaiz8PlI8L5o6qvPPSQ5bmKDSlFgtsVBaUiM0HOkD2RFrUjQ==", "0000000000", false, "378ddfa8-e1a6-4079-b3ea-3e780a0f20ea", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
                 columns: new[] { "RoleId", "UserId" },
-                values: new object[] { "f013c230-0f48-4cc5-84d3-096986b22be5", "38c1e1bc-9d35-4c1c-a086-59d17cd68c75" });
+                values: new object[] { "a4cbe362-20a8-40f3-bb6c-b32d1f373b14", "fa33fac9-2f5c-4a94-847c-c9dfde8be2c4" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
