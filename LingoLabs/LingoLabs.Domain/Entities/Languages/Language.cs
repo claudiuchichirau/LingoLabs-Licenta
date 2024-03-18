@@ -11,7 +11,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public List<LanguageLevel>? LanguageLevels { get; private set; } = new();
         public List<LanguageCompetence>? LanguageCompetences { get; private set; } = new();
         public List<Question>? PlacementTest { get; private set; } = new();
-        public List<Tag>? LanguageKeyWords { get; private set; } = new();
+        public List<EntityTag>? LanguageTags { get; private set; } = new();
 
         private Language(string languageName)
         {
@@ -65,14 +65,14 @@ namespace LingoLabs.Domain.Entities.Languages
             }
         }
 
-        public void AttachKeyWord(Tag tag)
+        public void AttachKeyWord(EntityTag tag)
         {
             if (tag != null)
             {
-                if (LanguageKeyWords == null)
-                    LanguageKeyWords = new List<Tag> { tag };
+                if (LanguageTags == null)
+                    LanguageTags = new List<EntityTag> { tag };
                 else
-                    LanguageKeyWords.Add(tag);
+                    LanguageTags.Add(tag);
             }
         }
 

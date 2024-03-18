@@ -6,6 +6,7 @@ namespace LingoLabs.Domain.Entities.Languages
     {
         public Guid TagId { get; private set; }
         public string TagContent { get; private set; }
+        public List<EntityTag> EntityTags { get; private set; } = [];
 
         private Tag(string tagContent)
         {
@@ -21,6 +22,17 @@ namespace LingoLabs.Domain.Entities.Languages
             }
 
             return Result<Tag>.Success(new Tag(tagContent));
+        }
+
+        public void AttachEntityTag(EntityTag entityTag)
+        {
+            if (entityTag != null)
+            {
+                if (EntityTags == null)
+                    EntityTags = new List<EntityTag> { entityTag };
+                else
+                    EntityTags.Add(entityTag);
+            }
         }
     }
 }

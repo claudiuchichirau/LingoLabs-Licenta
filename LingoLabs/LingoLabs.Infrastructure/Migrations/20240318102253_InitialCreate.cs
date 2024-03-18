@@ -98,6 +98,28 @@ namespace LingoLabs.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Tags",
+                columns: table => new
+                {
+                    TagId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TagContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LearningStyleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tags", x => x.TagId);
+                    table.ForeignKey(
+                        name: "FK_Tags_LearningStyles_LearningStyleId",
+                        column: x => x.LearningStyleId,
+                        principalTable: "LearningStyles",
+                        principalColumn: "LearningStyleId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Chapters",
                 columns: table => new
                 {
@@ -312,6 +334,55 @@ namespace LingoLabs.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EntityTags",
+                columns: table => new
+                {
+                    EntityTagId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EntityType = table.Column<int>(type: "int", nullable: false),
+                    LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    ChapterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    LessonId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    TagId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EntityTags", x => x.EntityTagId);
+                    table.ForeignKey(
+                        name: "FK_EntityTags_Chapters_ChapterId",
+                        column: x => x.ChapterId,
+                        principalTable: "Chapters",
+                        principalColumn: "ChapterId");
+                    table.ForeignKey(
+                        name: "FK_EntityTags_LanguageCompetences_LanguageCompetenceId",
+                        column: x => x.LanguageCompetenceId,
+                        principalTable: "LanguageCompetences",
+                        principalColumn: "LanguageCompetenceId");
+                    table.ForeignKey(
+                        name: "FK_EntityTags_LanguageLevels_LanguageLevelId",
+                        column: x => x.LanguageLevelId,
+                        principalTable: "LanguageLevels",
+                        principalColumn: "LanguageLevelId");
+                    table.ForeignKey(
+                        name: "FK_EntityTags_Languages_LanguageId",
+                        column: x => x.LanguageId,
+                        principalTable: "Languages",
+                        principalColumn: "LanguageId");
+                    table.ForeignKey(
+                        name: "FK_EntityTags_Lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lessons",
+                        principalColumn: "LessonId");
+                    table.ForeignKey(
+                        name: "FK_EntityTags_Tags_TagId",
+                        column: x => x.TagId,
+                        principalTable: "Tags",
+                        principalColumn: "TagId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Questions",
                 columns: table => new
                 {
@@ -342,58 +413,6 @@ namespace LingoLabs.Infrastructure.Migrations
                         principalTable: "Lessons",
                         principalColumn: "LessonId",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tags",
-                columns: table => new
-                {
-                    TagId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TagContent = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ChapterId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LanguageId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LearningStyleId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    LessonId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tags", x => x.TagId);
-                    table.ForeignKey(
-                        name: "FK_Tags_Chapters_ChapterId",
-                        column: x => x.ChapterId,
-                        principalTable: "Chapters",
-                        principalColumn: "ChapterId");
-                    table.ForeignKey(
-                        name: "FK_Tags_LanguageCompetences_LanguageCompetenceId",
-                        column: x => x.LanguageCompetenceId,
-                        principalTable: "LanguageCompetences",
-                        principalColumn: "LanguageCompetenceId");
-                    table.ForeignKey(
-                        name: "FK_Tags_LanguageLevels_LanguageLevelId",
-                        column: x => x.LanguageLevelId,
-                        principalTable: "LanguageLevels",
-                        principalColumn: "LanguageLevelId");
-                    table.ForeignKey(
-                        name: "FK_Tags_Languages_LanguageId",
-                        column: x => x.LanguageId,
-                        principalTable: "Languages",
-                        principalColumn: "LanguageId");
-                    table.ForeignKey(
-                        name: "FK_Tags_LearningStyles_LearningStyleId",
-                        column: x => x.LearningStyleId,
-                        principalTable: "LearningStyles",
-                        principalColumn: "LearningStyleId");
-                    table.ForeignKey(
-                        name: "FK_Tags_Lessons_LessonId",
-                        column: x => x.LessonId,
-                        principalTable: "Lessons",
-                        principalColumn: "LessonId");
                 });
 
             migrationBuilder.CreateTable(
@@ -509,6 +528,36 @@ namespace LingoLabs.Infrastructure.Migrations
                 column: "LanguageId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EntityTags_ChapterId",
+                table: "EntityTags",
+                column: "ChapterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityTags_LanguageCompetenceId",
+                table: "EntityTags",
+                column: "LanguageCompetenceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityTags_LanguageId",
+                table: "EntityTags",
+                column: "LanguageId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityTags_LanguageLevelId",
+                table: "EntityTags",
+                column: "LanguageLevelId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityTags_LessonId",
+                table: "EntityTags",
+                column: "LessonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EntityTags_TagId",
+                table: "EntityTags",
+                column: "TagId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_LanguageCompetenceResults_ChapterResultId",
                 table: "LanguageCompetenceResults",
                 column: "ChapterResultId");
@@ -579,34 +628,9 @@ namespace LingoLabs.Infrastructure.Migrations
                 column: "LessonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tags_ChapterId",
-                table: "Tags",
-                column: "ChapterId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tags_LanguageCompetenceId",
-                table: "Tags",
-                column: "LanguageCompetenceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tags_LanguageId",
-                table: "Tags",
-                column: "LanguageId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tags_LanguageLevelId",
-                table: "Tags",
-                column: "LanguageLevelId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Tags_LearningStyleId",
                 table: "Tags",
                 column: "LearningStyleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Tags_LessonId",
-                table: "Tags",
-                column: "LessonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserLanguageLevels_EnrollmentId",
@@ -631,13 +655,16 @@ namespace LingoLabs.Infrastructure.Migrations
                 name: "Choices");
 
             migrationBuilder.DropTable(
+                name: "EntityTags");
+
+            migrationBuilder.DropTable(
                 name: "QuestionResults");
 
             migrationBuilder.DropTable(
-                name: "Tags");
+                name: "UserLanguageLevels");
 
             migrationBuilder.DropTable(
-                name: "UserLanguageLevels");
+                name: "Tags");
 
             migrationBuilder.DropTable(
                 name: "LessonResults");

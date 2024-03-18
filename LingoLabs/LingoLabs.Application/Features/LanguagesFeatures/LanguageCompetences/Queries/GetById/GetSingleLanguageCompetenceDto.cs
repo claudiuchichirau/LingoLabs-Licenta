@@ -11,6 +11,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
         public int? LanguageCompetencePriorityNumber { get; set; }
         public List<LessonDto> Lessons { get; set; } = [];
         public List<TagDto> LearningCompetenceKeyWords { get; set; } = [];
+        public List<TagDto> UnassociatedTags { get; set; } = [];
         public List<UserLanguageLevelDto> UserLanguageLevels { get; set; } = [];
     }
 }

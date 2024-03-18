@@ -18,7 +18,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             var language = await context.Languages
                 .Include(language => language.LanguageLevels)
                 .Include(language => language.LanguageCompetences)
-                .Include(language => language.LanguageKeyWords)
+                .Include(language => language.LanguageTags)
                 .Include(language => language.PlacementTest)
                 .FirstOrDefaultAsync(language => language.LanguageId == id);
 

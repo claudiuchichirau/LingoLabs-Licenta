@@ -1,15 +1,18 @@
 ﻿using LingoLabs.Application.Persistence.Languages;
 using MediatR;
+using System.Linq;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.GetById
 {
     public class GetByIdLanguageQueryHandler : IRequestHandler<GetByIdLanguageQuery, GetSingleLanguageDto>
     {
         private readonly ILanguageRepository repository;
+        private readonly ITagRepository tagRepository;
 
-        public GetByIdLanguageQueryHandler(ILanguageRepository repository)
+        public GetByIdLanguageQueryHandler(ILanguageRepository repository, ITagRepository tagRepository)
         {
             this.repository = repository;
+            this.tagRepository = tagRepository;
         }
 
         public async Task<GetSingleLanguageDto> Handle(GetByIdLanguageQuery request, CancellationToken cancellationToken)
@@ -38,6 +41,27 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
                         LanguageId = languageCompetence.LanguageId
                     }).ToList();
 
+                var allTags = await tagRepository.GetAllAsync();
+
+                var allTagsDto = allTags.Value.Select(tag => new Tags.Queries.TagDto
+                {
+                    TagId = tag.TagId,
+                    TagContent = tag.TagContent
+                });
+
+                var tasks = language.Value.LanguageTags.Select(async entityTag =>
+                {
+                    var tag = await tagRepository.FindByIdAsync(entityTag.TagId);
+                    return new Tags.Queries.TagDto
+                    {
+                        TagId = entityTag.Tag.TagId,
+                        TagContent = tag.Value.TagContent
+                    };
+                });
+                var languageKeyWords = (await Task.WhenAll(tasks)).ToList();
+
+                var unassociatedTags = allTagsDto.Where(tag => !languageKeyWords.Any(lkw => lkw.TagId == tag.TagId)).ToList();
+
                 return new GetSingleLanguageDto
                 {
                     LanguageId = language.Value.LanguageId,
@@ -49,11 +73,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
 
                     LanguageCompetences = sortedLanguageCompetences,
 
-                    LanguageKeyWords = language.Value.LanguageKeyWords.Select(tag => new Tags.Queries.TagDto
-                    {
-                        TagId = tag.TagId,
-                        TagContent = tag.TagContent
-                    }).ToList(),
+                    LanguageKeyWords = languageKeyWords,
+
+                    UnassociatedTags = unassociatedTags,
 
                     PlacementTest = language.Value.PlacementTest.Select(question => new Questions.Queries.QuestionDto
                     {

@@ -17,7 +17,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         {
             var chapter = await context.Chapters
                 .Include(c => c.languageCompetences)
-                .Include(c => c.ChapterKeyWords)
+                .Include(c => c.ChapterTags)
                 .FirstOrDefaultAsync(c => c.ChapterId == id);
 
             if (chapter == null)

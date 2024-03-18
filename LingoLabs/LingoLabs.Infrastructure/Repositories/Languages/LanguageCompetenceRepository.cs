@@ -16,7 +16,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         {
             var result = await context.LanguageCompetences
                 .Include(competence => competence.Lessons)
-                .Include(competence => competence.LearningCompetenceKeyWords)
+                .Include(competence => competence.LearningCompetenceTags)
                 .Include(competence => competence.Language)
                 .Include(competence => competence.Chapter)
                 .FirstOrDefaultAsync(competence => competence.LanguageCompetenceId == id);

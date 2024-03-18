@@ -10,11 +10,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
     {
         private readonly ILanguageLevelRepository repository;
         private readonly IUserLanguageLevelRepository userLanguageLevelRepository;
+        private readonly ITagRepository tagRepository;
 
-        public GetByIdLanguageLevelQueryHandler(ILanguageLevelRepository repository, IUserLanguageLevelRepository userLanguageLevelRepository)
+        public GetByIdLanguageLevelQueryHandler(ILanguageLevelRepository repository, IUserLanguageLevelRepository userLanguageLevelRepository, ITagRepository tagRepository)
         {
             this.repository = repository;
             this.userLanguageLevelRepository = userLanguageLevelRepository;
+            this.tagRepository = tagRepository;
         }
         public async Task<LanguageLevelDto> Handle(GetByIdLanguageLevelQuery request, CancellationToken cancellationToken)
         {
@@ -40,6 +42,27 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
                         LanguageLevelId = chapter.LanguageLevelId
                     }).ToList();
 
+                var allTags = await tagRepository.GetAllAsync();
+
+                var allTagsDto = allTags.Value.Select(tag => new Tags.Queries.TagDto
+                {
+                    TagId = tag.TagId,
+                    TagContent = tag.TagContent
+                });
+
+                var tasks = languageLevel.Value.LanguageLevelTags.Select(async entityTag =>
+                {
+                    var tag = await tagRepository.FindByIdAsync(entityTag.TagId);
+                    return new Tags.Queries.TagDto
+                    {
+                        TagId = entityTag.Tag.TagId,
+                        TagContent = tag.Value.TagContent
+                    };
+                });
+                var languageLevelKeyWords = (await Task.WhenAll(tasks)).ToList();
+
+                var unassociatedTags = allTagsDto.Where(tag => !languageLevelKeyWords.Any(lkw => lkw.TagId == tag.TagId)).ToList();
+
                 return new GetSingleLanguageLevelDto
                 {
                     LanguageLevelId = languageLevel.Value.LanguageLevelId,
@@ -52,11 +75,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
 
                     LanguageChapters = languageChapterSorted,
 
-                    LanguageLeveKeyWords = languageLevel.Value.LanguageLeveKeyWords.Select(tag => new Tags.Queries.TagDto
-                    {
-                        TagId = tag.TagId,
-                        TagContent = tag.TagContent
-                    }).ToList(),
+                    LanguageLeveKeyWords = languageLevelKeyWords,
+                    UnassociatedTags = unassociatedTags,
 
                     UserLanguageLevels = userLanguageLevels.Select(userLanguageLevel => new EnrollmentsFeatures.UserLanguageLevels.Queries.UserLanguageLevelDto
                     {

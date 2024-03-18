@@ -11,7 +11,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public string? LanguageLevelDescription { get; private set; } = string.Empty;
         public string? LanguageLevelVideoLink { get; private set; } = string.Empty;
         public List<Chapter>? LanguageChapters { get; private set; } = [];
-        public List<Tag>? LanguageLeveKeyWords { get; private set; } = [];
+        public List<EntityTag>? LanguageLevelTags { get; private set; } = [];
         public List<UserLanguageLevel>? UserLanguageLevels { get; private set; } = [];
         public int? PriorityNumber { get; private set; }
         public Guid LanguageId { get; private set; }
@@ -53,14 +53,14 @@ namespace LingoLabs.Domain.Entities.Languages
             }
         }
 
-        public void AttachKeyWord(Tag tag)
+        public void AttachKeyWord(EntityTag tag)
         {
             if (tag != null)
             {
-                if (LanguageLeveKeyWords == null)
-                    LanguageLeveKeyWords = new List<Tag> { tag };
+                if (LanguageLevelTags == null)
+                    LanguageLevelTags = new List<EntityTag> { tag };
                 else
-                    LanguageLeveKeyWords.Add(tag);
+                    LanguageLevelTags.Add(tag);
             }
         }
 

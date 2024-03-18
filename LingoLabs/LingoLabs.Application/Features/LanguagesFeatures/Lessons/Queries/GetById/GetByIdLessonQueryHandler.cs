@@ -7,10 +7,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
     public class GetByIdLessonQueryHandler : IRequestHandler<GetByIdLessonQuery, GetSingleLessonDto>
     {
         private readonly ILessonRepository repository;
+        private readonly ITagRepository tagRepository;
 
-        public GetByIdLessonQueryHandler(ILessonRepository repository)
+        public GetByIdLessonQueryHandler(ILessonRepository repository, ITagRepository tagRepository)
         {
             this.repository = repository;
+            this.tagRepository = tagRepository;
         }
         public async Task<GetSingleLessonDto> Handle(GetByIdLessonQuery request, CancellationToken cancellationToken)
         {
@@ -27,6 +29,27 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
                         LessonId = question.LessonId
                     }).ToList();
 
+                var allTags = await tagRepository.GetAllAsync();
+
+                var allTagsDto = allTags.Value.Select(tag => new Tags.Queries.TagDto
+                {
+                    TagId = tag.TagId,
+                    TagContent = tag.TagContent
+                });
+
+                var tasks = lesson.Value.LessonTags.Select(async entityTag =>
+                {
+                    var tag = await tagRepository.FindByIdAsync(entityTag.TagId);
+                    return new Tags.Queries.TagDto
+                    {
+                        TagId = entityTag.Tag.TagId,
+                        TagContent = tag.Value.TagContent
+                    };
+                });
+                var lessonKeyWords = (await Task.WhenAll(tasks)).ToList();
+
+                var unassociatedTags = allTagsDto.Where(tag => !lessonKeyWords.Any(lkw => lkw.TagId == tag.TagId)).ToList();
+
                 return new GetSingleLessonDto
                 {
                     LessonId = lesson.Value.LessonId,
@@ -39,7 +62,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
                     LessonImageData = lesson.Value.LessonImageData,
                     LanguageCompetenceId = lesson.Value.LanguageCompetenceId,
                     LessonPriorityNumber = lesson.Value.LessonPriorityNumber,
-                    LessonQuestions = sortedLessonQuestions
+                    LessonQuestions = sortedLessonQuestions,
+                    LessonTags = lessonKeyWords,
+                    UnassociatedTags = unassociatedTags
                 };
             }
             

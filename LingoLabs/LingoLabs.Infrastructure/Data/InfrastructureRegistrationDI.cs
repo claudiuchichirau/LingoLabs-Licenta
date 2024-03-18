@@ -4,6 +4,7 @@ using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResults.Co
 using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.DeleteLessonResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Commands.DeleteQuestionResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.DeleteUserLanguageLevel;
+using LingoLabs.Application.Features.LanguagesFeatures.EntityTags.Commands.DeleteEntityTag;
 using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.DeleteLanguageCompetence;
 using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.DeletePlacementTest;
 using LingoLabs.Application.Persistence;
@@ -48,6 +49,7 @@ namespace LingoLabs.Infrastructure.Data
             services.AddScoped<IWritingQuestionResultRepository, WritingQuestionResultRepository>();
             services.AddScoped<IUserLanguageLevelRepository, UserLanguageLevelRepository>();
             services.AddScoped<ILearningStyleRepository, LearningStyleRepository>();
+            services.AddScoped<IEntityTagRepository, EntityTagRepository>();
 
             services.AddTransient<DeleteQuestionResultCommandHandler>();
             services.AddTransient<DeleteLessonResultCommandHandler>();
@@ -57,7 +59,7 @@ namespace LingoLabs.Infrastructure.Data
             services.AddTransient<DeleteUserLanguageLevelCommandHandler>();
             services.AddTransient<DeleteLanguageCompetenceCommandHandler>();
             services.AddTransient<DeletePlacementTestCommandHandler>();
-
+            services.AddTransient<DeleteEntityTagCommandHandler>();
 
             return services;
         }

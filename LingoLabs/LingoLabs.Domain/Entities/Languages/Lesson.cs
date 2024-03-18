@@ -14,7 +14,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public string? LessonVideoLink { get; protected set; } = string.Empty;
         public byte[]? LessonImageData { get; protected set; }
         public List<Question>? LessonQuestions { get; protected set; } = [];
-        public List<Tag > LessonTags { get; protected set; } = [];
+        public List<EntityTag> LessonTags { get; protected set; } = [];
         public Guid LanguageCompetenceId { get; protected set; }
         public LanguageCompetence? LanguageCompetence { get; set; }
 
@@ -92,12 +92,12 @@ namespace LingoLabs.Domain.Entities.Languages
                 LessonVideoLink = videoLink;
         }
 
-        public void AttachTag(Tag tag)
+        public void AttachTag(EntityTag tag)
         {
             if (tag != null)
             {
                 if (LessonTags == null)
-                    LessonTags = new List<Tag> { tag };
+                    LessonTags = new List<EntityTag> { tag };
                 else
                     LessonTags.Add(tag);
             }

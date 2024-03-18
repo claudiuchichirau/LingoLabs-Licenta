@@ -13,5 +13,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
         public List<LanguageCompetenceDto> LanguageCompetences { get; set; } = [];
         public List<QuestionDto> PlacementTest { get; set; } = [];
         public List<TagDto> LanguageKeyWords { get; set; } = [];
+        public List<TagDto> UnassociatedTags { get; set; } = [];
     }
 }

@@ -12,7 +12,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public int? LanguageCompetencePriorityNumber { get; private set; }
         public LanguageCompetenceType LanguageCompetenceType { get; private set; }
         public List<Lesson>? Lessons { get; private set; } = new();
-        public List<Tag>? LearningCompetenceKeyWords { get; private set; } = new();
+        public List<EntityTag>? LearningCompetenceTags { get; private set; } = new();
         public Guid ChapterId { get; private set; }
         public Chapter? Chapter { get; set; }
         public Guid LanguageId { get; private set; }
@@ -73,14 +73,14 @@ namespace LingoLabs.Domain.Entities.Languages
             }
         }
 
-        public void AttachKeyWord(Tag tag)
+        public void AttachKeyWord(EntityTag tag)
         {
             if (tag != null)
             {
-                if (LearningCompetenceKeyWords == null)
-                    LearningCompetenceKeyWords = new List<Tag> { tag };
+                if (LearningCompetenceTags == null)
+                    LearningCompetenceTags = new List<EntityTag> { tag };
                 else
-                    LearningCompetenceKeyWords.Add(tag);
+                    LearningCompetenceTags.Add(tag);
             }
         }
 

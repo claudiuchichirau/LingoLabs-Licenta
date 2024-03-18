@@ -11,7 +11,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public byte[]? ChapterImageData { get; private set; }
         public string? ChapterVideoLink { get; private set; } = string.Empty;
         public List<LanguageCompetence>? languageCompetences { get; private set; } = new();
-        public List<Tag>? ChapterKeyWords { get; private set; } = new();
+        public List<EntityTag>? ChapterTags { get; private set; } = new();
         public Guid LanguageLevelId { get; private set; }
         public LanguageLevel? LanguageLevel { get; set; }
 
@@ -48,17 +48,6 @@ namespace LingoLabs.Domain.Entities.Languages
             }
         }
 
-        public void AttachKeyWord(Tag tag)
-        {
-            if (tag != null)
-            {
-                if (ChapterKeyWords == null)
-                    ChapterKeyWords = new List<Tag> { tag };
-                else
-                    ChapterKeyWords.Add(tag);
-            }
-        }
-
         public void AttachImageData(byte[] chapterImageData)
         {
             if (chapterImageData != null && chapterImageData.Length > 0)
@@ -69,6 +58,17 @@ namespace LingoLabs.Domain.Entities.Languages
         {
             if (!string.IsNullOrWhiteSpace(chapterVideoLink))
                 ChapterVideoLink = chapterVideoLink;
+        }
+
+        public void AttachTag(EntityTag entityTag)
+        {
+            if (entityTag != null)
+            {
+                if (ChapterTags == null)
+                    ChapterTags = new List<EntityTag> { entityTag };
+                else
+                    ChapterTags.Add(entityTag);
+            }
         }
 
         public void UpdateChapter(string chapterName, string chapterDescription, byte[] chapterImageData, string chapterVideoLink, int? chapterPrioriryNumber)

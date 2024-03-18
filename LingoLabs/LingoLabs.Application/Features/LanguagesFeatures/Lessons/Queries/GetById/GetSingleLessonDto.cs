@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries;
+using LingoLabs.Application.Features.LanguagesFeatures.Tags.Queries;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetById
 {
@@ -11,5 +12,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
         public byte[] LessonImageData { get; set; } = [];
         public int? LessonPriorityNumber { get; set; }
         public List<QuestionDto> LessonQuestions { get; set; } = [];
+        public List<TagDto> LessonTags { get; set; } = [];
+        public List<TagDto> UnassociatedTags { get; set; } = [];
     }
 }

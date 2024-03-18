@@ -17,7 +17,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         {
             var result = await context.LanguageLevels
                 .Include(level => level.LanguageChapters)
-                .Include(level => level.LanguageLeveKeyWords)
+                .Include(level => level.LanguageLevelTags)
                 .Include(level => level.Language)
                 .FirstOrDefaultAsync(level => level.LanguageLevelId == id);
 

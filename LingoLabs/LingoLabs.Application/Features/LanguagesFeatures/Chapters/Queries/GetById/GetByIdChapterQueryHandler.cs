@@ -8,10 +8,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
     public class GetByIdChapterQueryHandler : IRequestHandler<GetByIdChapterQuery, GetSingleChapterDto>
     {
         private readonly IChapterRepository repository;
+        private readonly ITagRepository tagRepository;
 
-        public GetByIdChapterQueryHandler(IChapterRepository repository)
+        public GetByIdChapterQueryHandler(IChapterRepository repository, ITagRepository tagRepository)
         {
             this.repository = repository;
+            this.tagRepository = tagRepository;
         }
         public async Task<GetSingleChapterDto> Handle(GetByIdChapterQuery request, CancellationToken cancellationToken)
         {
@@ -29,6 +31,27 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
                         LanguageId = languageCompetence.LanguageId
                     }).ToList();
 
+                var allTags = await tagRepository.GetAllAsync();
+
+                var allTagsDto = allTags.Value.Select(tag => new Tags.Queries.TagDto
+                {
+                    TagId = tag.TagId,
+                    TagContent = tag.TagContent
+                });
+
+                var tasks = chapter.Value.ChapterTags.Select(async entityTag =>
+                {
+                    var tag = await tagRepository.FindByIdAsync(entityTag.TagId);
+                    return new Tags.Queries.TagDto
+                    {
+                        TagId = entityTag.Tag.TagId,
+                        TagContent = tag.Value.TagContent
+                    };
+                });
+                var chapterKeyWords = (await Task.WhenAll(tasks)).ToList();
+
+                var unassociatedTags = allTagsDto.Where(tag => !chapterKeyWords.Any(lkw => lkw.TagId == tag.TagId)).ToList();
+
                 return new GetSingleChapterDto
                 {
                     ChapterId = chapter.Value.ChapterId,
@@ -41,11 +64,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
 
                     languageCompetences = sortedLanguageCompetences,
 
-                    ChapterKeyWords = chapter.Value.ChapterKeyWords.Select(tag => new Tags.Queries.TagDto
-                    {
-                        TagId = tag.TagId,
-                        TagContent = tag.TagContent
-                    }).ToList()
+                    ChapterKeyWords = chapterKeyWords,
+                    UnassociatedTags = unassociatedTags
                 };
             }
 

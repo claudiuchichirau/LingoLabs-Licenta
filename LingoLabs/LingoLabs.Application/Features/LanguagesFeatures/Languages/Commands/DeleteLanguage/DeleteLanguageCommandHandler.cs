@@ -1,4 +1,5 @@
-﻿using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.DeleteLanguageCompetence;
+﻿using LingoLabs.Application.Features.LanguagesFeatures.EntityTags.Commands.DeleteEntityTag;
+using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.DeleteLanguageCompetence;
 using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities.Languages;
@@ -10,11 +11,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.De
     {
         private readonly ILanguageRepository languageRepository;
         private readonly DeleteLanguageCompetenceCommandHandler deleteLanguageCompetenceCommandHandler;
+        private readonly DeleteEntityTagCommandHandler deleteEntityTagCommandHandler;
 
-        public DeleteLanguageCommandHandler(ILanguageRepository languageRepository, DeleteLanguageCompetenceCommandHandler deleteLanguageCompetenceCommandHandler)
+        public DeleteLanguageCommandHandler(ILanguageRepository languageRepository, DeleteLanguageCompetenceCommandHandler deleteLanguageCompetenceCommandHandler, DeleteEntityTagCommandHandler deleteEntityTagCommandHandler)
         {
             this.languageRepository = languageRepository;
             this.deleteLanguageCompetenceCommandHandler = deleteLanguageCompetenceCommandHandler;
+            this.deleteEntityTagCommandHandler = deleteEntityTagCommandHandler;
         }
 
         public async Task<DeleteLanguageCommandResponse> Handle(DeleteLanguageCommand request, CancellationToken cancellationToken)
@@ -55,6 +58,23 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.De
                     {
                         Success = false,
                         ValidationsErrors = deleteLanguageCompetenceCommandResponse.ValidationsErrors
+                    };
+                }
+            }
+
+            var entityTags = language.Value.LanguageTags.ToList();
+
+            foreach (EntityTag entityTag in entityTags)
+            {
+                var deleteEntityTagCommand = new DeleteEntityTagCommand { EntityTagId = entityTag.EntityTagId };
+                var deleteEntityTagCommandResponse = await deleteEntityTagCommandHandler.Handle(deleteEntityTagCommand, cancellationToken);
+
+                if(!deleteEntityTagCommandResponse.Success)
+                {
+                    return new DeleteLanguageCommandResponse
+                    {
+                        Success = false,
+                        ValidationsErrors = deleteEntityTagCommandResponse.ValidationsErrors
                     };
                 }
             }

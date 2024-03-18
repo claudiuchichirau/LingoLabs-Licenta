@@ -11,6 +11,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
         public int? PriorityNumber { get; set; }
         public List<ChapterDto> LanguageChapters { get; set; } = [];
         public List<TagDto> LanguageLeveKeyWords { get; set; } = [];
+        public List<TagDto> UnassociatedTags { get; set; } = [];
         public List<UserLanguageLevelDto> UserLanguageLevels { get; set; } = [];
     }
 }

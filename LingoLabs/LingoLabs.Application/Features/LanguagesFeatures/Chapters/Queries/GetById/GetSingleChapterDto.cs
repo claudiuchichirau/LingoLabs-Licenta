@@ -11,5 +11,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
         public string ChapterVideoLink { get; set; } = string.Empty;
         public List<LanguageCompetenceDto> languageCompetences { get; set; } = [];
         public List<TagDto> ChapterKeyWords { get; set; } = [];
+        public List<TagDto> UnassociatedTags { get; set; } = [];
     }
 }
