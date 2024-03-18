@@ -27,11 +27,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LingoLabs.Application", "Li
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LingoLabs.API", "LingoLabs.API\LingoLabs.API.csproj", "{562D5A1B-FE76-4ABC-95FD-5C185F774955}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LingoLabs.Identity", "LingoLabs.Identity\LingoLabs.Identity.csproj", "{6C39786A-DEB0-4003-B595-C439C0223225}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LingoLabs.Identity", "LingoLabs.Identity\LingoLabs.Identity.csproj", "{6C39786A-DEB0-4003-B595-C439C0223225}"
 	ProjectSection(ProjectDependencies) = postProject
 		{99ED11C6-9C4F-4319-8F45-F15F46B95BB3} = {99ED11C6-9C4F-4319-8F45-F15F46B95BB3}
 		{EF5928C9-E9F5-417E-9894-4A44B6E0537D} = {EF5928C9-E9F5-417E-9894-4A44B6E0537D}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LingoLabs.App", "LingoLabs.App\LingoLabs.App.csproj", "{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +105,18 @@ Global
 		{6C39786A-DEB0-4003-B595-C439C0223225}.Release|iPhone.Build.0 = Release|Any CPU
 		{6C39786A-DEB0-4003-B595-C439C0223225}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
 		{6C39786A-DEB0-4003-B595-C439C0223225}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Release|iPhone.Build.0 = Release|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -119,6 +133,7 @@ Global
 		{99ED11C6-9C4F-4319-8F45-F15F46B95BB3} = {51D69365-7AA5-409B-87F0-CF58468E8731}
 		{562D5A1B-FE76-4ABC-95FD-5C185F774955} = {F5B60E86-3578-4718-8E9D-C975B3B2CF73}
 		{6C39786A-DEB0-4003-B595-C439C0223225} = {8A9741D2-9A4A-4FD8-B09A-D94121357C33}
+		{2A17FD03-EB4F-4328-8A58-3D5F0F9E779D} = {4DF6A097-D9F4-40F1-A46A-FE0805E303A1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F613D5CF-5794-4DCD-BDE5-2505FEC33278}
