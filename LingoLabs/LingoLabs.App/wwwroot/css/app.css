@@ -1,6 +1,24 @@
-/*html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+@font-face {
+    font-family: 'Poppins-SemiBold';
+    src: url('../fonts/Poppins-SemiBold.ttf')
 }
+
+@font-face {
+    font-family: 'Poppins-Regular';
+    src: url('../fonts/Poppins-Regular.ttf')
+}
+
+
+@font-face {
+    font-family: 'Poppins-Bold';
+    src: url('../fonts/Poppins-Bold.ttf')
+}
+
+* {
+    font-family: 'Poppins-Regular', Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
+}
+
 
 h1:focus {
     outline: none;
@@ -101,4 +119,3 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
-*/

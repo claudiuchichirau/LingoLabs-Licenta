@@ -1,4 +1,9 @@
-﻿@inherits LayoutComponentBase
+﻿@using MudBlazor
+@inherits LayoutComponentBase
+
+<MudThemeProvider/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
 
 <div class="page-fluid">
     <div class="navbar">
@@ -6,12 +11,12 @@
     </div>
 
     <main>
-        <article class="content">
+        <div class="content">
             @Body
-        </article>
+        </div>
     </main>
 
     <div class="footer">
-        <Footer />
+        <Footer/>
     </div>
 </div>
