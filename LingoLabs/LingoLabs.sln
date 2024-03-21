@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LingoLabs.Identity", "Lingo
 		{EF5928C9-E9F5-417E-9894-4A44B6E0537D} = {EF5928C9-E9F5-417E-9894-4A44B6E0537D}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LingoLabs.App", "LingoLabs.App\LingoLabs.App.csproj", "{35605583-2011-4BAB-AC25-45C3466A349E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LingoLabs.App", "LingoLabs.App\LingoLabs.App.csproj", "{35605583-2011-4BAB-AC25-45C3466A349E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

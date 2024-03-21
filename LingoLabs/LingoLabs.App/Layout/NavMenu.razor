@@ -1,11 +1,12 @@
 ﻿@using MudBlazor
+@inject NavigationManager NavigationManager
 
 <MudLayout>
-    <MudAppBar Elevation="1" Class="app-bar-custom">
+    <MudAppBar Elevation="1" Class="app-bar-custom" Id="navbar">
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
             <!-- Prima coloană cu imaginea și titlul site-ului aliniat la stânga -->
-            <div style="flex: 1; display: flex; align-items: center;" href="/">
-                <img src="images/sigla-lingolabs.png" alt="LingoLabs" style="height: 55px; margin-left: 40px;" />
+            <div style="flex: 1; display: flex; align-items: center;" href="/" @onclick="NavigateToHome">
+                <img src="images/homepage/sigla-lingolabs.png" alt="LingoLabs" style="height: 55px; margin-left: 40px;" />
                 <MudText Typo="Typo.h6" Class="poppins-semi-bold" style="font-size: 25px; color: #2563EB; margin-left: 10px;">LingoLabs</MudText>
             </div>
             <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
@@ -16,8 +17,7 @@
             </div>
             <!-- Butonul de login -->
             <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
-                @* <MudButton Color="Color.Primary" Class="button-custom">Login</MudButton> *@
-                <MudButton Variant="Variant.Filled" Class="custom-button poppins-semi-bold">Login</MudButton>
+                <MudButton Variant="Variant.Filled" Class="custom-button poppins-semi-bold" OnClick="NavigateToLogin">Login</MudButton>
             </div>
         </div>
     </MudAppBar>
@@ -67,7 +67,12 @@
     
 </div>
  *@
+
+
+@inject IJSRuntime JSRuntime
+
 @code {
+
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
@@ -75,5 +80,23 @@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
+    }
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
+    }
+
+    private void NavigateToHome()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("enableScrollFunction");
+        }
     }
 }

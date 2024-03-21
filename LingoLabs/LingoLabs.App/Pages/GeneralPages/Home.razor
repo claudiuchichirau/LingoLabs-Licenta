@@ -1,0 +1,354 @@
+﻿@page "/"
+@using MudBlazor
+
+
+<div class="landpage-pic d-flex justify-content-around bg-secondary mb-3 align-items-center" style="margin-top:-10px;">
+    <div style="margin-left:100px; margin-top:10px;">
+        <h1 style="font-size: 40px; color: white;">Studiul online este acum mult mai accesibil</h1>
+        <p class="poppins-regular" style="font-size: 18px; padding:5px; color: white;">LingoLabs este o platformă unde poți învăța interactiv.</p>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Să începem!</MudButton>
+    </div>
+    <div>
+        <img style="margin-left:80px; margin-right:100px; padding: 59px;" src="images/homepage/55761-removebg-preview.png">
+    </div>
+</div>
+
+<div class="text-center">
+    <h1 style="color:#FC6F05; font-size: 33px; margin-top: 15px;">
+        <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowDown" />
+        De ce LingoLabs?
+        <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowDown" />
+    </h1>
+</div>
+
+
+<div class="container">
+    <div class="row align-items-center">
+        <div class="col-md-6 custom-container">
+            <div class="border-container">
+                <h2 class="p-2 text-center" style="color: #2563EB;">Puteți învăța online și confortabil din orice colț al lumii</h2>
+                <p class="text-center" style="font-size: 16px; font-weight: bold;">LingoLabs este un instrument online eficient care te susține în dezvoltarea abilităților lingvistice, oferindu-ți posibilitatea să exersezi vorbirea într-o limbă străină printr-o varietate de exerciții interactive și feedback personalizat.</p>
+            </div>
+        </div>
+        <div class="col-md-6 custom-image">
+            <img src="images/homepage/homepage-1.png">
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col-md-6 custom-image">
+            <img src="images/homepage/homepage-2.png">
+        </div>
+        <div class="col-md-6 custom-container">
+            <div class="border-container">
+                <h2 class="p-2 text-center" style="color: #2563EB;">Descoperă puterea cuvintelor tale</h2>
+                <p class="text-center" style="font-size: 16px; font-weight: bold;">Descoperă la LingoLabs cum să transformi scrisul de mână în text digital fără bătăi de cap. Încarcă o fotografie și lasă magia să se întâmple în lecțiile noastre de Scriere, unde fiecare cuvânt scris devine parte din călătoria ta educațională.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col-md-6 custom-container">
+            <div class="border-container">
+                <h2 class="p-2 text-center" style="color: #2563EB;">Ascultă lumea în accentul tău preferat</h2>
+                <p class="text-center" style="font-size: 16px; font-weight: bold;">Experimentează învățarea limbilor adaptată auzului tău la Lecțiile noastre de Ascultare. Alege accentul care ți se potrivește și lasă LingoLabs să te ghideze. Cu noi, vei ajunge să te exprimi clar și cu încredere.</p>
+            </div>
+        </div>
+        <div class="col-md-6 custom-image">
+            <img src="images/homepage/homepage-3.png">
+        </div>
+    </div>
+
+    <div class="row align-items-center" style="margin-top: -10px;">
+        <div class="col-md-6 custom-image">
+            <img src="images/homepage/homepage-4.jpg" style="max-width: 600px; max-height: 500px;">
+        </div>
+        <div class="col-md-6 custom-container">
+            <div class="border-container">
+                <h2 class="p-2 text-center" style="color: #2563EB;">Vorbește și fii înțeles</h2>
+                <p class="text-center" style="font-size: 16px; font-weight: bold;">Descoperă plăcerea de a învăța o limbă străină prin conversații directe cu Lingo, mascota noastră prietenoasă. Lecțiile interactive de Vorbire îți vor permite să te exprimi liber, oferindu-ți șansa de a purta un dialog autentic cu Lingo</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid p-3" style="background-color: #E9EFFD; padding: 10px; margin-top: 40px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-left">
+            <h2 class="p-2" style="color: #2563EB; margin-left: 76px;">Începe să înveți inteligent chiar acum!</h2>
+            <p style="font-size: 16px; font-weight: bold; margin-left: 85px;">
+                Încearcă testele noastre rapide și gratuite online pentru a afla care este nivelul tău de limbă Engleză și care dintre Nivelele
+                <span style="color: #FC6F05;">LingoLabs</span>
+                ți s-ar potrivi cel mai bine. Există o multitudine de teste din care poți alege.
+            </p>
+
+        </div>
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Să începem!</MudButton>
+        </div>
+    </div>
+</div>
+
+<div class="text-left">
+    <h1 style="color:#2563EB; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 40px;">Cursurile LingoLabs</h1>
+</div>
+
+<MudCarousel Class="mud-width-full" @ref="_carousel" ItemsSource="@_source" @bind-SelectedIndex="selectedIndex" Style="height:410px;" ShowArrows="@_arrows" ShowBullets="@_bullets" EnableSwipeGesture="@_enableSwipeGesture" AutoCycle="@_autocycle">
+    <ItemTemplate>
+        <div class="container-fluid p-3">
+            <div class="row justify-content-center">
+
+                <div class="col-md-3">
+                    <div class="card">
+                        <img class="card-img-top" src="@context.ImageUrl" style="max-width: 300px; max-height: 200px; display: block; margin: auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">English @context.Title</h5>
+                            <div class="row">
+                                <div class="col">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: @context.Lesson</p>
+                                </div>
+                                <div class="col">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: @context.Lesson</p>
+                                </div>
+                                <div class="col">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.People" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" />Elevi: @context.Students</p>
+                                </div>
+                            </div>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                        </div>
+                    </div>
+                </div>
+
+               <div class="col-md-3">
+                    <div class="card">
+                        <img class="card-img-top" src="@context.ImageUrl" style="max-width: 300px; max-height: 200px; display: block; margin: auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">English @context.Title</h5>
+                            <div class="row">
+                                <div class="col">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: @context.Lesson</p>
+                                </div>
+                                <div class="col">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: @context.Lesson</p>
+                                </div>
+                                <div class="col">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.People" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" />Elevi: @context.Students</p>
+                                </div>
+                            </div>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Start Course</MudButton>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="card">
+                        <img class="card-img-top" src="@context.ImageUrl" style="max-width: 300px; max-height: 200px; display: block; margin: auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">English @context.Title</h5>
+                            <div class="row">
+                                <div class="col">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: @context.Lesson</p>
+                                </div>
+                                <div class="col">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: @context.Lesson</p>
+                                </div>
+                                <div class="col">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.People" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" />Elevi: @context.Students</p>
+                                </div>
+                            </div>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Start Course</MudButton>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </ItemTemplate>
+</MudCarousel>
+
+<div class="container" style="margin-top: 30px;">
+    <div class="row align-items-center">
+        <div class="col-md-6 custom-image">
+            <img src="images/homepage/homepage-despre-noi.png">
+        </div>
+        <div class="col-md-6 custom-container">
+            <div>
+                <h2 class="p-2 text-center" style="color: #2563EB;">Despre <span style="color: #FC6F05;">LingoLabs</span></h2>
+                <p class="text-center" style="font-size: 16px; font-weight: bold;">
+                    Soluțiile noastre pentru predare și evaluare în mediul online ajută milioane de cursanți din întreaga lume și sunt 
+                    construite pe baza unor perspective unice obținute din cercetarea și expertiza profesorilor Cambridge. 
+                </p>
+                <p class="text-center" style="font-size: 16px; font-weight: bold;">
+                    <span style="color: #FC6F05;">LingoLabs</span> este o platformă online rapidă și convenabilă care ajută la 
+                    dezvoltarea abilităților lingvistice, oferindu-ți posibilitatea să exersezi vorbirea într-o limbă străină 
+                    printr-o varietate de exerciții interactive și feedback personalizat.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container-fluid p-3" style="background-color: #E9EFFD; padding: 10px; margin-top: 80px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-left">
+            <h2 class="p-2" style="color: #2563EB; margin-left: 76px;">Testează-ți Engleza chiar acum!</h2>
+            <p style="font-size: 16px; font-weight: bold; margin-left: 85px;">
+                Încearcă testele noastre rapide și gratuite online pentru a afla care este nivelul tău de limbă Engleză și care dintre Nivelele
+                <span style="color: #FC6F05;">LingoLabs</span>
+                ți s-ar potrivi cel mai bine. Există o multitudine de teste din care poți alege.
+            </p>
+
+        </div>
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Testează acum!</MudButton>
+        </div>
+    </div>
+</div>
+
+<div class="text-center">
+    <h1 style="color: black; font-size: 33px; margin-top: 80px;">
+        Află ce apreciază alții la <span style="color: #FC6F05;">LingoLabs</span>
+    </h1>
+    <h2 style="font-size: 19px;">
+        Comunitatea noastră unită învață împreună. Aici sunt câteva dintre părerile lor
+    </h2>
+</div>
+
+<div class="container-fluid p-3" style="margin-bottom: 80px;">
+    <div class="row justify-content-center">
+
+        <div class="col-md-3 d-flex align-items-stretch">
+            <div class="card d-flex flex-column justify-content-center" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+                <div class="row text-center" style="margin-top: 15px;">
+                    <p>
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                    </p>
+                </div>
+                <div class="row text-center" style="padding: 10px;">
+                    <p>
+                        “Am început să învăț franceza cu LingoLabs și am fost uimit de cât de repede am început să înțeleg și să vorbesc.
+                        Sunt foarte încântat de rezultatele mele și de cât de mult am învățat într-un timp atât de scurt!”
+                    </p>
+                </div>
+                <div class="row text-center">
+                    <p style="font-weight: bold;">
+                        Cătălina Munteanu, România
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 d-flex align-items-stretch">
+            <div class="card d-flex flex-column justify-content-center" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+                <div class="row text-center" style="margin-top: 15px;">
+                    <p>
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.StarHalf" Style="color: yellow;" />
+                    </p>
+                </div>
+                <div class="row text-center" style="padding: 10px;">
+                    <p>
+                        “I never thought I’d be able to learn a new language on my own, but this site’s structured approach and 
+                        engaging content have proven me wrong. Highly recommend it to anyone looking to expand their horizons!”
+                    </p>
+                </div>
+                <div class="row text-center">
+                    <p style="font-weight: bold;">
+                        Mathey McBride, England
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 d-flex align-items-stretch">
+            <div class="card d-flex flex-column justify-content-center" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+                <div class="row text-center" style="margin-top: 15px;">
+                    <p>
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                        <MudIcon Icon="@Icons.Material.Filled.Star" Style="color: yellow;" />
+                    </p>
+                </div>
+                <div class="row text-center" style="padding: 10px;">
+                    <p>
+                        “Les retours personnalisés et le suivi des progrès sur ce site sont incroyables. On a l’impression d’avoir 
+                        un tuteur personnel qui vous guide à chaque étape du processus d’apprentissage.”
+                    </p>
+                </div>
+                <div class="row text-center">
+                    <p style="font-weight: bold;">
+                        Lucas Hugo, France
+                    </p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<style>
+    .landpage-pic {
+        background: linear-gradient(to right, #2563EB, #36A7FC);
+    }
+
+    .poppins-regular {
+        font-family: 'Poppins-Regular', sans-serif;
+    }
+
+    .border-container {
+        padding: 17px;
+        border: 1px solid black;
+        border-radius: 10px;
+        box-sizing: border-box;
+    }
+
+        .border-container h2 {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+    .custom-container {
+        padding: 45px;
+    }
+
+    .custom-image {
+        padding: 30px;
+        max-width: auto;
+    }
+</style>
+
+
+@code {
+    private MudCarousel<CourseCard> _carousel;
+    private bool _arrows = true;
+    private bool _bullets = true;
+    private bool _enableSwipeGesture = true;
+    private bool _autocycle = true;
+    private IList<CourseCard> _source = new List<CourseCard>() {
+        new CourseCard { Title = "Course 1", ImageUrl = "/images/homepage/homepage-1.png", Lesson = 6,Students = 23 },
+        new CourseCard { Title = "Course 2", ImageUrl = "/images/homepage/homepage-2.png", Lesson = 7, Students = 30 },
+        new CourseCard { Title = "Course 3", ImageUrl = "/images/homepage/homepage-3.png", Lesson = 8, Students = 40 }
+    };
+    private int selectedIndex = 2;
+
+    public class CourseCard
+    {
+        public string Title { get; set; }
+        public string ImageUrl { get; set; }
+        public int Lesson { get; set; }
+        public int Levels { get; set; }
+        public int Students { get; set; }
+    }
+}
