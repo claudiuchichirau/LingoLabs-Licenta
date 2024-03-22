@@ -1,7 +1,13 @@
 ﻿@page "/register"
+@using LingoLabs.App.Auth
+@using LingoLabs.App.ViewModel.AuthenticationModels
 @using MudBlazor
 @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@inject NavigationManager NavigationManager
+@inject CustomStateProvider authStateProvider
+@inject IJSRuntime JSRuntime
+@inject ISnackbar Snackbar
 
 <div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top:-10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
 </div>
@@ -19,31 +25,38 @@
                 </p>
             </div>
             <MudPaper Class="pa-6" Style="margin-bottom: 40px; width: 60%; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
-                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                    <MudTextField T="string" Label="Username" Required="true" RequiredError="User name is required!" />
-                    <MudTextField T="string" Label="First Name" Required="true" RequiredError="First name is required!" />
-                    <MudTextField T="string" Label="Last Name" Required="true" RequiredError="Last name is required!" />
-                    <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
-                                  Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
-                    <MudTextField T="string" Label="Password" HelperText="Choose a strong password" @ref="pwField1"
-                                  InputType="InputType.Password"
+                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" OnValidSubmit="OnSubmit" Model="registerRequest">
+                    <MudTextField T="string" Label="Username" Required="true" RequiredError="Username-ul este obligatoriu!" @bind-Value="registerRequest.UserName" ValidationMessage For="@(() => registerRequest.UserName)" />
+                    <MudTextField T="string" Label="Prenume" Required="true" RequiredError="Prenumele este obligatoriu!" @bind-Value="registerRequest.FirstName" ValidationMessage For="@(() => registerRequest.FirstName)" />
+                    <MudTextField T="string" Label="Nume" Required="true" RequiredError="Numele este obligatoriu!" @bind-Value="registerRequest.LastName" ValidationMessage For="@(() => registerRequest.LastName)" />
+                    <MudTextField T="string" Label="Email" Required="true" RequiredError="Adresa de Email este obligatorie!"
+                                  Validation="@(new EmailAddressAttribute() {ErrorMessage = "Adresa de Email este invalidă!"})"
+                                  @bind-Value="registerRequest.Email" 
+                                  ValidationMessage For="@(() => registerRequest.Email)" />
+                    <MudTextField T="string" Label="Parola" HelperText="Alege o parolă puternică!" @ref="pwField1"
+                                  InputType="@passwordInputType"
                                   Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
-                                  RequiredError="Password is required!" />
+                                  RequiredError="Parola este obligatorie!"
+                                  @bind-Value="registerRequest.Password"
+                                  ValidationMessage For="@(() => registerRequest.Password)"
+                                  Icon="@passwordIcon" Color="Color.Primary" Adornment="Adornment.End" @onclick="TogglePasswordVisibility" />
                     <MudTextField T="string"
-                                  Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
-                                  Validation="@(new Func<string, string>(PasswordMatch))" />
+                                  Label="Password" HelperText="Repetă parola" InputType="InputType.Password"
+                                  Validation="@(new Func<string, string>(PasswordMatch))" Required="true" />
 
-                    <MudTextField T="string" Label="Phone Number" Required="true" RequiredError="Phone number is required!"
-                                  Validation="@(new PhoneAttribute() {ErrorMessage = "The phone number is invalid"})" />
+                    <MudTextField T="string" Label="Telefon" Required="true" RequiredError="Numărul de telefon este obligatoriu!"
+                                  Validation="@(new Func<string, string>(PhoneNumberValid))"
+                                  @bind-Value="registerRequest.PhoneNumber"
+                                  ValidationMessage For="@(() => registerRequest.PhoneNumber)" />
 
                     <div class="d-flex justify-content-center">
-                        <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
+                        <MudRadioGroup T="string" Required="true" RequiredError="Selectarea tipului de cont (Student sau Admin) este obligatorie!" @bind-Value="registerRequest.Role" ValidationMessage For="@(() => registerRequest.Role)">
                             <MudRadio Option="@("Student")">Student</MudRadio>
                             <MudRadio Option="@("Admin")">Admin</MudRadio>
                         </MudRadioGroup>
                     </div>
                     <div class="d-flex align-items-center justify-content-center" style="padding: 20px; margin-bottom: -20px;">
-                        <MudButton Variant="Variant.Filled" Style="background-color: #FC6F05; color: white; margin: auto;" Disabled="@(!success)" Class="ml-auto">Login</MudButton>
+                        <MudButton Variant="Variant.Filled" Style="background-color: #FC6F05; color: white; margin: auto;" Disabled="@(!success)" Class="ml-auto" type="submit" OnClick="OnSubmit">Register</MudButton>
                     </div>
                 </MudForm>
             </MudPaper>
@@ -71,6 +84,8 @@
     string[] errors = { };
     MudTextField<string> pwField1;
     MudForm form;
+    private string passwordIcon = Icons.Filled.VisibilityOff;
+    private InputType passwordInputType = InputType.Password;
 
     private IEnumerable<string> PasswordStrength(string pw)
     {
@@ -94,6 +109,42 @@
         if (pwField1.Value != arg)
             return "Passwords don't match";
         return null;
+    }
+
+    private string PhoneNumberValid(string phoneNumber)
+    {
+        if (!Regex.IsMatch(phoneNumber, @"^\+?[0-9]+$"))
+            return "Numărul de telefon este invalid!";
+        return null; 
+    }
+
+    RegisterViewModel registerRequest { get; set; } = new RegisterViewModel();
+    string error { get; set; }
+    private Snackbar snackbar;
+
+    async Task OnSubmit()
+    {
+        error = null;
+        try
+        {
+            await authStateProvider.Register(registerRequest);
+            NavigationManager.NavigateTo("/login");
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+            snackbar = Snackbar.Add("Register successful!", Severity.Success);
+
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+            snackbar = Snackbar.Add($"{error}", Severity.Error);
+        }
+    }
+
+    private void TogglePasswordVisibility()
+    {
+        passwordInputType = passwordInputType == InputType.Password ? InputType.Text : InputType.Password;
+        passwordIcon = passwordIcon == Icons.Filled.VisibilityOff ? Icons.Filled.Visibility : Icons.Filled.VisibilityOff;
     }
 
 }

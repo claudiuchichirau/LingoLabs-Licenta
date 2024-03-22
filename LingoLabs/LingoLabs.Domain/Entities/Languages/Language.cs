@@ -8,6 +8,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public string LanguageName { get; private set; }
         public string? LanguageDescription { get; private set; } = string.Empty;
         public string? LanguageVideoLink { get; private set; }= string.Empty;
+        public byte[]? LanguageFlag { get; private set; } = [];
         public List<LanguageLevel>? LanguageLevels { get; private set; } = new();
         public List<LanguageCompetence>? LanguageCompetences { get; private set; } = new();
         public List<Question>? PlacementTest { get; private set; } = new();
@@ -82,7 +83,7 @@ namespace LingoLabs.Domain.Entities.Languages
                 LanguageVideoLink = languageVideoLink;
         }
 
-        public void UpdateLanguage(string languageName, string languageDescription, string languageVideoLink)
+        public void UpdateLanguage(string languageName, string languageDescription, string languageVideoLink, byte[] languageFlag)
         {
             if (!string.IsNullOrWhiteSpace(languageName))
                 LanguageName = languageName;
@@ -90,6 +91,8 @@ namespace LingoLabs.Domain.Entities.Languages
                 LanguageDescription = languageDescription;
             if (!string.IsNullOrWhiteSpace(languageVideoLink))
                 LanguageVideoLink = languageVideoLink;
+            if (languageFlag.Length > 0)
+                LanguageFlag = languageFlag;
         }
     }
 }

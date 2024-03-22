@@ -38,7 +38,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Up
 
             var updateLanguageDto = request.UpdateLanguageDto;
 
-            language.Value.UpdateLanguage(updateLanguageDto.LanguageName, updateLanguageDto.LanguageDescription, updateLanguageDto.LanguageVideoLink);
+            language.Value.UpdateLanguage(updateLanguageDto.LanguageName, updateLanguageDto.LanguageDescription, updateLanguageDto.LanguageVideoLink, updateLanguageDto.LanguageFlag);
 
             var result = await languageRepository.UpdateAsync(language.Value);
 

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LingoLabs.Infrastructure.Migrations
 {
     [DbContext(typeof(LingoLabsDbContext))]
-    [Migration("20240318102253_InitialCreate")]
+    [Migration("20240322111807_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -420,6 +420,9 @@ namespace LingoLabs.Infrastructure.Migrations
 
                     b.Property<string>("LanguageDescription")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("LanguageFlag")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("LanguageName")
                         .IsRequired()

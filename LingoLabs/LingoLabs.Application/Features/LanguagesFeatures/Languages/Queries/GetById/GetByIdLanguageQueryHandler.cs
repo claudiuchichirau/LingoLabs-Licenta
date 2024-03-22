@@ -68,6 +68,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
                     LanguageName = language.Value.LanguageName,
                     LanguageDescription = language.Value.LanguageDescription,
                     LanguageVideoLink = language.Value.LanguageVideoLink,
+                    LanguageFlag = language.Value.LanguageFlag,
 
                     LanguageLevels = sortedLanguageLevels,
 

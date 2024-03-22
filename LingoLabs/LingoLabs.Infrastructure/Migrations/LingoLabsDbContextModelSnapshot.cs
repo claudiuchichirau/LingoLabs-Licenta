@@ -418,6 +418,9 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<string>("LanguageDescription")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<byte[]>("LanguageFlag")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<string>("LanguageName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

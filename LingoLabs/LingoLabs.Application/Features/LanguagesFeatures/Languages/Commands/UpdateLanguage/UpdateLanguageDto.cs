@@ -5,5 +5,6 @@
         public string LanguageName { get; set; } = string.Empty;
         public string LanguageDescription { get; set; } = string.Empty;
         public string LanguageVideoLink { get; set; } = string.Empty;
+        public byte[] LanguageFlag { get; set; } = [];
     }
 }

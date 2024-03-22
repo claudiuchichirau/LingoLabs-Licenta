@@ -9,6 +9,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
     {
         public string LanguageDescription { get; set; } = string.Empty;
         public string LanguageVideoLink { get; set; } = string.Empty;
+        public byte[] LanguageFlag { get; set; } = [];
         public List<LanguageLevelDto> LanguageLevels { get; set; } = [];
         public List<LanguageCompetenceDto> LanguageCompetences { get; set; } = [];
         public List<QuestionDto> PlacementTest { get; set; } = [];

@@ -1,24 +1,54 @@
-﻿@using MudBlazor
+﻿@using LingoLabs.App.Auth
+@using LingoLabs.App.Contracts
+@using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
 @inject NavigationManager NavigationManager
+@inject CustomStateProvider AuthStateProvider
+@inject IJSRuntime JSRuntime
+@inject ISnackbar Snackbar
 
 <MudLayout>
     <MudAppBar Elevation="1" Class="app-bar-custom" Id="navbar">
         <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-            <!-- Prima coloană cu imaginea și titlul site-ului aliniat la stânga -->
+
             <div style="flex: 1; display: flex; align-items: center;" href="/" @onclick="NavigateToHome">
                 <img src="images/homepage/sigla-lingolabs.png" alt="LingoLabs" style="height: 55px; margin-left: 40px;" />
                 <MudText Typo="Typo.h6" Class="poppins-semi-bold" style="font-size: 25px; color: #2563EB; margin-left: 10px;">LingoLabs</MudText>
             </div>
+
             <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
                 <a href="/" class="nav-link nav-link-custom">Acasă</a>
                 <a href="#" class="nav-link nav-link-custom">Cursuri</a>
                 <a href="#" class="nav-link nav-link-custom">Despre Noi</a>
                 <a href="#" class="nav-link nav-link-custom">Contact</a>
             </div>
-            <!-- Butonul de login -->
-            <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
-                <MudButton Variant="Variant.Filled" Class="custom-button poppins-semi-bold" OnClick="NavigateToLogin">Login</MudButton>
-            </div>
+
+            <CascadingAuthenticationState>
+			    <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+                    <NotAuthorized>
+                        <!-- Butonul de LOGIN -->
+                        <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+                            <MudButton Variant="Variant.Filled" Class="custom-button poppins-semi-bold" OnClick="NavigateToLogin">Login</MudButton>
+                        </div>
+                    </NotAuthorized>
+
+                    <Authorized>
+                        <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
+                            <MudMenu FullWidth="true">
+                                <ActivatorContent>
+                                    <MudChip Icon="@Icons.Material.Filled.Person" Style="background-color: #FC6F05; color: white;">Contul meu</MudChip>
+                                </ActivatorContent>
+                                <ChildContent>
+                                    <MudMenuItem>Profil</MudMenuItem>
+                                    <MudMenuItem Class="poppins-semi-bold" OnClick="Logout">Logout</MudMenuItem>
+                                </ChildContent>
+                            </MudMenu>
+                        </div>
+                    </Authorized>
+
+                </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+            </CascadingAuthenticationState>
         </div>
     </MudAppBar>
 </MudLayout>
@@ -72,10 +102,13 @@
 @inject IJSRuntime JSRuntime
 
 @code {
+    private Snackbar snackbar;
 
     private bool collapseNavMenu = true;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    [Inject]
+    public IAuthenticationService AuthenticationService { get; set; }
 
     private void ToggleNavMenu()
     {
@@ -85,6 +118,14 @@
     private void NavigateToLogin()
     {
         NavigationManager.NavigateTo("/login");
+    }
+
+    private async Task Logout()
+    {
+        await AuthenticationService.Logout();
+        NavigationManager.NavigateTo("/login");
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        snackbar = Snackbar.Add("Logout successful!", Severity.Success);
     }
 
     private void NavigateToHome()

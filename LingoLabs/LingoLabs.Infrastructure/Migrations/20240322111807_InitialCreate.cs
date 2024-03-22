@@ -19,6 +19,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     LanguageName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LanguageDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LanguageFlag = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),

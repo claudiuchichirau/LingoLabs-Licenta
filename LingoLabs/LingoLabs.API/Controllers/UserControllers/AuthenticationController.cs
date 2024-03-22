@@ -3,9 +3,7 @@ using LingoLabs.Application.Contracts.Identity;
 using LingoLabs.Application.Contracts.Interfaces;
 using LingoLabs.Application.Models.Identity;
 using LingoLabs.Identity.Models;
-using LingoLabs.Identity.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LingoLabs.API.Controllers.UserControllers

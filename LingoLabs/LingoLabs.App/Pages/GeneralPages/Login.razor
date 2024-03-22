@@ -1,8 +1,14 @@
 ﻿@page "/login"
+@using LingoLabs.App.Auth
+@using LingoLabs.App.ViewModel.AuthenticationModels
 @using MudBlazor
+@using MatBlazor
 @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
 @inject NavigationManager NavigationManager
+@inject CustomStateProvider authStateProvider
+@inject IJSRuntime JSRuntime
+@inject ISnackbar Snackbar
 
 <div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top:-10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
     <span style="color: #edf5fa; position: absolute; top: 20%; left: 15%; font-size: 20px; transform: rotate(15deg);">a</span>
@@ -47,15 +53,21 @@
                 </p>
             </div>
             <MudPaper Class="pa-6" Style="margin-bottom: 40px; width: 60%; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
-                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
-                    <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!"
-                                  Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" />
+                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" OnValidSubmit="OnSubmit" Model="loginRequest">
+                    <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" 
+                                  @bind-Value="loginRequest.Email"
+                                  Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" 
+                                  ValidationMessage For="@(() => loginRequest.Email)"/>
                     <MudTextField T="string" Label="Password" @ref="pwField1"
                                   InputType="InputType.Password"
                                   Required="true"
-                                  RequiredError="Password is required!" />
+                                  RequiredError="Password is required!" 
+                                  @bind-Value = "loginRequest.Password"
+                                  ValidationMessage For="@(() => loginRequest.Password)" />
                     <div class="d-flex align-items-center justify-content-center" style="padding: 20px; margin-bottom: -20px;">
-                        <MudButton Variant="Variant.Filled" Style="background-color: #FC6F05; color: white; margin: auto;" Disabled="@(!success)" Class="ml-auto">Login</MudButton>
+                        <MudButton Variant="Variant.Filled" Style="background-color: #FC6F05; color: white; margin: auto;"
+                                   Disabled="@(!success)" Class="ml-auto" type="submit" OnClick="OnSubmit">Login
+                        </MudButton>
                     </div>
                 </MudForm>
             </MudPaper>
@@ -78,26 +90,33 @@
     </div>
 </MudContainer>
 
+<MatButton>Test</MatButton>
+
 @code {
     bool success;
     string[] errors = { };
     MudTextField<string> pwField1;
     MudForm form;
+    private Snackbar snackbar;
 
-    private IEnumerable<string> PasswordStrength(string pw)
+    LoginViewModel loginRequest { get; set; } = new LoginViewModel();
+    string error { get; set; }
+
+    async Task OnSubmit()
     {
-        if (string.IsNullOrWhiteSpace(pw))
+        error = null;
+        try
         {
-            yield return "Password is required!";
-            yield break;
+            await authStateProvider.Login(loginRequest);
+            NavigationManager.NavigateTo("/");
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+            snackbar = Snackbar.Add("Login successful!", Severity.Success);
         }
-        if (pw.Length < 8)
-            yield return "Password must be at least of length 8";
-        if (!Regex.IsMatch(pw, @"[A-Z]"))
-            yield return "Password must contain at least one capital letter";
-        if (!Regex.IsMatch(pw, @"[a-z]"))
-            yield return "Password must contain at least one lowercase letter";
-        if (!Regex.IsMatch(pw, @"[0-9]"))
-            yield return "Password must contain at least one digit";
+        catch (Exception ex)
+        {
+            error = ex.Message;
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+            snackbar = Snackbar.Add($"{error}", Severity.Error);
+        }
     }
 }
