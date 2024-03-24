@@ -26,9 +26,20 @@
             </div>
             <MudPaper Class="pa-6" Style="margin-bottom: 40px; width: 60%; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
                 <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" OnValidSubmit="OnSubmit" Model="registerRequest">
-                    <MudTextField T="string" Label="Username" Required="true" RequiredError="Username-ul este obligatoriu!" @bind-Value="registerRequest.UserName" ValidationMessage For="@(() => registerRequest.UserName)" />
-                    <MudTextField T="string" Label="Prenume" Required="true" RequiredError="Prenumele este obligatoriu!" @bind-Value="registerRequest.FirstName" ValidationMessage For="@(() => registerRequest.FirstName)" />
-                    <MudTextField T="string" Label="Nume" Required="true" RequiredError="Numele este obligatoriu!" @bind-Value="registerRequest.LastName" ValidationMessage For="@(() => registerRequest.LastName)" />
+                    <MudTextField T="string" Label="Username" Required="true" RequiredError="Username-ul este obligatoriu!"
+                                  @bind-Value="registerRequest.UserName"
+                                  Validation="@((string s) => s.Length <= 50 && s.Length > 2 ? "" : "Username-ul nu poate depăși 50 de caractere.")"
+                                  ValidationMessage For="@(() => registerRequest.UserName)" />
+
+                    <MudTextField T="string" Label="Prenume" Required="true" RequiredError="Prenumele este obligatoriu!"
+                                  @bind-Value="registerRequest.FirstName"
+                                  Validation="@((string s) => s.Length <= 50 && s.Length > 4 && Regex.IsMatch(s, @"^[a-zA-Z]+$") ? "" : "Prenumele nu poate depăși 50 de caractere și trebuie să conțină doar litere.")"
+                                  ValidationMessage For="@(() => registerRequest.FirstName)" />
+
+                    <MudTextField T="string" Label="Nume" Required="true" RequiredError="Numele este obligatoriu!"
+                                  @bind-Value="registerRequest.LastName"
+                                  Validation="@((string s) => s.Length <= 50 && s.Length > 4 && Regex.IsMatch(s, @"^[a-zA-Z]+$") ? "" : "Numele nu poate depăși 50 de caractere și trebuie să conțină doar litere.")"
+                                  ValidationMessage For="@(() => registerRequest.LastName)" />
                     <MudTextField T="string" Label="Email" Required="true" RequiredError="Adresa de Email este obligatorie!"
                                   Validation="@(new EmailAddressAttribute() {ErrorMessage = "Adresa de Email este invalidă!"})"
                                   @bind-Value="registerRequest.Email" 

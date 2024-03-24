@@ -1,8 +1,10 @@
 using Blazored.LocalStorage;
 using LingoLabs.App;
 using LingoLabs.App.Auth;
-using LingoLabs.App.Contracts;
+using LingoLabs.App.Contracts.AuthContracts;
 using LingoLabs.App.Services;
+using LingoLabs.App.Services.AuthServices;
+using MatBlazor;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -37,5 +39,6 @@ builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>(cl
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 builder.Services.AddMudServices();
+builder.Services.AddMatBlazor();
 
 await builder.Build().RunAsync();

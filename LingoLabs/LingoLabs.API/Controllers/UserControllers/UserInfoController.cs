@@ -72,5 +72,23 @@ namespace LingoLabs.API.Controllers.UserControllers
                 return BadRequest(result.Error);
             }
         }
+
+        [Authorize(Roles = "Admin, Student, AdminPending")]
+        [HttpPut("changepassword")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
+        {
+            var result = await userService.ChangePassword(currentUserService.UserId, model);
+
+            if (result.success)
+            {
+                return Ok(result.message);
+            }
+            else
+            {
+                return BadRequest(result.message);
+            }
+        }
     }
 }

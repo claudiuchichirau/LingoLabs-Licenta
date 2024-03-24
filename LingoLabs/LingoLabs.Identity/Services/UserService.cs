@@ -10,13 +10,13 @@ namespace LingoLabs.Identity.Services
     {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
-        private readonly ILoginService _loginService;
+        private readonly ILoginService loginService;
 
         public UserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILoginService loginService)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
-            _loginService = loginService;
+            loginService = loginService;
         }
 
         public async Task<Result<UserInfoModel>> GetCurrentUserInfoAsync(string userId)
@@ -102,9 +102,43 @@ namespace LingoLabs.Identity.Services
                 return Result<string>.Failure("Failed to delete user");
             }
 
-            await _loginService.Logout();
+            await loginService.Logout();
 
             return Result<string>.Success("User deleted successfully");
         }
+
+        public async Task<(bool success, string message)> ChangePassword(string userId, ChangePasswordModel model)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return (false, "User not found.");
+            }
+
+            if (model.CurrentPassword == null || model.NewPassword == null)
+            {
+                return (false, "Password fields cannot be null.");
+            }
+
+            if (model.CurrentPassword == model.NewPassword)
+            {
+                return (false, "New password cannot be the same as the old password.");
+            }
+
+            var checkOldPassword = await userManager.CheckPasswordAsync(user, model.CurrentPassword);
+            if (!checkOldPassword)
+            {
+                return (false, "The old password is incorrect.");
+            }
+
+            var changePasswordResult = await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!changePasswordResult.Succeeded)
+            {
+                return (false, "Failed to change password.");
+            }
+
+            return (true, "Password changed successfully.");
+        }
+
     }
 }

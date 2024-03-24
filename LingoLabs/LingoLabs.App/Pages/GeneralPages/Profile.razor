@@ -1,0 +1,250 @@
+﻿@page "/profile"
+@using LingoLabs.App.Auth
+@using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Services.AuthServices
+@using LingoLabs.App.ViewModel.AuthenticationModels
+@using MatBlazor
+@using MudBlazor
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@* @inject CustomStateProvider authStateProvider
+@inject IUserDataService UserDataService
+@inject UserDto UserInfo *@
+
+
+<div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top:-10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
+</div>
+
+
+<MudContainer>
+    <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1;">
+            <div class="row">
+                <h2 style="color: #2563EB; padding: 7px; margin-top: 30px;">Datele Contului</h2>
+            </div>
+
+            <div class="row w-100 d-flex align-items-center justify-content-center">
+                <div class="col-md-4 text-center">
+                    <img src="images/login/user-pic.jpg" alt="User Profile Pic" style="max-width: 100%; height: auto;">
+                </div>
+
+                <div class="col-md-8 text-center">
+                    <div class="row">
+                        <span>
+                            <label><strong>Username:</strong> @username</label>
+                            <MudChip Icon="@Icons.Material.Filled.Edit" Style="background-color: #E9EFFD; color: black; width: 30px; margin-left: 7px; margin-top: -3px;" 
+                                     @onclick='() => OpenDialog("username")' ></MudChip>
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>
+                            <label><strong>Prenume:</strong> @firstName</label>
+                            <MudChip Icon="@Icons.Material.Filled.Edit" Style="background-color: #E9EFFD; color: black; width: 30px; margin-left: 7px; margin-top: -3px;"
+                                     @onclick='() => OpenDialog("firstName")'></MudChip>
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>
+                            <label><strong>Numele:</strong> @lastName</label>
+                            <MudChip Icon="@Icons.Material.Filled.Edit" Style="background-color: #E9EFFD; color: black; width: 30px; margin-left: 7px; margin-top: -3px;"
+                                     @onclick='() => OpenDialog("lastName")'></MudChip>
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>
+                            <label><strong>Email:</strong> @email</label>
+                            <MudChip Icon="@Icons.Material.Filled.Edit" Style="background-color: #E9EFFD; color: black; width: 30px; margin-left: 7px; margin-top: -3px;"
+                                     @onclick='() => OpenDialog("email")' ></MudChip>
+                        </span>
+                    </div>
+
+                    <div class="row">
+                        <span>
+                            <label><strong>Telefon:</strong> @phoneNumber</label>
+                            <MudChip Icon="@Icons.Material.Filled.Edit" Style="background-color: #E9EFFD; color: black; width: 30px; margin-left: 7px; margin-top: -3px;"
+                                     @onclick='() => OpenDialog("phoneNumber")'></MudChip>
+                        </span>
+                    </div>
+                        <label><strong>Role:</strong> @role</label>
+                </div>
+
+                    <MudDialog @bind-IsVisible="visible" Options="dialogOptions">
+                        <TitleContent>
+                            <MudText Typo="Typo.h6">
+                                <MudIcon Icon="@Icons.Material.Filled.Edit" /> Edit @currentField
+                            </MudText>
+                        </TitleContent>
+                        <DialogContent>
+                            <MudTextField T="string" @bind-Value="newValue" Label="@currentField"></MudTextField>
+                        </DialogContent>
+                        <DialogActions>
+                            <MudButton Variant="Variant.Filled" OnClick="Cancel" Class="px-10" Style="background-color: red; color: white;">Close</MudButton>
+                            <MudButton OnClick="Submit" Style="color: #2563EB;">Ok</MudButton>
+                        </DialogActions>
+                    </MudDialog>
+
+                    <div class="row d-flex justify-content-center align-items-center" style="padding: 20px;">
+                        <MudButton Variant="Variant.Filled" OnClick="SubmitSave" Disabled="@(!isModified)" Style="background-color: #01c156; color: white; width: 50px;">Save</MudButton>
+                    </div>
+
+            </div>
+        </div>
+
+        <div class="row d-flex justify-content-center align-items-center" style="padding: 20px; margin-top: 20px;">
+            <MudButton Variant="Variant.Filled" Color="Color.Warning" Style="color: white; max-width: 250px;">Change Password</MudButton>
+        </div>
+
+        <div class="row d-flex justify-content-center align-items-center" style="padding: 20px;">
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Style="max-width: 175px;">Delete</MudButton>
+        </div>
+
+    </div>
+</MudContainer>
+          
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    bool success;
+    string[] errors = { };
+    MudTextField<string> pwField1;
+    MudForm form;
+    private Snackbar snackbar;
+
+    private bool visible;
+    private string currentField;
+    private string newValue;
+    private string username = "claudiuChi";
+    private string firstName = "Claudiu";
+    private string lastName = "Chichirau";
+    private string email = "example@test.com";
+    private string phoneNumber = "0722222222";
+    private string role = "Student";
+    private bool isModified = false;
+
+    void Submit()
+    {
+        switch (currentField)
+        {
+            case "username":
+                if(username != newValue)
+                    isModified = true;
+                username = newValue;
+                break;
+
+            case "firstName":
+                if(firstName != newValue)
+                    isModified = true;
+                firstName = newValue;
+                break;
+
+            case "lastName":
+                if(lastName != newValue)
+                    isModified = true;
+                lastName = newValue;
+                break;
+
+            case "email":
+                if(email != newValue)
+                    isModified = true;
+                email = newValue;
+                break;
+
+            case "phoneNumber":
+                if(phoneNumber != newValue)
+                    isModified = true;
+                phoneNumber = newValue;
+                break;
+        }
+        visible = false;
+    }
+
+    void Cancel() => visible = false;
+
+    void OpenDialog(string field)
+    {
+        currentField = field;
+        switch (field)
+        {
+            case "username":
+                newValue = username;
+                break;
+            case "firstName":
+                newValue = firstName;
+                break;
+            case "lastName":
+                newValue = lastName;
+                break;
+            case "email":
+                newValue = email;
+                break;
+            case "phoneNumber":
+                newValue = phoneNumber;
+                break;
+        }
+        visible = true;
+    }
+
+    private DialogOptions dialogOptions = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
+
+    private void SubmitSave()
+    {
+        // ... restul codului ...
+
+        isModified = false;
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes!", Severity.Success);
+    }
+
+
+
+    // public Guid UserId = Guid.Empty;
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     var authState = await authStateProvider.GetAuthenticationStateAsync();
+    //     var user = authState.User;
+    //     var claims = user.Claims.ToList();
+
+        // var usernameClaim = claims.FirstOrDefault(claim => claim.Type == "preferred_username");
+        // var emailClaim = claims.FirstOrDefault(claim => claim.Type == "email");
+        // var firstNameClaim = claims.FirstOrDefault(claim => claim.Type == "first_name");
+        // var lastNameClaim = claims.FirstOrDefault(claim => claim.Type == "last_name");
+        // var phoneNumberClaim = claims.FirstOrDefault(claim => claim.Type == "phone_number");
+        // var roleClaim = claims.FirstOrDefault(claim => claim.Type == "role");
+        // var userIdClaim = claims.FirstOrDefault(claim => claim.Type == "nameid");
+
+        // if (userIdClaim != null) 
+        //     UserId = Guid.Parse(userIdClaim.Value);
+
+        // // Load user information
+        // var userInfoResponse = await UserDataService.GetUserInfoAsync();
+        // if (userInfoResponse.IsSuccess)
+        // {
+        //     UserInfo = userInfoResponse.Data;
+        // }
+        // else
+        // {
+        //     // Gestionare scenariu în care încărcarea informațiilor despre utilizator a eșuat
+        //     // Poți trata acest scenariu cum consideri oportun
+        //     // Console.WriteLine($"Failed to load user information.");
+        //     // TODO: Handle this scenario
+        // }
+    }
+}
+
+
+
+        @* <MudPaper Class="pa-6" Style="margin-bottom: 40px; width: 60%; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
+                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+
+
+                    <div class="d-flex justify-content-center">
+                    </div>
+                    <div class="d-flex align-items-center justify-content-center" style="padding: 20px; margin-bottom: -20px;">
+                        <MudButton Variant="Variant.Filled" Style="background-color: #FC6F05; color: white; margin: auto;" Disabled="@(!success)" Class="ml-auto" type="submit">Register</MudButton>
+                    </div>
+                </MudForm>
+            </MudPaper> *@

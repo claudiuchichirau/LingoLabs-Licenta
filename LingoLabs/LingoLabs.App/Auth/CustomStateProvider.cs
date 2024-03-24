@@ -1,5 +1,5 @@
 ﻿using Blazored.LocalStorage;
-using LingoLabs.App.Contracts;
+using LingoLabs.App.Contracts.AuthContracts;
 using LingoLabs.App.ViewModel.AuthenticationModels;
 using Microsoft.AspNetCore.Components.Authorization;
 using System.Security.Claims;

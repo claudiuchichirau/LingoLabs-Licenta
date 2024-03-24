@@ -9,5 +9,6 @@ namespace LingoLabs.Application.Contracts.Identity
         Task<(int status, string message)> ApproveAdmin(string userId);
         Task<Result<List<UserInfoModel>>> GetPendingAdmins();
         Task<Result<string>> DeleteCurrentUser(string userId);
+        Task<(bool success, string message)> ChangePassword(string userId, ChangePasswordModel model);
     }
 }
