@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using MudBlazor
 
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 
 <div class="landpage-pic d-flex justify-content-around bg-secondary mb-3 align-items-center" style="margin-top:-10px;">
     <div style="margin-left:100px; margin-top:10px;">
@@ -100,7 +101,7 @@
             <div class="row justify-content-center">
 
                 <div class="col-md-3">
-                    <div class="card">
+                    <div class="card" style="width: 375px;">
                         <img class="card-img-top" src="@context.ImageUrl" style="max-width: 300px; max-height: 200px; display: block; margin: auto;">
                         <div class="card-body">
                             <h5 class="card-title">English @context.Title</h5>
@@ -115,13 +116,15 @@
                                     <p><MudIcon Icon="@Icons.Material.Filled.People" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" />Elevi: @context.Students</p>
                                 </div>
                             </div>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                            <div style="display: flex; justify-content: center;">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                <div class="col-md-3">
-                    <div class="card">
+                    <div class="card" style="width: 375px;">
                         <img class="card-img-top" src="@context.ImageUrl" style="max-width: 300px; max-height: 200px; display: block; margin: auto;">
                         <div class="card-body">
                             <h5 class="card-title">English @context.Title</h5>
@@ -136,13 +139,15 @@
                                     <p><MudIcon Icon="@Icons.Material.Filled.People" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" />Elevi: @context.Students</p>
                                 </div>
                             </div>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Start Course</MudButton>
+                            <div style="display: flex; justify-content: center;">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="col-md-3">
-                    <div class="card">
+                    <div class="card" style="width: 375px;">
                         <img class="card-img-top" src="@context.ImageUrl" style="max-width: 300px; max-height: 200px; display: block; margin: auto;">
                         <div class="card-body">
                             <h5 class="card-title">English @context.Title</h5>
@@ -157,7 +162,9 @@
                                     <p><MudIcon Icon="@Icons.Material.Filled.People" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" />Elevi: @context.Students</p>
                                 </div>
                             </div>
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Start Course</MudButton>
+                            <div style="display: flex; justify-content: center;">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                            </div>
                         </div>
                     </div>
                 </div>

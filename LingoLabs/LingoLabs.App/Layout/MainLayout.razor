@@ -6,12 +6,12 @@
 <MudSnackbarProvider/>
 
 <MudLayout style="display: flex; flex-direction: column; min-height: 100vh;">
-    <div class="navbar">
+    <div class="navbar poppins-semi-bold">
         <NavMenu />
     </div>
 
     <main>
-        <div class="content" style="margin-top: 41px; flex-grow: 1;">
+        <div class="content poppins-semi-bold" style="margin-top: 41px; flex-grow: 1;">
             @Body
         </div>
     </main>
@@ -20,7 +20,13 @@
         <MudFab Style="background-color: #FC6F05; color: white;" StartIcon="@Icons.Material.Filled.ArrowCircleUp" />
     </MudScrollToTop>
 
-    <footer class="footer">
+    <footer class="footer poppins-semi-bold">
         <Footer />
     </footer>
 </MudLayout>
+
+<style>
+    .poppins-semi-bold {
+        font-family: 'Poppins-SemiBold', sans-serif;
+    }
+</style>

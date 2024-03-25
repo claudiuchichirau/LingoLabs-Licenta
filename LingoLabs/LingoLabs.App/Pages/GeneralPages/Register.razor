@@ -45,12 +45,15 @@
                                   @bind-Value="registerRequest.Email" 
                                   ValidationMessage For="@(() => registerRequest.Email)" />
                     <MudTextField T="string" Label="Parola" HelperText="Alege o parolă puternică!" @ref="pwField1"
-                                  InputType="@passwordInputType"
+                                  InputType="@PasswordInput"
                                   Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
                                   RequiredError="Parola este obligatorie!"
                                   @bind-Value="registerRequest.Password"
                                   ValidationMessage For="@(() => registerRequest.Password)"
-                                  Icon="@passwordIcon" Color="Color.Primary" Adornment="Adornment.End" @onclick="TogglePasswordVisibility" />
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@PasswordInputIcon"
+                                  OnAdornmentClick="ButtonTestclick"
+                                  AdornmentAriaLabel="Show Password" />
                     <MudTextField T="string"
                                   Label="Password" HelperText="Repetă parola" InputType="InputType.Password"
                                   Validation="@(new Func<string, string>(PasswordMatch))" Required="true" />
@@ -152,10 +155,25 @@
         }
     }
 
-    private void TogglePasswordVisibility()
+    public string Password { get; set; } = "";
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void ButtonTestclick()
     {
-        passwordInputType = passwordInputType == InputType.Password ? InputType.Text : InputType.Password;
-        passwordIcon = passwordIcon == Icons.Filled.VisibilityOff ? Icons.Filled.Visibility : Icons.Filled.VisibilityOff;
+        if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
     }
 
 }

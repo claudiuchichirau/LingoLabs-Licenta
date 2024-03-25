@@ -59,11 +59,15 @@
                                   Validation="@(new EmailAddressAttribute() {ErrorMessage = "The email address is invalid"})" 
                                   ValidationMessage For="@(() => loginRequest.Email)"/>
                     <MudTextField T="string" Label="Password" @ref="pwField1"
-                                  InputType="InputType.Password"
+                                  InputType="@PasswordInput"
                                   Required="true"
-                                  RequiredError="Password is required!" 
-                                  @bind-Value = "loginRequest.Password"
-                                  ValidationMessage For="@(() => loginRequest.Password)" />
+                                  RequiredError="Password is required!"
+                                  @bind-Value="loginRequest.Password"
+                                  ValidationMessage For="@(() => loginRequest.Password)"
+                                  Adornment="Adornment.End"
+                                  AdornmentIcon="@PasswordInputIcon"
+                                  OnAdornmentClick="ButtonTestclick"
+                                  AdornmentAriaLabel="Show Password" />
                     <div class="d-flex align-items-center justify-content-center" style="padding: 20px; margin-bottom: -20px;">
                         <MudButton Variant="Variant.Filled" Style="background-color: #FC6F05; color: white; margin: auto;"
                                    Disabled="@(!success)" Class="ml-auto" type="submit" OnClick="OnSubmit">Login
@@ -115,6 +119,27 @@
             error = ex.Message;
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
             snackbar = Snackbar.Add($"{error}", Severity.Error);
+        }
+    }
+
+    public string Password { get; set; } = "";
+    bool isShow;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    void ButtonTestclick()
+    {
+        if (isShow)
+        {
+            isShow = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            isShow = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
         }
     }
 }

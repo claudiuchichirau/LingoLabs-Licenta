@@ -17,11 +17,11 @@
             </div>
 
             <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
-                <a href="/" class="nav-link nav-link-custom">Acasă</a>
-                <a href="/dashboard" class="nav-link nav-link-custom">Dashboard</a>
-                <a href="#" class="nav-link nav-link-custom">Cursuri</a>
-                <a href="#" class="nav-link nav-link-custom">Despre Noi</a>
-                <a href="#" class="nav-link nav-link-custom">Contact</a>
+                <a href="/" class="nav-link nav-link-custom poppins-semi-bold">Acasă</a>
+                <a href="/dashboard" class="nav-link nav-link-custom poppins-semi-bold">Dashboard</a>
+                <a href="#" class="nav-link nav-link-custom poppins-semi-bold">Cursuri</a>
+                <a href="#" class="nav-link nav-link-custom poppins-semi-bold">Despre Noi</a>
+                <a href="#" class="nav-link nav-link-custom poppins-semi-bold">Contact</a>
             </div>
 
             <CascadingAuthenticationState>
@@ -30,7 +30,7 @@
                     <NotAuthorized>
                         <!-- Butonul de LOGIN -->
                         <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
-                            <MudButton Variant="Variant.Filled" Class="custom-button poppins-semi-bold" OnClick="NavigateToLogin">Login</MudButton>
+                            <MudButton Variant="Variant.Filled" Class="custom-button" OnClick="NavigateToLogin">Login</MudButton>
                         </div>
                     </NotAuthorized>
 
@@ -38,13 +38,13 @@
                         <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center;">
                             <MudMenu FullWidth="true">
                                 <ActivatorContent>
-                                    <MudChip Icon="@Icons.Material.Filled.Person" Style="background-color: #FC6F05; color: white;">Contul meu</MudChip>
+                                    <MudChip Icon="@Icons.Material.Filled.Person" Style="background-color: #FC6F05; color: white;" Class="poppins-semi-bold">Contul meu</MudChip>
                                 </ActivatorContent>
                                 <ChildContent>
+                                    <MudMenuItem Class="centered-menu-item" OnClick="NavigateToDashboard">Dashboard</MudMenuItem>
                                     <MudMenuItem Class="centered-menu-item" OnClick="NavigateToProfile">Profil</MudMenuItem>
-                                    <MudMenuItem Class="centered-menu-item">Cursurile mele</MudMenuItem>
                                     <MudMenuItem>
-                                        <MudChip Icon="@Icons.Material.Filled.Logout" OnClick="Logout" Style="background-color: red; color: white;">Logout</MudChip>
+                                        <MudChip Icon="@Icons.Material.Filled.Logout" OnClick="Logout" Style="background-color: red; color: white;" Class="poppins-semi-bold">Logout</MudChip>
                                     </MudMenuItem>
                                 </ChildContent>
                             </MudMenu>
@@ -81,7 +81,7 @@
         }
 
     .poppins-semi-bold {
-        font-family: 'Poppins-SemiBold', sans-serif;
+        font-family: 'Poppins-SemiBold', sans-serif !important;
     }
 
     .centered-menu-item {
@@ -127,6 +127,11 @@
     private void NavigateToLogin()
     {
         NavigationManager.NavigateTo("/login");
+    }
+
+    private void NavigateToDashboard()
+    {
+        NavigationManager.NavigateTo("/dashboard");
     }
 
     private void NavigateToProfile()
