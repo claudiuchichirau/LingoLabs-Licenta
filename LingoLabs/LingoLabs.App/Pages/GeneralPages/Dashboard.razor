@@ -19,7 +19,7 @@
 
 <MudContainer>
     <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
-        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1;">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
             <div class="row">
                 <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Bine ai revenit, !</h2>
             </div>
@@ -146,8 +146,12 @@
             </PagerContent>
             <EditButtonContent Context="button">
                 <div style="display: flex; flex-direction: row;" >
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" Style="margin-right: 10px;"/>
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteLanguage" Class="pa-0" Style="margin-left: 10px;"/>
+                    <MudTooltip Text="Edit Course">
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" Style="margin-right: 10px;" />
+                    </MudTooltip>
+                    <MudTooltip Text="Delete Course">
+                        <MudIconButton Text="Delete Course" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteLanguage" Class="pa-0" Style="margin-left: 10px;" />
+                    </MudTooltip>
                 </div>
             </EditButtonContent>
         </MudTable>

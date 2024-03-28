@@ -1,0 +1,119 @@
+﻿@page "/language-overview"
+@using MudBlazor
+@using MatBlazor
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top:-10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
+</div>
+
+<MudContainer>
+    <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+            <div class="row">
+                <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Curs Overview</h2>
+            </div>
+        </div>
+    </div>
+</MudContainer>
+
+<div class="row">
+    <div class="col">
+        <div class="text-left">
+            <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-top: 50px; margin-bottom: 20px;" class="poppins-semi-bold">
+                Nume:&emsp;
+                <span style="color: #2563EB; font-size: 21px;">
+                    Limba Engleza
+                </span>
+            </h1>
+        </div>
+
+        <div class="text-left">
+            <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
+                Descriere:&emsp;
+                <span style="font-size: 21px; color: #2563EB;">
+                    Cursul de limba engleza este un curs de nivel incepator, care se adreseaza persoanelor care doresc sa invete limba engleza de la zero.
+                </span>
+            </h1>
+        </div>
+
+        <div class="text-left">
+            <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
+                Video:
+            </h1>
+            <iframe style="width: 426px; height: 240px; margin-left: 225px;" src="https://www.youtube.com/embed/CA1L7_hyRqs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+    </div>
+    <div class="col d-flex align-items-center justify-content-center">
+        <img src="https://vectorflags.s3-us-west-2.amazonaws.com/flags/uk-circle-01.png" alt="Limba Engleza" style="width: 350px; height: auto;">
+    </div>
+</div>
+
+
+<div class="text-left">
+    <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
+        Cuvinte cheie:
+    </h1>
+
+    <MudContainer>
+        <div class="row mx-0" style="margin-bottom:50px; width: 350vh; min-height: 12vh;">
+            <div class="col-md-6" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                <MudTooltip>
+                    <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #2563EB; color: white; position: absolute; right: -25px; top: -25px;" @onclick='() => OpenDialog()' />
+                </MudTooltip>
+            </div>
+        </div>
+    </MudContainer>
+
+    <MudDialog @bind-IsVisible="visible" Options="dialogOptions">
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
+                <span style="color: #2563EB;">Adaugă un cuvânt cheie</span>
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudTextField T="string" @bind-Value="keyWord" Label="Nume"></MudTextField>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Filled" OnClick="Cancel" Class="px-10" Style="color: black;">Close</MudButton>
+            <MudButton OnClick="@(async () => AddKeyWord(keyWord))" Style="color: #2563EB;">Add</MudButton>
+
+        </DialogActions>
+    </MudDialog>
+
+</div>
+
+
+
+@code {
+    private Snackbar snackbar;
+    private bool visible;
+    private string currentField;
+    private string newValue;
+    private bool isModified = false;
+    private string keyWord;
+
+    void Submit()
+    {
+        visible = false;
+    }
+
+    void Cancel() => visible = false;
+
+    void OpenDialog()
+    {
+        visible = true;
+    }
+
+    private DialogOptions dialogOptions = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
+
+    void AddKeyWord(string keyWord)
+    {
+        visible = false;
+        // Do something
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        snackbar = Snackbar.Add("Cuvântul cheie a fost adăugat cu succes!", Severity.Success);
+    }
+}
