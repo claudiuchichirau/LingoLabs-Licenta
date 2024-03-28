@@ -21,7 +21,7 @@
     <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
         <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1;">
             <div class="row">
-                <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Bine ai revenit, Claudiu!</h2>
+                <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Bine ai revenit, !</h2>
             </div>
         </div>
     </div>
@@ -177,83 +177,83 @@
 {
 
     <div class="text-left">
-        <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 40px;" class="poppins-semi-bold">Cursurile Mele</h1>
+        <h1 style="color: #FC6F05; font-size: 33px; padding: 15px; margin-left: 85px; margin-top: 85px;" class="poppins-semi-bold">Cursurile Mele</h1>
     </div>
 
-    <div class="container-fluid p-3">
-        <div class="row justify-content-center">
 
-            <div class="col-md-3">
-                <div class="card" style="width: 375px;">
-                    <img class="card-img-top" src="/images/homepage/homepage-1.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto;">
-                    <div class="card-body">
-                        <h5 class="card-title">English 1</h5>
-                        <div class="row">
-                            <div class="col">
-                                <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
+    <MudExpansionPanels MultiExpansion="true">
+        <div class="custom-width">
+            @foreach (var language in UserLanguages)
+            {
+                <MudExpansionPanel Text="@language.LanguageName" Style="color: #2563EB;">
+                    <div>
+                        <div style="padding: 15px; margin-bottom: 10px;">
+                            <p class="text-center" style="color: black; font-size: 18px;"><MudIcon Icon="@Icons.Material.Filled.Analytics" Size=Size.Large Color="Color.Success" />Tabla ta de progres pentru @language.LanguageName</p>
+                        </div>
+
+                        @foreach (var competence in language.UserLanguageLevels)
+                        {
+                            <div class="row justify-content-center align-items-center" style="padding: 15px;">
+                                <div class="col text-center">
+                                    <p style="font-size: 22px; color: black;">@competence.LanguageCompetence</p>
+                                </div>
+                                <div class="col text-left" style="width: 70%; height: 70%;">
+                                    <MudTimeline TimelineOrientation=TimelineOrientation.Horizontal TimelinePosition=TimelinePosition.Bottom Reverse=false>
+                                        @foreach (var level in LanguageLevels)
+                                        {
+                                            if (String.Compare(level, competence.LanguageLevel) <= 0)
+                                            {
+                                                <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+                                                    <ItemContent>
+                                                        <MudAlert Severity="Severity.Success">@level</MudAlert>
+                                                    </ItemContent>
+                                                </MudTimelineItem>
+                                            }
+                                            else
+                                            {
+                                                <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
+                                                    <ItemContent>
+                                                        <MudAlert Severity="Severity.Normal">@level</MudAlert>
+                                                    </ItemContent>
+                                                </MudTimelineItem>
+                                            }
+                                        }
+                                    </MudTimeline>
+                                </div>
+                                <div class="col text-center">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Progresează!</MudButton>
+                                </div>
                             </div>
-                            <div class="col">
-                                <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
-                            </div>
-                            <div class="col">
-                                <p><MudIcon Icon="@Icons.Material.Filled.People" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" />Elevi: 2</p>
+                        }
+
+                        <div class="container-fluid p-3" style="background-color: #E9EFFD; margin-top: 60px;">
+                            <div class="row justify-content-center">
+                                <div class="col-md-6 text-center">
+                                    <h2 class="p-2" style="color: #2563EB; margin-left: 76px; font-size: 18px;">Optimizează-ți timpul și efortul îmbunătățindu-ți simultan toate competențele</h2>
+                                </div>
+                                <div class="col-md-6 d-flex justify-content-center align-items-center">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Începe acum!</MudButton>
+                                </div>
                             </div>
                         </div>
-                        <div style="display: flex; justify-content: center;">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+
+                        <div style="padding: 15px; margin-bottom: 10px; margin-top: 60px;">
+                            <p class="text-center" style="color: black; font-size: 18px;">
+                                <MudIcon icon="@Icons.Material.Filled.Checklist" Size=Size.Large Color="Color.Success" />
+                                Dornic de progres rapid? Evaluează-ți cunoștințele cu un test scurt și avansează la nivelul următor:
+                            </p>
+                            <div class="text-center">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 25%;">Începe testul de evaluare!</MudButton>
+                            </div>
                         </div>
+
                     </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card" style="width: 375px;">
-                    <img class="card-img-top" src="/images/homepage/homepage-2.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto;">
-                    <div class="card-body">
-                        <h5 class="card-title">English 2</h5>
-                        <div class="row">
-                            <div class="col">
-                                <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
-                            </div>
-                            <div class="col">
-                                <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
-                            </div>
-                            <div class="col">
-                                <p><MudIcon Icon="@Icons.Material.Filled.People" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" />Elevi: 2</p>
-                            </div>
-                        </div>
-                        <div style="display: flex; justify-content: center;">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-3">
-                <div class="card" style="width: 375px;">
-                    <img class="card-img-top" src="/images/homepage/homepage-3.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto;">
-                    <div class="card-body">
-                        <h5 class="card-title">English 3</h5>
-                        <div class="row">
-                            <div class="col">
-                                <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
-                            </div>
-                            <div class="col">
-                                <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
-                            </div>
-                            <div class="col">
-                                <p><MudIcon Icon="@Icons.Material.Filled.People" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" />Elevi: 2</p>
-                            </div>
-                        </div>
-                        <div style="display: flex; justify-content: center;">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+                </MudExpansionPanel>
+            }
         </div>
-    </div>
+    </MudExpansionPanels>
+
+
 
     <div class="text-left">
         <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 100px;" class="poppins-semi-bold">Alte cursuri</h1>
@@ -337,17 +337,21 @@
 
         </div>
     </div>
+}    
 
-    <style>
-        .poppins-semi-bold {
+<style>
+    .poppins-semi-bold {
         font-family: 'Poppins-SemiBold', sans-serif;
-        }
-    </style>
-}            
+    }
 
+    .custom-width {
+        width: 80%;
+        margin: auto;
+    }
+</style>
+
+@* ADIM APPROVAL *@
 @code {
-    // ADIM APPROVAL
-
     private bool dense = false;
     private bool hover = true;
     private bool striped = false;
@@ -423,11 +427,11 @@
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
         snackbar = Snackbar.Add("Administratorul " + element.FirstName + " " + element.LastName + " a fost respins!", Severity.Error);
     }
+}
 
 
-
-    // ADMIN VIEW & EDIT COURSES
-
+@* ADMIN VIEW & EDIT COURSES *@
+@code {
     private List<string> editEvents = new();
     private bool ronly = false;
     private bool canCancelEdit = true;
@@ -518,4 +522,47 @@
     {
         // NavigationManager.NavigateTo("/languageoverview");
     }
+}
+
+
+@* STUDENT VIEW HIS COURSES *@
+@code {
+    public class UserLanguage
+    {
+        public string LanguageName { get; set; }
+        public List<UserLanguageLevel> UserLanguageLevels { get; set; }
+    }
+
+    public class UserLanguageLevel
+    {
+        public string LanguageCompetence { get; set; }
+        public string LanguageLevel { get; set; }
+    }
+
+    private List<string> LanguageLevels { get; set; } = new List<string> { "A1", "A2", "B1", "B2", "C1", "C2" };
+    private List<UserLanguage> UserLanguages { get; set; } = new List<UserLanguage>
+    {
+        new UserLanguage
+        {
+            LanguageName = "Limba Engleza",
+            UserLanguageLevels = new List<UserLanguageLevel>
+            {
+                new UserLanguageLevel { LanguageCompetence = "Grammar", LanguageLevel = "B2" },
+                new UserLanguageLevel { LanguageCompetence = "Listening", LanguageLevel = "C1" },
+                new UserLanguageLevel { LanguageCompetence = "Speaking", LanguageLevel = "B1" },
+                new UserLanguageLevel { LanguageCompetence = "Writing", LanguageLevel = "C2" }
+            }
+        },
+        new UserLanguage
+        {
+            LanguageName = "Limba Franceza",
+            UserLanguageLevels = new List<UserLanguageLevel>
+            {
+                new UserLanguageLevel { LanguageCompetence = "Grammar", LanguageLevel = "A2" },
+                new UserLanguageLevel { LanguageCompetence = "Listening", LanguageLevel = "A1" },
+                new UserLanguageLevel { LanguageCompetence = "Speaking", LanguageLevel = "A2" },
+                new UserLanguageLevel { LanguageCompetence = "Writing", LanguageLevel = "C2" }
+            }
+        }
+    };
 }
