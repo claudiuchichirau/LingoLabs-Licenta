@@ -1,10 +1,11 @@
 ﻿@page "/language-overview"
+@using LingoLabs.App.ViewModel.MudBlazor
 @using MudBlazor
 @using MatBlazor
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-<div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top:-10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
+<div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top: -10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
 </div>
 
 <MudContainer>
@@ -17,7 +18,7 @@
     </div>
 </MudContainer>
 
-<div class="row">
+<div class="row" style="max-width: 100vw; overflow-x: auto;">
     <div class="col">
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-top: 50px; margin-bottom: 20px;" class="poppins-semi-bold">
@@ -37,12 +38,22 @@
             </h1>
         </div>
 
-        <div class="text-left">
-            <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
-                Video:
-            </h1>
-            <iframe style="width: 426px; height: 240px; margin-left: 225px;" src="https://www.youtube.com/embed/CA1L7_hyRqs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <div class="row">
+            <!-- First Column (1/3 width) -->
+            <div class="col-md-4">
+                <div class="text-left">
+                    <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
+                        Video:
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Second Column (2/3 width) -->
+            <div class="col-md-8">
+                <iframe style="width: 426px; height: 240px; margin-top: 9px;" src="https://www.youtube.com/embed/CA1L7_hyRqs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
         </div>
+
 
     </div>
     <div class="col d-flex align-items-center justify-content-center">
@@ -50,18 +61,24 @@
     </div>
 </div>
 
-
-<div class="text-left">
+<div class="text-left" style="max-width: 100vw; overflow-x: auto;">
     <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
         Cuvinte cheie:
     </h1>
 
-    <MudContainer>
-        <div class="row mx-0" style="margin-bottom:50px; width: 350vh; min-height: 12vh;">
+    <MudContainer Style="overflow-x: hidden;">
+        <div class="row mx-0" style="margin-top: 25px; margin-bottom: 50px; width: 333vh; min-height: 12vh;">
             <div class="col-md-6" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
                 <MudTooltip>
                     <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #2563EB; color: white; position: absolute; right: -25px; top: -25px;" @onclick='() => OpenDialog()' />
                 </MudTooltip>
+
+                <MudStack Row="true">
+                    @foreach (var item in KewWords)
+                    {
+                        <MudPaper Class="pa-3" Style="background-color: #02497E; color: white;">@item</MudPaper>
+                    }
+                </MudStack>
             </div>
         </div>
     </MudContainer>
@@ -85,8 +102,109 @@
 
 </div>
 
+<div class="text-left">
+    <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 30px;" class="poppins-semi-bold">Nivelurile Lingvistice</h1>
+</div>
+
+<div style="max-width: 80%; margin: auto; margin-bottom: 55px;">
+    <MudTable Items="@LanguageLevels" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<LanguageLevelElement,bool>(FilterFuncViewLanguage)"
+              @bind-SelectedItem="selectedAdminLanguage" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
+              OnCommitEditClick="@(() => EditLanguageLevel())"
+              IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Niveluri Lingvistice</MudText>
+            <MudSpacer />
+            <div class="text-center" style="width: 55%;">
+                <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Style="width: 50%;" />
+            </div>
+            <MudTooltip Text="Add">
+                <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialogLanguageLevel()' />
+            </MudTooltip>
+        </ToolBarContent>
+
+        <ColGroup>
+            @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
+            {
+                <col style="width:50px;" />
+            }
+            <col />
+            @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
+            {
+                <col style="width:50px;" />
+            }
+        </ColGroup>
+        <HeaderContent>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelName)">Nume</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelAlias)">Alias</MudTableSortLabel></MudTh>
+            <MudTh>Descriere</MudTh>
+            <MudTh>Link Video</MudTh>
+            <MudTh>Numărul de prioritate</MudTh>
+            <MudTh>Vizualizează</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Nume">@context.LanguageLevelName</MudTd>
+            <MudTd DataLabel="Alias">@context.LanguageLevelAlias</MudTd>
+            <MudTd DataLabel="Descriere">@context.LanguageLevelDescription</MudTd>
+            <MudTd DataLabel="Link Video">@context.LanguageLevelVideoLink</MudTd>
+            <MudTd DataLabel="Numărul de prioritate">@context.LanguageLevelPriorityNumber</MudTd>
+            <MudTd DataLabel="Vizualizează">
+                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLanguageOverview() )">Vezi mai multe</MudButton>
+            </MudTd>
+        </RowTemplate>
+        <RowEditingTemplate>
+            <MudTd DataLabel="Nume">
+                <MudTextField @bind-Value="@context.LanguageLevelName" />
+            </MudTd>
+            <MudTd DataLabel="Alias">
+                <MudTextField @bind-Value="@context.LanguageLevelAlias" />
+            </MudTd>
+            <MudTd DataLabel="Descriere">
+                <MudTextField @bind-Value="@context.LanguageLevelDescription" />
+            </MudTd>
+            <MudTd DataLabel="Link Video">
+                <MudTextField @bind-Value="@context.LanguageLevelVideoLink" />
+            </MudTd>
+            <MudTd DataLabel="Numărul de prioritate">
+                <MudTextField @bind-Value="@context.LanguageLevelPriorityNumber" />
+            </MudTd>
+            <MudTd DataLabel="Vizualizează"></MudTd>
+        </RowEditingTemplate>
+        <PagerContent>
+            <MudTablePager />
+        </PagerContent>
+        <EditButtonContent Context="button">
+            <div style="display: flex; flex-direction: row;">
+                <MudTooltip Text="Editeaza nivelul lingvistic">
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" Style="margin-right: 10px;" />
+                </MudTooltip>
+                <MudTooltip Text="Delete Course">
+                    <MudIconButton Text="Strege nivelul lingvistic" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteLanguageLevel" Class="pa-0" Style="margin-left: 10px;" />
+                </MudTooltip>
+            </div>
+        </EditButtonContent>
+    </MudTable>
+
+    <MudDialog @bind-IsVisible="visibleLanguageLevel" Options="dialogOptionsForLanguageLevel">
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
+                <span style="color: #2563EB;">Adaugă un nivel lingvistic</span>
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <MudTextField T="string" @bind-Value="LanguageLevelNameValue" Label="Nume"></MudTextField>
+            <MudTextField T="string" @bind-Value="LanguageLevelAliasValue" Label="Alias"></MudTextField>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Filled" OnClick="CancelLanguageLevel" Class="px-10" Style="color: black;">Close</MudButton>
+            <MudButton OnClick="@(async () => AddLanguageLevel(LanguageLevelNameValue, LanguageLevelAliasValue))" Style="color: #2563EB;">Add</MudButton>
+
+        </DialogActions>
+    </MudDialog>
+</div>
 
 
+@* KEW WORDS *@
 @code {
     private Snackbar snackbar;
     private bool visible;
@@ -115,5 +233,135 @@
         // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
         snackbar = Snackbar.Add("Cuvântul cheie a fost adăugat cu succes!", Severity.Success);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await PopulateKewWords();
+        await PopulateLanguagesLevelsTable();
+    }
+
+    private IEnumerable<string> KewWords = new List<string>();
+    int containerWidth = 333; // Width of MudContainer (in vh units)
+    int totalWidth; // Total width of elements (in vh units)
+    int numRows; // Number of rows needed
+
+    private async Task PopulateKewWords()
+    {
+        KewWords = new List<string>
+        {
+            "Cuvânt cheie 1",
+            "Cuvânt cheie 2",
+            "Cuvânt cheie 3"
+        };
+
+        // Elements = await httpClient.GetFromJsonAsync<List<AdminElement>>("webapi/periodictable");
+    }
+
+    void CalculateRowsAndWidth()
+    {
+        totalWidth = KewWords.Sum(kw => kw.Length);
+        numRows = (int)Math.Ceiling((double)totalWidth / containerWidth);
+    }
+}
+
+@* VIEW & EDIT LANGUAGE LEVELS *@
+@code {
+    private bool dense = false;
+    private bool hover = true;
+    private List<string> editEvents = new();
+    private bool ronly = false;
+    private bool canCancelEdit = true;
+    private bool blockSwitch = false;
+    private string searchString = "";
+    private LanguageLevelElement selectedAdminLanguage = null;
+    private LanguageLevelElement elementBeforeEdit;
+    private HashSet<LanguageLevelElement> selectedItems1 = new HashSet<LanguageLevelElement>();
+    private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
+    private TableEditButtonPosition editButtonPosition = TableEditButtonPosition.End;
+    private TableEditTrigger editTrigger = TableEditTrigger.EditButton;
+    private IEnumerable<LanguageLevelElement> LanguageLevels = new List<LanguageLevelElement>();
+
+    protected async Task PopulateLanguagesLevelsTable()
+    {
+        LanguageLevels = new List<LanguageLevelElement>
+        {
+            new LanguageLevelElement
+            {
+                LanguageLevelName = "A1",
+                LanguageLevelAlias = "Beginner",
+                LanguageLevelDescription = "Descriere sasa lorem ipsum vede vidi vici bini",
+                LanguageLevelVideoLink = "https://www.youtube.com/watch?v=EzlRcGUdhA4&ab_channel=TheMotans-Topic",
+                LanguageLevelPriorityNumber = 1
+            },
+            new LanguageLevelElement
+            {
+                LanguageLevelName = "A2",
+                LanguageLevelAlias = "Beginner",
+                LanguageLevelDescription = null,
+                LanguageLevelVideoLink = null,
+                LanguageLevelPriorityNumber = null
+            }
+        };
+
+        // AdminLanguageElements = await httpClient.GetFromJsonAsync<List<AdminViewLanguageElement>>("webapi/periodictable");
+    }
+
+    private void AddEditionEvent(string message)
+    {
+        editEvents.Add(message);
+        StateHasChanged();
+    }
+
+    private bool FilterFuncViewLanguage(LanguageLevelElement element) => FilterFuncViewLanguage1(element, searchString);
+
+    private bool FilterFuncViewLanguage1(LanguageLevelElement element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.LanguageLevelName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.LanguageLevelAlias.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+
+    void EditLanguageLevel()
+    {
+        // Do something
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes!", Severity.Success);
+    }
+
+    void DeleteLanguageLevel()
+    {
+        // Do something
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        snackbar = Snackbar.Add("Nivelul de limbă a fost șters cu succes!", Severity.Success);
+    }
+
+    private bool visibleLanguageLevel;
+    private string LanguageLevelNameValue;
+    private string LanguageLevelAliasValue;
+    private DialogOptions dialogOptionsForLanguageLevel = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
+
+    void CancelLanguageLevel() => visibleLanguageLevel = false;
+
+    void AddLanguageLevel(string languageNameValue, string languageAliasValue)
+    {
+        visibleLanguageLevel = false;
+        // Do something
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        snackbar = Snackbar.Add("Nivelul de limbă a fost adăugat cu succes!", Severity.Success);
+    }
+
+    void OpenDialogLanguageLevel()
+    {
+        visibleLanguageLevel = true;
+    }
+
+    void NavigateToLanguageOverview()
+    {
+        // NavigationManager.NavigateTo("/languageoverview");
     }
 }
