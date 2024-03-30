@@ -60,7 +60,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
                     LessonType = lesson.Value.LessonType,
                     LessonVideoLink = lesson.Value.LessonVideoLink,
                     LessonImageData = lesson.Value.LessonImageData,
-                    LanguageCompetenceId = lesson.Value.LanguageCompetenceId,
+                    ChapterId = lesson.Value.ChapterId,
                     LessonPriorityNumber = lesson.Value.LessonPriorityNumber,
                     LessonQuestions = sortedLessonQuestions,
                     LessonTags = lessonKeyWords,

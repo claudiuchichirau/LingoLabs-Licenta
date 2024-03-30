@@ -5,7 +5,7 @@ namespace LingoLabs.Application.Persistence.Languages
 {
     public interface ILanguageCompetenceRepository: IAsyncRepository<LanguageCompetence>
     {
-        Task<bool> ExistsLanguageCompetenceAsync(LanguageCompetenceType languageCompetenceType, Guid chapterIid);
+        Task<bool> ExistsLanguageCompetenceAsync(LanguageCompetenceType languageCompetenceType, Guid languageId);
         Task<LanguageCompetenceType> GetLanguageCompetenceTypeAsync(Guid id);
         Task<bool> ExistsLanguageCompetencePriorityNumberAsync(int priorityNumber, Guid languageCompetenceId);
     }

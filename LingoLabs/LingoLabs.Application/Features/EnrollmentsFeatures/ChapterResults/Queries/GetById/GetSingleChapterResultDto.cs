@@ -1,9 +1,9 @@
-﻿using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceResults.Queries;
+﻿using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Queries;
 
 namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Queries.GetById
 {
     public class GetSingleChapterResultDto: ChapterResultDto
     {
-        public List<LanguageCompetenceResultDto> LanguageCompetenceResults { get;  set; } = [];
+        public List<LessonResultDto> LessonResults { get;  set; } = [];
     }
 }

@@ -18,7 +18,6 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                 .Include(competence => competence.Lessons)
                 .Include(competence => competence.LearningCompetenceTags)
                 .Include(competence => competence.Language)
-                .Include(competence => competence.Chapter)
                 .FirstOrDefaultAsync(competence => competence.LanguageCompetenceId == id);
 
             if (result == null)
@@ -29,9 +28,9 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             return Result<LanguageCompetence>.Success(result);
         }
 
-        public async Task<bool> ExistsLanguageCompetenceAsync(LanguageCompetenceType languageCompetenceType, Guid chapterId)
+        public async Task<bool> ExistsLanguageCompetenceAsync(LanguageCompetenceType languageCompetenceType, Guid languageId)
         {
-            return await context.LanguageCompetences.AnyAsync(competence => competence.LanguageCompetenceType == languageCompetenceType && competence.ChapterId == chapterId);
+            return await context.LanguageCompetences.AnyAsync(competence => competence.LanguageCompetenceType == languageCompetenceType && competence.LanguageId == languageId);
         }
 
         public async Task<LanguageCompetenceType> GetLanguageCompetenceTypeAsync(Guid id)
@@ -47,7 +46,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             var languageCompetenceFound = await context.LanguageCompetences.FirstOrDefaultAsync(languageCompetence => languageCompetence.LanguageCompetenceId == languageCompetenceId);
 
             return await context.LanguageCompetences
-                .AnyAsync(languageCompetence => languageCompetence.LanguageCompetencePriorityNumber == priorityNumber && languageCompetence.ChapterId == languageCompetenceFound.ChapterId && languageCompetence.LanguageCompetenceId != languageCompetenceFound.LanguageCompetenceId);
+                .AnyAsync(languageCompetence => languageCompetence.LanguageCompetencePriorityNumber == priorityNumber && languageCompetence.LanguageId == languageCompetenceFound.LanguageId && languageCompetence.LanguageCompetenceId != languageCompetenceFound.LanguageCompetenceId);
         }
     }
 }

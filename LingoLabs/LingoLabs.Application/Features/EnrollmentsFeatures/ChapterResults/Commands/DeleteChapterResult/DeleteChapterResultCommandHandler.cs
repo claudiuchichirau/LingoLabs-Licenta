@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceResults.Commands.DeleteLanguageCompetenceResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.DeleteLessonResult;
 using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Domain.Entities.Enrollments;
 using MediatR;
@@ -8,12 +9,12 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
     public class DeleteChapterResultCommandHandler : IRequestHandler<DeleteChapterResultCommand, DeleteChapterResultCommandResponse>
     {
         private readonly IChapterResultRepository chapterResultRepository;
-        private readonly DeleteLanguageCompetenceResultCommandHandler deleteLanguageCompetenceResultCommandHandler;
+        private readonly DeleteLessonResultCommandHandler deleteLessonResultCommandHandler;
 
-        public DeleteChapterResultCommandHandler(IChapterResultRepository chapterResultRepository, DeleteLanguageCompetenceResultCommandHandler deleteLanguageCompetenceResultCommandHandler)
+        public DeleteChapterResultCommandHandler(IChapterResultRepository chapterResultRepository, DeleteLessonResultCommandHandler deleteLanguageCompetenceResultCommandHandler)
         {
             this.chapterResultRepository = chapterResultRepository;
-            this.deleteLanguageCompetenceResultCommandHandler = deleteLanguageCompetenceResultCommandHandler;
+            this.deleteLessonResultCommandHandler = deleteLessonResultCommandHandler;
         }
 
         public async Task<DeleteChapterResultCommandResponse> Handle(DeleteChapterResultCommand request, CancellationToken cancellationToken)
@@ -40,19 +41,19 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
                 };
             }
 
-            var languageCompetenceResults = chapterResult.Value.LanguageCompetenceResults.ToList();
+            var lessonResults = chapterResult.Value.LessonResults.ToList();
 
-            foreach (LanguageCompetenceResult languageCompetenceResult in languageCompetenceResults) 
+            foreach (LessonResult lessonResult in lessonResults) 
             {
-                var deleteLanguageCompetenceResultCommand = new DeleteLanguageCompetenceResultCommand { LanguageCompetenceResultId = languageCompetenceResult.LanguageCompetenceResultId };
-                var deleteLanguageCompetenceResultCommandResponse = await deleteLanguageCompetenceResultCommandHandler.Handle(deleteLanguageCompetenceResultCommand, cancellationToken);
+                var deleteLessonResultCommand = new DeleteLessonResultCommand { LessonResultId = lessonResult.LessonResultId };
+                var deleteLessonResultCommandResponse = await deleteLessonResultCommandHandler.Handle(deleteLessonResultCommand, cancellationToken);
 
-                if(!deleteLanguageCompetenceResultCommandResponse.Success)
+                if(!deleteLessonResultCommandResponse.Success)
                 {
                     return new DeleteChapterResultCommandResponse
                     {
                         Success = false,
-                        ValidationsErrors = deleteLanguageCompetenceResultCommandResponse.ValidationsErrors
+                        ValidationsErrors = deleteLessonResultCommandResponse.ValidationsErrors
                     };
                 }
             }

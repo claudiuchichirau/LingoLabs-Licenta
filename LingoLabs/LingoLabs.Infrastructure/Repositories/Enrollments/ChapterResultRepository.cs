@@ -16,7 +16,7 @@ namespace LingoLabs.Infrastructure.Repositories.Enrollments
         {
             var chapterResult = await context.ChapterResults
                 .Include(cr => cr.Chapter)
-                .Include(cr => cr.LanguageCompetenceResults)
+                .Include(cr => cr.LessonResults)
                 .Include(cr => cr.LanguageLevelResult)
                 .FirstOrDefaultAsync(cr => cr.ChapterResultId == id);
 

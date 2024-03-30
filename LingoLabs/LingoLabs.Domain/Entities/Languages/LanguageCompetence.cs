@@ -13,22 +13,19 @@ namespace LingoLabs.Domain.Entities.Languages
         public LanguageCompetenceType LanguageCompetenceType { get; private set; }
         public List<Lesson>? Lessons { get; private set; } = new();
         public List<EntityTag>? LearningCompetenceTags { get; private set; } = new();
-        public Guid ChapterId { get; private set; }
-        public Chapter? Chapter { get; set; }
         public Guid LanguageId { get; private set; }
         public Language? Language { get; set; }
         public List<UserLanguageLevel>? UserLanguageLevels { get; private set; } = [];
 
-        private LanguageCompetence(string languageCompetenceName, LanguageCompetenceType languageCompetenceType, Guid chapterId, Guid languageId)
+        private LanguageCompetence(string languageCompetenceName, LanguageCompetenceType languageCompetenceType, Guid languageId)
         {
             LanguageCompetenceId = Guid.NewGuid();
             LanguageCompetenceName = languageCompetenceName;
             LanguageCompetenceType = languageCompetenceType;
-            ChapterId = chapterId;
             LanguageId = languageId;
         }
 
-        public static Result<LanguageCompetence> Create(string languageCompetenceName, LanguageCompetenceType languageCompetenceType, Guid chapterId, Guid languageId)
+        public static Result<LanguageCompetence> Create(string languageCompetenceName, LanguageCompetenceType languageCompetenceType, Guid languageId)
         {
             if (string.IsNullOrWhiteSpace(languageCompetenceName))
                 return Result<LanguageCompetence>.Failure("LanguageCompetenceName is required");
@@ -36,13 +33,10 @@ namespace LingoLabs.Domain.Entities.Languages
             if (!IsValidLanguageCompetenceType(languageCompetenceType))
                 return Result<LanguageCompetence>.Failure("Invalid LanguageCompetenceType");
 
-            if (chapterId == default)
-                return Result<LanguageCompetence>.Failure("ChapterId is required");
-
             if (languageId == default)
                 return Result<LanguageCompetence>.Failure("LanguageId is required");
 
-            return Result<LanguageCompetence>.Success(new LanguageCompetence(languageCompetenceName, languageCompetenceType, chapterId, languageId));
+            return Result<LanguageCompetence>.Success(new LanguageCompetence(languageCompetenceName, languageCompetenceType, languageId));
         }
 
         private static bool IsValidLanguageCompetenceType(LanguageCompetenceType languageCompetenceType)

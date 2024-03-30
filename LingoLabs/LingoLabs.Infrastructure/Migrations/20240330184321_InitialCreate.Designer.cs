@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LingoLabs.Infrastructure.Migrations
 {
     [DbContext(typeof(LingoLabsDbContext))]
-    [Migration("20240322111807_InitialCreate")]
+    [Migration("20240330184321_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -170,6 +170,9 @@ namespace LingoLabs.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("ChapterResultId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -179,7 +182,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<bool>("IsCompleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("LanguageCompetenceResultId")
+                    b.Property<Guid?>("LanguageCompetenceResultId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LastModifiedBy")
@@ -192,6 +195,8 @@ namespace LingoLabs.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("LessonResultId");
+
+                    b.HasIndex("ChapterResultId");
 
                     b.HasIndex("LanguageCompetenceResultId");
 
@@ -448,7 +453,7 @@ namespace LingoLabs.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("ChapterId")
+                    b.Property<Guid?>("ChapterId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("CreatedBy")
@@ -542,6 +547,9 @@ namespace LingoLabs.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("ChapterId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -553,7 +561,7 @@ namespace LingoLabs.Infrastructure.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("nvarchar(21)");
 
-                    b.Property<Guid>("LanguageCompetenceId")
+                    b.Property<Guid?>("LanguageCompetenceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LastModifiedBy")
@@ -588,6 +596,8 @@ namespace LingoLabs.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("LessonId");
+
+                    b.HasIndex("ChapterId");
 
                     b.HasIndex("LanguageCompetenceId");
 
@@ -793,9 +803,9 @@ namespace LingoLabs.Infrastructure.Migrations
             modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.LanguageCompetenceResult", b =>
                 {
                     b.HasOne("LingoLabs.Domain.Entities.Enrollments.ChapterResult", "ChapterResult")
-                        .WithMany("LanguageCompetenceResults")
+                        .WithMany()
                         .HasForeignKey("ChapterResultId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LingoLabs.Domain.Entities.Languages.LanguageCompetence", "LanguageCompetence")
@@ -830,11 +840,15 @@ namespace LingoLabs.Infrastructure.Migrations
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.LessonResult", b =>
                 {
-                    b.HasOne("LingoLabs.Domain.Entities.Enrollments.LanguageCompetenceResult", "LanguageCompetenceResult")
-                        .WithMany("LessonsResults")
-                        .HasForeignKey("LanguageCompetenceResultId")
+                    b.HasOne("LingoLabs.Domain.Entities.Enrollments.ChapterResult", "ChapterResult")
+                        .WithMany("LessonResults")
+                        .HasForeignKey("ChapterResultId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("LingoLabs.Domain.Entities.Enrollments.LanguageCompetenceResult", null)
+                        .WithMany("LessonsResults")
+                        .HasForeignKey("LanguageCompetenceResultId");
 
                     b.HasOne("LingoLabs.Domain.Entities.Languages.Lesson", "Lesson")
                         .WithMany()
@@ -842,7 +856,7 @@ namespace LingoLabs.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("LanguageCompetenceResult");
+                    b.Navigation("ChapterResult");
 
                     b.Navigation("Lesson");
                 });
@@ -962,19 +976,15 @@ namespace LingoLabs.Infrastructure.Migrations
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.LanguageCompetence", b =>
                 {
-                    b.HasOne("LingoLabs.Domain.Entities.Languages.Chapter", "Chapter")
+                    b.HasOne("LingoLabs.Domain.Entities.Languages.Chapter", null)
                         .WithMany("languageCompetences")
-                        .HasForeignKey("ChapterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChapterId");
 
                     b.HasOne("LingoLabs.Domain.Entities.Languages.Language", "Language")
                         .WithMany("LanguageCompetences")
                         .HasForeignKey("LanguageId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
-
-                    b.Navigation("Chapter");
 
                     b.Navigation("Language");
                 });
@@ -992,13 +1002,18 @@ namespace LingoLabs.Infrastructure.Migrations
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Lesson", b =>
                 {
-                    b.HasOne("LingoLabs.Domain.Entities.Languages.LanguageCompetence", "LanguageCompetence")
-                        .WithMany("Lessons")
-                        .HasForeignKey("LanguageCompetenceId")
+                    b.HasOne("LingoLabs.Domain.Entities.Languages.Chapter", "Chapter")
+                        .WithMany("ChapterLessons")
+                        .HasForeignKey("ChapterId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("LanguageCompetence");
+                    b.HasOne("LingoLabs.Domain.Entities.Languages.LanguageCompetence", null)
+                        .WithMany("Lessons")
+                        .HasForeignKey("LanguageCompetenceId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Chapter");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Question", b =>
@@ -1027,7 +1042,7 @@ namespace LingoLabs.Infrastructure.Migrations
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.ChapterResult", b =>
                 {
-                    b.Navigation("LanguageCompetenceResults");
+                    b.Navigation("LessonResults");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Enrollments.Enrollment", b =>
@@ -1054,6 +1069,8 @@ namespace LingoLabs.Infrastructure.Migrations
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Chapter", b =>
                 {
+                    b.Navigation("ChapterLessons");
+
                     b.Navigation("ChapterTags");
 
                     b.Navigation("languageCompetences");

@@ -27,7 +27,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
                         LanguageCompetenceId = languageCompetence.LanguageCompetenceId,
                         LanguageCompetenceName = languageCompetence.LanguageCompetenceName,
                         LanguageCompetenceType = languageCompetence.LanguageCompetenceType,
-                        ChapterId = languageCompetence.ChapterId,
                         LanguageId = languageCompetence.LanguageId
                     }).ToList();
 
@@ -63,6 +62,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
                     ChapterVideoLink = chapter.Value.ChapterVideoLink,
 
                     languageCompetences = sortedLanguageCompetences,
+                    ChapterLessons = chapter.Value.ChapterLessons.Select(lesson => new Lessons.Queries.LessonDto
+                    {
+                        LessonId = lesson.LessonId,
+                        LessonTitle = lesson.LessonTitle,
+                        LessonType = lesson.LessonType
+                    }).ToList(),
 
                     ChapterKeyWords = chapterKeyWords,
                     UnassociatedTags = unassociatedTags

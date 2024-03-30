@@ -23,10 +23,10 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Quer
                     ChapterId = chapterResult.Value.ChapterId,
                     LanguageLevelResultId = chapterResult.Value.LanguageLevelResultId,
                     IsCompleted = chapterResult.Value.IsCompleted,
-                    LanguageCompetenceResults = chapterResult.Value.LanguageCompetenceResults.Select(lc => new LanguageCompetenceResults.Queries.LanguageCompetenceResultDto
+                    LessonResults = chapterResult.Value.LessonResults.Select(lc => new LessonResults.Queries.LessonResultDto
                     {
-                        LanguageCompetenceResultId = lc.LanguageCompetenceResultId,
-                        LanguageCompetenceId = lc.LanguageCompetenceId,
+                        LessonResultId = lc.LessonResultId,
+                        LessonId = lc.LessonId,
                         ChapterResultId = lc.ChapterResultId,
                         IsCompleted = lc.IsCompleted,
                     }).ToList()

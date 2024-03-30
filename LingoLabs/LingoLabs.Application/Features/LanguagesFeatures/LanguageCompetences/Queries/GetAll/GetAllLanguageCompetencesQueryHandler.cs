@@ -22,7 +22,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                     LanguageCompetenceId = x.LanguageCompetenceId,
                     LanguageCompetenceName = x.LanguageCompetenceName,
                     LanguageCompetenceType = x.LanguageCompetenceType,
-                    ChapterId = x.ChapterId,
                     LanguageId = x.LanguageId
                 }).ToList();
             }

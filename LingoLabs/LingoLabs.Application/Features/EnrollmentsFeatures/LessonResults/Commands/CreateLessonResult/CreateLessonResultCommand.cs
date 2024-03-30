@@ -5,7 +5,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
     public class CreateLessonResultCommand: IRequest<CreateLessonResultCommandResponse>
     {
         public Guid LessonId { get; set; }
-        public Guid LanguageCompetenceResultId { get; set; }
+        public Guid ChapterResultId { get; set; }
         public bool IsCompleted { get; set; }
     }
 }

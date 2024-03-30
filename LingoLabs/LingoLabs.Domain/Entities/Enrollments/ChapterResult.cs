@@ -6,7 +6,7 @@ namespace LingoLabs.Domain.Entities.Enrollments
     public class ChapterResult : AuditableEntity
     {
         public Guid ChapterResultId { get; private set; }
-        public List<LanguageCompetenceResult>? LanguageCompetenceResults { get; private set; } = new();
+        public List<LessonResult>? LessonResults { get; private set; } = new();
         public bool IsCompleted { get; private set; }
         public Guid ChapterId { get; private set; }
         public Chapter? Chapter { get; set; }
@@ -30,14 +30,14 @@ namespace LingoLabs.Domain.Entities.Enrollments
             return Result<ChapterResult>.Success(new ChapterResult(chapterId, languageLevelResultId));
         }
 
-        public void AttachLanguageCompetenceResult(LanguageCompetenceResult languageCompetenceResult)
+        public void AttachLanguageCompetenceResult(LessonResult lessonResult)
         {
-            if(languageCompetenceResult != null)
+            if(lessonResult != null)
             {
-                if(LanguageCompetenceResults == null)
-                    LanguageCompetenceResults = new List<LanguageCompetenceResult> { languageCompetenceResult };
-                else   
-                    LanguageCompetenceResults.Add(languageCompetenceResult);
+                if(LessonResults == null)
+                    LessonResults = new List<LessonResult> { lessonResult };
+                else
+                    LessonResults.Add(lessonResult);
             }
         }
 

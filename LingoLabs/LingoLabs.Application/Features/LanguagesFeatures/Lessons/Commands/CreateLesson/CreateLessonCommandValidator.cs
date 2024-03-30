@@ -27,12 +27,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
                 .Must(type => type == LanguageCompetenceType.Grammar || type == LanguageCompetenceType.Reading || type == LanguageCompetenceType.Writing)
                 .WithMessage("{PropertyName} must have one of the following values: Grammar, Reading, Writing");
 
-            RuleFor(p => p)
-                .MustAsync(async (command, cancellationToken) =>
-                    command.LessonType == await _languageCompetenceRepository.GetLanguageCompetenceTypeAsync(command.LanguageCompetenceId))
-                .WithMessage("LessonType must be the same as the LanguageCompetenceType associated with the provided LanguageCompetenceId.");
-
-            RuleFor(p => p.LanguageCompetenceId)
+            RuleFor(p => p.ChapterId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");

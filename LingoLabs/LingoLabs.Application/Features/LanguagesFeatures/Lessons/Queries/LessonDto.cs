@@ -7,6 +7,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries
         public Guid LessonId { get; set; }
         public string LessonTitle { get; set; } = default!;
         public LanguageCompetenceType LessonType { get; set; }
-        public Guid LanguageCompetenceId { get; set; }
+        public Guid ChapterId { get; set; }
     }
 }

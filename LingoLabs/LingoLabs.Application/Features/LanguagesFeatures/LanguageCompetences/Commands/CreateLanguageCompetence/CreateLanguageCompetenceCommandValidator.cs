@@ -18,23 +18,18 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidateLanguageCompetence(p.LanguageCompetenceName, p.LanguageCompetenceType, p.ChapterId))
+                .MustAsync((p, cancellation) => ValidateLanguageCompetence(p.LanguageCompetenceName, p.LanguageCompetenceType, p.LanguageId))
                 .WithMessage("{PropertyName} must have one of the following values: Grammar, Listening, Reading, Writing and must be the same as LanguageCompetenceName");
 
             RuleFor(p => p.LanguageId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
-
-            RuleFor(p => p.ChapterId)
-                .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotNull()
-                .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
         }
 
-        private async Task<bool> ValidateLanguageCompetence(string name, LanguageCompetenceType type, Guid chapterId)
+        private async Task<bool> ValidateLanguageCompetence(string name, LanguageCompetenceType type, Guid languageId)
         {
-            if (await repository.ExistsLanguageCompetenceAsync(type, chapterId))
+            if (await repository.ExistsLanguageCompetenceAsync(type, languageId))
                 return false;
 
             if (name == "Listening" && type != LanguageCompetenceType.Listening)

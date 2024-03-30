@@ -7,6 +7,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
     {
         public string LessonTitle { get; set; } = string.Empty;
         public LanguageCompetenceType LessonType { get; set; }
-        public Guid LanguageCompetenceId { get; set; }
+        public Guid ChapterId { get; set; }
     }
 }

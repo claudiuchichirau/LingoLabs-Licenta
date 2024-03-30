@@ -29,7 +29,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
                 };
             }
 
-            var lesson = Lesson.Create(request.LessonTitle, request.LessonType, request.LanguageCompetenceId);
+            var lesson = Lesson.Create(request.LessonTitle, request.LessonType, request.ChapterId);
             if(lesson.IsSuccess)
             {
                 await repository.AddAsync(lesson.Value);
@@ -40,7 +40,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
                         LessonId = lesson.Value.LessonId,
                         LessonTitle = lesson.Value.LessonTitle,
                         LessonType = lesson.Value.LessonType,
-                        LanguageCompetenceId = lesson.Value.LanguageCompetenceId
+                        ChapterId = lesson.Value.ChapterId
                     }
                 };
             }

@@ -38,7 +38,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                         LessonId = lesson.LessonId,
                         LessonTitle = lesson.LessonTitle,
                         LessonType = lesson.LessonType,
-                        LanguageCompetenceId = lesson.LanguageCompetenceId
+                        ChapterId = lesson.ChapterId
                     }).ToList();
 
                 var allTags = await tagRepository.GetAllAsync();
@@ -67,7 +67,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                     LanguageCompetenceId = languageCompetence.Value.LanguageCompetenceId,
                     LanguageCompetenceName = languageCompetence.Value.LanguageCompetenceName,
                     LanguageCompetenceType = languageCompetence.Value.LanguageCompetenceType,
-                    ChapterId = languageCompetence.Value.ChapterId,
                     LanguageId = languageCompetence.Value.LanguageId,
                     LanguageCompetenceDescription = languageCompetence.Value.LanguageCompetenceDescription,
                     LanguageCompetenceVideoLink = languageCompetence.Value.LanguageCompetenceVideoLink,

@@ -22,12 +22,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                 .Must(type => type == LanguageCompetenceType.Listening)
                 .WithMessage("{PropertyName} must be Listening");
 
-            RuleFor(p => p)
-                .MustAsync(async (command, cancellationToken) =>
-                    command.LessonType == await _languageCompetenceRepository.GetLanguageCompetenceTypeAsync(command.LanguageCompetenceId))
-                .WithMessage("{PropertyName} must be the same as the LanguageCompetenceType associated with the provided LanguageCompetenceId.");
-
-            RuleFor(p => p.LanguageCompetenceId)
+            RuleFor(p => p.ChapterId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");

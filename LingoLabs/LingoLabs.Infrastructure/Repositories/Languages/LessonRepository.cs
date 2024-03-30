@@ -16,7 +16,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         {
             var result = await context.Lessons
                 .Include(lesson => lesson.LessonQuestions)
-                .Include(lesson => lesson.LanguageCompetence)
+                .Include(lesson => lesson.Chapter)
                 .FirstOrDefaultAsync(lesson => lesson.LessonId == id);
 
             if (result == null)
@@ -49,7 +49,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             var lessonFound = await context.Lessons.FirstOrDefaultAsync(lesson => lesson.LessonId == lessonId);
 
             return await context.Lessons
-                .AnyAsync(lesson => lesson.LessonPriorityNumber == priorityNumber && lesson.LanguageCompetenceId == lessonFound.LanguageCompetenceId && lesson.LessonId != lessonFound.LessonId);
+                .AnyAsync(lesson => lesson.LessonPriorityNumber == priorityNumber && lesson.ChapterId == lessonFound.ChapterId && lesson.LessonId != lessonFound.LessonId);
         }
     }
 }

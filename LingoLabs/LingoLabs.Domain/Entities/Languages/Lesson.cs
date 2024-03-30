@@ -15,19 +15,19 @@ namespace LingoLabs.Domain.Entities.Languages
         public byte[]? LessonImageData { get; protected set; }
         public List<Question>? LessonQuestions { get; protected set; } = [];
         public List<EntityTag> LessonTags { get; protected set; } = [];
-        public Guid LanguageCompetenceId { get; protected set; }
-        public LanguageCompetence? LanguageCompetence { get; set; }
+        public Guid ChapterId { get; protected set; }
+        public Chapter? Chapter { get; set; }
 
-        protected Lesson(string lessonTitle, LanguageCompetenceType lessonType, Guid languageCompetenceId)
+        protected Lesson(string lessonTitle, LanguageCompetenceType lessonType, Guid chapterId)
         {
             LessonId = Guid.NewGuid();
             LessonTitle = lessonTitle;
             LessonType = lessonType;
-            LanguageCompetenceId = languageCompetenceId;
+            ChapterId = chapterId;
 
         }
 
-        public static Result<Lesson> Create(string lessonTitle, LanguageCompetenceType lessonType, Guid languageCompetenceId)
+        public static Result<Lesson> Create(string lessonTitle, LanguageCompetenceType lessonType, Guid chapterId)
         {
             if (string.IsNullOrWhiteSpace(lessonTitle))
                 return Result<Lesson>.Failure("LessonName is required");
@@ -35,10 +35,10 @@ namespace LingoLabs.Domain.Entities.Languages
             if (!IsValidLessonType(lessonType))
                 return Result<Lesson>.Failure("Invalid LessonType");
 
-            if (languageCompetenceId == default)
-                return Result<Lesson>.Failure("Invalid LanguageCompetenceId");
+            if (chapterId == default)
+                return Result<Lesson>.Failure("Invalid chapterId");
 
-            return Result<Lesson>.Success(new Lesson(lessonTitle, lessonType, languageCompetenceId));
+            return Result<Lesson>.Success(new Lesson(lessonTitle, lessonType, chapterId));
         }
 
         private static bool IsValidLessonType(LanguageCompetenceType languageCompetenceType)

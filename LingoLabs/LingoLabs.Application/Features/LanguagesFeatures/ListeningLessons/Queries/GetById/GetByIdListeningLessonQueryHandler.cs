@@ -38,7 +38,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
                     LessonVideoLink = listeningLesson.Value.LessonVideoLink,
                     LessonImageData = listeningLesson.Value.LessonImageData,
                     LessonPriorityNumber = listeningLesson.Value.LessonPriorityNumber,
-                    LanguageCompetenceId = listeningLesson.Value.LanguageCompetenceId,
+                    ChapterId = listeningLesson.Value.ChapterId,
                     LessonQuestions = sortedLessonQuestions,
                     TextScript = listeningLesson.Value.TextScript,
                     Accents = listeningLesson.Value.Accents
