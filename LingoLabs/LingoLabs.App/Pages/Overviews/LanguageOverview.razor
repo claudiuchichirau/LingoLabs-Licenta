@@ -15,7 +15,7 @@
     <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
         <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
             <div class="row">
-                <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Curs Overview</h2>
+                <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Curs - Overview</h2>
             </div>
         </div>
     </div>
@@ -26,7 +26,7 @@
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-top: 50px; margin-bottom: 20px;" class="poppins-semi-bold">
                 Nume:&emsp;
-                <span style="color: #2563EB; font-size: 21px;">
+                <span style="color: #2563EB; font-size: 25px;">
                     Limba Engleza
                 </span>
             </h1>
@@ -35,7 +35,7 @@
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
                 Descriere:&emsp;
-                <span style="font-size: 21px; color: #2563EB;">
+                <span style="font-size: 21px; color: #2563EB; text-align: justify;">
                     Cursul de limba engleza este un curs de nivel incepator, care se adreseaza persoanelor care doresc sa invete limba engleza de la zero.
                 </span>
             </h1>
@@ -137,12 +137,12 @@
             }
         </ColGroup>
         <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelName)">Nume</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelAlias)">Alias</MudTableSortLabel></MudTh>
-            <MudTh>Descriere</MudTh>
-            <MudTh>Link Video</MudTh>
-            <MudTh>Numărul de prioritate</MudTh>
-            <MudTh>Vizualizează</MudTh>
+            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelName)">Nume</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelAlias)">Alias</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align: center;">Descriere</MudTh>
+            <MudTh Style="text-align: center;">Link Video</MudTh>
+            <MudTh Style="text-align: center;">Numărul de prioritate</MudTh>
+            <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Nume">@context.LanguageLevelName</MudTd>
@@ -238,12 +238,12 @@
             }
         </ColGroup>
         <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageCompetenceElement, object>(x=>x.LanguageCompetenceName)">Nume</MudTableSortLabel></MudTh>
-            <MudTh>Tip</MudTh>
-            <MudTh>Descriere</MudTh>
-            <MudTh>Link Video</MudTh>
-            <MudTh>Numărul de prioritate</MudTh>
-            <MudTh>Vizualizează</MudTh>
+            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageCompetenceElement, object>(x=>x.LanguageCompetenceName)">Nume</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align: center;">Tip</MudTh>
+            <MudTh Style="text-align: center;">Descriere</MudTh>
+            <MudTh Style="text-align: center;">Link Video</MudTh>
+            <MudTh Style="text-align: center;">Numărul de prioritate</MudTh>
+            <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
             <MudTd DataLabel="Nume">@context.LanguageCompetenceName</MudTd>
@@ -560,113 +560,6 @@
     </DialogActions>
 </MudDialog>
 
-@* <div style="max-width: 80%; margin: auto; margin-bottom: 55px;">
-    <MudTable Items="@LanguageCompetences" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<QuestionElement,bool>(FilterFuncViewPlacementTest)"
-              @bind-SelectedItem="selectedQuestions" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
-              OnCommitEditClick="@(() => EditLanguageCompetence())"
-              IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
-        <ToolBarContent>
-            <MudText Typo="Typo.h6">Întrebări - Test Inițial</MudText>
-            <MudSpacer />
-            <div class="text-center" style="width: 55%;">
-                <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Style="width: 50%;" />
-            </div>
-            <MudTooltip Text="Update">
-                <MudFab Icon="@Icons.Material.Filled.Update" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialogUpdatePlacementTest()' />
-            </MudTooltip>
-            <MudTooltip Text="Delete">
-                <MudFab Icon="@Icons.Material.Filled.Delete" Style="background-color: #FC6F05; color: white;" @onclick='() => DeletePlacementTest()' />
-            </MudTooltip>
-        </ToolBarContent>
-
-        <ColGroup>
-            @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
-            {
-                <col style="width:50px;" />
-            }
-            <col />
-            @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
-            {
-                <col style="width:50px;" />
-            }
-        </ColGroup>
-        <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<QuestionElement, object>(x=>x.QuestionRequirement)">Cerință</MudTableSortLabel></MudTh>
-            <MudTh>Vezi mai multe</MudTh>
-        </HeaderContent>
-        <RowTemplate>
-            <MudTd DataLabel="Cerință">@context.QuestionRequirement</MudTd>
-            <MudTd DataLabel="Vezi mai multe">
-                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => OpenDialogQuestion(context) )">Vezi mai multe</MudButton>
-            </MudTd>
-        </RowTemplate>
-        <PagerContent>
-            <MudTablePager />
-        </PagerContent>
-        <EditButtonContent Context="button">
-            <div style="display: flex; flex-direction: row;">
-                <MudTooltip Text="Șterge întrebarea">
-                    <MudIconButton Text="Sterge nivelul lingvistic" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteQuestionPlacementTest" Class="pa-0" Style="margin-left: 10px;" />
-                </MudTooltip>
-            </div>
-        </EditButtonContent>
-    </MudTable>
-
-    <MudDialog @bind-IsVisible="visibleQuestion" Options="dialogOptionsQuestion">
-        <TitleContent>
-            <MudText Typo="Typo.h6">
-                <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
-                <span style="color: #2563EB;">Vizualizează întrebarea</span>
-            </MudText>
-        </TitleContent>
-        <DialogContent>
-            <MudText Typo="Typo.body1">
-                <span style="font-size: 16px;">Cerință: @currentQuestion.QuestionRequirement</span>
-            </MudText>
-            <MudList>
-                <span style="font-size: 16px;">Variante de răspuns: </span>
-                @foreach (var choice in currentQuestion.QuestionChoices)
-                {
-                    @if (choice.IsCorrect == true)
-                    {
-                        <MudListItem Style="margin: 0; padding: 0;">
-                            <MudText Typo="Typo.body1" Style="color: green;">&nbsp;- @choice.ChoiceContent</MudText>
-                        </MudListItem>
-                    }
-                    else if (choice.IsCorrect == false)
-                    {
-                        <MudListItem Style="margin: 0; padding: 0;">
-                            <MudText Typo="Typo.body1" Style="color: gray;">&nbsp;- @choice.ChoiceContent</MudText>
-                        </MudListItem>
-                    }
-                }
-            </MudList>
-
-            @if (currentQuestion.QuestionImageData != null || currentQuestion.QuestionVideoLink != null)
-            {
-                <MudText>
-                    <span style="font-size: 16px; margin-top:15px;">Resurse suplimentare:</span>
-                </MudText>
-                <MudText Style="display: flex; flex-direction: column; align-items: center;">
-                    @if (currentQuestion.QuestionImageData != null)
-                    {
-                        <img src="@currentQuestion.QuestionImageData" alt="Imagine întrebare" style="max-width: 400px; max-height: 500px; width: 100%; height: auto; margin-top: 10px; margin-bottom: 10px;" />
-                    }
-                    @if (currentQuestion.QuestionVideoLink != null)
-                    {
-                        <MudText Typo="Typo.body1" Style="margin-top: 10px;">
-                            <iframe style="width: 426px; height: 240px; margin-top: 9px;" src="@currentQuestion.QuestionVideoLink" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        </MudText>
-                    }
-                </MudText>
-            }
-
-        </DialogContent>
-        <DialogActions>
-            <MudButton Variant="Variant.Filled" OnClick="CancelQuestion" Class="px-10" Style="color: black;">Close</MudButton>
-        </DialogActions>
-    </MudDialog>
-</div> *@
 
 <style type="text/css">
     .mud-table-head .header-centered th {
@@ -841,7 +734,7 @@
 
     void NavigateToLanguageLevelOverview()
     {
-        // NavigationManager.NavigateTo("/languageoverview");
+        // NavigationManager.NavigateTo("/language-level-overview");
     }
 }
 

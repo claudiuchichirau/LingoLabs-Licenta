@@ -72,8 +72,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                     LanguageCompetenceVideoLink = languageCompetence.Value.LanguageCompetenceVideoLink,
                     LanguageCompetencePriorityNumber = languageCompetence.Value.LanguageCompetencePriorityNumber,
 
-                    Lessons = sortedLessons,
-
                     LearningCompetenceKeyWords = languageCompetenceKeyWords,
 
                     UnassociatedTags = unassociatedTags,
