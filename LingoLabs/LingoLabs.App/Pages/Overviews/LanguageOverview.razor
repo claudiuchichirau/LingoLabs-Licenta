@@ -470,41 +470,40 @@
 
 
 @* PLACEMENT TEST EXISTS *@
-<MudTable Items="@Questions" Hover="true" SortLabel="Sort By" Filter="new Func<QuestionElement,bool>(FilterFuncViewPlacementTest)">
-    <ToolBarContent>
-        <MudText Typo="Typo.h6">Întrebări - Test Inițial</MudText>
-        <MudSpacer />
-        <div class="text-center" style="width: 55%;">
-            <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Style="width: 50%;" />
-        </div>
-        <MudTooltip Text="Update">
-            <MudFab Icon="@Icons.Material.Filled.Update" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialogUpdatePlacementTest()' />
-        </MudTooltip>
-        <MudTooltip Text="Delete">
-            <MudFab Icon="@Icons.Material.Filled.Delete" Style="background-color: #FC6F05; color: white;" @onclick='() => DeletePlacementTest()' />
-        </MudTooltip>
-    </ToolBarContent>
-    <HeaderContent>
-        <MudTh><MudTableSortLabel SortBy="new Func<QuestionElement, object>(x=>x.QuestionRequirement)">Cerință</MudTableSortLabel></MudTh>
-        <MudTh>Vezi mai multe</MudTh>
-    </HeaderContent>
-    <RowTemplate>
-        <MudTd DataLabel="Cerință">@context.QuestionRequirement</MudTd>
-        <MudTd DataLabel="Vezi mai multe">
-            <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => OpenDialogQuestion(context) )">Vezi mai multe</MudButton>
-        </MudTd>
-    </RowTemplate>
-    <PagerContent>
-        <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
-    </PagerContent>
-    <EditButtonContent Context="button">
-        <div style="display: flex; flex-direction: row;">
-            <MudTooltip Text="Șterge întrebarea">
-                <MudIconButton Text="Sterge nivelul lingvistic" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteQuestionPlacementTest" Class="pa-0" Style="margin-left: 10px;" />
+<div style="max-width: 80%; margin: auto; margin-bottom: 55px;">
+    <MudTable Items="@Questions" Hover="true" SortLabel="Sort By" Filter="new Func<QuestionElement,bool>(FilterFuncViewPlacementTest)">
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Întrebări - Test Inițial</MudText>
+            <MudSpacer />
+            <div class="text-center" style="width: 55%;">
+                <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Style="width: 50%;" />
+            </div>
+            @* <MudTooltip Text="Update">
+                <MudFab Icon="@Icons.Material.Filled.Update" Style="background-color: #FC6F05; color: white; margin-right: 15px;" @onclick='() => OpenDialogUpdatePlacementTest()' />
+            </MudTooltip> *@
+            <MudTooltip Text="Delete">
+                <MudFab Icon="@Icons.Material.Filled.Delete" Style="background-color: #FC6F05; color: white;" @onclick='() => DeletePlacementTest()' />
             </MudTooltip>
-        </div>
-    </EditButtonContent>
-</MudTable>
+        </ToolBarContent>
+        <HeaderContent>
+            <MudTh Style="text-align: center;"><MudTableSortLabel SortBy="new Func<QuestionElement, object>(x=>x.QuestionRequirement)">Cerință</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align: center;">Vezi mai multe</MudTh>
+            <MudTh Style="text-align: center;">Șterge întrebarea</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Cerință">@context.QuestionRequirement</MudTd>
+            <MudTd DataLabel="Vezi mai multe" Style="text-align: center;">
+                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => OpenDialogQuestion(context) )">Vezi mai multe</MudButton>
+            </MudTd>
+            <MudTd DataLabel="Șterge întrebarea" Style="text-align: center;">
+                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => DeleteQuestionPlacementTest(context) )"><MudIcon Icon="@Icons.Material.Filled.Delete" Size="@Size.Small" /></MudButton>
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[] { 10, 25, 50, 100 }" />
+        </PagerContent>
+    </MudTable>
+</div>
 
 <MudDialog @bind-IsVisible="visibleQuestion" Options="dialogOptionsQuestion">
     <TitleContent>
@@ -1053,7 +1052,7 @@
         snackbar = Snackbar.Add("Testul inițial a fost șters cu succes!", Severity.Success);
     }
 
-    void DeleteQuestionPlacementTest()
+    void DeleteQuestionPlacementTest(QuestionElement question)
     {
         // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
