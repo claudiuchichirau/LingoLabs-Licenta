@@ -62,7 +62,7 @@
 
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
-                Numărul de prioritate:&emsp;
+                Nr. Crt.:&emsp;
                 <span style="font-size: 21px; color: #2563EB; text-align: justify;">
                     1
                 </span>
@@ -169,7 +169,7 @@
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ChapterElement, object>(x=>x.ChapterDescription)">Descriere</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;">Link Video</MudTh>
             <MudTh Style="text-align: center;">Link Imagine</MudTh>
-            <MudTh Style="text-align: center;">Numărul de prioritate</MudTh>
+            <MudTh Style="text-align: center;">Nr. Crt.</MudTh>
             <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
@@ -177,7 +177,7 @@
             <MudTd DataLabel="Descriere" Class="descriere">@context.ChapterDescription</MudTd>
             <MudTd DataLabel="Link Video" Class="video-data">@context.ChapterVideoData</MudTd>
             <MudTd DataLabel="Link Imagine" Class="image-data">@context.ChapterImageData</MudTd>
-            <MudTd DataLabel="Numărul de prioritate">@context.ChapterPriorityNumber</MudTd>
+            <MudTd DataLabel="Nr. Crt.">@context.ChapterPriorityNumber</MudTd>
             <MudTd DataLabel="Vizualizează">
                 <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToChapterOverview() )">Vezi mai multe</MudButton>
             </MudTd>
@@ -195,7 +195,7 @@
             <MudTd DataLabel="Link Imagine">
                 <MudTextField @bind-Value="@context.ChapterImageData" />
             </MudTd>
-            <MudTd DataLabel="Numărul de prioritate">
+            <MudTd DataLabel="Nr. Crt.">
                 <MudTextField @bind-Value="@context.ChapterPriorityNumber" />
             </MudTd>
             <MudTd DataLabel="Vizualizează"></MudTd>

@@ -65,7 +65,7 @@
 
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
-                Numărul de prioritate:&emsp;
+                Nr. Crt.:&emsp;
                 <span style="font-size: 21px; color: #2563EB; text-align: justify;">
                     1
                 </span>
@@ -184,15 +184,15 @@
             }
         </ColGroup>
         <HeaderContent>
-            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LessonPriorityNumber)">Nr. ctr.</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LessonPriorityNumber)">Nr. Crt.</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LessonTitle)">Titlu</MudTableSortLabel></MudTh>
-            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LessonDescription)">Descriere</MudTableSortLabel></MudTh>
-            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LessonContent)">Conținut</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align: center;">Descriere</MudTh>
+            <MudTh Style="text-align: center;">Conținut</MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LanguageCompetenceId)">Competență Lingvistică</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Nr. ctr.">@context.LessonPriorityNumber</MudTd>
+            <MudTd DataLabel="Nr. Crt.">@context.LessonPriorityNumber</MudTd>
             <MudTd DataLabel="Titlu">@context.LessonTitle</MudTd>
             <MudTd DataLabel="Descriere">@context.LessonDescription</MudTd>
             <MudTd DataLabel="Conținut">@context.LessonContent</MudTd>
@@ -203,7 +203,7 @@
             <MudTd>
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <MudTooltip Text="Vizualizează & Modifică">
-                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.RemoveRedEye" Class="pa-0" OnClick="@( () => OpenDialogEditLesson(context) )" Style="margin-right: 7px;" />
+                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Visibility" Class="pa-0" OnClick="@( () => OpenDialogEditLesson(context) )" Style="margin-right: 7px;" />
                     </MudTooltip>
                     <MudTooltip Text="Șterge Lecția">
                         <MudIconButton Text="Șterge lecția" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => DeleteLesson(context.LessonId) )" Class="pa-0" Style="margin-left: 7px;" />
@@ -312,7 +312,7 @@
                     <MudTextField T="string" Label="Conținut" @bind-Value="lessonRequest.LessonContent"></MudTextField>
                     <MudTextField T="string" Label="Link Video" @bind-Value="lessonRequest.LessonVideoLink"></MudTextField>
                     <MudTextField T="string" Label="Link Imagine" @bind-Value="lessonRequest.LessonImageLink"></MudTextField>
-                    <MudTextField T="int?" Label="Nr. ctr" @bind-Value="lessonRequest.LessonPriorityNumber"></MudTextField>
+                    <MudTextField T="int?" Label="Nr. Crt." @bind-Value="lessonRequest.LessonPriorityNumber"></MudTextField>
                     <MudTextField T="string" Label="Text Script" @bind-Value="lessonRequest.TextScript"></MudTextField>
                     <MudText Typo="Typo.h6">Acente</MudText>
                     @foreach (var accent in Accents)
@@ -583,7 +583,7 @@
 
     void NavigateToLessonOverview()
     {
-        NavigationManager.NavigateTo("/language-level-overview");
+        NavigationManager.NavigateTo("/lesson-overview");
     }
 }
 

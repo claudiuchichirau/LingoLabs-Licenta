@@ -248,7 +248,7 @@
             <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Nr. Crt">@context.LanguageCompetencePriorityNumber</MudTd>
+            <MudTd DataLabel="Nr. Crt.">@context.LanguageCompetencePriorityNumber</MudTd>
             <MudTd DataLabel="Nume">@context.LanguageCompetenceName</MudTd>
             <MudTd DataLabel="Tip">@context.LanguageCompetenceType</MudTd>
             <MudTd DataLabel="Descriere">@context.LanguageCompetenceDescription</MudTd>
@@ -258,7 +258,7 @@
             </MudTd>
         </RowTemplate>
         <RowEditingTemplate>
-            <MudTd DataLabel="Nr. Crt">
+            <MudTd DataLabel="Nr. Crt.">
                 <MudTextField @bind-Value="@context.LanguageCompetencePriorityNumber" />
             </MudTd>
             <MudTd DataLabel="Nume">
