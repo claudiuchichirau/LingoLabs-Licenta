@@ -1,4 +1,5 @@
-﻿using LingoLabs.Domain.Entities.Languages;
+﻿using LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries;
+using LingoLabs.Domain.Entities.Languages;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Queries
 {

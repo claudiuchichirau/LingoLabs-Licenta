@@ -29,9 +29,8 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         public async Task<Result<IReadOnlyList<Question>>> GetQuestionsByLanguageLevelIdAsync(Guid languageLevelId)
         {
             var languageLevel = await context.LanguageLevels
-                .Include(l => l.LanguageChapters)
-                .ThenInclude(lc => lc.languageCompetences)
-                .ThenInclude(lc => lc.Lessons)
+                .Include(l => l.LanguageLevelChapters)
+                .ThenInclude(lc => lc.ChapterLessons)
                 .ThenInclude(l => l.LessonQuestions)
                 .FirstOrDefaultAsync(l => l.LanguageLevelId == languageLevelId);
 
@@ -42,19 +41,16 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
 
             var questions = new List<Question>();
 
-            foreach (var chapter in languageLevel.LanguageChapters)
+            foreach (var chapter in languageLevel.LanguageLevelChapters)
             {
-                foreach (var competence in chapter.languageCompetences)
+                foreach (var lesson in chapter.ChapterLessons)
                 {
-                    foreach (var lesson in competence.Lessons)
-                    {
-                        var result = await context.Questions
-                            .Include(q => q.QuestionChoices)
-                            .Where(q => q.LessonId == lesson.LessonId)
-                            .ToListAsync();
+                    var result = await context.Questions
+                        .Include(q => q.QuestionChoices)
+                        .Where(q => q.LessonId == lesson.LessonId)
+                        .ToListAsync();
 
-                        questions.AddRange(result);
-                    }
+                    questions.AddRange(result);
                 }
             }
 
@@ -64,7 +60,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         public async Task<Result<IReadOnlyList<Question>>> GetQuestionsByLanguageCompetenceIdAsync(Guid languageCompetenceId)
         {
             var languageCompetence = await context.LanguageCompetences
-                .Include(lc => lc.Lessons)
+                .Include(lc => lc.LanguageCompetenceLessons)
                 .ThenInclude(l => l.LessonQuestions)
                 .FirstOrDefaultAsync(lc => lc.LanguageCompetenceId == languageCompetenceId);
 
@@ -75,7 +71,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
 
             var questions = new List<Question>();
 
-            foreach (var lesson in languageCompetence.Lessons)
+            foreach (var lesson in languageCompetence.LanguageCompetenceLessons)
             {
                 var result = await context.Questions
                     .Include(q => q.QuestionChoices)

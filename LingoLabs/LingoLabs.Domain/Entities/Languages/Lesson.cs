@@ -10,35 +10,35 @@ namespace LingoLabs.Domain.Entities.Languages
         public string? LessonRequirement { get; protected set; } = string.Empty;     
         public string? LessonContent { get; protected set; } = string.Empty;    
         public int? LessonPriorityNumber { get; protected set; }
-        public LanguageCompetenceType LessonType { get; protected set; }
         public string? LessonVideoLink { get; protected set; } = string.Empty;
         public byte[]? LessonImageData { get; protected set; }
+        public Guid LanguageCompetenceId { get; protected set; }
+        public LanguageCompetence? LanguageCompetence { get; set; }
         public List<Question>? LessonQuestions { get; protected set; } = [];
         public List<EntityTag> LessonTags { get; protected set; } = [];
         public Guid ChapterId { get; protected set; }
         public Chapter? Chapter { get; set; }
 
-        protected Lesson(string lessonTitle, LanguageCompetenceType lessonType, Guid chapterId)
+        protected Lesson(string lessonTitle, Guid chapterId, Guid languageCompetenceId)
         {
             LessonId = Guid.NewGuid();
             LessonTitle = lessonTitle;
-            LessonType = lessonType;
             ChapterId = chapterId;
-
+            LanguageCompetenceId = languageCompetenceId;
         }
 
-        public static Result<Lesson> Create(string lessonTitle, LanguageCompetenceType lessonType, Guid chapterId)
+        public static Result<Lesson> Create(string lessonTitle, Guid chapterId, Guid languageCompetenceId)
         {
             if (string.IsNullOrWhiteSpace(lessonTitle))
                 return Result<Lesson>.Failure("LessonName is required");
 
-            if (!IsValidLessonType(lessonType))
-                return Result<Lesson>.Failure("Invalid LessonType");
-
             if (chapterId == default)
                 return Result<Lesson>.Failure("Invalid chapterId");
 
-            return Result<Lesson>.Success(new Lesson(lessonTitle, lessonType, chapterId));
+            if (languageCompetenceId == default)
+                return Result<Lesson>.Failure("Invalid languageCompetenceId");
+
+            return Result<Lesson>.Success(new Lesson(lessonTitle, chapterId, languageCompetenceId));
         }
 
         private static bool IsValidLessonType(LanguageCompetenceType languageCompetenceType)

@@ -10,7 +10,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
         public int? ChapterPriorityNumber { get; set; } 
         public byte[] ChapterImageData { get; set; } = [];
         public string ChapterVideoLink { get; set; } = string.Empty;
-        public List<LanguageCompetenceDto> languageCompetences { get; set; } = [];
         public List<LessonDto> ChapterLessons { get; set; } = [];
         public List<TagDto> ChapterKeyWords { get; set; } = [];
         public List<TagDto> UnassociatedTags { get; set; } = [];

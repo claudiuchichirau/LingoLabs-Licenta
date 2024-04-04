@@ -1,6 +1,4 @@
-﻿using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Queries;
-using LingoLabs.Application.Persistence.Languages;
-using LingoLabs.Domain.Entities.Languages;
+﻿using LingoLabs.Application.Persistence.Languages;
 using MediatR;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetById
@@ -20,16 +18,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
             var chapter = await repository.FindByIdAsync(request.Id);
             if(chapter.IsSuccess)
             {
-                var sortedLanguageCompetences = chapter.Value.languageCompetences
-                    .OrderBy(languageCompetence => languageCompetence.LanguageCompetencePriorityNumber ?? int.MaxValue)
-                    .Select(languageCompetence => new LanguageCompetences.Queries.LanguageCompetenceDto
-                    {
-                        LanguageCompetenceId = languageCompetence.LanguageCompetenceId,
-                        LanguageCompetenceName = languageCompetence.LanguageCompetenceName,
-                        LanguageCompetenceType = languageCompetence.LanguageCompetenceType,
-                        LanguageId = languageCompetence.LanguageId
-                    }).ToList();
-
                 var allTags = await tagRepository.GetAllAsync();
 
                 var allTagsDto = allTags.Value.Select(tag => new Tags.Queries.TagDto
@@ -61,12 +49,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
                     ChapterImageData = chapter.Value.ChapterImageData,
                     ChapterVideoLink = chapter.Value.ChapterVideoLink,
 
-                    languageCompetences = sortedLanguageCompetences,
                     ChapterLessons = chapter.Value.ChapterLessons.Select(lesson => new Lessons.Queries.LessonDto
                     {
                         LessonId = lesson.LessonId,
                         LessonTitle = lesson.LessonTitle,
-                        LessonType = lesson.LessonType
+                        ChapterId = lesson.ChapterId,
+                        LanguageCompetenceId = lesson.LanguageCompetenceId
                     }).ToList(),
 
                     ChapterKeyWords = chapterKeyWords,

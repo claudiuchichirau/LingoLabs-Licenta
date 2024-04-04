@@ -31,16 +31,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
 
                 var userLanguageLevels = userLanguageLevelsResult.Value;
 
-                var sortedLessons = languageCompetence.Value.Lessons
-                    .OrderBy(lesson => lesson.LessonPriorityNumber ?? int.MaxValue)
-                    .Select(lesson => new Lessons.Queries.LessonDto
-                    {
-                        LessonId = lesson.LessonId,
-                        LessonTitle = lesson.LessonTitle,
-                        LessonType = lesson.LessonType,
-                        ChapterId = lesson.ChapterId
-                    }).ToList();
-
                 var allTags = await tagRepository.GetAllAsync();
 
                 var allTagsDto = allTags.Value.Select(tag => new Tags.Queries.TagDto
@@ -82,6 +72,14 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                         EnrollmentId = userLanguageLevel.EnrollmentId,
                         LanguageLevelId = userLanguageLevel.LanguageLevelId,
                         LanguageCompetenceId = userLanguageLevel.LanguageCompetenceId
+                    }).ToList(),
+
+                    LanguageCompetenceLessons = languageCompetence.Value.LanguageCompetenceLessons.Select(lesson => new Lessons.Queries.LessonDto
+                    {
+                        LessonId = lesson.LessonId,
+                        LessonTitle = lesson.LessonTitle,
+                        ChapterId = lesson.ChapterId,
+                        LanguageCompetenceId = lesson.LanguageCompetenceId
                     }).ToList()
                 };
             }

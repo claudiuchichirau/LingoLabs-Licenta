@@ -10,7 +10,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public string LanguageLevelAlias { get; private set; } 
         public string? LanguageLevelDescription { get; private set; } = string.Empty;
         public string? LanguageLevelVideoLink { get; private set; } = string.Empty;
-        public List<Chapter>? LanguageChapters { get; private set; } = [];
+        public List<Chapter>? LanguageLevelChapters { get; private set; } = [];
         public List<EntityTag>? LanguageLevelTags { get; private set; } = [];
         public List<UserLanguageLevel>? UserLanguageLevels { get; private set; } = [];
         public int? PriorityNumber { get; private set; }
@@ -40,17 +40,6 @@ namespace LingoLabs.Domain.Entities.Languages
         {
             if (!string.IsNullOrWhiteSpace(languageLevelDescription))
                 LanguageLevelDescription = languageLevelDescription;
-        }
-
-        public void AttachLanguageChapter(Chapter chapter)
-        {
-            if (chapter != null)
-            {
-                if (LanguageChapters == null)
-                    LanguageChapters = new List<Chapter> { chapter };
-                else
-                    LanguageChapters.Add(chapter);
-            }
         }
 
         public void AttachKeyWord(EntityTag tag)

@@ -21,8 +21,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetAl
                 {
                     LessonId = lesson.LessonId,
                     LessonTitle = lesson.LessonTitle,
-                    LessonType = lesson.LessonType,
-                    ChapterId = lesson.ChapterId
+                    ChapterId = lesson.ChapterId,
+                    LanguageCompetenceId = lesson.LanguageCompetenceId
                 }).ToList();
             }
 

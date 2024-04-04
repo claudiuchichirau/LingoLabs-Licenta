@@ -21,8 +21,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
                 {
                     LessonId = lesson.LessonId,
                     LessonTitle = lesson.LessonTitle,
-                    LessonType = lesson.LessonType,
                     ChapterId = lesson.ChapterId,
+                    LanguageCompetenceId = lesson.LanguageCompetenceId,
                     TextScript = lesson.TextScript,
                     Accents = lesson.Accents
                 }).ToList();

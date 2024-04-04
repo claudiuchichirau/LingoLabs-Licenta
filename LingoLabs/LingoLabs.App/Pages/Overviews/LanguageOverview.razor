@@ -4,6 +4,7 @@
 @using MatBlazor
 @using System.Net.Http.Json
 @using ViewModel.MudBlazor
+@inject NavigationManager NavigationManager
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
@@ -24,7 +25,7 @@
 <div class="row" style="max-width: 100vw; overflow-x: auto;">
     <div class="col">
         <div class="text-left">
-            <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-top: 50px; margin-bottom: 20px;" class="poppins-semi-bold">
+            <h1 style="color: black; font-size: 33px; margin-left: 75px; margin-top: 50px; padding: 5px;" class="poppins-semi-bold">
                 Nume:&emsp;
                 <span style="color: #2563EB; font-size: 25px;">
                     Limba Engleza
@@ -98,13 +99,14 @@
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Filled" OnClick="Cancel" Class="px-10" Style="color: black;">Close</MudButton>
-            <MudButton OnClick="@(async () => AddKeyWord(keyWord))" Style="color: #2563EB;">Add</MudButton>
+            <MudButton Disabled="keyWord == null" OnClick="@(async () => AddKeyWord(keyWord))" Style="color: #2563EB;">Add</MudButton>
 
         </DialogActions>
     </MudDialog>
 
 </div>
 
+@* LANGUEAGE LEVELS *@
 <div class="text-left">
     <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 30px;" class="poppins-semi-bold">Nivelurile Lingvistice</h1>
 </div>
@@ -137,24 +139,27 @@
             }
         </ColGroup>
         <HeaderContent>
+            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelPriorityNumber)">Nr. Crt.</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelName)">Nume</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelAlias)">Alias</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;">Descriere</MudTh>
             <MudTh Style="text-align: center;">Link Video</MudTh>
-            <MudTh Style="text-align: center;">Numărul de prioritate</MudTh>
             <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
+            <MudTd DataLabel="Nr. Crt.">@context.LanguageLevelPriorityNumber</MudTd>
             <MudTd DataLabel="Nume">@context.LanguageLevelName</MudTd>
             <MudTd DataLabel="Alias">@context.LanguageLevelAlias</MudTd>
             <MudTd DataLabel="Descriere">@context.LanguageLevelDescription</MudTd>
             <MudTd DataLabel="Link Video">@context.LanguageLevelVideoLink</MudTd>
-            <MudTd DataLabel="Numărul de prioritate">@context.LanguageLevelPriorityNumber</MudTd>
             <MudTd DataLabel="Vizualizează">
                 <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLanguageLevelOverview() )">Vezi mai multe</MudButton>
             </MudTd>
         </RowTemplate>
         <RowEditingTemplate>
+            <MudTd DataLabel="Nr. Crt.">
+                <MudTextField @bind-Value="@context.LanguageLevelPriorityNumber" />
+            </MudTd>
             <MudTd DataLabel="Nume">
                 <MudTextField @bind-Value="@context.LanguageLevelName" />
             </MudTd>
@@ -167,9 +172,6 @@
             <MudTd DataLabel="Link Video">
                 <MudTextField @bind-Value="@context.LanguageLevelVideoLink" />
             </MudTd>
-            <MudTd DataLabel="Numărul de prioritate">
-                <MudTextField @bind-Value="@context.LanguageLevelPriorityNumber" />
-            </MudTd>
             <MudTd DataLabel="Vizualizează"></MudTd>
         </RowEditingTemplate>
         <PagerContent>
@@ -181,7 +183,7 @@
                     <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" Style="margin-right: 10px;" />
                 </MudTooltip>
                 <MudTooltip Text="Delete Course">
-                    <MudIconButton Text="Strege nivelul lingvistic" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteLanguageLevel" Class="pa-0" Style="margin-left: 10px;" />
+                    <MudIconButton Text="Șterge nivelul lingvistic" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteLanguageLevel" Class="pa-0" Style="margin-left: 10px;" />
                 </MudTooltip>
             </div>
         </EditButtonContent>
@@ -200,12 +202,13 @@
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Filled" OnClick="CancelLanguageLevel" Class="px-10" Style="color: black;">Close</MudButton>
-            <MudButton OnClick="@(async () => AddLanguageLevel(LanguageLevelNameValue, LanguageLevelAliasValue))" Style="color: #2563EB;">Add</MudButton>
+            <MudButton Disabled="LanguageLevelNameValue == null || LanguageLevelAliasValue == null" OnClick="@(async () => AddLanguageLevel(LanguageLevelNameValue, LanguageLevelAliasValue))" Style="color: #2563EB;">Add</MudButton>
 
         </DialogActions>
     </MudDialog>
 </div>
 
+@* LANGUAGE COMPETENCES *@
 <div class="text-left">
     <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 30px;" class="poppins-semi-bold">Competențe Lingvistice</h1>
 </div>
@@ -238,24 +241,26 @@
             }
         </ColGroup>
         <HeaderContent>
+            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageCompetenceElement, object>(x=>x.LanguageCompetencePriorityNumber)">Nr. Crt.</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageCompetenceElement, object>(x=>x.LanguageCompetenceName)">Nume</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;">Tip</MudTh>
-            <MudTh Style="text-align: center;">Descriere</MudTh>
             <MudTh Style="text-align: center;">Link Video</MudTh>
-            <MudTh Style="text-align: center;">Numărul de prioritate</MudTh>
             <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
+            <MudTd DataLabel="Nr. Crt">@context.LanguageCompetencePriorityNumber</MudTd>
             <MudTd DataLabel="Nume">@context.LanguageCompetenceName</MudTd>
             <MudTd DataLabel="Tip">@context.LanguageCompetenceType</MudTd>
             <MudTd DataLabel="Descriere">@context.LanguageCompetenceDescription</MudTd>
             <MudTd DataLabel="Link Video">@context.LanguageCompetenceVideoLink</MudTd>
-            <MudTd DataLabel="Numărul de prioritate">@context.LanguageCompetencePriorityNumber</MudTd>
             <MudTd DataLabel="Vizualizează">
                 <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLanguageCompetenceOverview() )">Vezi mai multe</MudButton>
             </MudTd>
         </RowTemplate>
         <RowEditingTemplate>
+            <MudTd DataLabel="Nr. Crt">
+                <MudTextField @bind-Value="@context.LanguageCompetencePriorityNumber" />
+            </MudTd>
             <MudTd DataLabel="Nume">
                 <MudTextField @bind-Value="@context.LanguageCompetenceName" />
             </MudTd>
@@ -267,9 +272,6 @@
             </MudTd>
             <MudTd DataLabel="Link Video">
                 <MudTextField @bind-Value="@context.LanguageCompetenceVideoLink" />
-            </MudTd>
-            <MudTd DataLabel="Numărul de prioritate">
-                <MudTextField @bind-Value="@context.LanguageCompetencePriorityNumber" />
             </MudTd>
             <MudTd DataLabel="Vizualizează"></MudTd>
         </RowEditingTemplate>
@@ -306,7 +308,7 @@
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Filled" OnClick="CancelLanguageCompetence" Class="px-10" Style="color: black;">Close</MudButton>
-            <MudButton OnClick="@(async () => AddLanguageCompetence(LanguageCompetenceNameValue, LanguageCompetenceTypeValue))" Style="color: #2563EB;">Add</MudButton>
+            <MudButton Disabled="LanguageCompetenceNameValue == null || LanguageCompetenceTypeValue == null" OnClick="@(async () => AddLanguageCompetence(LanguageCompetenceNameValue, LanguageCompetenceTypeValue))" Style="color: #2563EB;">Add</MudButton>
 
         </DialogActions>
     </MudDialog>
@@ -734,7 +736,7 @@
 
     void NavigateToLanguageLevelOverview()
     {
-        // NavigationManager.NavigateTo("/language-level-overview");
+        NavigationManager.NavigateTo("/language-level-overview");
     }
 }
 
@@ -819,7 +821,7 @@
 
     void NavigateToLanguageCompetenceOverview()
     {
-        // NavigationManager.NavigateTo("/languageoverview");
+        NavigationManager.NavigateTo("/language-competence-overview");
     }
 }
 

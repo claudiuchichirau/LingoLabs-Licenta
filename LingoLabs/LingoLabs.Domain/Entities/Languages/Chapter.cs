@@ -10,7 +10,6 @@ namespace LingoLabs.Domain.Entities.Languages
         public int? ChapterPriorityNumber { get; private set; }
         public byte[]? ChapterImageData { get; private set; }
         public string? ChapterVideoLink { get; private set; } = string.Empty;
-        public List<LanguageCompetence>? languageCompetences { get; private set; } = [];
         public List<Lesson>? ChapterLessons { get; private set; } = [];
         public List<EntityTag>? ChapterTags { get; private set; } = [];
         public Guid LanguageLevelId { get; private set; }
@@ -36,17 +35,6 @@ namespace LingoLabs.Domain.Entities.Languages
         {
             if (!string.IsNullOrWhiteSpace(chapterDescription))
                 ChapterDescription = chapterDescription;
-        }
-
-        public void AttachLanguageCompetence(LanguageCompetence languageCompetence)
-        {
-            if (languageCompetence != null)
-            {
-                if (languageCompetences == null)
-                    languageCompetences = new List<LanguageCompetence> { languageCompetence };
-                else
-                    languageCompetences.Add(languageCompetence);
-            }
         }
 
         public void AttachImageData(byte[] chapterImageData)

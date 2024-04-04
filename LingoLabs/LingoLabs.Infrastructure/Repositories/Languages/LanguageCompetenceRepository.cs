@@ -15,7 +15,6 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         public override async Task<Result<LanguageCompetence>> FindByIdAsync(Guid id)
         {
             var result = await context.LanguageCompetences
-                .Include(competence => competence.Lessons)
                 .Include(competence => competence.LearningCompetenceTags)
                 .Include(competence => competence.Language)
                 .FirstOrDefaultAsync(competence => competence.LanguageCompetenceId == id);

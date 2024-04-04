@@ -34,11 +34,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
                     LessonDescription = listeningLesson.Value.LessonDescription,
                     LessonRequirement = listeningLesson.Value.LessonRequirement,
                     LessonContent = listeningLesson.Value.LessonContent,
-                    LessonType = listeningLesson.Value.LessonType,
                     LessonVideoLink = listeningLesson.Value.LessonVideoLink,
                     LessonImageData = listeningLesson.Value.LessonImageData,
                     LessonPriorityNumber = listeningLesson.Value.LessonPriorityNumber,
                     ChapterId = listeningLesson.Value.ChapterId,
+                    LanguageCompetenceId = listeningLesson.Value.LanguageCompetenceId,
                     LessonQuestions = sortedLessonQuestions,
                     TextScript = listeningLesson.Value.TextScript,
                     Accents = listeningLesson.Value.Accents

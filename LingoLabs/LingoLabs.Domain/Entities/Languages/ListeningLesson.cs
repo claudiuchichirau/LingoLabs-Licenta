@@ -7,25 +7,25 @@ namespace LingoLabs.Domain.Entities.Languages
         public string TextScript { get; private set; }
         public List<string> Accents { get; private set; }
 
-        private ListeningLesson(string lessonTitle, LanguageCompetenceType lessonType, Guid chapterId, string textScript, List<string> accents) : base(lessonTitle, lessonType, chapterId)
+        private ListeningLesson(string lessonTitle, Guid chapterId, Guid languageCompetenceId, string textScript, List<string> accents) : base(lessonTitle, chapterId, languageCompetenceId)
         {
             LessonId = Guid.NewGuid();
             LessonTitle = lessonTitle;
-            LessonType = lessonType;
+            LanguageCompetenceId = languageCompetenceId;
             ChapterId = chapterId;
             TextScript = textScript;
             Accents = accents;
         }
 
-        public static Result<ListeningLesson> Create(string lessonTitle, LanguageCompetenceType lessonType, Guid chapterId, string textScript, List<string> accents)
+        public static Result<ListeningLesson> Create(string lessonTitle, Guid chapterId, Guid languageCompetenceId, string textScript, List<string> accents)
         {
             if(string.IsNullOrWhiteSpace(lessonTitle))
                 return Result<ListeningLesson>.Failure("LessonTitle is required");
 
-            if (!IsValidLessonType(lessonType))
-                return Result<ListeningLesson>.Failure("Invalid LessonType");
-
             if (chapterId == default)
+                return Result<ListeningLesson>.Failure("Invalid LanguageCompetenceId");
+
+            if (languageCompetenceId == default)
                 return Result<ListeningLesson>.Failure("Invalid LanguageCompetenceId");
             
             if (string.IsNullOrWhiteSpace(textScript))
@@ -34,7 +34,7 @@ namespace LingoLabs.Domain.Entities.Languages
             if (accents == null || accents.Count == 0)
                 return Result<ListeningLesson>.Failure("Accents is required");
 
-            return Result<ListeningLesson>.Success(new ListeningLesson(lessonTitle, lessonType, chapterId, textScript, accents));
+            return Result<ListeningLesson>.Success(new ListeningLesson(lessonTitle, chapterId, languageCompetenceId, textScript, accents));
         }
 
         public void AttachAccent(string accent)

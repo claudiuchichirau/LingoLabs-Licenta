@@ -33,7 +33,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
 
                 var userLanguageLevels = userLanguageLevelsResult.Value;
 
-                var languageChapterSorted = languageLevel.Value.LanguageChapters
+                var languageChapterSorted = languageLevel.Value.LanguageLevelChapters
                     .OrderBy(chapter => chapter.ChapterPriorityNumber ?? int.MaxValue)
                     .Select(chapter => new Chapters.Queries.ChapterDto
                     {

@@ -16,11 +16,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                 .NotNull()
                 .MaximumLength(70).WithMessage("{PropertyName} must not exceed 70 characters.");
 
-            RuleFor(p => p.LessonType)
-                .NotEmpty().WithMessage("{PropertyName} is required.")
-                .NotNull()
-                .Must(type => type == LanguageCompetenceType.Listening)
-                .WithMessage("{PropertyName} must be Listening");
+            RuleFor(p => p)
+                .MustAsync((p, cancellation) => ValidateLanguageCompetence(p.LanguageCompetenceId, _languageCompetenceRepository))
+                .WithMessage("LanguageCompetenceType must be Listening");
 
             RuleFor(p => p.ChapterId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
@@ -37,6 +35,18 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                 .NotNull()
                 .Must(accents => accents.Count >= 2).WithMessage("{PropertyName} must contain at least 2 elements.");
 
+        }
+
+        private async Task<bool> ValidateLanguageCompetence(Guid languageCompetenceId, ILanguageCompetenceRepository _languageCompetenceRepository)
+        {
+            var languageCompetence = await _languageCompetenceRepository.FindByIdAsync(languageCompetenceId);
+            if (languageCompetence == null)
+                return false;
+
+            LanguageCompetenceType languageCompetenceType = await _languageCompetenceRepository.GetLanguageCompetenceTypeAsync(languageCompetenceId);
+            if (languageCompetenceType == LanguageCompetenceType.Listening)
+                return true;
+            return false;
         }
     }
 }

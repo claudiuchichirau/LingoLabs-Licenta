@@ -16,7 +16,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         public override async Task<Result<LanguageLevel>> FindByIdAsync(Guid id)
         {
             var result = await context.LanguageLevels
-                .Include(level => level.LanguageChapters)
+                .Include(level => level.LanguageLevelChapters)
                 .Include(level => level.LanguageLevelTags)
                 .Include(level => level.Language)
                 .FirstOrDefaultAsync(level => level.LanguageLevelId == id);

@@ -450,9 +450,6 @@ namespace LingoLabs.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ChapterId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
@@ -485,8 +482,6 @@ namespace LingoLabs.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("LanguageCompetenceId");
-
-                    b.HasIndex("ChapterId");
 
                     b.HasIndex("LanguageId");
 
@@ -558,7 +553,7 @@ namespace LingoLabs.Infrastructure.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("nvarchar(21)");
 
-                    b.Property<Guid?>("LanguageCompetenceId")
+                    b.Property<Guid>("LanguageCompetenceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LastModifiedBy")
@@ -585,9 +580,6 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Property<string>("LessonTitle")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("LessonType")
-                        .HasColumnType("int");
 
                     b.Property<string>("LessonVideoLink")
                         .HasColumnType("nvarchar(max)");
@@ -907,7 +899,7 @@ namespace LingoLabs.Infrastructure.Migrations
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Chapter", b =>
                 {
                     b.HasOne("LingoLabs.Domain.Entities.Languages.LanguageLevel", "LanguageLevel")
-                        .WithMany("LanguageChapters")
+                        .WithMany("LanguageLevelChapters")
                         .HasForeignKey("LanguageLevelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -973,10 +965,6 @@ namespace LingoLabs.Infrastructure.Migrations
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.LanguageCompetence", b =>
                 {
-                    b.HasOne("LingoLabs.Domain.Entities.Languages.Chapter", null)
-                        .WithMany("languageCompetences")
-                        .HasForeignKey("ChapterId");
-
                     b.HasOne("LingoLabs.Domain.Entities.Languages.Language", "Language")
                         .WithMany("LanguageCompetences")
                         .HasForeignKey("LanguageId")
@@ -1005,12 +993,15 @@ namespace LingoLabs.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LingoLabs.Domain.Entities.Languages.LanguageCompetence", null)
-                        .WithMany("Lessons")
+                    b.HasOne("LingoLabs.Domain.Entities.Languages.LanguageCompetence", "LanguageCompetence")
+                        .WithMany("LanguageCompetenceLessons")
                         .HasForeignKey("LanguageCompetenceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Chapter");
+
+                    b.Navigation("LanguageCompetence");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Question", b =>
@@ -1069,8 +1060,6 @@ namespace LingoLabs.Infrastructure.Migrations
                     b.Navigation("ChapterLessons");
 
                     b.Navigation("ChapterTags");
-
-                    b.Navigation("languageCompetences");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.Language", b =>
@@ -1086,16 +1075,16 @@ namespace LingoLabs.Infrastructure.Migrations
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.LanguageCompetence", b =>
                 {
-                    b.Navigation("LearningCompetenceTags");
+                    b.Navigation("LanguageCompetenceLessons");
 
-                    b.Navigation("Lessons");
+                    b.Navigation("LearningCompetenceTags");
 
                     b.Navigation("UserLanguageLevels");
                 });
 
             modelBuilder.Entity("LingoLabs.Domain.Entities.Languages.LanguageLevel", b =>
                 {
-                    b.Navigation("LanguageChapters");
+                    b.Navigation("LanguageLevelChapters");
 
                     b.Navigation("LanguageLevelTags");
 

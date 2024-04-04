@@ -11,8 +11,8 @@ namespace LingoLabs.Domain.Entities.Languages
         public string? LanguageCompetenceVideoLink { get; private set; } = string.Empty;
         public int? LanguageCompetencePriorityNumber { get; private set; }
         public LanguageCompetenceType LanguageCompetenceType { get; private set; }
-        public List<Lesson>? Lessons { get; private set; } = new();
-        public List<EntityTag>? LearningCompetenceTags { get; private set; } = new();
+        public List<Lesson>? LanguageCompetenceLessons { get; private set; } = [];
+        public List<EntityTag>? LearningCompetenceTags { get; private set; } = [];
         public Guid LanguageId { get; private set; }
         public Language? Language { get; set; }
         public List<UserLanguageLevel>? UserLanguageLevels { get; private set; } = [];
@@ -51,20 +51,6 @@ namespace LingoLabs.Domain.Entities.Languages
         {
             if (!string.IsNullOrWhiteSpace(languageCompetenceDescription))
                 LanguageCompetenceDescription = languageCompetenceDescription;
-        }
-
-        public void AttachLesson(Lesson lesson)
-        {
-            if (lesson != null)
-            {
-                if (lesson.LessonType == LanguageCompetenceType)    // This is to ensure that the lesson type matches the language competence type
-                {
-                    if (Lessons == null)
-                        Lessons = new List<Lesson> { lesson };
-                    else
-                        Lessons.Add(lesson);
-                }
-            }
         }
 
         public void AttachKeyWord(EntityTag tag)

@@ -19,13 +19,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidateLesson(p.LessonTitle, lessonRepository))
-                .WithMessage("{PropertyName} must be unique.");
+                .MustAsync((p, cancellation) => ValidateLessonTitle(p.LessonTitle, lessonRepository))
+                .WithMessage("LessonTitle must be unique.");
 
-            RuleFor(p => p.LessonType)
-                //.NotEmpty().WithMessage("{PropertyName} is required.")
-                .Must(type => type == LanguageCompetenceType.Grammar || type == LanguageCompetenceType.Reading || type == LanguageCompetenceType.Writing)
-                .WithMessage("{PropertyName} must have one of the following values: Grammar, Reading, Writing");
+            RuleFor(p => p)
+                .MustAsync((p, cancellation) => ValidateLanguageCompetence(p.LanguageCompetenceId, _languageCompetenceRepository))
+                .WithMessage("LanguageCompetenceType must be one of the following values: Grammar, Reading, Writing.");
 
             RuleFor(p => p.ChapterId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
@@ -33,12 +32,24 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
                 .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
         }
 
-        private async Task<bool> ValidateLesson(string lessonTitle, ILessonRepository lessonRepository)
+        private async Task<bool> ValidateLessonTitle(string lessonTitle, ILessonRepository lessonRepository)
         {
 
             if (await lessonRepository.ExistsLessonAsync(lessonTitle) == true)
                 return false;
             return true;
+        }
+
+        private async Task<bool> ValidateLanguageCompetence(Guid languageCompetenceId, ILanguageCompetenceRepository _languageCompetenceRepository)
+        {
+            var languageCompetence = await _languageCompetenceRepository.FindByIdAsync(languageCompetenceId);
+            if (languageCompetence == null)
+                return false;
+
+            LanguageCompetenceType languageCompetenceType = await _languageCompetenceRepository.GetLanguageCompetenceTypeAsync(languageCompetenceId);
+            if (languageCompetenceType == LanguageCompetenceType.Grammar || languageCompetenceType == LanguageCompetenceType.Reading || languageCompetenceType == LanguageCompetenceType.Writing)
+                return true;
+            return false;
         }
     }
 }

@@ -172,7 +172,7 @@ namespace LingoLabs.Infrastructure.Data
                 .HasForeignKey(l => l.LanguageId);
 
             modelBuilder.Entity<LanguageLevel>()
-                .HasMany(l => l.LanguageChapters)
+                .HasMany(l => l.LanguageLevelChapters)
                 .WithOne()
                 .HasForeignKey("LanguageLevelId");
 
@@ -184,13 +184,8 @@ namespace LingoLabs.Infrastructure.Data
 
             modelBuilder.Entity<Chapter>()
                 .HasOne(c => c.LanguageLevel)
-                .WithMany(l => l.LanguageChapters)
+                .WithMany(l => l.LanguageLevelChapters)
                 .HasForeignKey(c => c.LanguageLevelId);
-
-            modelBuilder.Entity<Chapter>()
-                .HasMany(c => c.languageCompetences)
-                .WithOne()
-                .HasForeignKey("ChapterId");
 
             modelBuilder.Entity<Chapter>()
                 .HasMany(l => l.ChapterTags)
@@ -205,6 +200,12 @@ namespace LingoLabs.Infrastructure.Data
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<LanguageCompetence>()
+                .HasMany(l => l.LanguageCompetenceLessons)
+                .WithOne(c => c.LanguageCompetence)
+                .HasForeignKey(c => c.LanguageCompetenceId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<LanguageCompetence>()
                 .HasMany(lc => lc.UserLanguageLevels)
                 .WithOne(ull => ull.LanguageCompetence)
                 .HasForeignKey(ull => ull.LanguageCompetenceId)
@@ -214,12 +215,6 @@ namespace LingoLabs.Infrastructure.Data
                 .HasOne(l => l.Language)
                 .WithMany(c => c.LanguageCompetences)
                 .HasForeignKey(l => l.LanguageId);
-
-            modelBuilder.Entity<LanguageCompetence>()
-                .HasMany(l => l.Lessons)
-                .WithOne()
-                .HasForeignKey("LanguageCompetenceId")
-                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<LanguageCompetence>()
                 .HasMany(l => l.LearningCompetenceTags)

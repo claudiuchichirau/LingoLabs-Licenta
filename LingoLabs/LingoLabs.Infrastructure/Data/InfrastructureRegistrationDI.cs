@@ -4,16 +4,17 @@ using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResults.Co
 using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.DeleteLessonResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Commands.DeleteQuestionResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.DeleteUserLanguageLevel;
+using LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.DeleteChapter;
 using LingoLabs.Application.Features.LanguagesFeatures.EntityTags.Commands.DeleteEntityTag;
 using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.DeleteLanguageCompetence;
 using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.DeletePlacementTest;
+using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.DeleteLesson;
 using LingoLabs.Application.Persistence;
 using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Infrastructure.Repositories;
 using LingoLabs.Infrastructure.Repositories.Enrollments;
 using LingoLabs.Infrastructure.Repositories.Languages;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,6 +61,8 @@ namespace LingoLabs.Infrastructure.Data
             services.AddTransient<DeleteLanguageCompetenceCommandHandler>();
             services.AddTransient<DeletePlacementTestCommandHandler>();
             services.AddTransient<DeleteEntityTagCommandHandler>();
+            services.AddTransient<DeleteChapterCommandHandler>();
+            services.AddTransient<DeleteLessonCommandHandler>();
 
             return services;
         }

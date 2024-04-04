@@ -168,7 +168,7 @@
             </DialogContent>
             <DialogActions>
                 <MudButton Variant="Variant.Filled" OnClick="Cancel" Class="px-10" Style="color: black;">Close</MudButton>
-                <MudButton OnClick="@(async () => AddLanguage(LanguageNameValue))" Style="color: #2563EB;">Add</MudButton>
+                <MudButton Disabled="LanguageNameValue == null" OnClick="@(async () => AddLanguage(LanguageNameValue))" Style="color: #2563EB;">Add</MudButton>
 
             </DialogActions>
         </MudDialog>
@@ -514,7 +514,7 @@
         visible = false;
         // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Cursul a fost adăugat cu succes!", Severity.Success);
+        snackbar = Snackbar.Add("Cursul '" + languageNameValue + "' a fost adăugat cu succes!", Severity.Success);
     }
 
     void OpenDialog()
@@ -524,7 +524,7 @@
 
     void NavigateToLanguageOverview()
     {
-        // NavigationManager.NavigateTo("/languageoverview");
+        NavigationManager.NavigateTo("/language-overview");
     }
 }
 

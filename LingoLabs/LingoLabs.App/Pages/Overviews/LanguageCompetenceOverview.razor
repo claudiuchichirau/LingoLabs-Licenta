@@ -24,7 +24,16 @@
 <div class="row" style="max-width: 100vw; overflow-x: auto;">
     <div class="col">
         <div class="text-left">
-            <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-top: 50px; margin-bottom: 20px;" class="poppins-semi-bold">
+            <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-top: 50px; margin-bottom: 10px;" class="poppins-semi-bold">
+                Curs:&emsp;
+                <span style="color: #FC6F05; font-size: 25px;">
+                    English
+                </span>
+            </h1>
+        </div>
+
+        <div class="text-left">
+            <h1 style="color: black; font-size: 33px; margin-left: 75px; padding: 5px;" class="poppins-semi-bold">
                 Nume:&emsp;
                 <span style="color: #2563EB; font-size: 25px;">
                     Listening
@@ -33,7 +42,7 @@
         </div>
 
         <div class="text-left">
-            <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-bottom: 20px;" class="poppins-semi-bold">
+            <h1 style="color: black; font-size: 33px; margin-left: 75px; padding: 5px;" class="poppins-semi-bold">
                 Tip:&emsp;
                 <span style="color: #2563EB; font-size: 21px;">
                     Listening
@@ -109,7 +118,7 @@
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Filled" OnClick="Cancel" Class="px-10" Style="color: black;">Close</MudButton>
-            <MudButton OnClick="@(async () => AddKeyWord(keyWord))" Style="color: #2563EB;">Add</MudButton>
+            <MudButton Disabled="keyWord == null" OnClick="@(async () => AddKeyWord(keyWord))" Style="color: #2563EB;">Add</MudButton>
 
         </DialogActions>
     </MudDialog>

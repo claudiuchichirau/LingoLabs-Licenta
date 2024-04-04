@@ -1,5 +1,7 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.DeleteUserLanguageLevel;
+using LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.DeleteChapter;
 using LingoLabs.Application.Features.LanguagesFeatures.EntityTags.Commands.DeleteEntityTag;
+using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.DeleteLesson;
 using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities.Enrollments;
@@ -14,13 +16,15 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
         private readonly DeleteUserLanguageLevelCommandHandler deleteUserLanguageLevelCommandHandler;
         private readonly IUserLanguageLevelRepository userLanguageLevelRepository;
         private readonly DeleteEntityTagCommandHandler deleteEntityTagCommandHandler;
+        private readonly DeleteLessonCommandHandler deleteLessonCommandHandler;
 
-        public DeleteLanguageCompetenceCommandHandler(ILanguageCompetenceRepository languageCompetenceRepository, DeleteUserLanguageLevelCommandHandler deleteUserLanguageLevelCommandHandler, IUserLanguageLevelRepository userLanguageLevelRepository, DeleteEntityTagCommandHandler deleteEntityTagCommandHandler)
+        public DeleteLanguageCompetenceCommandHandler(ILanguageCompetenceRepository languageCompetenceRepository, DeleteUserLanguageLevelCommandHandler deleteUserLanguageLevelCommandHandler, IUserLanguageLevelRepository userLanguageLevelRepository, DeleteEntityTagCommandHandler deleteEntityTagCommandHandler, DeleteLessonCommandHandler deleteLessonCommandHandler)
         {
             this.languageCompetenceRepository = languageCompetenceRepository;
             this.deleteUserLanguageLevelCommandHandler = deleteUserLanguageLevelCommandHandler;
             this.userLanguageLevelRepository = userLanguageLevelRepository;
             this.deleteEntityTagCommandHandler = deleteEntityTagCommandHandler;
+            this.deleteLessonCommandHandler = deleteLessonCommandHandler;
         }
 
         public async Task<DeleteLanguageCompetenceCommandResponse> Handle(DeleteLanguageCompetenceCommand request, CancellationToken cancellationToken)
@@ -89,6 +93,23 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
                     {
                         Success = false,
                         ValidationsErrors = deleteEntityTagCommandResponse.ValidationsErrors
+                    };
+                }
+            }
+
+            var lessons = languageCompetence.Value.LanguageCompetenceLessons.ToList();
+
+            foreach (Lesson lesson in lessons)
+            {
+                var deleteLessonCommand = new DeleteLessonCommand { LessonId = lesson.LessonId };
+                var deleteLessonCommandResponse = await deleteLessonCommandHandler.Handle(deleteLessonCommand, cancellationToken);
+
+                if (!deleteLessonCommandResponse.Success)
+                {
+                    return new DeleteLanguageCompetenceCommandResponse
+                    {
+                        Success = false,
+                        ValidationsErrors = deleteLessonCommandResponse.ValidationsErrors
                     };
                 }
             }
