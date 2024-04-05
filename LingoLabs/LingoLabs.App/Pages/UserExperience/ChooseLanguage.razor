@@ -1,0 +1,76 @@
+﻿@page "/choose-language"
+@using LingoLabs.App.ViewModel.MudBlazor
+@using MudBlazor
+@using MatBlazor
+@using System.Net.Http.Json
+@using ViewModel.MudBlazor
+@inject NavigationManager NavigationManager
+@inject HttpClient httpClient
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudContainer>
+    <div class="text-center" style="margin-top: 50px; margin-bottom:50px;">
+        <h2 style="color: black;" class="poppins-semi-bold">Ce ți-ar plăcea să înveți?</h2>
+    </div>
+</MudContainer>
+
+<div class="container-fluid p-3" style="margin-bottom: 80px;">
+    <div class="row justify-content-center">
+
+        <MudButton Variant="Variant.Text" OnClick="NavigateToChooseLevel">
+            <div class="col-md-3 d-flex align-items-stretch">
+                <div class="card d-flex flex-column justify-content-center" style="box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);">
+                    <div class="row text-center" style="padding: 20px;">
+                        <img src="https://vectorflags.s3-us-west-2.amazonaws.com/flags/uk-circle-01.png" alt="Limba Engleza" style="max-width: 150px; height: auto;">
+                    </div>
+                    <div class="row text-center" style="font-size: 19px; margin-bottom: 10px;">
+                        <strong>
+                            English
+                        </strong>
+                    </div>
+                </div>
+            </div>
+        </MudButton>
+
+
+    </div>
+</div>
+
+@code {
+    // private IEnumerable<> Questions = new List<QuestionElement>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // await PopulateLanguages();
+    }
+
+    // protected async Task PopulateLanguages()
+    // {
+    //     Questions = new List<QuestionElement>
+    //     {
+    //         new QuestionElement
+    //         {
+    //             QuestionId = Guid.NewGuid(),
+    //             QuestionPriorityNumber = 1,
+    //             QuestionType = QuestionTypeElement.TrueFalse,
+    //             QuestionRequirement = "Aveti de facut 2 teme?",
+    //             QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
+    //             QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+    //             QuestionChoices = new List<ChoiceElement>
+    //             {
+    //                 new ChoiceElement
+    //                 {
+    //                     ChoiceContent = "TrueFalse",
+    //                     IsCorrect = true
+    //                 }
+    //             }
+    //         }
+    //     };
+    // }
+
+    void NavigateToChooseLevel()
+    {
+        NavigationManager.NavigateTo("/choose-level");
+    }
+}
