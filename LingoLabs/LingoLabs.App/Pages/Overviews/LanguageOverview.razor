@@ -388,13 +388,15 @@
                                                   CustomHeader="true" CustomFooter="true" HeaderClass="table-head-bordered" FooterClass="table-foot-bordered" >
                                             <HeaderContent>
                                                 <MudTHeadRow IsCheckable="true">
-                                                    <MudTh>Cerință</MudTh>
-                                                    <MudTh>Vezi mai multe</MudTh>
+                                                    <MudTh Style="text-align: center;">Tipul Întrebării</MudTh>
+                                                    <MudTh Style="text-align: center;">Cerință</MudTh>
+                                                    <MudTh Style="text-align: center;">Vezi mai multe</MudTh>
                                                 </MudTHeadRow>
                                             </HeaderContent>
                                             <RowTemplate>
-                                                <MudTd DataLabel="Cerință">@context.QuestionRequirement</MudTd>
-                                                <MudTd DataLabel="Vezi mai multe">
+                                                <MudTd DataLabel="Tipul Întrebării" Style="text-align: center;">@context.QuestionType</MudTd>
+                                                <MudTd DataLabel="Cerință" Style="text-align: center;">@context.QuestionRequirement</MudTd>
+                                                <MudTd DataLabel="Vezi mai multe" Style=" text-align: center;">
                                                     <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => OpenDialogQuestion(context) )">Vezi mai multe</MudButton>
                                                 </MudTd>
                                             </RowTemplate>
@@ -411,23 +413,62 @@
                                                 <MudText Typo="Typo.body1">
                                                     <span style="font-size: 16px;">Cerință: @currentQuestion.QuestionRequirement</span>
                                                 </MudText>
-                                                <MudList>
-                                                    <span style="font-size: 16px;">Variante de răspuns: </span>
+
+                                                @if (currentQuestion.QuestionType == QuestionTypeElement.TrueFalse)     // TRUE / FALSE QUESTION
+                                                {
                                                     @foreach (var choice in currentQuestion.QuestionChoices)
                                                     {
                                                         @if (choice.IsCorrect == true)
                                                         {
-                                                            <MudListItem Style="margin: 0; padding: 0;">
-                                                                <MudText Typo="Typo.body1" Style="color: green;">&nbsp;- @choice.ChoiceContent</MudText>
-                                                            </MudListItem>
-                                                        } else if (choice.IsCorrect == false)
+                                                            <MudText Typo="Typo.body1">
+                                                                <strong>Valoarea de adevăr:&emsp;</strong>
+                                                                <span style="color: green;">@choice.IsCorrect</span>
+                                                            </MudText>
+                                                        }
+                                                        else if (choice.IsCorrect == false)
                                                         {
-                                                            <MudListItem Style="margin: 0; padding: 0;">
-                                                                <MudText Typo="Typo.body1" Style="color: gray;">&nbsp;- @choice.ChoiceContent</MudText>
-                                                            </MudListItem>
+                                                            <MudText Typo="Typo.body1">
+                                                                <strong>Valoarea de adevăr:&emsp;</strong>
+                                                                <span style="color: red;">@choice.IsCorrect</span>
+                                                            </MudText>
                                                         }
                                                     }
-                                                </MudList>
+                                                }
+
+                                                @if (currentQuestion.QuestionType == QuestionTypeElement.Grila)         // GRID QUESTION
+                                                {
+                                                    <MudText Typo="Typo.body1">
+                                                        <strong>Variante de răspuns:</strong>
+                                                        @foreach (var choice in currentQuestion.QuestionChoices)
+                                                        {
+                                                            @if (choice.IsCorrect == true)
+                                                            {
+                                                                <MudText Typo="Typo.body1" Style="margin-top: 5px; color: green;">
+                                                                    <strong>-&emsp;@choice.ChoiceContent</strong>
+                                                                </MudText>
+                                                            }
+                                                            else if (choice.IsCorrect == false)
+                                                            {
+                                                                <MudText Typo="Typo.body1" Style="margin-top: 5px; color: red;">
+                                                                    <strong>-&emsp;@choice.ChoiceContent</strong>
+                                                                </MudText>
+                                                            }
+                                                        }
+                                                    </MudText>
+                                                }
+
+                                                @if (currentQuestion.QuestionType == QuestionTypeElement.CuvantLipsa)    // MISSING WORD QUESTION
+                                                {
+                                                    <MudText Typo="Typo.body1">
+                                                        <strong>Variante de răspuns:</strong>
+                                                        @foreach (var choice in currentQuestion.QuestionChoices)
+                                                        {
+                                                            <MudText Typo="Typo.body1" Style="margin-top: 5px; color: green;">
+                                                                <strong>-&emsp;@choice.ChoiceContent</strong>
+                                                            </MudText>
+                                                        }
+                                                    </MudText>
+                                                }
 
                                                 @if (currentQuestion.QuestionImageData != null || currentQuestion.QuestionVideoLink != null)
                                                 {
@@ -488,17 +529,19 @@
             </MudTooltip>
         </ToolBarContent>
         <HeaderContent>
+            <MudTh Style="text-align: center;"><MudTableSortLabel SortBy="new Func<QuestionElement, object>(x=>x.QuestionType)">Tipul Întrebării</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel SortBy="new Func<QuestionElement, object>(x=>x.QuestionRequirement)">Cerință</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;">Vezi mai multe</MudTh>
             <MudTh Style="text-align: center;">Șterge întrebarea</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Cerință">@context.QuestionRequirement</MudTd>
+            <MudTd DataLabel="Tipul Întrebării" Style="text-align: center;">@context.QuestionType</MudTd>
+            <MudTd DataLabel="Cerință" Style="text-align: center;">@context.QuestionRequirement</MudTd>
             <MudTd DataLabel="Vezi mai multe" Style="text-align: center;">
-                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => OpenDialogQuestion(context) )">Vezi mai multe</MudButton>
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.RemoveRedEye" Class="pa-0" OnClick="@( () => OpenDialogQuestion(context) )" Style="margin-right: 7px;" />
             </MudTd>
             <MudTd DataLabel="Șterge întrebarea" Style="text-align: center;">
-                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => DeleteQuestionPlacementTest(context) )"><MudIcon Icon="@Icons.Material.Filled.Delete" Size="@Size.Small" /></MudButton>
+                <MudIconButton Text="Șterge Întrebarea" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => DeleteQuestionPlacementTest(context) )" Class="pa-0" Style="margin-left: 7px;" Disabled="Questions.Count() <=10" />
             </MudTd>
         </RowTemplate>
         <PagerContent>
@@ -518,24 +561,61 @@
         <MudText Typo="Typo.body1">
             <span style="font-size: 16px;">Cerință: @currentQuestion.QuestionRequirement</span>
         </MudText>
-        <MudList>
-            <span style="font-size: 16px;">Variante de răspuns: </span>
+        @if (currentQuestion.QuestionType == QuestionTypeElement.TrueFalse)     // TRUE / FALSE QUESTION
+        {
             @foreach (var choice in currentQuestion.QuestionChoices)
             {
                 @if (choice.IsCorrect == true)
                 {
-                    <MudListItem Style="margin: 0; padding: 0;">
-                        <MudText Typo="Typo.body1" Style="color: green;">&nbsp;- @choice.ChoiceContent</MudText>
-                    </MudListItem>
+                    <MudText Typo="Typo.body1">
+                        <strong>Valoarea de adevăr:&emsp;</strong>
+                        <span style="color: green;">@choice.IsCorrect</span>
+                    </MudText>
                 }
                 else if (choice.IsCorrect == false)
                 {
-                    <MudListItem Style="margin: 0; padding: 0;">
-                        <MudText Typo="Typo.body1" Style="color: gray;">&nbsp;- @choice.ChoiceContent</MudText>
-                    </MudListItem>
+                    <MudText Typo="Typo.body1">
+                        <strong>Valoarea de adevăr:&emsp;</strong>
+                        <span style="color: red;">@choice.IsCorrect</span>
+                    </MudText>
                 }
             }
-        </MudList>
+        }
+
+        @if (currentQuestion.QuestionType == QuestionTypeElement.Grila)         // GRID QUESTION
+        {
+            <MudText Typo="Typo.body1">
+                <strong>Variante de răspuns:</strong>
+                @foreach (var choice in currentQuestion.QuestionChoices)
+                {
+                    @if (choice.IsCorrect == true)
+                    {
+                        <MudText Typo="Typo.body1" Style="margin-top: 5px; color: green;">
+                            <strong>-&emsp;@choice.ChoiceContent</strong>
+                        </MudText>
+                    }
+                    else if (choice.IsCorrect == false)
+                    {
+                        <MudText Typo="Typo.body1" Style="margin-top: 5px; color: red;">
+                            <strong>-&emsp;@choice.ChoiceContent</strong>
+                        </MudText>
+                    }
+                }
+            </MudText>
+        }
+
+        @if (currentQuestion.QuestionType == QuestionTypeElement.CuvantLipsa)    // MISSING WORD QUESTION
+        {
+            <MudText Typo="Typo.body1">
+                <strong>Variante de răspuns:</strong>
+                @foreach (var choice in currentQuestion.QuestionChoices)
+                {
+                    <MudText Typo="Typo.body1" Style="margin-top: 5px; color: green;">
+                        <strong>-&emsp;@choice.ChoiceContent</strong>
+                    </MudText>
+                }
+            </MudText>
+        }
 
         @if (currentQuestion.QuestionImageData != null || currentQuestion.QuestionVideoLink != null)
         {
@@ -886,6 +966,8 @@
             new QuestionElement
             {
                 QuestionId = Guid.NewGuid(),
+                QuestionPriorityNumber = 1,
+                QuestionType = QuestionTypeElement.TrueFalse,
                 QuestionRequirement = "Aveti de facut 2 teme?",
                 QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
                 QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
@@ -893,22 +975,19 @@
                 {
                     new ChoiceElement
                     {
-                        ChoiceContent = "Nu, avem 3",
+                        ChoiceContent = "TrueFalse",
                         IsCorrect = true
-                    },
-                    new ChoiceElement
-                    {
-                        ChoiceContent = "Da, avem 2",
-                        IsCorrect = false
                     }
                 }
             },
             new QuestionElement
             {
                 QuestionId = Guid.NewGuid(),
+                QuestionPriorityNumber = 2,
+                QuestionType = QuestionTypeElement.CuvantLipsa,
                 QuestionRequirement = "Ce luna e acum?",
-                QuestionImageData = null,
-                QuestionVideoLink = null,
+                QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
+                QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
                 QuestionChoices = new List<ChoiceElement>
                 {
                     new ChoiceElement
@@ -919,11 +998,37 @@
                     new ChoiceElement
                     {
                         ChoiceContent = "Martie",
+                        IsCorrect = true
+                    }
+                }
+            },
+            new QuestionElement
+            {
+                QuestionId = Guid.NewGuid(),
+                QuestionPriorityNumber = null,
+                QuestionType = QuestionTypeElement.Grila,
+                QuestionRequirement = "Ce fac azi?",
+                QuestionImageData = null,
+                QuestionVideoLink = null,
+                QuestionChoices = new List<ChoiceElement>
+                {
+                    new ChoiceElement
+                    {
+                        ChoiceContent = "Dorm",
+                        IsCorrect = false
+                    },
+                    new ChoiceElement
+                    {
+                        ChoiceContent = "Licenta",
+                        IsCorrect = true
+                    },
+                    new ChoiceElement
+                    {
+                        ChoiceContent = "Plec in vacanta",
                         IsCorrect = false
                     }
                 }
             }
-
         };
 
         // AdminLanguageElements = await httpClient.GetFromJsonAsync<List<AdminViewLanguageElement>>("webapi/periodictable");
