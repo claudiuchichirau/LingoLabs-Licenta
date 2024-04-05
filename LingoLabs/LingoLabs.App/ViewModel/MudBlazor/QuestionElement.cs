@@ -7,6 +7,7 @@
         public string QuestionRequirement { get; set; } = string.Empty;
         public List<ChoiceElement>? QuestionChoices { get; set; }
         public string? QuestionImageData { get; set; }
-        public string? QuestionVideoLink { get; set; } 
+        public string? QuestionVideoLink { get; set; }
+        public int? QuestionPriorityNumber { get; set; }
     }
 }
