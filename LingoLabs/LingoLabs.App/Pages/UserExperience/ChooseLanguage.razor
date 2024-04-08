@@ -18,11 +18,11 @@
 <div class="container-fluid p-3" style="margin-bottom: 80px;">
     <div class="row justify-content-center">
 
-        <MudButton Variant="Variant.Text" OnClick="NavigateToChooseLevel">
-            <div class="col-md-3 d-flex align-items-stretch">
+        <div class="col-md-3 d-flex align-items-stretch" style="display: flex; justify-content: center;">
+            <MudButton Variant="Variant.Text" OnClick="NavigateToLanguage" Style="padding: 10px;">
                 <div class="card d-flex flex-column justify-content-center" style="box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);">
                     <div class="row text-center" style="padding: 20px;">
-                        <img src="https://vectorflags.s3-us-west-2.amazonaws.com/flags/uk-circle-01.png" alt="Limba Engleza" style="max-width: 150px; height: auto;">
+                        <img src="https://vectorflags.s3-us-west-2.amazonaws.com/flags/uk-circle-01.png" style="max-width: 150px; height: auto;">
                     </div>
                     <div class="row text-center" style="font-size: 19px; margin-bottom: 10px;">
                         <strong>
@@ -30,20 +30,19 @@
                         </strong>
                     </div>
                 </div>
-            </div>
-        </MudButton>
-
+            </MudButton>
+        </div>
 
     </div>
 </div>
 
 @code {
-    // private IEnumerable<> Questions = new List<QuestionElement>();
+    // private IEnumerable<> Languages = new List<QuestionElement>();
 
-    protected override async Task OnInitializedAsync()
-    {
-        // await PopulateLanguages();
-    }
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     await PopulateLanguages();
+    // }
 
     // protected async Task PopulateLanguages()
     // {
@@ -69,8 +68,8 @@
     //     };
     // }
 
-    void NavigateToChooseLevel()
+    void NavigateToLanguage()
     {
-        NavigationManager.NavigateTo("/choose-level");
+        NavigationManager.NavigateTo("/want-placement-test");
     }
 }

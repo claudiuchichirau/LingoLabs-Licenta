@@ -2,6 +2,7 @@
 {
     public class LanguageLevelElement
     {
+        public Guid LanguageLevelId { get; set; }
         public string LanguageLevelName { get; set; } = string.Empty;
         public string LanguageLevelAlias { get; set; } = string.Empty;
         public string? LanguageLevelDescription { get; set; }

@@ -1,0 +1,288 @@
+﻿@page "/language-competence-dashboard"
+@using LingoLabs.App.ViewModel.MudBlazor
+@using MudBlazor
+@using MatBlazor
+@using System.Net.Http.Json
+@using ViewModel.MudBlazor
+@inject NavigationManager NavigationManager
+@inject HttpClient httpClient
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+
+<div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top: -10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
+</div>
+
+@* GET BY ID INFORMATIONS *@
+<MudContainer>
+    <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom: 40px;">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+            <div class="row">
+                <h1 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">@languageCompetence.LanguageCompetenceName</h1>
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(languageCompetence.LanguageCompetenceDescription))
+    {
+        <div class="row" style="margin-top: 150px; margin-bottom: 70px;">
+            <div class="col">
+                <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">@languageCompetence.LanguageCompetenceDescription</p>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(languageCompetence.LanguageCompetenceVideoLink))
+    {
+        <div class="row" style="margin-top: 45px; margin-bottom: 10px;">
+            <div class="col">
+                <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                    <p class="custom-text" style="font-size: 40px; margin-bottom: -3px;">
+                        <span style="color: #FC6F05;"><strong>Hear</strong></span>,
+                        <span style="color: #2563EB;"><strong>understand</strong></span>,
+                        <span style="color: lawngreen;"><strong>express</strong></span>
+                    </p>
+                    <p style="font-size: 25px;">Our video shows you the way</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-bottom: 70px;">
+            <div class="col text-center">
+                <iframe style="width: 700px; height: 394px; margin-top: 9px;" src="@languageCompetence.LanguageCompetenceVideoLink" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    }
+</MudContainer>
+
+@* CHAPTERS *@
+<div class="text-center">
+    <h1 style="color: black; font-size: 33px; margin-top: 120px; margin-bottom: 25px;">
+        Discover <span style="color: #FC6F05;">@languageCompetence.LanguageCompetenceName</span>'s Chapters
+    </h1>
+    <h2 style="font-size: 19px; margin-bottom: 45px;">
+        Explore @languageCompetence.LanguageCompetenceName's chapters to swiftly elevate your language skills.
+    </h2>
+</div>
+
+<MudTimeline Style="margin-bottom: 50px;">
+    @for (int i = 0; i < languageCompetence.Chapters.Count; i++)
+    {
+        ChapterElement chapter = languageCompetence.Chapters[i];
+        string alignment = i % 2 == 0 ? "text-left" : "text-right";
+
+        <MudTimelineItem Color="Color.Dark" Size="Size.Small">
+            <ItemOpposite>
+                <MudButton Variant="Variant.Filled" Style="background-color: #FC6F05; color: white;">OPEN</MudButton>
+            </ItemOpposite>
+            <ItemContent>
+                <div class="@alignment">
+                    <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: #2563EB;"><strong>@chapter.ChapterName</strong></MudText>
+                    <MudText Typo="Typo.h5" Style="color: black; font-size: 17px;"><strong>@chapter.ChapterDescription</strong></MudText>
+                </div>
+            </ItemContent>
+        </MudTimelineItem>
+    }
+        @* TO DO: culoare verde la bulina daca ChapterResult.IsCompleted = true, gri altfel + butonul OPEN sa fie disabled *@
+</MudTimeline>
+
+@code {
+    private LanguageCompetenceElement languageCompetence = new LanguageCompetenceElement();
+
+    private LanguageElement language = new LanguageElement();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await PopulateLanguage();
+        await PopulateLanguageCompetence();
+    }
+
+    private async Task PopulateLanguage()
+    {
+        language = new LanguageElement
+            {
+                LanguageId = Guid.NewGuid(),
+                LanguageName = "English",
+                LanguageDescription = "English is a West Germanic language first spoken in early medieval England, which has become the leading language of international discourse in the 21st century.",
+                LanguageVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                LanguageFlag = "https://vectorflags.s3-us-west-2.amazonaws.com/flags/uk-circle-01.png",
+                LanguageLevels = new List<LanguageLevelElement>
+            {
+                new LanguageLevelElement
+                {
+                    LanguageLevelId = new Guid("123e4567-e89b-12d3-a456-426614174000"),
+                    LanguageLevelName = "A1",
+                    LanguageLevelAlias = "Beginner",
+                    LanguageLevelDescription = "Can understand and use familiar everyday expressions and very basic phrases aimed at the satisfaction of needs of a concrete type.",
+                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                    LanguageLevelPriorityNumber = 1
+                },
+                new LanguageLevelElement
+                {
+                    LanguageLevelId = new Guid("0e572e8b-835f-4b7a-9a77-2895a6c6c1af"),
+                    LanguageLevelName = "A2",
+                    LanguageLevelAlias = "Elementary",
+                    LanguageLevelDescription = "Can introduce themselves and others and can ask and answer questions about personal details such as where they live, people they know and things they have.",
+                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                    LanguageLevelPriorityNumber = 2
+                },
+                new LanguageLevelElement
+                {
+                    LanguageLevelId = new Guid("550e8400-e29b-41d4-a716-446655440000"),
+                    LanguageLevelName = "B1",
+                    LanguageLevelAlias = "Intermediate",
+                    LanguageLevelDescription = "Can understand the main points of clear standard input on familiar matters regularly encountered in work, school, leisure, etc.",
+                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                    LanguageLevelPriorityNumber = 3
+                },
+                new LanguageLevelElement
+                {
+                    LanguageLevelId = Guid.NewGuid(),
+                    LanguageLevelName = "B2",
+                    LanguageLevelAlias = "Upper Intermediate",
+                    LanguageLevelDescription = "Can interact with a degree of fluency and spontaneity that makes regular interaction with native speakers quite possible without strain for either party.",
+                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                    LanguageLevelPriorityNumber = 4
+                },
+                new LanguageLevelElement
+                {
+                    LanguageLevelId = Guid.NewGuid(),
+                    LanguageLevelName = "C1",
+                    LanguageLevelAlias = "Advanced",
+                    LanguageLevelDescription = "Can understand a wide range of demanding, longer texts, and recognize implicit meaning.",
+                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                    LanguageLevelPriorityNumber = 5
+                },
+                new LanguageLevelElement
+                {
+                    LanguageLevelId = Guid.NewGuid(),
+                    LanguageLevelName = "C2",
+                    LanguageLevelAlias = "Proficiency",
+                    LanguageLevelDescription = "Can understand with ease virtually everything heard or read.",
+                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                    LanguageLevelPriorityNumber = 6
+                }
+            },
+                LanguageCompetences = new List<LanguageCompetenceElement>
+            {
+                new LanguageCompetenceElement
+                {
+                    LanguageCompetenceId = new Guid("a0b1c2d3-4e5f-6789-0a1b-2c3d4e5f6789"),
+                    LanguageCompetenceName = "Listening",
+                    LanguageCompetenceDescription = "Listening is the ability to accurately receive and interpret messages in the communication process.",
+                    LanguageCompetencePriorityNumber = 1
+                },
+                new LanguageCompetenceElement
+                {
+                    LanguageCompetenceId = new Guid("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
+                    LanguageCompetenceName = "Reading",
+                    LanguageCompetenceDescription = "Reading is the ability to understand, interpret, and evaluate written texts.",
+                    LanguageCompetencePriorityNumber = 2
+                },
+                new LanguageCompetenceElement
+                {
+                    LanguageCompetenceId = new Guid("58077344-e110-4b6b-9f8e-6a24c708d011"),
+                    LanguageCompetenceName = "Speaking",
+                    LanguageCompetenceDescription = "Speaking is the ability to produce and articulate sounds that form words and sentences.",
+                    LanguageCompetencePriorityNumber = 3
+                },
+                new LanguageCompetenceElement
+                {
+                    LanguageCompetenceId = new Guid("a36c2e74-f979-4b47-8d7b-6a9b07d7238a"),
+                    LanguageCompetenceName = "Writing",
+                    LanguageCompetenceDescription = "Writing is the ability to convey information through written language.",
+                    LanguageCompetencePriorityNumber = 4
+                }
+            },
+                PlacementTest = new List<QuestionElement>
+            {
+                new QuestionElement
+                {
+                    QuestionId = Guid.NewGuid(),
+                    QuestionPriorityNumber = 1,
+                    QuestionType = QuestionTypeElement.TrueFalse,
+                    QuestionRequirement = "Aveti de facut 2 teme?",
+                    QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
+                    QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                    QuestionChoices = new List<ChoiceElement>
+                    {
+                        new ChoiceElement
+                        {
+                            ChoiceContent = "TrueFalse",
+                            IsCorrect = true
+                        }
+                    }
+                },
+                new QuestionElement
+                {
+                    QuestionId = Guid.NewGuid(),
+                    QuestionPriorityNumber = 2,
+                    QuestionType = QuestionTypeElement.Grila,
+                    QuestionRequirement = "Aveti de facut 2 teme?",
+                    QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
+                    QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                    QuestionChoices = new List<ChoiceElement>
+                    {
+                        new ChoiceElement
+                        {
+                            ChoiceContent = "TrueFalse",
+                            IsCorrect = true
+                        }
+                    }
+                },
+                new QuestionElement
+                {
+                    QuestionId = Guid.NewGuid(),
+                    QuestionPriorityNumber = 3,
+                    QuestionType = QuestionTypeElement.Grila,
+                    QuestionRequirement = "Aveti de facut 2 teme?",
+                    QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
+                    QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                    QuestionChoices = new List<ChoiceElement>
+                    {
+                        new ChoiceElement
+                        {
+                            ChoiceContent = "TrueFalse",
+                            IsCorrect = true
+                        }
+                    }
+                }
+            }
+            };
+    }
+
+    private async Task PopulateLanguageCompetence()
+    {
+        languageCompetence = new LanguageCompetenceElement
+            {
+                LanguageCompetenceId = Guid.NewGuid(),
+                LanguageCompetenceName = "Listening",
+                LanguageCompetenceVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                LanguageCompetenceDescription = "Listening is the ability to accurately receive and interpret messages in the communication process.",
+                LanguageCompetencePriorityNumber = 1,
+                Chapters = new List<ChapterElement>
+                {
+                    new ChapterElement
+                    {
+                        ChapterId = Guid.NewGuid(),
+                        ChapterName = "Chapter 1",
+                        ChapterDescription = "Chapter 1 description",
+                    },
+                    new ChapterElement
+                    {
+                        ChapterId = Guid.NewGuid(),
+                        ChapterName = "Chapter 2",
+                        ChapterDescription = "Chapter 2 description",
+                    },
+                    new ChapterElement
+                    {
+                        ChapterId = Guid.NewGuid(),
+                        ChapterName = "Chapter 3",
+                        ChapterDescription = "Chapter 3 description",
+                    }
+                }
+            };
+    }
+}

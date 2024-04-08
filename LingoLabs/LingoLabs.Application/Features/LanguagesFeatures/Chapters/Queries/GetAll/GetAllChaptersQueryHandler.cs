@@ -21,7 +21,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetA
                 {
                     ChapterId = c.ChapterId,
                     ChapterName = c.ChapterName,
-                    LanguageLevelId = c.LanguageLevelId
+                    LanguageLevelId = c.LanguageLevelId,
+                    LanguageCompetenceId = c.LanguageCompetenceId
                 }).ToList();
             }
 

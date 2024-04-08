@@ -227,7 +227,7 @@
             <MudSelect T="Guid" Label="Selectează competența lingvistică" @bind-Value="selectedCompetenceId">
                 @foreach (var competence in LanguageCompetences)
                 {
-                    <MudSelectItem Value="@competence.LanguageCompetenceGuid">@competence.LanguageCompetenceName</MudSelectItem>
+                    <MudSelectItem Value="@competence.LanguageCompetenceId">@competence.LanguageCompetenceName</MudSelectItem>
                 }
             </MudSelect>
         </DialogContent>
@@ -354,7 +354,7 @@
         {
             new LanguageCompetenceElement
             {
-                LanguageCompetenceGuid = Guid.NewGuid(),
+                LanguageCompetenceId = Guid.NewGuid(),
                 LanguageCompetenceName = "Vorbire",
                 LanguageCompetenceDescription = "Vorbirea este abilitatea de a vorbi fluent și corect într-o limbă străină.",
                 LanguageCompetenceVideoLink = "https://www.youtube.com/watch?v=EzlRcGUdhA4&ab_channel=TheMotans-Topic",
@@ -362,6 +362,7 @@
             },
             new LanguageCompetenceElement
             {
+                LanguageCompetenceId = Guid.NewGuid(),
                 LanguageCompetenceName = "Ascultare",
                 LanguageCompetenceDescription = "Ascultarea este abilitatea de a asculta și înțelege corect ceea ce se spune într-o limbă străină.",
                 LanguageCompetenceVideoLink = null,
