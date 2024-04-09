@@ -1,4 +1,4 @@
-﻿@page "/language-competence-dashboard"
+﻿@page "/language-level-dashboard"
 @using LingoLabs.App.ViewModel.MudBlazor
 @using MudBlazor
 @using MatBlazor
@@ -18,23 +18,23 @@
     <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom: 40px;">
         <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
             <div class="row">
-                <h1 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">@languageCompetence.LanguageCompetenceName</h1>
+                <h1 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">@languageLevel.LanguageLevelName - @languageLevel.LanguageLevelAlias</h1>
             </div>
         </div>
     </div>
 
-    @if (!string.IsNullOrEmpty(languageCompetence.LanguageCompetenceDescription))
+    @if (!string.IsNullOrEmpty(languageLevel.LanguageLevelDescription))
     {
         <div class="row" style="margin-top: 150px; margin-bottom: 70px;">
             <div class="col">
                 <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">@languageCompetence.LanguageCompetenceDescription</p>
+                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">@languageLevel.LanguageLevelDescription</p>
                 </div>
             </div>
         </div>
     }
 
-    @if (!string.IsNullOrEmpty(languageCompetence.LanguageCompetenceVideoLink))
+    @if (!string.IsNullOrEmpty(languageLevel.LanguageLevelVideoLink))
     {
         <div class="row" style="margin-top: 45px; margin-bottom: 10px;">
             <div class="col">
@@ -51,7 +51,7 @@
 
         <div class="row" style="margin-bottom: 70px;">
             <div class="col text-center">
-                <iframe style="width: 700px; height: 394px; margin-top: 9px;" src="@languageCompetence.LanguageCompetenceVideoLink" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe style="width: 700px; height: 394px; margin-top: 9px;" src="@languageLevel.LanguageLevelVideoLink" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
     }
@@ -60,43 +60,58 @@
 @* CHAPTERS *@
 <div class="text-center">
     <h1 style="color: black; font-size: 33px; margin-top: 120px; margin-bottom: 25px;">
-        Discover <span style="color: #FC6F05;">@languageCompetence.LanguageCompetenceName</span>'s Chapters
+        Discover <span style="color: #FC6F05;">@languageLevel.LanguageLevelName</span>'s Chapters
     </h1>
     <h2 style="font-size: 19px; margin-bottom: 45px;">
-        Explore @languageCompetence.LanguageCompetenceName's chapters to swiftly elevate your language skills.
+        Explore @languageLevel.LanguageLevelName's chapters to swiftly elevate your language skills.
     </h2>
 </div>
 
 <MudTimeline Style="margin-bottom: 50px;">
-    @for (int i = 0; i < languageCompetence.Lessons.Count; i++)
+    @for (int i = 0; i < languageLevel.Chapters.Count; i++)
     {
-        LessonElement lesson = languageCompetence.Lessons[i];
+        ChapterElement chapter = languageLevel.Chapters[i];
         string alignment = i % 2 == 0 ? "text-left" : "text-right";
 
         <MudTimelineItem Color="Color.Dark" Size="Size.Small">
             <ItemOpposite>
-                <MudButton Variant="Variant.Filled" OnClick="NavigateToLessonDashboard" Style="background-color: #FC6F05; color: white;">OPEN</MudButton>
+                <MudButton Variant="Variant.Filled" OnClick="NavigateToChapterDashboard" Style="background-color: #FC6F05; color: white;">OPEN</MudButton>
             </ItemOpposite>
             <ItemContent>
                 <div class="@alignment">
-                    <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: #2563EB;"><strong>@lesson.LessonTitle</strong></MudText>
-                    <MudText Typo="Typo.h5" Style="color: black; font-size: 17px;"><strong>@lesson.LessonDescription</strong></MudText>
+                    <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: #2563EB;"><strong>@chapter.ChapterName</strong></MudText>
+                    <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@chapter.ChapterDescription</strong></MudText>
+
+                    @{
+                        var panelText = $"{chapter.ChapterName}'s Lessons";
+                    }
+
+                    <div class="@alignment">
+                        <MudExpansionPanels Class="@alignment" Style="width: 50%;">
+                            <MudExpansionPanel Text="@panelText">
+                                @foreach (LessonElement lesson in chapter.Lessons)
+                                {
+                                    <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 20px; color: #2563EB;"><MudIcon Icon="@Icons.Material.Filled.ArrowForward" Style="color: #FC6F05;"></MudIcon><strong>@lesson.LessonTitle</strong></MudText>
+                                }
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
+                    </div>
                 </div>
             </ItemContent>
         </MudTimelineItem>
     }
-        @* TO DO: culoare verde la bulina daca ChapterResult.IsCompleted = true, gri altfel + butonul OPEN sa fie disabled *@
+    @* TO DO: culoare verde la bulina daca ChapterResult.IsCompleted = true, gri altfel + butonul OPEN sa fie disabled *@
 </MudTimeline>
 
 @code {
-    private LanguageCompetenceElement languageCompetence = new LanguageCompetenceElement();
+    private LanguageLevelElement languageLevel = new LanguageLevelElement();
 
     private LanguageElement language = new LanguageElement();
 
     protected override async Task OnInitializedAsync()
     {
         await PopulateLanguage();
-        await PopulateLanguageCompetence();
+        await PopulateLanguageLevel();
     }
 
     private async Task PopulateLanguage()
@@ -253,37 +268,122 @@
             };
     }
 
-    private async Task PopulateLanguageCompetence()
+    private async Task PopulateLanguageLevel()
     {
-        languageCompetence = new LanguageCompetenceElement
+        languageLevel = new LanguageLevelElement
             {
-                LanguageCompetenceId = Guid.NewGuid(),
-                LanguageCompetenceName = "Listening",
-                LanguageCompetenceVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                LanguageCompetenceDescription = "Listening is the ability to accurately receive and interpret messages in the communication process.",
-                LanguageCompetencePriorityNumber = 1,
-                Lessons = new List<LessonElement>
+                LanguageLevelId = Guid.NewGuid(),
+                LanguageLevelName = "A1",
+                LanguageLevelAlias = "Beginner",
+                LanguageLevelDescription = "Can understand and use familiar everyday expressions and very basic phrases aimed at the satisfaction of needs of a concrete type.",
+                LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
+                LanguageLevelPriorityNumber = 1,
+                Chapters = new List<ChapterElement>
                 {
-                    new LessonElement
+                    new ChapterElement
                     {
-                        LessonId = Guid.NewGuid(),
-                        LessonTitle = "Lesson 1",
-                        LessonDescription = "Lesson 1 description",
-                        LessonPriorityNumber = 1
+                        ChapterId = Guid.NewGuid(),
+                        ChapterName = "Chapter 1",
+                        ChapterDescription = "Chapter 1 description",
+                        ChapterPriorityNumber = 1,
+                        Lessons = new List<LessonElement>
+                        {
+                            new LessonElement
+                            {
+                                LessonId = Guid.NewGuid(),
+                                LessonTitle = "Lesson 1",
+                                LessonDescription = "Lesson 1 description",
+                                LessonPriorityNumber = 1
+                            },
+                            new LessonElement
+                            {
+                                LessonId = Guid.NewGuid(),
+                                LessonTitle = "Lesson 2",
+                                LessonDescription = "Lesson 2 description",
+                                LessonPriorityNumber = 2
+                            },
+                            new LessonElement
+                            {
+                                LessonId = Guid.NewGuid(),
+                                LessonTitle = "Lesson 3",
+                                LessonDescription = "Lesson 3 description",
+                                LessonPriorityNumber = 3
+                            }
+                        }
                     },
-                    new LessonElement
+                    new ChapterElement
                     {
-                        LessonId = Guid.NewGuid(),
-                        LessonTitle = "Lesson 2",
-                        LessonDescription = "Lesson 2 description",
-                        LessonPriorityNumber = 2
+                        ChapterId = Guid.NewGuid(),
+                        ChapterName = "Chapter 2",
+                        ChapterDescription = "Chapter 2 description",
+                        ChapterPriorityNumber = 2,
+                        Lessons = new List<LessonElement>
+                        {
+                            new LessonElement
+                            {
+                                LessonId = Guid.NewGuid(),
+                                LessonTitle = "Lesson 1",
+                                LessonDescription = "Lesson 1 description",
+                                LessonPriorityNumber = 1
+                            },
+                            new LessonElement
+                            {
+                                LessonId = Guid.NewGuid(),
+                                LessonTitle = "Lesson 2",
+                                LessonDescription = "Lesson 2 description",
+                                LessonPriorityNumber = 2
+                            },
+                            new LessonElement
+                            {
+                                LessonId = Guid.NewGuid(),
+                                LessonTitle = "Lesson 3",
+                                LessonDescription = "Lesson 3 description",
+                                LessonPriorityNumber = 3
+                            }
+                        }
+                    },
+                    new ChapterElement
+                    {
+                        ChapterId = Guid.NewGuid(),
+                        ChapterName = "Chapter 3",
+                        ChapterDescription = "Chapter 3 description",
+                        ChapterPriorityNumber = 3,
+                        Lessons = new List<LessonElement>
+                        {
+                            new LessonElement
+                            {
+                                LessonId = Guid.NewGuid(),
+                                LessonTitle = "Lesson 1",
+                                LessonDescription = "Lesson 1 description",
+                                LessonPriorityNumber = 1
+                            },
+                            new LessonElement
+                            {
+                                LessonId = Guid.NewGuid(),
+                                LessonTitle = "Lesson 2",
+                                LessonDescription = "Lesson 2 description",
+                                LessonPriorityNumber = 2
+                            },
+                            new LessonElement
+                            {
+                                LessonId = Guid.NewGuid(),
+                                LessonTitle = "Lesson 3",
+                                LessonDescription = "Lesson 3 description",
+                                LessonPriorityNumber = 3
+                            }
+                        }
                     }
                 }
             };
     }
 
-    private void NavigateToLessonDashboard()
+    private void NavigateToChapterDashboard()
     {
         NavigationManager.NavigateTo("/chapter-dashboard");
+    }
+
+    private void NavigateToLesson(Guid lessonId)
+    {
+        NavigationManager.NavigateTo($"/lesson-dashboard/{lessonId}");
     }
 }

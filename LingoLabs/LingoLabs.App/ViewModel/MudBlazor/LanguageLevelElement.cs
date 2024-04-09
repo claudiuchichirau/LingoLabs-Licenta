@@ -8,5 +8,6 @@
         public string? LanguageLevelDescription { get; set; }
         public string? LanguageLevelVideoLink { get; set; }
         public int? LanguageLevelPriorityNumber { get; set; }
+        public List<ChapterElement> Chapters { get; set; }
     }
 }

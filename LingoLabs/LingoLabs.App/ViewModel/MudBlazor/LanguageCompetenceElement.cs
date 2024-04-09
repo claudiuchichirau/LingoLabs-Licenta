@@ -8,6 +8,6 @@
         public string? LanguageCompetenceDescription { get; set; }
         public string? LanguageCompetenceVideoLink { get; set; }
         public int? LanguageCompetencePriorityNumber { get; set; }
-        public List<ChapterElement> Chapters { get; set; } = [];
+        public List<LessonElement> Lessons { get; set; } = [];
     }
 }

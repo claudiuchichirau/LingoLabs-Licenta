@@ -8,5 +8,6 @@
         public string? ChapterImageData { get; set; } 
         public string? ChapterVideoData { get; set; } 
         public int? ChapterPriorityNumber { get; set; }
+        public List<LessonElement> Lessons { get; set; } = [];
     }
 }

@@ -102,6 +102,7 @@
                     <div class="@alignment">
                         <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px;"><span style="color: #2563EB;">@languageLevel.LanguageLevelName</span> - <span style="color: #FC6F05;">@languageLevel.LanguageLevelAlias</span></MudText>
                         <MudText Style="color: black; font-size: 17px;"><strong>@languageLevel.LanguageLevelDescription</strong></MudText>
+                        <MudButton OnClick="NavigateToLanguageLevel">See More</MudButton>
                     </div>
                 </ItemContent>
             </MudTimelineItem>
@@ -427,5 +428,10 @@
     void NavigateToLanguageCompetence()
     {
         NavigationManager.NavigateTo("/language-competence-dashboard");
+    }
+
+    void NavigateToLanguageLevel()
+    {
+        NavigationManager.NavigateTo("/language-level-dashboard");
     }
 }
