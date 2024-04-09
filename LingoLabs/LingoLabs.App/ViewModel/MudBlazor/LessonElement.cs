@@ -12,7 +12,7 @@
         public string? LessonVideoLink { get; set; }
         public string? LessonImageLink { get; set; }
         public int? LessonPriorityNumber { get; set; }
-        // List Tags
-        // List questions
+        public List<string> LessonTags { get; set; } = [];
+        public List<QuestionElement> Questions { get; set; } = [];
     }
 }

@@ -72,6 +72,7 @@
     {
         ChapterElement chapter = languageLevel.Chapters[i];
         string alignment = i % 2 == 0 ? "text-left" : "text-right";
+        string alignmentForPanel = i % 2 == 0 ? "block-left" : "block-right";
 
         <MudTimelineItem Color="Color.Dark" Size="Size.Small">
             <ItemOpposite>
@@ -86,22 +87,45 @@
                         var panelText = $"{chapter.ChapterName}'s Lessons";
                     }
 
-                    <div class="@alignment">
-                        <MudExpansionPanels Class="@alignment" Style="width: 50%;">
-                            <MudExpansionPanel Text="@panelText">
+                    <MudExpansionPanels Class="@alignmentForPanel" Style="width: 35%; margin-top: 5px;">
+                            <MudExpansionPanel Text="@panelText" Style="color: dark;">
                                 @foreach (LessonElement lesson in chapter.Lessons)
                                 {
-                                    <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 20px; color: #2563EB;"><MudIcon Icon="@Icons.Material.Filled.ArrowForward" Style="color: #FC6F05;"></MudIcon><strong>@lesson.LessonTitle</strong></MudText>
+                                    <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 17px;">
+                                        <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Style="color: #FC6F05;" Size="Size.Small"></MudIcon>
+                                        <MudLink OnClick="@( () => NavigateToLesson(@lesson.LessonId) )">
+                                            <strong class="hover-link">@lesson.LessonTitle</strong>
+                                        </MudLink>
+                                    </MudText>
                                 }
                             </MudExpansionPanel>
-                        </MudExpansionPanels>
-                    </div>
+                    </MudExpansionPanels>
                 </div>
             </ItemContent>
         </MudTimelineItem>
     }
     @* TO DO: culoare verde la bulina daca ChapterResult.IsCompleted = true, gri altfel + butonul OPEN sa fie disabled *@
 </MudTimeline>
+
+
+<style>
+    .block-left {
+        float: left;
+    }
+
+    .block-right {
+        float: right;
+    }
+
+    .hover-link {
+        color: #2563EB;
+    }
+
+    .hover-link:hover {
+        color: #02497E;
+    }
+
+</style>
 
 @code {
     private LanguageLevelElement languageLevel = new LanguageLevelElement();
@@ -384,6 +408,7 @@
 
     private void NavigateToLesson(Guid lessonId)
     {
-        NavigationManager.NavigateTo($"/lesson-dashboard/{lessonId}");
+        NavigationManager.NavigateTo($"/lesson-dashboard");
+        // NavigationManager.NavigateTo($"/lesson-dashboard/{lessonId}");
     }
 }
