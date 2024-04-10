@@ -8,5 +8,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries
         public string QuestionRequirement { get; set; } = string.Empty;
         public LearningType QuestionLearningType { get; set; }
         public Guid LessonId { get; set; }
+        public int? QuestionPriorityNumber { get; set; }
     }
 }

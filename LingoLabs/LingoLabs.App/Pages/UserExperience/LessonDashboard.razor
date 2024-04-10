@@ -11,11 +11,6 @@
 
 
 <div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top: -10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
-    @foreach (string tag in lesson.LessonTags)
-    {
-        Random random = new Random();
-        <span style="color: #CDE9FE; position: absolute; top: @(new Random().Next(10, 90))%; left: @(new Random().Next(10, 90))%; font-size: @(random.Next(10, 30))px; transform: rotate(@(random.Next(-15, 15))deg);">@tag</span>
-    })
 </div>
 
 @* GET BY ID INFORMATIONS *@
@@ -96,20 +91,252 @@
         </div>
     }
 
-    <div class="text-center" style="margin-bottom: 50px;">
-        <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
-            Time for a <span style="color: #FC6F05;">Quiz</span>
-        </h1>
-        <h2 style="font-size: 19px; margin-bottom: 30px;">
-            Get ready to test your knowledge with our comprehensive quiz. Spanning a minimum of 10 questions, each designed to challenge and enhance your understanding of the lesson. Good luck!
-        </h2>
-        <MudButton Variant="Variant.Filled" OnClick="StartQuiz" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Quiz"></MudIcon> START NOW!</MudButton>
-    </div>
+    @if (!showQuizResults)
+    {
+        <div class="text-center" style="margin-bottom: 50px;">
+            <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
+                Time for a <span style="color: #FC6F05;">Quiz</span>
+            </h1>
+            <h2 style="font-size: 19px; margin-bottom: 30px;">
+                Get ready to test your knowledge with our comprehensive quiz. Spanning a minimum of 10 questions, each designed to challenge and enhance your understanding of the lesson. Good luck!
+            </h2>
+            <MudButton Variant="Variant.Filled" OnClick="() => StartQuiz()" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Quiz"></MudIcon> START NOW!</MudButton>
+        </div>        
+    }
+
 </MudContainer>
 
 
+@* COMPLETE QUIZ *@
+@if (showCompleteQuiz)
+{
+    <div class="row">
+        <div class="col text-center">
+            <MudIcon Icon="@Icons.Material.Filled.KeyboardDoubleArrowDown" Style="font-size: 48px;" Class="animated-arrow"></MudIcon>
+        </div>
+    </div>
+
+    <div style="width: 98vw; overflow-x: hidden;">
+        <MudCarousel Class="mud-width-full" Style="height: 500px;" AutoCycle="false" TData="object">
+
+            <BulletTemplate Context="selected">
+                <div Class="container mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon" style="margin-top: 25px;">
+                    <span class="mud-icon-button-label">
+                        <MudIcon Icon="@(selected ? Icons.Material.Filled.CheckCircle : Icons.Material.Filled.CheckCircle)" Style="@(selected ? "color: green;" : "color : gray;")" />
+                    </span>
+                </div>
+            </BulletTemplate>
+
+            <PreviousButtonTemplate>
+                <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+                    <span class="mud-icon-button-label">
+                        <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipPrevious" Color="@Color.Inherit" />
+                    </span>
+                </div>
+            </PreviousButtonTemplate>
+            <NextButtonTemplate>
+                <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
+                    <span class="mud-icon-button-label">
+                        <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipNext" Color="@Color.Inherit" />
+                    </span>
+                </div>
+            </NextButtonTemplate>
+            <ChildContent>
+                @foreach (QuestionElement question in lesson.Questions)
+                {
+                    var counter = lesson.Questions.IndexOf(question) + 1;
+                    <MudCarouselItem>
+                        @if (question.QuestionType == QuestionTypeElement.Grila)
+                        {
+                            var columns = Math.Ceiling(Math.Sqrt(question.QuestionChoices.Count()));
+                            <div class="d-flex flex-column align-items-center justify-content-center" style="height:100%; padding: 30px; margin-bottom: 15px;">
+                                <div class="md-2 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 10px; margin-bottom: 40px; margin-top: -10px;">
+                                    <div class="row text-center" style="width: 100%;">
+                                        <span style="color: black; padding: 3px; font-size: 15px;" class="poppins-semi-bold">Multiple-Choice Question</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3" style="margin-bottom: 45px;">
+                                    <span style="color: #FC6F05; padding: 10px; font-size: 29px;">@counter. @question.QuestionRequirement</span>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: repeat(@columns, 1fr); gap: 35px; margin-top: 25px; justify-items: center;">
+                                    @foreach (ChoiceElement choice in question.QuestionChoices)
+                                    {
+                                        <div style="display: flex; justify-content: center;">
+                                            <MudButton Color="Color.Primary" Variant="Variant.Outlined" Style="@(choice.ChoiceId == userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceId ? "color: white; border-color: #2563EB; background-color: #2563EB; padding: 10px; font-size: 20px;" : "color: #2563EB; border-color: #2563EB; background-color: white; padding: 10px; font-size: 20px;")" OnClick="() => {SelectAnswer(question, choice); CheckAllQuestionsCompleted();}">
+                                                @choice.ChoiceContent
+                                            </MudButton>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        @if (question.QuestionType == QuestionTypeElement.TrueFalse)
+                        {
+                            <div class="d-flex flex-column align-items-center justify-content-center" style="height:100%; padding: 30px; margin-bottom: 15px;">
+                                <div class="md-2 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 10px; margin-bottom: 40px; margin-top: -10px;">
+                                    <div class="row text-center" style="width: 100%;">
+                                        <span style="color: black; padding: 3px; font-size: 15px;" class="poppins-semi-bold">True/False Question</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3" style="margin-bottom: 45px;">
+                                    <span style="color: #FC6F05; padding: 10px; font-size: 29px;">@counter. @question.QuestionRequirement</span>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 35px; margin-top: 25px; justify-items: center;">
+                                    <div style="display: flex; justify-content: center;">
+                                        <MudButton Color="Color.Primary" Variant="Variant.Outlined" Style="@(userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceIsCorrect == true ? "color: white; border-color: green; background-color: green; padding: 10px; font-size: 20px;" : "color: green; border-color: green; background-color: white; padding: 10px; font-size: 20px;")" OnClick='() => {SelectAnswer(question, true); CheckAllQuestionsCompleted();}'>
+                                            True
+                                        </MudButton>
+                                    </div>
+                                    <div style="display: flex; justify-content: center;">
+                                        <MudButton Color="Color.Primary" Variant="Variant.Outlined" Style="@(userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceIsCorrect == false ? "color: white; border-color: red; background-color: red; padding: 10px; font-size: 20px;" : "color: red; border-color: red; background-color: white; padding: 10px; font-size: 20px;")" OnClick='() => {SelectAnswer(question, false); CheckAllQuestionsCompleted();}'>
+                                            False
+                                        </MudButton>
+                                    </div>
+                                </div>
+
+                            </div>
+                        }
+
+                        @if (question.QuestionType == QuestionTypeElement.CuvantLipsa)
+                        {
+                            <div class="d-flex flex-column align-items-center justify-content-center" style="height:100%; padding: 30px; margin-bottom: 15px;">
+                                <div class="md-2 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 10px; margin-bottom: 40px; margin-top: -10px;">
+                                    <div class="row text-center" style="width: 100%;">
+                                        <span style="color: black; padding: 3px; font-size: 15px;" class="poppins-semi-bold">Missing Word Question</span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3" style="margin-bottom: 45px;">
+                                    <span style="color: #FC6F05; padding: 10px; font-size: 29px;">@counter. @question.QuestionRequirement</span>
+                                </div>
+
+                                <div style="display: flex; justify-content: center; align-items: center;">
+                                    <MudTextField HelperText="Enter your answer here" Variant="Variant.Outlined" ValueChanged="(string value) => { ValidateMissingWordQuestion(value, question); CheckAllQuestionsCompleted(); }" />
+                                </div>
+                            </div>
+                        }
+
+                    </MudCarouselItem>
+
+                }
+            </ChildContent>
+        </MudCarousel>
+    </div>
+
+    if(showSubmitButton)
+    {
+        <div class="row" style="margin-top: 35px; margin-bottom: 50px;">
+            <div class="col text-center">
+                <MudButton Variant="Variant.Filled" OnClick="() => SubmitQuiz(userQuiz)" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> SUBMIT</MudButton>
+            </div>
+        </div>
+    }
+}
+
+@* QUIZ RESULTS *@
+@if (showQuizResults)
+{
+    <div class="text-center" style="margin-bottom: 50px;">
+        <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
+            Quiz <span style="color: #FC6F05;">Results</span> Await
+        </h1>
+        <h2 style="font-size: 19px; margin-bottom: 30px;">
+            Here are the results of your quiz. You can review your answers and see how you did. Keep up the good work!
+        </h2>
+    </div>
+
+    <div class="container" style="margin-bottom: 20px;">
+        <MudTable Items="@quizResultsElement.questionResultElements" Bordered="@bordered" Filter="new Func<QuestionResultElement,bool>(FilterFunc1)">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Your Quiz Answers</MudText>
+                <MudSpacer />
+                <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh Class="text-center">Question Type</MudTh>
+                <MudTh Class="text-center">Question Requirement</MudTh>
+                <MudTh Class="text-center">Your Answer</MudTh>
+                <MudTh Class="text-center">Correct Answer</MudTh>
+                <MudTh Class="text-center">Is Correct</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Question Type" Class="text-center">@context.QuestionType</MudTd>
+                <MudTd DataLabel="Question Requirement" Class="text-center">@context.QuestionRequirement</MudTd>
+
+                @if (context.QuestionType == QuestionTypeElement.Grila)
+                {
+                    <MudTd DataLabel="Your Answer" Class="text-center">@context.GrilaUserChoiceId</MudTd>
+                    <MudTd DataLabel="Correct Answer" Class="text-center">@context.GrilaCorrectChoiceId</MudTd>
+                }
+                else if (context.QuestionType == QuestionTypeElement.TrueFalse)
+                {
+                    <MudTd DataLabel="Your Answer" Class="text-center">@context.TrueFalseUserValue</MudTd>
+                    <MudTd DataLabel="Correct Answer" Class="text-center">@context.TrueFalseCorrectValue</MudTd>
+                }
+                else if (context.QuestionType == QuestionTypeElement.CuvantLipsa)
+                {
+                    <MudTd DataLabel="Your Answer" Class="text-center">@context.CuvantLipsaUserValue</MudTd>
+
+                    List<string> cuvantLipsaCorrectValues = context.CuvantLipsaCorrectValues;
+                    string cuvantLipsaCorrectValuesString = string.Join(" / ", cuvantLipsaCorrectValues);
+
+                    <MudTd DataLabel="Correct Answer" Class="text-center">@cuvantLipsaCorrectValuesString</MudTd>
+                }
+
+                @if (@context.UserAnswerIsCorrect)
+                {
+                    <MudTd DataLabel="Is Correct" Style="color: forestgreen;" Class="text-center">@context.UserAnswerIsCorrect</MudTd>
+                }
+                else
+                {
+                    <MudTd DataLabel="Is Correct" Style="color: red;" Class="text-center">@context.UserAnswerIsCorrect</MudTd>
+                }
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </div>
+
+    <div class="text-center" style="margin-bottom: 50px;">
+        <h1 style="color: black; font-size: 37px; margin-top: 80px; margin-bottom: 15px;">
+            Your Score: <span style="color: #FC6F05;">@score%</span>
+        </h1>
+    </div>
+}
+
+<style>
+    @@keyframes moveArrow {
+        0% {
+            transform: translateY(0);
+        }
+
+        50% {
+            transform: translateY(20px);
+        }
+
+        100% {
+            transform: translateY(0);
+        }
+    }
+
+    .animated-arrow {
+        animation: moveArrow 2s infinite;
+    }
+</style>
+
+@* COMPLETE QUIZ *@
 @code {
+    private bool showCompleteQuiz = false;
+    private bool showSubmitButton = false;
+    private bool bordered = false;
     private LessonElement lesson = new LessonElement();
+    private UserQuizElement userQuiz = new UserQuizElement();
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,76 +358,264 @@
                 LessonTags = new List<string> { "English", "Beginner", "Alphabet", "Vocabulary", "Pronunciation", "Communication", "Conversation" },
                 LessonRequirement = "In the next minutes you will take a quiz to test your knowledge about the alphabet and basic vocabulary.",
                 Questions = new List<QuestionElement>
-            {
-                new QuestionElement
                 {
-                    QuestionId = Guid.NewGuid(),
-                    QuestionRequirement = "What is the first letter of the English alphabet?",
-                    QuestionType = QuestionTypeElement.Grila,
-                    QuestionChoices = new List<ChoiceElement>
+                    new QuestionElement
                     {
-                        new ChoiceElement
+                        QuestionId = Guid.NewGuid(),
+                        QuestionRequirement = "What is the first letter of the English alphabet?",
+                        QuestionType = QuestionTypeElement.Grila,
+                        QuestionPriorityNumber = 1,
+                        QuestionChoices = new List<ChoiceElement>
                         {
-                            ChoiceId = Guid.NewGuid(),
-                            ChoiceContent = "A",
-                            IsCorrect = true
-                        },
-                        new ChoiceElement
-                        {
-                            ChoiceId = Guid.NewGuid(),
-                            ChoiceContent = "B",
-                            IsCorrect = false
-                        },
-                        new ChoiceElement
-                        {
-                            ChoiceId = Guid.NewGuid(),
-                            ChoiceContent = "C",
-                            IsCorrect = false
-                        },
-                        new ChoiceElement
-                        {
-                            ChoiceId = Guid.NewGuid(),
-                            ChoiceContent = "D",
-                            IsCorrect = false
+                            new ChoiceElement
+                            {
+                                ChoiceId = Guid.NewGuid(),
+                                ChoiceContent = "A",
+                                IsCorrect = true
+                            },
+                            new ChoiceElement
+                            {
+                                ChoiceId = Guid.NewGuid(),
+                                ChoiceContent = "B",
+                                IsCorrect = false
+                            },
+                            new ChoiceElement
+                            {
+                                ChoiceId = Guid.NewGuid(),
+                                ChoiceContent = "C",
+                                IsCorrect = false
+                            },
+                            new ChoiceElement
+                            {
+                                ChoiceId = Guid.NewGuid(),
+                                ChoiceContent = "D",
+                                IsCorrect = false
+                            }
                         }
-                    }
-                },
-                new QuestionElement
-                {
-                    QuestionId = Guid.NewGuid(),
-                    QuestionRequirement = "<Apple> is a verb?",
-                    QuestionType = QuestionTypeElement.TrueFalse,
-                    QuestionChoices = new List<ChoiceElement>
+                    },
+                    new QuestionElement
                     {
-                        new ChoiceElement
+                        QuestionId = Guid.NewGuid(),
+                        QuestionRequirement = "<Apple> is a verb?",
+                        QuestionType = QuestionTypeElement.TrueFalse,
+                        QuestionPriorityNumber = 2,
+                        QuestionChoices = new List<ChoiceElement>
                         {
-                            ChoiceId = Guid.NewGuid(),
-                            ChoiceContent = "Apple",
-                            IsCorrect = false
+                            new ChoiceElement
+                            {
+                                ChoiceId = Guid.NewGuid(),
+                                ChoiceContent = "Apple",
+                                IsCorrect = false
+                            }
                         }
-                    }
-                },
-                new QuestionElement
-                {
-                    QuestionId = Guid.NewGuid(),
-                    QuestionRequirement = "The solar system has ____ planets.",
-                    QuestionType = QuestionTypeElement.CuvantLipsa,
-                    QuestionChoices = new List<ChoiceElement>
+                    },
+                    new QuestionElement
                     {
-                        new ChoiceElement
+                        QuestionId = Guid.NewGuid(),
+                        QuestionRequirement = "The solar system has ____ planets.",
+                        QuestionType = QuestionTypeElement.CuvantLipsa,
+                        QuestionChoices = new List<ChoiceElement>
                         {
-                            ChoiceId = Guid.NewGuid(),
-                            ChoiceContent = "8",
-                            IsCorrect = false
-                        },
+                            new ChoiceElement
+                            {
+                                ChoiceId = Guid.NewGuid(),
+                                ChoiceContent = "8",
+                                IsCorrect = true
+                            },
+                        }
                     }
                 }
-            }
             };
     }
 
     void StartQuiz()
     {
-        NavigationManager.NavigateTo("/quiz");
+        showCompleteQuiz = true;
+        List<UserQuestionElement> userQuestions = new List<UserQuestionElement>();
+        foreach (QuestionElement question in lesson.Questions)
+        {
+            userQuestions.Add(new UserQuestionElement
+            {
+                QuestionId = question.QuestionId,
+                QuestionType = question.QuestionType,
+                QuestionCompleted = false
+            });
+        }
+
+        userQuiz = new UserQuizElement
+        {
+            LessonId = lesson.LessonId,
+            UserQuestions = userQuestions
+        };
+    }
+
+    void SelectAnswer(QuestionElement questionElement, ChoiceElement choice)    // grila question
+    {
+        if (questionElement.QuestionType == QuestionTypeElement.Grila)
+        {
+            userQuiz.UserQuestions.Find(x => x.QuestionId == questionElement.QuestionId).ChoiceId = choice.ChoiceId;
+            userQuiz.UserQuestions.Find(x => x.QuestionId == questionElement.QuestionId).QuestionCompleted = true;
+        }
+    }
+
+    void SelectAnswer(QuestionElement questionElement, bool trueFalseAnswer)        // true/false question
+    {
+        if(questionElement.QuestionType == QuestionTypeElement.TrueFalse)
+        {
+            userQuiz.UserQuestions.Find(x => x.QuestionId == questionElement.QuestionId).ChoiceIsCorrect = trueFalseAnswer;
+            userQuiz.UserQuestions.Find(x => x.QuestionId == questionElement.QuestionId).QuestionCompleted = true;
+        }
+    }
+
+    void ValidateMissingWordQuestion(string value, QuestionElement question)        // missing word question
+    {
+        if (!string.IsNullOrEmpty(value))
+        {
+            userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).QuestionCompleted = true;
+            userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceContent = value;
+        }
+    }
+
+    void CheckAllQuestionsCompleted()
+    {
+        foreach (var question in userQuiz.UserQuestions)
+        {
+            if (!question.QuestionCompleted)
+            {
+                showSubmitButton = false;
+                return;
+            }
+        }
+        showSubmitButton = true;
+    }
+}
+
+
+@* SHOW QUIZ RESULTS *@
+@code {
+    private bool showQuizResults = false;
+    private QuizResultsElement quizResultsElement = new QuizResultsElement();
+    private string searchString1 = "";
+
+    void SubmitQuiz(UserQuizElement userQuiz)
+    {
+        quizResultsElement = new QuizResultsElement
+        {
+            LessonId = userQuiz.LessonId,
+            questionResultElements = userQuiz.UserQuestions.Select(q => new QuestionResultElement
+            {
+                QuestionId = q.QuestionId,
+                QuestionType = q.QuestionType
+            }).ToList()
+        };
+
+        foreach (QuestionResultElement questionResult in quizResultsElement.questionResultElements)
+        {
+            UserQuestionElement userQuestion = userQuiz.UserQuestions.Find(x => x.QuestionId == questionResult.QuestionId);
+
+            if (questionResult.QuestionType == QuestionTypeElement.Grila)
+            {
+                questionResult.GrilaUserChoiceId = userQuiz.UserQuestions.Find(x => x.QuestionId == questionResult.QuestionId).ChoiceId;
+            }
+            else if (questionResult.QuestionType == QuestionTypeElement.TrueFalse)
+            {
+                questionResult.TrueFalseUserValue = userQuestion.ChoiceIsCorrect;
+            }
+            else if (questionResult.QuestionType == QuestionTypeElement.CuvantLipsa)
+            {
+                questionResult.CuvantLipsaUserValue = userQuestion.ChoiceContent;
+            }
+        }
+
+        foreach (QuestionResultElement questionResult in quizResultsElement.questionResultElements)
+        {
+            QuestionElement question = lesson.Questions.Find(x => x.QuestionId == questionResult.QuestionId);
+
+            questionResult.QuestionRequirement = question.QuestionRequirement;
+
+            if (question.QuestionType == QuestionTypeElement.Grila)
+            {
+                questionResult.GrilaCorrectChoiceId = question.QuestionChoices.Find(x => x.IsCorrect).ChoiceId;
+                if (questionResult.GrilaUserChoiceId == questionResult.GrilaCorrectChoiceId)
+                    questionResult.UserAnswerIsCorrect = true;
+                else
+                    questionResult.UserAnswerIsCorrect = false;
+            }
+            else if (question.QuestionType == QuestionTypeElement.TrueFalse)
+            {                
+                questionResult.TrueFalseCorrectValue = question.QuestionChoices[0].IsCorrect;
+                if (questionResult.TrueFalseUserValue == questionResult.TrueFalseCorrectValue)
+                    questionResult.UserAnswerIsCorrect = true;
+                else
+                    questionResult.UserAnswerIsCorrect = false;
+            }
+            else if (question.QuestionType == QuestionTypeElement.CuvantLipsa)
+            {
+                List<string> cuvantLipsaCorrectValues = new List<string>();
+                foreach (var choice in question.QuestionChoices)
+                {
+                    cuvantLipsaCorrectValues.Add(choice.ChoiceContent);
+                }
+                questionResult.CuvantLipsaCorrectValues = cuvantLipsaCorrectValues;
+
+                questionResult.UserAnswerIsCorrect = false;
+                foreach (string correctValue in questionResult.CuvantLipsaCorrectValues)
+                {
+                    if (questionResult.CuvantLipsaUserValue == correctValue)
+                    {
+                        questionResult.UserAnswerIsCorrect = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        showCompleteQuiz = false;
+        showSubmitButton = false;
+        showQuizResults = true;
+
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        Snackbar.Add("Quiz submitted successfully!", Severity.Success);
+
+        CalculateScore();
+    }
+
+    private bool FilterFunc1(QuestionResultElement element) => FilterFunc(element, searchString1);
+
+    private bool FilterFunc(QuestionResultElement element, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (element.QuestionRequirement.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.QuestionType.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.CuvantLipsaUserValue != null && element.CuvantLipsaUserValue.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (element.CuvantLipsaCorrectValues != null)
+        {
+            foreach (var value in element.CuvantLipsaCorrectValues)
+            {
+                if (value.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    private int score;
+
+    void CalculateScore()
+    {
+        score = 0;
+        foreach (var questionResult in quizResultsElement.questionResultElements)
+        {
+            if (questionResult.UserAnswerIsCorrect)
+            {
+                score++;
+            }
+        }
+
+        score = (score * 100) / quizResultsElement.questionResultElements.Count;
     }
 }
