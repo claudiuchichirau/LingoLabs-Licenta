@@ -1,0 +1,32 @@
+﻿@page "/notfound"
+@using LingoLabs.App.ViewModel.MudBlazor
+@using MudBlazor
+@using MatBlazor
+@using System.Net.Http.Json
+@using ViewModel.MudBlazor
+@using static LingoLabs.App.Pages.GeneralPages.Dashboard
+@inject NavigationManager NavigationManager
+@inject HttpClient httpClient
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+
+<div class="text-center" style="margin-bottom: 50px;">
+    <div class="d-flex justify-content-center align-content-center">
+        <img src="images/homepage/not-found.png" />
+    </div>
+    <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
+        This page could not be found
+    </h1>
+    <h2 style="font-size: 19px; margin-bottom: 30px;">
+        The page you are looking for might have been removed or temporarily unavailable.
+    </h2>
+    <MudButton Variant="Variant.Filled" OnClick="NavigateToHomePage" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px;"> Back to Homepage</MudButton>
+</div>   
+
+@code {
+    void NavigateToHomePage()
+    {
+        NavigationManager.NavigateTo("/");
+    }
+}

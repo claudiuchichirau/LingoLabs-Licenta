@@ -1,203 +1,25 @@
-﻿@page "/lesson-dashboard"
+﻿@page "/placement-test"
 @using LingoLabs.App.ViewModel.MudBlazor
 @using MudBlazor
 @using MatBlazor
 @using System.Net.Http.Json
 @using ViewModel.MudBlazor
+@using static LingoLabs.App.Pages.GeneralPages.Dashboard
 @inject NavigationManager NavigationManager
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 
-
-<div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top: -10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
-</div>
-
-@* GET BY ID INFORMATIONS *@
-<MudContainer>
-    <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom: 40px;">
-        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
-            <div class="row">
-                <h1 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">@lesson.LessonTitle</h1>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mx-0 justify-content-between">
-        <div class="col-md-3 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
-            <div class="row">
-                @* <span style="color: #FC6F05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">@lesson.ChapterId</span> *@
-                <span style="color: #FC6F05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">Chapter 1</span>
-            </div>
-        </div>
-        <div class="col-md-3 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
-            <div class="row">
-                @* <span style="color: #fc6f05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">@lesson.LanguageCompetenceId</span> *@
-                <span style="color: #FC6F05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">Grammar</span>
-            </div>
-        </div>
-    </div>
-
-    @if (!string.IsNullOrEmpty(lesson.LessonDescription))
-    {
-        <div class="row" style="margin-top: 70px; margin-bottom: 70px;">
-            <div class="col">
-                <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">@lesson.LessonDescription</p>
-                </div>
-            </div>
-        </div>
-    }
-
-    @if (!string.IsNullOrEmpty(lesson.LessonVideoLink))
-    {
-        <div class="row" style="margin-top: 45px; margin-bottom: 10px;">
-            <div class="col">
-                <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-                    <p class="custom-text" style="font-size: 40px; margin-bottom: -3px;">
-                        <span style="color: #FC6F05;"><strong>Hear</strong></span>,
-                        <span style="color: #2563EB;"><strong>understand</strong></span>,
-                        <span style="color: lawngreen;"><strong>express</strong></span>
-                    </p>
-                    <p style="font-size: 22px;">Right here, right now, we’ve got a video that’ll tie up all the loose ends of this lesson, giving you the scoop on everything you need to know. Let’s dive in! 😊</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="row" style="margin-bottom: 70px;">
-            <div class="col text-center">
-                <iframe style="width: 700px; height: 394px; margin-top: 9px;" src="@lesson.LessonVideoLink" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-        </div>
-    }
-
-    @if (!string.IsNullOrEmpty(lesson.LessonContent))
-    {
-        <div class="row" style="margin-top: 70px; margin-bottom: 70px;">
-            <div class="col">
-                <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">@lesson.LessonContent</p>
-                </div>
-            </div>
-        </div>
-    }
-
-    @if (!string.IsNullOrEmpty(lesson.LessonImageLink))
-    {
-        <div class="row" style="margin-top: 70px; margin-bottom: 150px;">
-            <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
-                <img src="@lesson.LessonImageLink" style="max-width: 700px; height: auto;">
-            </div>
-        </div>
-    }
-
-    @if (!string.IsNullOrEmpty(lesson.LessonRequirement))
-    {
-        <div class="row" style="margin-top: 70px; margin-bottom: 70px;">
-            <div class="col">
-                <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">@lesson.LessonRequirement</p>
-                </div>
-            </div>
-        </div>
-    }
-
-    @* WRITE THE ESSAY *@
-    <div class="container">
-        <div class="row" style="margin-top: 20px; margin-bottom: -20px;">
-            <div class="col">
-                <div style="display: flex; flex-direction: column; justify-content: start; height: 100%;">
-                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">Start to type your essay here:</p>
-                </div>
-            </div>
-        </div>
-
-        <MudTextField @bind-Text="sampleText" T="string" Variant="Variant.Text" AutoGrow Lines="1" HelperText="Start to write your essay here!" Style="width: 100%;" />
-
-        <p>@wordCount/100 words</p>
-
-        <div class="row">
-            <div class="col">
-                <div style="display: flex; flex-direction: column; justify-content: end; height: 100%;">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@isButtonDisabled" OnClick="() => SendWrittenEssay(sampleText)" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> Submit</MudButton>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="row" style="margin-top: 85px; margin-bottom: -20px;">
-        <div class="col">
-            <div style="display: flex; flex-direction: column; justify-content: start; height: 100%;">
-                <p style="color: black; font-size: 22px;" class="poppins-semi-bold">Or, if you prefer, upload pictures of your handwritten essay. We'll take care of the rest!</p>
-            </div>
-        </div>
-    </div>
-
-    @* UPLOAD ESSAY IMAGE       -> doar daca este WRITTING LESSON*@
-    <MudStack Style="width: 100%">
-        <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-                       Accept=".png, .jpg"
-                       MaximumFileCount="100"
-                       OnFilesChanged="OnInputFileChanged"
-                       Hidden="@false"
-                       InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
-                       InputStyle="opacity:0"
-                       @ondragenter="@SetDragClass"
-                       @ondragleave="@ClearDragClass"
-                       @ondragend="@ClearDragClass">
-            <ButtonTemplate>
-                <MudPaper Height="300px"
-                          Outlined="true"
-                          Class="@_dragClass">
-                    <MudText Typo="Typo.h6">
-                        Drag and drop files here or click
-                    </MudText>
-                    @foreach (var file in _fileNames)
-                    {
-                        <MudChip Color="Color.Dark" Text="@file" />
-                    }
-                </MudPaper>
-                <MudToolBar DisableGutters="true"
-                            Class="relative d-flex justify-end gap-4 z-30">
-                    <MudButton HtmlTag="label"
-                               Style="background-color: #2563EB; color: white;"
-                               for="@context.Id"
-                               Variant="Variant.Filled">
-                        Open file picker
-                    </MudButton>
-                    <MudButton OnClick="@Upload"
-                               Style="background-color: #2563EB; color: white;"
-                               Disabled="@(!_fileNames.Any())"
-                               Variant="Variant.Filled">
-                        Upload
-                    </MudButton>
-                    <MudButton OnClick="@Clear"
-                               Color="Color.Error"
-                               Disabled="@(!_fileNames.Any())"
-                               Variant="Variant.Filled">
-                        Clear
-                    </MudButton>
-                </MudToolBar>
-            </ButtonTemplate>
-        </MudFileUpload>
-    </MudStack>
-
-    @if (!showQuizResults)
-    {
-        <div class="text-center" style="margin-bottom: 50px;">
-            <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
-                Time for a <span style="color: #FC6F05;">Quiz</span>
-            </h1>
-            <h2 style="font-size: 19px; margin-bottom: 30px;">
-                Get ready to test your knowledge with our comprehensive quiz. Spanning a minimum of 10 questions, each designed to challenge and enhance your understanding of the lesson. Good luck!
-            </h2>
-            <MudButton Variant="Variant.Filled" OnClick="() => StartQuiz()" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Quiz"></MudIcon> START NOW!</MudButton>
-        </div>        
-    }
-
-</MudContainer>
-
+<div class="text-center" style="margin-bottom: 50px;">
+    <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
+        Time for your first <span style="color: #FC6F05;">LingoLab's</span> Quiz
+    </h1>
+    <h2 style="font-size: 19px; margin-bottom: 30px;">
+        Prepare to embark on a linguistic journey with our tailored assessment. Featuring a series of questions aimed<br />
+        at gauging your proficiency and understanding of the language. Wishing you the best of luck!
+    </h2>
+    <MudButton Variant="Variant.Filled" OnClick="() => StartQuiz()" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Quiz"></MudIcon> START NOW!</MudButton>
+</div>        
 
 
 @* COMPLETE QUIZ *@
@@ -321,7 +143,7 @@
         </MudCarousel>
     </div>
 
-    if(showSubmitButton)
+    if (showSubmitButton)
     {
         <div class="row" style="margin-top: 35px; margin-bottom: 50px;">
             <div class="col text-center">
@@ -336,20 +158,11 @@
 {
     <div id="quizResults" class="text-center" style="margin-bottom: 50px;">
         <hr style="width: 20%; border: 1px solid rgba(128, 128, 128, 0.5); margin: auto; margin-top: 50px; margin-bottom: 50px;">
-        @if (score >= 45)
-        {
-            <p style="font-size: 19px; margin-bottom: 30px;">
-                Congratulations! You've passed the quiz with flying colors.<br>
-                Keep up the good work and continue to improve your skills. 😊
-            </p>
-        }
-        else
-        {
-            <p style="font-size: 19px; margin-bottom: 30px;">
-                Don't worry if you didn't pass this time. Review your answers, learn from your mistakes, and try again.<br>
-                You've got this! 💪
-            </p>
-        }
+        
+        <p style="font-size: 19px; margin-bottom: 30px;">
+            You've completed the assessment, and your linguistic abilities have been mapped across various competencies.<br>
+            Here's a snapshot of your language profile as it stands today. Embrace this insight as a guide on your journey to language mastery. 🌟
+        </p>
 
         <span style="color: black; font-size: 19px; margin-top: 80px; margin-bottom: 15px;">
             Result
@@ -371,8 +184,43 @@
             <div>
                 <img src="images/quiz/low-score.png">
             </div>
-            <div>
-                <MudButton Icon="@Icons.Material.Filled.ChangeCircle" Style="background-color: red; color: white; margin-top: 35px;" Class="text-center align-items-center justify-content-center" OnClick="TryAgainQuiz">Try Again Now</MudButton>
+        }
+    </div>
+
+    <div class="container">
+        <div style="padding: 15px; margin-bottom: 10px;">
+            <p class="text-center" style="color: black; font-size: 18px;"><MudIcon Icon="@Icons.Material.Filled.Analytics" Size=Size.Large Color="Color.Success" />This is your approximate levels for @languageLevels.LanguageName</p>
+        </div>
+
+        @foreach (var competence in languageLevels.UserLanguageLevels)
+        {
+            <div class="row justify-content-center align-items-center" style="padding: 15px;">
+                <div class="col text-center">
+                    <p style="font-size: 22px; color: black;">@competence.LanguageCompetence</p>
+                </div>
+                <div class="col text-left" style="width: 70%; height: 70%;">
+                    <MudTimeline TimelineOrientation=TimelineOrientation.Horizontal TimelinePosition=TimelinePosition.Bottom Reverse=false>
+                        @foreach (var level in LanguageLevels)
+                        {
+                            if (String.Compare(level, competence.LanguageLevel) <= 0)
+                            {
+                                <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+                                    <ItemContent>
+                                        <MudAlert Severity="Severity.Success">@level</MudAlert>
+                                    </ItemContent>
+                                </MudTimelineItem>
+                            }
+                            else
+                            {
+                                <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
+                                    <ItemContent>
+                                        <MudAlert Severity="Severity.Normal">@level</MudAlert>
+                                    </ItemContent>
+                                </MudTimelineItem>
+                            }
+                        }
+                    </MudTimeline>
+                </div>
             </div>
         }
     </div>
@@ -442,7 +290,15 @@
             </PagerContent>
         </MudTable>
     </div>
+
+    <div style="display: flex; justify-content: center; padding: 25px;">
+        <MudButton Variant="Variant.Filled" OnClick="NavigateToLanguageDashboard" Color="Color.Primary" Style="background-color: #FC6F05; color: white;">
+            <MudIcon Icon="@Icons.Material.Filled.Quiz"></MudIcon> Explore Lessons
+        </MudButton>
+    </div>
+
 }
+
 
 <style>
     @@keyframes moveArrow {
@@ -483,7 +339,6 @@
             {
                 LessonId = Guid.NewGuid(),
                 ChapterId = Guid.NewGuid(),
-                
                 LanguageCompetenceId = Guid.NewGuid(),
                 LessonTitle = "Introduction in English",
                 LessonDescription = "Welcome to the first lesson of our English language course. This introductory session is designed to ease you into the world of English, starting from the very basics. We'll explore the building blocks of the language, ensuring a solid foundation for your linguistic journey.",
@@ -491,7 +346,7 @@
                 LessonVideoLink = "https://www.youtube.com/embed/1y6smkh6c-0",
                 LessonImageLink = "https://psenglish.co.uk/wp-content/uploads/2021/11/Do-you-speak-English.jpg",
                 LessonTags = new List<string> { "English", "Beginner", "Alphabet", "Vocabulary", "Pronunciation", "Communication", "Conversation" },
-                LessonRequirement = "At this Writing English Lesson, your first assignement will be to write a short text about yourself. You will have to use the vocabulary and the grammar rules that you have learned in this lesson. The text should have at least 100 words. You can write your essay in the text field below or you can upload a photo of your essay. Good luck!",
+                LessonRequirement = "In the next minutes you will take a quiz to test your knowledge about the alphabet and basic vocabulary.",
                 Questions = new List<QuestionElement>
                 {
                     new QuestionElement
@@ -570,18 +425,18 @@
         foreach (QuestionElement question in lesson.Questions)
         {
             userQuestions.Add(new UserQuestionElement
-            {
-                QuestionId = question.QuestionId,
-                QuestionType = question.QuestionType,
-                QuestionCompleted = false
-            });
+                {
+                    QuestionId = question.QuestionId,
+                    QuestionType = question.QuestionType,
+                    QuestionCompleted = false
+                });
         }
 
         userQuiz = new UserQuizElement
-        {
-            LessonId = lesson.LessonId,
-            UserQuestions = userQuestions
-        };
+            {
+                LessonId = lesson.LessonId,
+                UserQuestions = userQuestions
+            };
     }
 
     void SelectAnswer(QuestionElement questionElement, ChoiceElement choice)    // grila question
@@ -595,7 +450,7 @@
 
     void SelectAnswer(QuestionElement questionElement, bool trueFalseAnswer)        // true/false question
     {
-        if(questionElement.QuestionType == QuestionTypeElement.TrueFalse)
+        if (questionElement.QuestionType == QuestionTypeElement.TrueFalse)
         {
             userQuiz.UserQuestions.Find(x => x.QuestionId == questionElement.QuestionId).ChoiceIsCorrect = trueFalseAnswer;
             userQuiz.UserQuestions.Find(x => x.QuestionId == questionElement.QuestionId).QuestionCompleted = true;
@@ -636,14 +491,14 @@
     public async Task SubmitQuiz(UserQuizElement userQuiz)
     {
         quizResultsElement = new QuizResultsElement
-        {
-            LessonId = userQuiz.LessonId,
-            questionResultElements = userQuiz.UserQuestions.Select(q => new QuestionResultElement
             {
-                QuestionId = q.QuestionId,
-                QuestionType = q.QuestionType
-            }).ToList()
-        };
+                LessonId = userQuiz.LessonId,
+                questionResultElements = userQuiz.UserQuestions.Select(q => new QuestionResultElement
+                {
+                    QuestionId = q.QuestionId,
+                    QuestionType = q.QuestionType
+                }).ToList()
+            };
 
         foreach (QuestionResultElement questionResult in quizResultsElement.questionResultElements)
         {
@@ -678,7 +533,7 @@
                     questionResult.UserAnswerIsCorrect = false;
             }
             else if (question.QuestionType == QuestionTypeElement.TrueFalse)
-            {                
+            {
                 questionResult.TrueFalseCorrectValue = question.QuestionChoices[0].IsCorrect;
                 if (questionResult.TrueFalseUserValue == questionResult.TrueFalseCorrectValue)
                     questionResult.UserAnswerIsCorrect = true;
@@ -715,15 +570,6 @@
         Snackbar.Add("Quiz submitted successfully!", Severity.Success);
 
         CalculateScore();
-    }
-
-    void TryAgainQuiz()
-    {
-        showQuizResults = false;
-        showQuizResultsTable = false;
-        showCompleteQuiz = true;
-        showSubmitButton = false;
-        StartQuiz();
     }
 
     private bool FilterFunc1(QuestionResultElement element) => FilterFunc(element, searchString1);
@@ -764,55 +610,27 @@
 
         score = (score * 100) / quizResultsElement.questionResultElements.Count;
     }
+
+    void NavigateToLanguageDashboard()
+    {
+        NavigationManager.NavigateTo("/language-dashboard");
+    }
 }
 
 
-@* UPLOAD ESSAY IMAGE *@
+@* SHOW LANGUAGE LEVELS *@
 @code {
-    #nullable enable
-    private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
-    private string _dragClass = DefaultDragClass;
-    private readonly List<string> _fileNames = new();
+    private List<string> LanguageLevels { get; set; } = new List<string> { "A1", "A2", "B1", "B2", "C1", "C2" };
 
-    private async Task Clear()
+    private UserLanguage languageLevels { get; set; } = new UserLanguage
     {
-        _fileNames.Clear();
-        ClearDragClass();
-        await Task.Delay(100);
-    }
-
-    private void OnInputFileChanged(InputFileChangeEventArgs e)
-    {
-        ClearDragClass();
-        var files = e.GetMultipleFiles();
-        foreach (var file in files)
+        LanguageName = "Limba Engleza",
+        UserLanguageLevels = new List<UserLanguageLevel>
         {
-            _fileNames.Add(file.Name);
+            new UserLanguageLevel { LanguageCompetence = "Grammar", LanguageLevel = "B2" },
+            new UserLanguageLevel { LanguageCompetence = "Listening", LanguageLevel = "C1" },
+            new UserLanguageLevel { LanguageCompetence = "Speaking", LanguageLevel = "B1" },
+            new UserLanguageLevel { LanguageCompetence = "Writing", LanguageLevel = "C2" }
         }
-    }
-
-    private void Upload()
-    {
-        // Upload the files here
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        Snackbar.Add("Files uploaded successfully!", Severity.Success);
-    }
-
-    private void SetDragClass()
-        => _dragClass = $"{DefaultDragClass} mud-border-primary";
-
-    private void ClearDragClass()
-        => _dragClass = DefaultDragClass;
-
-
-    // WRITE YOUR ESSAY
-    string sampleText = "";
-    int wordCount => string.IsNullOrWhiteSpace(sampleText) ? 0 : sampleText.Split(' ').Length;
-    bool isButtonDisabled => wordCount < 3;
-
-    async Task SendWrittenEssay(string text)
-    {
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        Snackbar.Add("Essay submitted successfully!", Severity.Success);
-    }
+    };
 }
