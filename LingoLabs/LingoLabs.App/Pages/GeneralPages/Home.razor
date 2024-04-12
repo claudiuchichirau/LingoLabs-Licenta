@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using MudBlazor
+@inject NavigationManager NavigationManager
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 
@@ -86,7 +87,7 @@
 
         </div>
         <div class="col-md-6 d-flex justify-content-center align-items-center">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Să începem!</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToLessonDashboard" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Să începem!</MudButton>
         </div>
     </div>
 </div>
@@ -357,5 +358,10 @@
         public int Lesson { get; set; }
         public int Levels { get; set; }
         public int Students { get; set; }
+    }
+
+    void NavigateToLessonDashboard()
+    {
+        NavigationManager.NavigateTo("/lesson-dashboard");
     }
 }

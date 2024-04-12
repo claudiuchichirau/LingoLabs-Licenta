@@ -1,0 +1,114 @@
+﻿@page "/abous-us"
+@using LingoLabs.App.ViewModel.MudBlazor
+@using MudBlazor
+@using MatBlazor
+@using System.Net.Http.Json
+@using ViewModel.MudBlazor
+@inject NavigationManager NavigationManager
+@inject HttpClient httpClient
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<div class="landpage-pic d-flex justify-content-around bg-secondary mb-3 align-items-center" style="margin-top:-10px;">
+    <img src="/images/homepage/jos.png" style="position: absolute; top: 143px; right: 0; max-width: 215px;">
+    <img src="/images/homepage/sus.png" style="position: absolute; top: 0; right: 0; max-width: 300px;">
+    <div class="container">
+        <h1 style="font-size: 40px; color: white;">Despre LingoLabs</h1>
+        <p class="poppins-regular" style="font-size: 18px; margin-top:5px; color: white;">
+            <span style="color: #FC6F05;">LingoLabs</span> este o aplicație revoluționară pentru învățarea vocabularului<br> 
+            în diverse limbi și îmbunătățirea cunoștințelor lingvistice, destinată vorbitorilor<br> 
+            de toate nivelurile. Facilitează accesul la învățarea limbilor pentru oameni din întreaga lume.
+        </p>
+    </div>
+</div>
+
+<div class="container"
+    <div class="text-left">
+        <p style="color: black; font-size: 17px; margin-top: 30px;" class="poppins-semi-bold">
+            LingoLabs este aici pentru a te sprijini în explorarea și stăpânirea tuturor limbilor străine. Fie că înveți pentru un nou loc de muncă, o nouă pasiune sau doar ca un hobby, drumul tău spre fluență debutează aici.
+        </p>
+    </div>
+
+    <div class="text-left" style="margin-top: 40px;">
+        <p style="color: black; font-size: 24px;" class="poppins-semi-bold">Cum funcționează <span style="color: #FC6F05;">LingoLabs</span>?</p>
+    </div>
+
+    <div class="text-left">
+        <p style="color: black; font-size: 17px; margin-top: 2px; margin-bottom: 100px;" class="poppins-semi-bold">
+            &ensp;&ensp;- Studiu autonom<br />
+            &ensp;&ensp;- Urmează-ți Planul de Studiu personalizat și lasă-te ghidat de lecțiile noastre atent elaborate. Utilizează cu încredere secțiunea noastră de Revizuire, dotată cu tehnologie de ultimă oră, care îți indică ce și când să revizuiești.
+        </p>
+    </div>
+
+    @* IMAGES SLIDES *@
+    <div class="container">
+        <div class="row align-items-center" style="margin-bottom: 100px;">
+            <div class="col-md-6 custom-container">
+                <div class="border-container">
+                    <h2 class="p-2 text-center" style="color: #2563EB;">Test precis cu rezultate rapide</h2>
+                    <p class="text-center" style="font-size: 16px; font-weight: bold;">LingoLabs este o platformă online rapidă și convenabil, creată pentru a ajuta instituțiile de învățământ superior și angajatorii să evalueze nivelul de engleză al indivizilor și grupurilor de candidați.</p>
+                </div>
+            </div>
+            <div class="col-md-6 custom-image justify-content-center">
+                <img src="images/about-us/despre-noi-1.png" style="max-height: 275px;">
+            </div>
+        </div>
+
+        <div class="row align-items-center" style="margin-bottom: 100px;">
+            <div class="col-md-6 custom-image justify-content-center">
+                <img src="images/about-us/despre-noi-2.png" style="max-height: 275px;">
+            </div>
+            <div class="col-md-6 custom-container">
+                <div class="border-container">
+                    <h2 class="p-2 text-center" style="color: #2563EB;">Drumul LingoLabs spre învățarea unei noi limbi străine, pas cu pas</h2>
+                    <p class="text-center" style="font-size: 16px; font-weight: bold;">Eficientă și satisfăcătoare, abordarea noastră unică încurajează progresul continuu, oferind o cale clară pentru îmbunătățirea abilităților lingvistice. Avem calificări pentru școli, educație generală și superioară, dar și pentru mediul de afaceri.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row align-items-center mt-8">
+            <div class="col-md-6 custom-container">
+                <div class="border-container">
+                    <h2 class="p-2 text-center" style="color: #2563EB;">Împreună îi inspirăm pe cursanți să meargă mai departe</h2>
+                    <p class="text-center" style="font-size: 16px; font-weight: bold;">Gama noastră de resurse didactice gratuite, planuri de lecții și activități este concepută pentru a te ajuta să-ți pregătești studenții pentru examenele și testele noastre. De asemenea, oferim o varietate de calificări didactice, cursuri și suport pentru a te ajuta să te dezvolți ca profesor.</p>
+                </div>
+            </div>
+            <div class="col-md-6 custom-image justify-content-center">
+                <img src="images/about-us/despre-noi-3.png" style="max-height: 275px;">
+            </div>
+        </div>
+
+        <div class="text-left" style="margin-top: 80px;">
+            <p style="color: black; font-size: 24px;" class="poppins-semi-bold">Motivează-i pe alții:</p>
+        </div>
+
+        <div class="text-left">
+            <p style="color: black; font-size: 17px; margin-top: 2px;" class="poppins-semi-bold">
+                Interacțiunea cu membrii Comunității Speak Up îți permite să înveți împreună prin împărtășirea cunoștințelor despre limba ta maternă. Corectează lucrările altora și, la rândul tău, primește recenzii pentru exercițiile tale. Creează legături autentice prin limbaj.
+            </p>
+        </div>
+
+        <div style="display: flex; justify-content: center;">
+            <MudButton Variant="Variant.Filled" OnClick="NavigateToCourses" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; margin-top: 15px; margin-bottom: 50px;">Începe să înveți!</MudButton>
+        </div>
+    </div>
+
+</div>
+
+<style>
+    .landpage-pic {
+        background: linear-gradient(to right, #2563EB, #36A7FC);
+        min-height: 300px;
+    }
+
+    .poppins-regular {
+        font-family: 'Poppins-Regular', sans-serif;
+    }
+</style>
+
+@code {
+    void NavigateToCourses()
+    {
+        NavigationManager.NavigateTo("/courses");
+    }
+}

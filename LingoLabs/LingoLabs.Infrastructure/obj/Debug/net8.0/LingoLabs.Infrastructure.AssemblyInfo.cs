@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LingoLabs.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+75ff21b6304fb18dfc0158a7c8b727522d89250c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f9760dc02968383fb98cf3ae5172f574794b3525")]
 [assembly: System.Reflection.AssemblyProductAttribute("LingoLabs.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LingoLabs.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

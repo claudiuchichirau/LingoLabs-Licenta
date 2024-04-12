@@ -17,12 +17,11 @@
             </div>
 
             <div style="flex: 1; display: flex; justify-content: center; align-items: center;">
-                <a href="/" class="nav-link nav-link-custom poppins-semi-bold">Acasă</a>
-                <a href="/lesson-dashboard" class="nav-link nav-link-custom poppins-semi-bold">Lessond Dashboard</a>
+                <a href="/" class="nav-link nav-link-custom poppins-semi-bold text-center">Acasă</a>
                 <a href="/dashboard" class="nav-link nav-link-custom poppins-semi-bold">Dashboard</a>
-                <a href="/" class="nav-link nav-link-custom poppins-semi-bold">Cursuri</a>
-                <a href="/" class="nav-link nav-link-custom poppins-semi-bold">Despre Noi</a>
-                <a href="/" class="nav-link nav-link-custom poppins-semi-bold">Contact</a>
+                <a href="/courses" class="nav-link nav-link-custom poppins-semi-bold text-center">Cursuri</a>
+                <a href="/abous-us" class="nav-link nav-link-custom poppins-semi-bold text-center">Despre Noi</a>
+                <a href="/contact-us" class="nav-link nav-link-custom poppins-semi-bold text-center">Contact</a>
             </div>
 
             <CascadingAuthenticationState>
@@ -68,8 +67,12 @@
         padding: 8px;
     }
 
-        .nav-link-custom:hover, .button-custom:hover {
+        .nav-link-custom:focus {
             color: #2563EB;
+        }
+
+        .nav-link-custom:hover, .button-custom:hover {
+            color: #02497E;
         }
 
     .custom-button {

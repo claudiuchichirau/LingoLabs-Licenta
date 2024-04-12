@@ -8,9 +8,15 @@
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject IJSRuntime JSRuntime
 
 
 <div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top: -10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
+    <img src="/images/homepage/line.png" style="position: absolute; top: 0; left: -45px; max-width: 150px;">
+    <img src="/images/homepage/line.png" style="position: absolute; top: 0; left: -30px; max-width: 150px;">
+    <img src="/images/homepage/line.png" style="position: absolute; top: 0; left: -15px; max-width: 150px;">
+    <img src="/images/homepage/jos.png" style="position: absolute; bottom: 0; right: 0; max-width: 150px;">
+    <img src="/images/homepage/sus.png" style="position: absolute; top: 0; right: 0; max-width: 200px;">
 </div>
 
 @* GET BY ID INFORMATIONS *@
@@ -406,9 +412,10 @@
         NavigationManager.NavigateTo("/chapter-dashboard");
     }
 
-    private void NavigateToLesson(Guid lessonId)
+    private async Task NavigateToLesson(Guid lessonId)
     {
-        NavigationManager.NavigateTo($"/lesson-dashboard");
+        NavigationManager.NavigateTo("/lesson-dashboard");
+        await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
         // NavigationManager.NavigateTo($"/lesson-dashboard/{lessonId}");
     }
 }

@@ -1,0 +1,78 @@
+﻿@page "/contact-us"
+@using LingoLabs.App.ViewModel.MudBlazor
+@using MudBlazor
+@using MatBlazor
+@using System.Net.Http.Json
+@using ViewModel.MudBlazor
+@inject NavigationManager NavigationManager
+@inject HttpClient httpClient
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<div class="landpage-pic d-flex justify-content-around bg-secondary mb-3 align-items-center" style="margin-top:-10px;">
+    <img src="/images/homepage/jos.png" style="position: absolute; top: 143px; right: 0; max-width: 215px;">
+    <img src="/images/homepage/sus.png" style="position: absolute; top: 0; right: 0; max-width: 300px;">
+    <div class="container text-center">
+        <h1 style="font-size: 40px; color: white;">Contactați-ne!</h1>
+        <p class="poppins-regular" style="font-size: 18px; margin-top:5px; color: white;">
+            Nu ezitați să ne contactați oricând. Vom răspunde cât mai curând posibil!
+        </p>
+    </div>
+</div>
+
+<div class="container p-3">
+    <div class="row justify-content-center">
+
+        <div class="col-md-4">
+            <div class="card m-3" style="width: 300px; height: 250px;">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+                    <MudIcon Icon="@Icons.Material.Filled.PhonelinkRing" Style="font-size: 85px; color: #2563EB; margin-top: 10px;" />
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title text-center">Sunați-ne</h4>
+                    <h6 class="card-title text-center"><a href="tel:+40123456789">+40723-456-789</a></h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card m-3" style="width: 300px; height: 250px;">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+                    <MudIcon Icon="@Icons.Material.Filled.PinDrop" Style="font-size: 85px; color: #2563EB; margin-top: 10px;" />
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title text-center">Biroul nostru principal</h4>
+                    <h6 class="card-title text-center"><a href="https://www.google.com/maps/search/?api=1&query=Strada+General+Henri+Mathias+Berthelot+16%2C+Iași+700483">General Henri Mathias Berthelot 16 Street 700483, Iași, Romania</a></h6>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card m-3" style="width: 300px; height: 250px;">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+                    <MudIcon Icon="@Icons.Material.Filled.Email" Class="text-center" Style="font-size: 85px; color: #2563EB; margin-top: 10px;" />
+                </div>
+                <div class="card-body">
+                    <h4 class="card-title text-center">Trimiteți un e-mail</h4>
+                    <h6 class="card-title text-center"><a href="mailto:lms@office.com?subject=Hello&body=Message">office@lingolabs.com</a></h6>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    .landpage-pic {
+        background: linear-gradient(to right, #2563EB, #36A7FC);
+        min-height: 300px;
+    }
+
+    .poppins-regular {
+        font-family: 'Poppins-Regular', sans-serif;
+    }
+</style>
+
+@code {
+
+}
