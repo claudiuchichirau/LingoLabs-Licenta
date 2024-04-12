@@ -6,9 +6,9 @@ namespace LingoLabs.Domain.Entities.Languages
     {
         public Guid QuestionId { get; protected set; }
         public string QuestionRequirement { get; protected set; }
-        public LearningType QuestionLearningType { get; protected set; }
+        public QuestionType QuestionType { get; protected set; }
         public List<Choice>? QuestionChoices { get; protected set; } = [];
-        public byte[]? QuestionImageData { get; private set; }
+        public string? QuestionImageData { get; private set; } = string.Empty;
         public string? QuestionVideoLink { get; private set; } = string.Empty;
         public int? QuestionPriorityNumber { get; private set; }
         public Guid LessonId { get; protected set; }
@@ -16,45 +16,41 @@ namespace LingoLabs.Domain.Entities.Languages
         public Guid? LanguageId { get; protected set; }
         public Language? Language { get; set; }
 
-        protected Question(string questionRequirement, LearningType questionLearningType, Guid lessonId)
+        protected Question(string questionRequirement, QuestionType questionType, Guid lessonId)
         {
             QuestionId = Guid.NewGuid();
             QuestionRequirement = questionRequirement;
-            QuestionLearningType = questionLearningType;
+            QuestionType = questionType;
             LessonId = lessonId;
         }
 
-        public static Result<Question> Create(string questionRequirement, LearningType questionLearningType, Guid lessonId)
+        public static Result<Question> Create(string questionRequirement, QuestionType questionType, Guid lessonId)
         {
             if (string.IsNullOrWhiteSpace(questionRequirement))
                 return Result<Question>.Failure("QuestionRequirement is required");
 
-            if (!IsValidLearningType(questionLearningType))
+            if (!IsValidQuestionType(questionType))
                 return Result<Question>.Failure("Invalid LearningType");
 
             if (lessonId == default)
                 return Result<Question>.Failure("LessonId is required");
 
-            return Result<Question>.Success(new Question(questionRequirement, questionLearningType, lessonId));
+            return Result<Question>.Success(new Question(questionRequirement, questionType, lessonId));
         }
 
-        public static bool IsValidLearningType(LearningType learningType)
+        public static bool IsValidQuestionType(QuestionType questionType)
         {
-            return learningType == LearningType.Auditory ||
-                   learningType == LearningType.Visual ||
-                   learningType == LearningType.Kinesthetic ||
-                   learningType == LearningType.Logical;
+            return questionType == QuestionType.TrueFalse ||
+                   questionType == QuestionType.MissingWord ||
+                   questionType == QuestionType.MultipleChoice;
         }
 
-        public void UpdateQuestion(string questionRequirement, LearningType questionLearningType, byte[] imageData, string videoLink, Guid languageId, int? questionPriorityNumber)
+        public void UpdateQuestion(string questionRequirement, string imageData, string videoLink, Guid languageId, int? questionPriorityNumber)
         {
             if (!string.IsNullOrWhiteSpace(questionRequirement))
                 QuestionRequirement = questionRequirement;
 
-            if (IsValidLearningType(questionLearningType))
-                QuestionLearningType = questionLearningType;
-
-            if (imageData != null && imageData.Length > 0)
+            if (!string.IsNullOrWhiteSpace(imageData))
                 QuestionImageData = imageData;
 
             if (!string.IsNullOrWhiteSpace(videoLink))
@@ -81,15 +77,15 @@ namespace LingoLabs.Domain.Entities.Languages
             QuestionRequirement = questionRequirement;
         }
 
-        public void UpdateQuestionLearningType(LearningType questionLearningType)
+        public void UpdateQuestionType(QuestionType questionType)
         {
-            if (IsValidLearningType(questionLearningType))
-                QuestionLearningType = questionLearningType;
+            if (IsValidQuestionType(questionType))
+                QuestionType = questionType;
         }
 
-        public void UpdateQuestionImageData(byte[] imageData)
+        public void UpdateQuestionImageData(string imageData)
         {
-            if (imageData != null && imageData.Length > 0)
+            if (!string.IsNullOrWhiteSpace(imageData))
                 QuestionImageData = imageData;
         }
 

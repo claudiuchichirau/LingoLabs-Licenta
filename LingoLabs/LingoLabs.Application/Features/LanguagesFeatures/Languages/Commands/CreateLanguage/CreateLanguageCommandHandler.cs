@@ -28,7 +28,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Cr
                 };
             }
 
-            var language = Language.Create(request.LanguageName);
+            var language = Language.Create(request.LanguageName, request.LanguageFlag);
             if (language.IsSuccess)
             {
                 await repository.AddAsync(language.Value);

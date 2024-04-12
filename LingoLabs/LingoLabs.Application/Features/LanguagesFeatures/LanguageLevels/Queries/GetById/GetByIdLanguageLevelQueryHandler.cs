@@ -38,7 +38,20 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
                     .Select(chapter => new Chapters.Queries.ChapterDto
                     {
                         ChapterId = chapter.ChapterId,
+                        ChapterPriorityNumber = chapter.ChapterPriorityNumber,
                         ChapterName = chapter.ChapterName,
+                        ChapterDescription = chapter.ChapterDescription,
+                        ChapterVideoLink = chapter.ChapterVideoLink,
+                        ChapterImageData = chapter.ChapterImageData,
+                        ChapterLessons = chapter.ChapterLessons.Select(lesson => new Lessons.Queries.LessonDto
+                        {
+                            LessonId = lesson.LessonId,
+                            LessonPriorityNumber = lesson.LessonPriorityNumber,
+                            LessonTitle = lesson.LessonTitle,
+                            LessonDescription = lesson.LessonDescription,
+                            LessonContent = lesson.LessonContent,
+                            LanguageCompetenceId = lesson.LanguageCompetenceId,
+                        }).ToList(),
                         LanguageLevelId = chapter.LanguageLevelId
                     }).ToList();
 
@@ -66,12 +79,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
                 return new GetSingleLanguageLevelDto
                 {
                     LanguageLevelId = languageLevel.Value.LanguageLevelId,
+                    LanguageLevelPriorityNumber = languageLevel.Value.PriorityNumber,
                     LanguageLevelName = languageLevel.Value.LanguageLevelName,
                     LanguageLevelAlias = languageLevel.Value.LanguageLevelAlias,
                     LanguageId = languageLevel.Value.LanguageId,
                     LanguageLevelDescription = languageLevel.Value.LanguageLevelDescription,
                     LanguageLevelVideoLink = languageLevel.Value.LanguageLevelVideoLink,
-                    PriorityNumber = languageLevel.Value.PriorityNumber,
 
                     LanguageChapters = languageChapterSorted,
 

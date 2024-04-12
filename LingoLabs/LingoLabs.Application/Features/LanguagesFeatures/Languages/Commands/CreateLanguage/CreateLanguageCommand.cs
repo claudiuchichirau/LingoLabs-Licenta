@@ -5,5 +5,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Cr
     public class CreateLanguageCommand : IRequest<CreateLanguageCommandResponse>
     {
         public string LanguageName { get; set; } = default!;
+        public string LanguageFlag { get; set; } = default!;
     }
 }

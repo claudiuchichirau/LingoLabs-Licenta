@@ -8,51 +8,26 @@ namespace LingoLabs.Domain.Entities.Languages
         public string LanguageName { get; private set; }
         public string? LanguageDescription { get; private set; } = string.Empty;
         public string? LanguageVideoLink { get; private set; }= string.Empty;
-        public byte[]? LanguageFlag { get; private set; } = [];
+        public string LanguageFlag { get; private set; }
         public List<LanguageLevel>? LanguageLevels { get; private set; } = new();
         public List<LanguageCompetence>? LanguageCompetences { get; private set; } = new();
         public List<Question>? PlacementTest { get; private set; } = new();
         public List<EntityTag>? LanguageTags { get; private set; } = new();
 
-        private Language(string languageName)
+        private Language(string languageName, string languageFlag)
         {
             LanguageId = Guid.NewGuid();
             LanguageName = languageName;
+            LanguageFlag = languageFlag;
         }
 
-        public static Result<Language> Create(string languageName)
+        public static Result<Language> Create(string languageName, string languageFlag)
         {
             if (string.IsNullOrWhiteSpace(languageName))
                 return Result<Language>.Failure("LanguageName is required");
-            return Result<Language>.Success(new Language(languageName));
-        }
-
-        public void AttachDescription(string languageDescription)
-        {
-            if (!string.IsNullOrWhiteSpace(languageDescription))
-                LanguageDescription = languageDescription;
-        }
-
-        public void AttachLanguageLevel(LanguageLevel languageLevel)
-        {
-            if (languageLevel != null)
-            {
-                if (LanguageLevels == null)
-                    LanguageLevels = new List<LanguageLevel> { languageLevel };
-                else
-                    LanguageLevels.Add(languageLevel);
-            }
-        }
-
-        public void AttachLanguageCompetence(LanguageCompetence languageCompetence)
-        {
-            if (languageCompetence != null)
-            {
-                if (LanguageCompetences == null)
-                    LanguageCompetences = new List<LanguageCompetence> { languageCompetence };
-                else
-                    LanguageCompetences.Add(languageCompetence);
-            }
+            if (string.IsNullOrWhiteSpace(languageFlag))
+                return Result<Language>.Failure("LanguageFlag is required");
+            return Result<Language>.Success(new Language(languageName, languageFlag));
         }
 
         public void UpdatePlacementTest(Question question)
@@ -66,24 +41,7 @@ namespace LingoLabs.Domain.Entities.Languages
             }
         }
 
-        public void AttachKeyWord(EntityTag tag)
-        {
-            if (tag != null)
-            {
-                if (LanguageTags == null)
-                    LanguageTags = new List<EntityTag> { tag };
-                else
-                    LanguageTags.Add(tag);
-            }
-        }
-
-        public void AttachVideoLink(string languageVideoLink)
-        {
-            if (!string.IsNullOrWhiteSpace(languageVideoLink))
-                LanguageVideoLink = languageVideoLink;
-        }
-
-        public void UpdateLanguage(string languageName, string languageDescription, string languageVideoLink, byte[] languageFlag)
+        public void UpdateLanguage(string languageName, string languageDescription, string languageVideoLink, string languageFlag)
         {
             if (!string.IsNullOrWhiteSpace(languageName))
                 LanguageName = languageName;
@@ -91,7 +49,7 @@ namespace LingoLabs.Domain.Entities.Languages
                 LanguageDescription = languageDescription;
             if (!string.IsNullOrWhiteSpace(languageVideoLink))
                 LanguageVideoLink = languageVideoLink;
-            if (languageFlag.Length > 0)
+            if (!string.IsNullOrWhiteSpace(languageFlag))
                 LanguageFlag = languageFlag;
         }
     }

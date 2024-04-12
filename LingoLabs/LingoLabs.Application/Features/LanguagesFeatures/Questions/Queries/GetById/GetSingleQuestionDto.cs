@@ -5,9 +5,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.Get
     public class GetSingleQuestionDto: QuestionDto
     {
         public List<ChoiceDto> QuestionChoices { get; set; } = [];
-        public byte[] QuestionImageData { get; set; } = [];
+        public string QuestionImageData { get; set; } = string.Empty;
         public string QuestionVideoLink { get; set; } = string.Empty;
-        public int? QuestionPriorityNumber { get; set; }
         public Guid? LanguageId { get; set; }
     }
 }

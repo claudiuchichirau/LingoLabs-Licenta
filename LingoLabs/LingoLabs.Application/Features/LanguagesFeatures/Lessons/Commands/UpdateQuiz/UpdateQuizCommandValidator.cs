@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
 using LingoLabs.Domain.Entities;
+using LingoLabs.Domain.Entities.Languages;
+using System.Net;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.UpdateQuiz
 {
@@ -22,12 +24,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                         if (string.IsNullOrEmpty(question.QuestionRequirement) || question.QuestionRequirement.Length >= 500)
                             return false;
 
-                        if (question.QuestionLearningType != LearningType.Auditory && question.QuestionLearningType != LearningType.Visual && question.QuestionLearningType != LearningType.Kinesthetic && question.QuestionLearningType != LearningType.Logical)
+                        if (question.QuestionType != QuestionType.MultipleChoice && question.QuestionType != QuestionType.TrueFalse && question.QuestionType != QuestionType.MissingWord)
                             return false;
 
                         if(question.QuestionImageData != null && question.QuestionImageData.Length > 0)
                         {
-                            return BeJpgOrPng(question.QuestionImageData);
+                            return BeImageValidUrl(question.QuestionImageData);
                         }
 
                         if (!string.IsNullOrEmpty(question.QuestionVideoLink))
@@ -52,14 +54,20 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 }).WithMessage("Maximum of 15 questions and 1 correct answer per question is allowed.");
         }
 
-        private bool BeJpgOrPng(byte[] imageData)
+        private static bool BeImageValidUrl(string url)
         {
-            var jpgHeader = new byte[] { 0xFF, 0xD8 };
-            var pngHeader = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+            Uri uriResult;
+            bool result = Uri.TryCreate(url, UriKind.Absolute, out uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 
-            if (imageData.Take(2).SequenceEqual(jpgHeader) || imageData.Take(4).SequenceEqual(pngHeader))
+            if (result)
             {
-                return true;
+                var request = WebRequest.Create(uriResult) as HttpWebRequest;
+                request.Method = "HEAD";
+                using (var response = request.GetResponse() as HttpWebResponse)
+                {
+                    return response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase);
+                }
             }
 
             return false;

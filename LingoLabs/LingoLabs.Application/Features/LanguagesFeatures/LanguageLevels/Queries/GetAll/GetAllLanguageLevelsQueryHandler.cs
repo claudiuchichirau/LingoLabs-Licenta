@@ -20,8 +20,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
                 response.LanguageLevels = result.Value.Select(languageLevel => new LanguageLevelDto
                 {
                     LanguageLevelId = languageLevel.LanguageLevelId,
+                    LanguageLevelPriorityNumber = languageLevel.PriorityNumber,
                     LanguageLevelName = languageLevel.LanguageLevelName,
                     LanguageLevelAlias = languageLevel.LanguageLevelAlias,
+                    LanguageLevelDescription = languageLevel.LanguageLevelDescription,
+                    LanguageLevelVideoLink = languageLevel.LanguageLevelVideoLink,
                     LanguageId = languageLevel.LanguageId
                 }).ToList();
             }

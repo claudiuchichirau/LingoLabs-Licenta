@@ -11,7 +11,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public string? LessonContent { get; protected set; } = string.Empty;    
         public int? LessonPriorityNumber { get; protected set; }
         public string? LessonVideoLink { get; protected set; } = string.Empty;
-        public byte[]? LessonImageData { get; protected set; }
+        public string? LessonImageData { get; protected set; } = string.Empty;
         public Guid LanguageCompetenceId { get; protected set; }
         public LanguageCompetence? LanguageCompetence { get; set; }
         public List<Question>? LessonQuestions { get; protected set; } = [];
@@ -49,61 +49,7 @@ namespace LingoLabs.Domain.Entities.Languages
                    languageCompetenceType == LanguageCompetenceType.Writing;
         }
 
-        public void AttachDescription(string lessonDescription)
-        {
-            if (!string.IsNullOrWhiteSpace(lessonDescription))
-                LessonDescription = lessonDescription;
-        }
-
-        public void AttachRequirement(string lessonRequirement)
-        {
-            if (!string.IsNullOrWhiteSpace(lessonRequirement))
-                LessonRequirement = lessonRequirement;
-        }
-
-        public void AttachContent(string lessonContent)
-        {
-            if (!string.IsNullOrWhiteSpace(lessonContent))
-                LessonContent = lessonContent;
-        }
-
-        public void AttachQuestion(Question question)
-        {
-            if (question != null)
-            {
-                if (LessonQuestions == null)
-                    LessonQuestions = new List<Question> { question };
-                else
-                    LessonQuestions.Add(question);
-            }
-        }
-
-        public void AttachImageData(byte[] imageData)
-        {
-            if (imageData != null && imageData.Length > 0)
-            {
-                LessonImageData = imageData;
-            }
-        }
-
-        public void AttachVideoLink(string videoLink)
-        {
-            if (!string.IsNullOrWhiteSpace(videoLink))
-                LessonVideoLink = videoLink;
-        }
-
-        public void AttachTag(EntityTag tag)
-        {
-            if (tag != null)
-            {
-                if (LessonTags == null)
-                    LessonTags = new List<EntityTag> { tag };
-                else
-                    LessonTags.Add(tag);
-            }
-        }
-
-        public void UpdateLesson(string lessonTitle, string lessonDescription, string lessonRequirement, string lessonContent, byte[] imageData, string videoLink, int? lessonPriorityNumber)
+        public void UpdateLesson(string lessonTitle, string lessonDescription, string lessonRequirement, string lessonContent, string imageData, string videoLink, int? lessonPriorityNumber)
         {
             if (!string.IsNullOrWhiteSpace(lessonTitle))
                 LessonTitle = lessonTitle;
@@ -113,7 +59,7 @@ namespace LingoLabs.Domain.Entities.Languages
                 LessonRequirement = lessonRequirement;
             if (!string.IsNullOrWhiteSpace(lessonContent))
                 LessonContent = lessonContent;
-            if (imageData != null && imageData.Length > 0)
+            if (!string.IsNullOrWhiteSpace(imageData))
                 LessonImageData = imageData;
             if (!string.IsNullOrWhiteSpace(videoLink))
                 LessonVideoLink = videoLink;

@@ -8,7 +8,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public string ChapterName { get; private set; }
         public string? ChapterDescription { get; private set; } = string.Empty;
         public int? ChapterPriorityNumber { get; private set; }
-        public byte[]? ChapterImageData { get; private set; }
+        public string? ChapterImageData { get; private set; } = string.Empty;
         public string? ChapterVideoLink { get; private set; } = string.Empty;
         public List<Lesson>? ChapterLessons { get; private set; } = [];
         public List<EntityTag>? ChapterTags { get; private set; } = [];
@@ -31,42 +31,13 @@ namespace LingoLabs.Domain.Entities.Languages
             return Result<Chapter>.Success(new Chapter(chapterName, languageLevelId));
         }
 
-        public void AttachDescription(string chapterDescription)
-        {
-            if (!string.IsNullOrWhiteSpace(chapterDescription))
-                ChapterDescription = chapterDescription;
-        }
-
-        public void AttachImageData(byte[] chapterImageData)
-        {
-            if (chapterImageData != null && chapterImageData.Length > 0)
-                ChapterImageData = chapterImageData;
-        }
-
-        public void AttachVideoLink(string chapterVideoLink)
-        {
-            if (!string.IsNullOrWhiteSpace(chapterVideoLink))
-                ChapterVideoLink = chapterVideoLink;
-        }
-
-        public void AttachTag(EntityTag entityTag)
-        {
-            if (entityTag != null)
-            {
-                if (ChapterTags == null)
-                    ChapterTags = new List<EntityTag> { entityTag };
-                else
-                    ChapterTags.Add(entityTag);
-            }
-        }
-
-        public void UpdateChapter(string chapterName, string chapterDescription, byte[] chapterImageData, string chapterVideoLink, int? chapterPrioriryNumber)
+        public void UpdateChapter(string chapterName, string chapterDescription, string chapterImageData, string chapterVideoLink, int? chapterPrioriryNumber)
         {
             if (!string.IsNullOrWhiteSpace(chapterName))
                 ChapterName = chapterName;
             if (!string.IsNullOrWhiteSpace(chapterDescription))
                 ChapterDescription = chapterDescription;
-            if (chapterImageData != null && chapterImageData.Length > 0)
+            if (!string.IsNullOrWhiteSpace(chapterImageData))
                 ChapterImageData = chapterImageData;
             if (!string.IsNullOrWhiteSpace(chapterVideoLink))
                 ChapterVideoLink = chapterVideoLink;

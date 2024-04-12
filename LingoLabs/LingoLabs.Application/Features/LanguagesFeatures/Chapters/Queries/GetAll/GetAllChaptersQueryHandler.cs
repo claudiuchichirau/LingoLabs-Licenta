@@ -20,7 +20,22 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetA
                 response.Chapters = result.Value.Select(c => new ChapterDto
                 {
                     ChapterId = c.ChapterId,
+                    ChapterPriorityNumber = c.ChapterPriorityNumber,
                     ChapterName = c.ChapterName,
+                    ChapterDescription = c.ChapterDescription,
+                    ChapterVideoLink = c.ChapterVideoLink,
+                    ChapterImageData = c.ChapterImageData,
+                    ChapterLessons = c.ChapterLessons.Select(lesson => new Lessons.Queries.LessonDto
+                    {
+                        LessonId = lesson.LessonId,
+                        LessonPriorityNumber = lesson.LessonPriorityNumber,
+                        LessonTitle = lesson.LessonTitle,
+                        LessonDescription = lesson.LessonDescription,
+                        LessonContent = lesson.LessonContent,
+                        ChapterId = lesson.ChapterId,
+                        LanguageCompetenceId = lesson.LanguageCompetenceId
+                    }).ToList(),
+
                     LanguageLevelId = c.LanguageLevelId
                 }).ToList();
             }

@@ -1,4 +1,5 @@
-﻿using LingoLabs.Application.Persistence.Enrollments;
+﻿using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Queries;
+using LingoLabs.Application.Persistence.Enrollments;
 using MediatR;
 
 namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceResults.Queries.GetById
@@ -21,8 +22,16 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
                 {
                     LanguageCompetenceResultId = languageCompetenceResult.Value.LanguageCompetenceResultId,
                     LanguageCompetenceId = languageCompetenceResult.Value.LanguageCompetenceId,
-                    ChapterResultId = languageCompetenceResult.Value.ChapterResultId,
-                    IsCompleted = languageCompetenceResult.Value.IsCompleted
+                    EnrollmentId = languageCompetenceResult.Value.EnrollmentId,
+                    IsCompleted = languageCompetenceResult.Value.IsCompleted,
+                    LessonsResults = languageCompetenceResult.Value.LessonsResults.Select(x => new LessonResultDto
+                    {
+                        LessonResultId = x.LessonResultId,
+                        LessonId = x.LessonId,
+                        ChapterResultId = x.ChapterResultId,
+                        LanguageCompetenceResultId = x.LanguageCompetenceResultId,
+                        IsCompleted = x.IsCompleted,
+                    }).ToList()
                 };
             }
 

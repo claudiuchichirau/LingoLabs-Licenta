@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Domain.Entities;
+using LingoLabs.Domain.Entities.Languages;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.UpdateQuiz
 {
@@ -6,8 +7,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
     {
         public Guid QuestionId { get; set; }
         public string QuestionRequirement { get; set; } = string.Empty;
-        public LearningType QuestionLearningType { get; set; }
-        public byte[] QuestionImageData { get; set; } = [];
+        public QuestionType QuestionType { get; set; }
+        public string QuestionImageData { get; set; } = string.Empty;
         public string QuestionVideoLink { get; set; } = string.Empty;
         public List<UpdateChoiceForDto> Choices { get; set; } = [];
     }

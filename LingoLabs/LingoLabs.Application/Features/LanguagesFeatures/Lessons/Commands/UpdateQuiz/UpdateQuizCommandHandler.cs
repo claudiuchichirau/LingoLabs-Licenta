@@ -42,7 +42,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
             {
                 var question = await questionRepository.FindByIdAsync(questionDto.QuestionId);
                 question.Value.UpdateQuestionRequirement(questionDto.QuestionRequirement);
-                question.Value.UpdateQuestionLearningType(questionDto.QuestionLearningType);
+                question.Value.UpdateQuestionType(questionDto.QuestionType);
                 question.Value.UpdateQuestionImageData(questionDto.QuestionImageData);
                 question.Value.UpdateQuestionVideoLink(questionDto.QuestionVideoLink);
 
@@ -79,7 +79,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 {
                     QuestionId = question.Value.QuestionId,
                     QuestionRequirement = question.Value.QuestionRequirement,
-                    QuestionLearningType = question.Value.QuestionLearningType,
+                    QuestionType = question.Value.QuestionType,
                     QuestionImageData = question.Value.QuestionImageData,
                     QuestionVideoLink = question.Value.QuestionVideoLink,
                     Choices = question.Value.QuestionChoices.Select(choice => new UpdateChoiceForDto

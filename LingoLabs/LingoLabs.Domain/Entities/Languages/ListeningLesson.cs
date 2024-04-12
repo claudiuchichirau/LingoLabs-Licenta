@@ -48,15 +48,22 @@ namespace LingoLabs.Domain.Entities.Languages
             }
         }
 
-        public void UpdateListeningLanguage(string lessonTitle, string lessonDescription, string lessonRequirement, string lessonContent, byte[] imageData, string videoLink, string textScript, List<string> accents, int? lessonPriorityNumber)
+        public void UpdateListeningLanguage(string lessonTitle, string lessonDescription, string lessonRequirement, string lessonContent, string imageData, string videoLink, string textScript, List<string> accents, int? lessonPriorityNumber)
         {
-            LessonTitle = lessonTitle;
-            LessonDescription = lessonDescription;
-            LessonRequirement = lessonRequirement;
-            LessonContent = lessonContent;
-            LessonImageData = imageData;
-            LessonVideoLink = videoLink;
-            TextScript = textScript;
+            if (!string.IsNullOrWhiteSpace(lessonTitle))
+                LessonTitle = lessonTitle;
+            if (!string.IsNullOrWhiteSpace(lessonDescription))
+                LessonDescription = lessonDescription;
+            if (!string.IsNullOrWhiteSpace(lessonRequirement))
+                LessonRequirement = lessonRequirement;
+            if (!string.IsNullOrWhiteSpace(lessonContent))
+                LessonContent = lessonContent;
+            if (!string.IsNullOrWhiteSpace(imageData))
+                LessonImageData = imageData;
+            if (!string.IsNullOrWhiteSpace(videoLink))
+                LessonVideoLink = videoLink;
+            if (!string.IsNullOrWhiteSpace(textScript))
+                TextScript = textScript;
             if (accents != null && accents.Count > 0)
                 Accents = accents;
             LessonPriorityNumber = lessonPriorityNumber;

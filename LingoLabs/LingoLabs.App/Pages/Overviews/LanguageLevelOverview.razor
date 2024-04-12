@@ -157,11 +157,11 @@
             {
                 <col style="width:5%;" />
             }
-            <col style="width:10%;" />
-            <col style="width:30%;" /> <!-- Descriere -->
-            <col style="width:7%;" /> <!-- Link Video -->
-            <col style="width:8%;" /> <!-- Link Imagine -->
             <col style="width:5%;" />
+            <col style="width:15%;" />
+            <col style="width:30%;" /> <!-- Descriere -->
+            <col style="width:20%;" /> <!-- Link Video -->
+            <col style="width:20%;" /> <!-- Link Imagine -->
             @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
             {
                 <col style="width:5%;" />
@@ -170,24 +170,27 @@
 
 
         <HeaderContent>
+            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ChapterElement, object>(x=>x.ChapterPriorityNumber)">Nr. Crt.</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ChapterElement, object>(x=>x.ChapterName)">Nume</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ChapterElement, object>(x=>x.ChapterDescription)">Descriere</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;">Link Video</MudTh>
             <MudTh Style="text-align: center;">Link Imagine</MudTh>
-            <MudTh Style="text-align: center;">Nr. Crt.</MudTh>
             <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
+            <MudTd DataLabel="Nr. Crt.">@context.ChapterPriorityNumber</MudTd>
             <MudTd DataLabel="Nume">@context.ChapterName</MudTd>
             <MudTd DataLabel="Descriere" Class="descriere">@context.ChapterDescription</MudTd>
             <MudTd DataLabel="Link Video" Class="video-data">@context.ChapterVideoData</MudTd>
             <MudTd DataLabel="Link Imagine" Class="image-data">@context.ChapterImageData</MudTd>
-            <MudTd DataLabel="Nr. Crt.">@context.ChapterPriorityNumber</MudTd>
             <MudTd DataLabel="Vizualizează">
                 <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToChapterOverview() )">Vezi mai multe</MudButton>
             </MudTd>
         </RowTemplate>
         <RowEditingTemplate>
+            <MudTd DataLabel="Nr. Crt.">
+                <MudTextField @bind-Value="@context.ChapterPriorityNumber" />
+            </MudTd>
             <MudTd DataLabel="Nume">
                 <MudTextField @bind-Value="@context.ChapterName" />
             </MudTd>
@@ -199,9 +202,6 @@
             </MudTd>
             <MudTd DataLabel="Link Imagine">
                 <MudTextField @bind-Value="@context.ChapterImageData" />
-            </MudTd>
-            <MudTd DataLabel="Nr. Crt.">
-                <MudTextField @bind-Value="@context.ChapterPriorityNumber" />
             </MudTd>
             <MudTd DataLabel="Vizualizează"></MudTd>
         </RowEditingTemplate>

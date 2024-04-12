@@ -1,4 +1,4 @@
-﻿using LingoLabs.Domain.Entities;
+﻿using LingoLabs.Domain.Entities.Languages;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries
 {
@@ -6,7 +6,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries
     {
         public Guid QuestionId { get; set; }
         public string QuestionRequirement { get; set; } = string.Empty;
-        public LearningType QuestionLearningType { get; set; }
+        public QuestionType QuestionType { get; set; }
         public Guid LessonId { get; set; }
         public int? QuestionPriorityNumber { get; set; }
     }

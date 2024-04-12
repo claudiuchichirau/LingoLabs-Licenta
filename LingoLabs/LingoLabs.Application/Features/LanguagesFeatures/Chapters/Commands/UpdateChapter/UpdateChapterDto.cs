@@ -5,7 +5,7 @@
         public string ChapterName { get; set; } = string.Empty;
         public string ChapterDescription { get; set; } = string.Empty;
         public int? ChapterPriorityNumber { get; set; }
-        public byte[] ChapterImageData { get; set; } = [];
+        public string ChapterImageData { get; set; } = string.Empty;
         public string ChapterVideoLink { get; set; } = string.Empty;
     }
 }

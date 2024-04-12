@@ -7,7 +7,7 @@
         public string LessonRequirement { get; set; } = string.Empty;
         public string LessonContent { get; set; } = string.Empty;
         public string LessonVideoLink { get; set; } = string.Empty;
-        public byte[] LessonImageData { get; set; } = [];
+        public string LessonImageData { get; set; } = string.Empty;
         public int? LessonPriorityNumber { get; set; }
         public string TextScript { get; set; } = string.Empty;
         public List<string> Accents { get; set; } = [];

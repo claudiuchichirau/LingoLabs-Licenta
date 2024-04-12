@@ -1,5 +1,4 @@
-﻿using LingoLabs.Domain.Entities;
-using LingoLabs.Domain.Entities.Languages;
+﻿using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.CreateQuestion
@@ -7,7 +6,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Cr
     public class CreateQuestionCommand: IRequest<CreateQuestionCommandResponse>
     {
         public string QuestionRequirement { get; set; } = default!;
-        public LearningType QuestionLearningType { get; set; }
+        public QuestionType QuestionType { get; set; }
         public Guid LessonId { get; set; }
     }
 }

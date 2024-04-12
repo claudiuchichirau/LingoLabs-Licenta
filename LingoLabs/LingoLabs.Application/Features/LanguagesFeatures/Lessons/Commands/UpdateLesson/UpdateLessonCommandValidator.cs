@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities.Languages;
+using System.Net;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.UpdateLesson
 {
@@ -23,7 +24,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
 
             RuleFor(p => p)
                 .MustAsync((p, cancellation) => ValidateLesson(p.UpdateLessonDto.LessonTitle, lessonRepository, p.LessonId))
-                .WithMessage("{PropertyName} must be unique.");
+                .WithMessage("LessonTitle must be unique.");
 
             RuleFor(p => p.UpdateLessonDto.LessonDescription)
                 .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.UpdateLessonDto.LessonDescription))
@@ -42,7 +43,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
 
             RuleFor(p => p.UpdateLessonDto.LessonImageData)
-                .Must(BeJpgOrPng).When(p => p.UpdateLessonDto.LessonImageData != null && p.UpdateLessonDto.LessonImageData.Length > 0)
+                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateLessonDto.LessonImageData))
                 .WithMessage("{PropertyName} should be a .jpg or .png image if it exists.");
 
             RuleFor(p => p)
@@ -52,14 +53,20 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
         }
 
 
-        private bool BeJpgOrPng(byte[] imageData)
+        private static bool BeImageValidUrl(string url)
         {
-            var jpgHeader = new byte[] { 0xFF, 0xD8 };
-            var pngHeader = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+            Uri uriResult;
+            bool result = Uri.TryCreate(url, UriKind.Absolute, out uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 
-            if (imageData.Take(2).SequenceEqual(jpgHeader) || imageData.Take(4).SequenceEqual(pngHeader))
+            if (result)
             {
-                return true;
+                var request = WebRequest.Create(uriResult) as HttpWebRequest;
+                request.Method = "HEAD";
+                using (var response = request.GetResponse() as HttpWebResponse)
+                {
+                    return response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase);
+                }
             }
 
             return false;

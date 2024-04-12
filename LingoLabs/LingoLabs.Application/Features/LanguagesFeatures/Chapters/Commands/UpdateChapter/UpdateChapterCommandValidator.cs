@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using LingoLabs.Application.Persistence.Languages;
+using System.Net;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.UpdateChapter
 {
@@ -37,8 +38,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Upd
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
 
             RuleFor(p => p.UpdateChapterDto.ChapterImageData)
-                .Must(BeJpgOrPng).When(p => p.UpdateChapterDto.ChapterImageData != null && p.UpdateChapterDto.ChapterImageData.Length > 0)
-                .WithMessage("{PropertyName} should be a .jpg or .png image if it exists.");
+                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateChapterDto.ChapterImageData))
+                .WithMessage("{PropertyName} should be a valid url if it exists.");
 
 
         }
@@ -57,14 +58,20 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Upd
             return true;
         }
 
-        private bool BeJpgOrPng(byte[] imageData)
+        private static bool BeImageValidUrl(string url)
         {
-            var jpgHeader = new byte[] { 0xFF, 0xD8 };
-            var pngHeader = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+            Uri uriResult;
+            bool result = Uri.TryCreate(url, UriKind.Absolute, out uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 
-            if (imageData.Take(2).SequenceEqual(jpgHeader) || imageData.Take(4).SequenceEqual(pngHeader))
+            if (result)
             {
-                return true;
+                var request = WebRequest.Create(uriResult) as HttpWebRequest;
+                request.Method = "HEAD";
+                using (var response = request.GetResponse() as HttpWebResponse)
+                {
+                    return response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase);
+                }
             }
 
             return false;

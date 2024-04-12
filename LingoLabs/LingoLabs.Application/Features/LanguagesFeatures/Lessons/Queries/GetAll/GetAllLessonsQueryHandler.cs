@@ -20,7 +20,10 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetAl
                 response.Lessons = result.Value.Select(lesson => new LessonDto
                 {
                     LessonId = lesson.LessonId,
+                    LessonPriorityNumber = lesson.LessonPriorityNumber,
                     LessonTitle = lesson.LessonTitle,
+                    LessonDescription = lesson.LessonDescription,
+                    LessonContent = lesson.LessonContent,
                     ChapterId = lesson.ChapterId,
                     LanguageCompetenceId = lesson.LanguageCompetenceId
                 }).ToList();

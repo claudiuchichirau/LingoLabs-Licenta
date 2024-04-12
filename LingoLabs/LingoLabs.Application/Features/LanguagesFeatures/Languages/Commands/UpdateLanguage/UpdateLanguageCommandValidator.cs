@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using LingoLabs.Application.Persistence.Languages;
+using System.Net;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.UpdateLanguage
 {
@@ -15,6 +16,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Up
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} must not be default.");
 
+            RuleFor(p => p.UpdateLanguageDto.LanguageFlag)
+                .NotEmpty().WithMessage("{PropertyName} is required.")
+                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateLanguageDto.LanguageFlag))
+                .WithMessage("{PropertyName} should be a valid url if it exists.");
+
             RuleFor(p => p.UpdateLanguageDto.LanguageName)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
@@ -22,7 +28,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Up
 
             RuleFor(p => p)
                 .MustAsync((p, cancellation) => ValidateLanguage(p.UpdateLanguageDto.LanguageName, languageRepository, p.LanguageId))
-                .WithMessage("{PropertyName} must be unique.");
+                .WithMessage("LanguageName must be unique.");
 
             RuleFor(p => p.UpdateLanguageDto.LanguageDescription)
                 .MaximumLength(1000).WithMessage("{PropertyName} must not exceed 1000 characters.");
@@ -45,6 +51,25 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Up
             return Uri.TryCreate(url, UriKind.Absolute, out var uriResult)
                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps)
                && (uriResult.Host == "www.youtube.com" || uriResult.Host == "youtu.be");
+        }
+
+        private static bool BeImageValidUrl(string url)
+        {
+            Uri uriResult;
+            bool result = Uri.TryCreate(url, UriKind.Absolute, out uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+            if (result)
+            {
+                var request = WebRequest.Create(uriResult) as HttpWebRequest;
+                request.Method = "HEAD";
+                using (var response = request.GetResponse() as HttpWebResponse)
+                {
+                    return response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase);
+                }
+            }
+
+            return false;
         }
     }
 }

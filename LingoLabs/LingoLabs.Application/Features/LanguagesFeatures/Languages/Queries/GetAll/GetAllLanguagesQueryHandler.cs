@@ -21,7 +21,10 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
                 response.Languages = result.Value.Select(language => new LanguageDto
                 {
                     LanguageId = language.LanguageId,
-                    LanguageName = language.LanguageName
+                    LanguageName = language.LanguageName,
+                    LanguageFlag = language.LanguageFlag,
+                    LanguageDescription = language.LanguageDescription,
+                    LanguageVideoLink = language.LanguageVideoLink
                 }).ToList();
             }
 

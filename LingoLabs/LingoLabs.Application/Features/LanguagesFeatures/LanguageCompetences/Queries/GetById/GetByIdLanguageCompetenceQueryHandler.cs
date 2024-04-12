@@ -78,6 +78,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                     {
                         LessonId = lesson.LessonId,
                         LessonTitle = lesson.LessonTitle,
+                        LessonDescription = lesson.LessonDescription,
+                        LessonContent = lesson.LessonContent,
                         ChapterId = lesson.ChapterId,
                         LanguageCompetenceId = lesson.LanguageCompetenceId
                     }).ToList()

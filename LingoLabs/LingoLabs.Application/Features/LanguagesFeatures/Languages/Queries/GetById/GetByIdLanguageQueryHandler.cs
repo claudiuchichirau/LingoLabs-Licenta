@@ -25,8 +25,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
                     .Select(languageLevel => new LanguageLevels.Queries.LanguageLevelDto
                     {
                         LanguageLevelId = languageLevel.LanguageLevelId,
+                        LanguageLevelPriorityNumber = languageLevel.PriorityNumber,
                         LanguageLevelName = languageLevel.LanguageLevelName,
                         LanguageLevelAlias = languageLevel.LanguageLevelAlias,
+                        LanguageLevelDescription = languageLevel.LanguageLevelDescription,
+                        LanguageLevelVideoLink = languageLevel.LanguageLevelVideoLink,
                         LanguageId = languageLevel.LanguageId
                     }).ToList();
 
@@ -35,8 +38,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
                     .Select(languageCompetence => new LanguageCompetences.Queries.LanguageCompetenceDto
                     {
                         LanguageCompetenceId = languageCompetence.LanguageCompetenceId,
+                        LanguageCompetencePriorityNumber = languageCompetence.LanguageCompetencePriorityNumber,
                         LanguageCompetenceName = languageCompetence.LanguageCompetenceName,
                         LanguageCompetenceType = languageCompetence.LanguageCompetenceType,
+                        LanguageCompetenceDescription = languageCompetence.LanguageCompetenceDescription,
+                        LanguageCompetenceVideoLink = languageCompetence.LanguageCompetenceVideoLink,
                         LanguageId = languageCompetence.LanguageId
                     }).ToList();
 
@@ -81,7 +87,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
                     {
                         QuestionId = question.QuestionId,
                         QuestionRequirement = question.QuestionRequirement,
-                        QuestionLearningType = question.QuestionLearningType,
+                        QuestionType = question.QuestionType,
                         LessonId = question.LessonId
                     }).ToList()
                 };

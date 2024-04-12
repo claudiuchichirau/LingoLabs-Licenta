@@ -7,7 +7,8 @@ namespace LingoLabs.Domain.Entities.Enrollments
     {
         public Guid EnrollmentId { get; private set; }
         public Guid UserId { get; private set; }
-        public List<LanguageLevelResult>? LanguageLevelResults { get; private set; } = new();
+        public List<LanguageLevelResult>? LanguageLevelResults { get; private set; } = [];
+        public List<LanguageCompetenceResult> LanguageCompetenceResults { get; private set; } = [];
         public List<UserLanguageLevel>? UserLanguageLevels { get; private set; }
         public Guid LanguageId { get; private set; }
         public Language? Language { get; set; }

@@ -32,7 +32,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Crea
 
             foreach (var q in request.QuestionList)
             {
-                var question = Question.Create(q.QuestionRequirement, q.QuestionLearningType, request.LessonId);
+                var question = Question.Create(q.QuestionRequirement, q.QuestionType, request.LessonId);
 
                 if(!question.IsSuccess)
                 {

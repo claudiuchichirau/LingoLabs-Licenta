@@ -4,5 +4,6 @@
     {
         public Guid LanguageId { get; set; }
         public string? LanguageName { get; set; }
+        public string? LanguageFlag { get; set; }
     }
 }

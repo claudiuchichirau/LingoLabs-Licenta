@@ -27,7 +27,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
                 };
             }
 
-            var languageCompetenceResult = LanguageCompetenceResult.Create(request.LanguageCompetenceId, request.ChapterResultId, request.IsCompleted);
+            var languageCompetenceResult = LanguageCompetenceResult.Create(request.LanguageCompetenceId, request.EnrollmentId, request.IsCompleted);
             if(languageCompetenceResult.IsSuccess)
             {
                 await repository.AddAsync(languageCompetenceResult.Value);
@@ -37,7 +37,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
                     {
                         LanguageCompetenceResultId = languageCompetenceResult.Value.LanguageCompetenceResultId,
                         LanguageCompetenceId = languageCompetenceResult.Value.LanguageCompetenceId,
-                        ChapterResultId = languageCompetenceResult.Value.ChapterResultId,
+                        EnrollmentId = languageCompetenceResult.Value.EnrollmentId,
                         IsCompleted = false
                     }
                 };

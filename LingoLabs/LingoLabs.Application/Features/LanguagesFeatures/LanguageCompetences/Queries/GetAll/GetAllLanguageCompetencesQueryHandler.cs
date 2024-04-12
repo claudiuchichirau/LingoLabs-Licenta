@@ -20,8 +20,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                 response.LanguageCompetences = result.Value.Select(x => new LanguageCompetenceDto
                 {
                     LanguageCompetenceId = x.LanguageCompetenceId,
+                    LanguageCompetencePriorityNumber = x.LanguageCompetencePriorityNumber,
                     LanguageCompetenceName = x.LanguageCompetenceName,
                     LanguageCompetenceType = x.LanguageCompetenceType,
+                    LanguageCompetenceDescription = x.LanguageCompetenceDescription,
+                    LanguageCompetenceVideoLink = x.LanguageCompetenceVideoLink,
                     LanguageId = x.LanguageId
                 }).ToList();
             }

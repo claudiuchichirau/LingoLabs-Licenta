@@ -43,7 +43,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
 
             question.Value.UpdateQuestion(
                 updateQuestioDto.QuestionRequirement,
-                updateQuestioDto.QuestionLearningType,
                 updateQuestioDto.QuestionImageData,
                 updateQuestioDto.QuestionVideoLink,
                 updateQuestioDto.LanguageId,
@@ -57,7 +56,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                 UpdateQuestion = new UpdateQuestionDto
                 {
                     QuestionRequirement = question.Value.QuestionRequirement,
-                    QuestionLearningType = question.Value.QuestionLearningType,
                     QuestionImageData = question.Value.QuestionImageData,
                     QuestionVideoLink = question.Value.QuestionVideoLink,
                     QuestionPriorityNumber = question.Value.QuestionPriorityNumber,

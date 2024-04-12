@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using LingoLabs.Application.Persistence.Languages;
+using System.Net;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.CreateLanguage
 {
@@ -17,7 +18,11 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Cr
 
             RuleFor(p => p)
                 .MustAsync((p, cancellation) => ValidateLanguage(p.LanguageName, languageRepository))
-                .WithMessage("{PropertyName} must be unique.");
+                .WithMessage("LanguageName must be unique.");
+
+            RuleFor(p => p.LanguageFlag)
+               .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.LanguageFlag))
+               .WithMessage("{PropertyName} should be a valid url.");
         }
 
         private async Task<bool> ValidateLanguage(string name, ILanguageRepository languageRepository)
@@ -25,6 +30,25 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Cr
             if(await languageRepository.ExistsLanguageAsync(name))
                 return false;
             return true;
+        }
+
+        private static bool BeImageValidUrl(string url)
+        {
+            Uri uriResult;
+            bool result = Uri.TryCreate(url, UriKind.Absolute, out uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+            if (result)
+            {
+                var request = WebRequest.Create(uriResult) as HttpWebRequest;
+                request.Method = "HEAD";
+                using (var response = request.GetResponse() as HttpWebResponse)
+                {
+                    return response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase);
+                }
+            }
+
+            return false;
         }
     }
 }

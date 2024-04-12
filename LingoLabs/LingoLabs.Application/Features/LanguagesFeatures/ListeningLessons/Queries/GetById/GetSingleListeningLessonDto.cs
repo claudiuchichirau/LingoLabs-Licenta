@@ -4,12 +4,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
 {
     public class GetSingleListeningLessonDto: ListeningLessonDto
     {
-        public string LessonDescription { get; set; } = string.Empty;
         public string LessonRequirement { get; set; } = string.Empty;
-        public string LessonContent { get; set; } = string.Empty;
         public string LessonVideoLink { get; set; } = string.Empty;
-        public byte[] LessonImageData { get; set; } = [];
-        public int? LessonPriorityNumber { get; set; }
+        public string LessonImageData { get; set; } = string.Empty;
         public List<QuestionDto> LessonQuestions { get; set; } = [];
     }
 }

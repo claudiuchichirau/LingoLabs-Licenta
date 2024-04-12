@@ -25,7 +25,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
                     {
                         QuestionId = question.QuestionId,
                         QuestionRequirement = question.QuestionRequirement,
-                        QuestionLearningType = question.QuestionLearningType,
+                        QuestionType = question.QuestionType,
                         LessonId = question.LessonId
                     }).ToList();
 

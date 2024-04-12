@@ -30,7 +30,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Cr
 
             var question = Question.Create(
                 request.QuestionRequirement, 
-                request.QuestionLearningType, 
+                request.QuestionType, 
                 request.LessonId);
 
             if (question.IsSuccess)
@@ -42,7 +42,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Cr
                     {
                         QuestionId = question.Value.QuestionId,
                         QuestionRequirement = question.Value.QuestionRequirement,
-                        QuestionLearningType = question.Value.QuestionLearningType,
+                        QuestionType = question.Value.QuestionType,
                         LessonId = question.Value.LessonId
                     }
                 };

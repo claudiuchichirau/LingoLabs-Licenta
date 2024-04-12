@@ -22,6 +22,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Queri
                     LessonResultId = lessonResult.Value.LessonResultId,
                     LessonId = lessonResult.Value.LessonId,
                     ChapterResultId = lessonResult.Value.ChapterResultId,
+                    LanguageCompetenceResultId = lessonResult.Value.LanguageCompetenceResultId,
                     IsCompleted = lessonResult.Value.IsCompleted,
                     QuestionResults = lessonResult.Value.QuestionResults?.Select(q => new QuestionResults.Queries.QuestionResultDto
                     {

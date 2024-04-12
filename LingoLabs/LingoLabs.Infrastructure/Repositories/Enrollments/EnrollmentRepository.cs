@@ -17,6 +17,7 @@ namespace LingoLabs.Infrastructure.Repositories.Enrollments
             var enrollment = await context.Enrollments
                 .Include(e => e.UserLanguageLevels)
                 .Include(e => e.LanguageLevelResults)
+                .Include(e => e.LanguageCompetenceResults)
                 .FirstOrDefaultAsync(e => e.EnrollmentId == guid);
 
             if(enrollment == null)

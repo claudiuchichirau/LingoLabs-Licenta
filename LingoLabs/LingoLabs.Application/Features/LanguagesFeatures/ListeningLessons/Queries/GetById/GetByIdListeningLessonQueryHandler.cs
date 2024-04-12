@@ -23,7 +23,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
                     {
                         QuestionId = question.QuestionId,
                         QuestionRequirement = question.QuestionRequirement,
-                        QuestionLearningType = question.QuestionLearningType,
+                        QuestionType = question.QuestionType,
                         LessonId = question.LessonId
                     }).ToList();
 

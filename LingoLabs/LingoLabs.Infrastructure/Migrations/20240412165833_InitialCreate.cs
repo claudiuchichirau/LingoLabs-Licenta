@@ -19,7 +19,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     LanguageName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LanguageDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LanguageFlag = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    LanguageFlag = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -147,6 +147,36 @@ namespace LingoLabs.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LanguageCompetenceResults",
+                columns: table => new
+                {
+                    LanguageCompetenceResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
+                    LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EnrollmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LanguageCompetenceResults", x => x.LanguageCompetenceResultId);
+                    table.ForeignKey(
+                        name: "FK_LanguageCompetenceResults_Enrollments_EnrollmentId",
+                        column: x => x.EnrollmentId,
+                        principalTable: "Enrollments",
+                        principalColumn: "EnrollmentId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LanguageCompetenceResults_LanguageCompetences_LanguageCompetenceId",
+                        column: x => x.LanguageCompetenceId,
+                        principalTable: "LanguageCompetences",
+                        principalColumn: "LanguageCompetenceId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Chapters",
                 columns: table => new
                 {
@@ -154,7 +184,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     ChapterName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ChapterDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ChapterPriorityNumber = table.Column<int>(type: "int", nullable: true),
-                    ChapterImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    ChapterImageData = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ChapterVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageLevelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -247,7 +277,7 @@ namespace LingoLabs.Infrastructure.Migrations
                     LessonContent = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LessonPriorityNumber = table.Column<int>(type: "int", nullable: true),
                     LessonVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LessonImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    LessonImageData = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ChapterId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
@@ -358,8 +388,8 @@ namespace LingoLabs.Infrastructure.Migrations
                 {
                     QuestionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuestionRequirement = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    QuestionLearningType = table.Column<int>(type: "int", nullable: false),
-                    QuestionImageData = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
+                    QuestionType = table.Column<int>(type: "int", nullable: false),
+                    QuestionImageData = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     QuestionVideoLink = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     QuestionPriorityNumber = table.Column<int>(type: "int", nullable: true),
                     LessonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -386,13 +416,14 @@ namespace LingoLabs.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LanguageCompetenceResults",
+                name: "LessonResults",
                 columns: table => new
                 {
-                    LanguageCompetenceResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LessonResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     IsCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    LanguageCompetenceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LessonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ChapterResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    LanguageCompetenceResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -400,19 +431,22 @@ namespace LingoLabs.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LanguageCompetenceResults", x => x.LanguageCompetenceResultId);
+                    table.PrimaryKey("PK_LessonResults", x => x.LessonResultId);
                     table.ForeignKey(
-                        name: "FK_LanguageCompetenceResults_ChapterResults_ChapterResultId",
+                        name: "FK_LessonResults_ChapterResults_ChapterResultId",
                         column: x => x.ChapterResultId,
                         principalTable: "ChapterResults",
-                        principalColumn: "ChapterResultId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "ChapterResultId");
                     table.ForeignKey(
-                        name: "FK_LanguageCompetenceResults_LanguageCompetences_LanguageCompetenceId",
-                        column: x => x.LanguageCompetenceId,
-                        principalTable: "LanguageCompetences",
-                        principalColumn: "LanguageCompetenceId",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_LessonResults_LanguageCompetenceResults_LanguageCompetenceResultId",
+                        column: x => x.LanguageCompetenceResultId,
+                        principalTable: "LanguageCompetenceResults",
+                        principalColumn: "LanguageCompetenceResultId");
+                    table.ForeignKey(
+                        name: "FK_LessonResults_Lessons_LessonId",
+                        column: x => x.LessonId,
+                        principalTable: "Lessons",
+                        principalColumn: "LessonId");
                 });
 
             migrationBuilder.CreateTable(
@@ -436,41 +470,6 @@ namespace LingoLabs.Infrastructure.Migrations
                         column: x => x.QuestionId,
                         principalTable: "Questions",
                         principalColumn: "QuestionId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LessonResults",
-                columns: table => new
-                {
-                    LessonResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsCompleted = table.Column<bool>(type: "bit", nullable: false),
-                    LessonId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ChapterResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    LanguageCompetenceResultId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastModifiedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LessonResults", x => x.LessonResultId);
-                    table.ForeignKey(
-                        name: "FK_LessonResults_ChapterResults_ChapterResultId",
-                        column: x => x.ChapterResultId,
-                        principalTable: "ChapterResults",
-                        principalColumn: "ChapterResultId");
-                    table.ForeignKey(
-                        name: "FK_LessonResults_LanguageCompetenceResults_LanguageCompetenceResultId",
-                        column: x => x.LanguageCompetenceResultId,
-                        principalTable: "LanguageCompetenceResults",
-                        principalColumn: "LanguageCompetenceResultId");
-                    table.ForeignKey(
-                        name: "FK_LessonResults_Lessons_LessonId",
-                        column: x => x.LessonId,
-                        principalTable: "Lessons",
-                        principalColumn: "LessonId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -564,9 +563,9 @@ namespace LingoLabs.Infrastructure.Migrations
                 column: "TagId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_LanguageCompetenceResults_ChapterResultId",
+                name: "IX_LanguageCompetenceResults_EnrollmentId",
                 table: "LanguageCompetenceResults",
-                column: "ChapterResultId");
+                column: "EnrollmentId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_LanguageCompetenceResults_LanguageCompetenceId",
@@ -687,22 +686,22 @@ namespace LingoLabs.Infrastructure.Migrations
                 name: "LearningStyles");
 
             migrationBuilder.DropTable(
+                name: "ChapterResults");
+
+            migrationBuilder.DropTable(
                 name: "LanguageCompetenceResults");
 
             migrationBuilder.DropTable(
                 name: "Lessons");
 
             migrationBuilder.DropTable(
-                name: "ChapterResults");
-
-            migrationBuilder.DropTable(
-                name: "LanguageCompetences");
+                name: "LanguageLevelResults");
 
             migrationBuilder.DropTable(
                 name: "Chapters");
 
             migrationBuilder.DropTable(
-                name: "LanguageLevelResults");
+                name: "LanguageCompetences");
 
             migrationBuilder.DropTable(
                 name: "Enrollments");

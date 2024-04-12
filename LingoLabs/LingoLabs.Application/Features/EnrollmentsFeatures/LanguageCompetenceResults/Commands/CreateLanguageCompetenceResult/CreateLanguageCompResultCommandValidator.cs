@@ -11,7 +11,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} is required.");
 
-            RuleFor(p => p.ChapterResultId)
+            RuleFor(p => p.EnrollmentId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} is required.");

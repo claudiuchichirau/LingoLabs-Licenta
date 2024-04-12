@@ -30,6 +30,14 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Queries
                         IsCompleted = LanguageLevelResults.IsCompleted
                     }).ToList(),
 
+                    LanguageCompetenceResults = enrollment.Value.LanguageCompetenceResults.Select(LanguageCompetenceResults => new LanguageCompetenceResults.Queries.LanguageCompetenceResultDto
+                    {
+                        EnrollmentId = LanguageCompetenceResults.EnrollmentId,
+                        LanguageCompetenceId = LanguageCompetenceResults.LanguageCompetenceId,
+                        LanguageCompetenceResultId = LanguageCompetenceResults.LanguageCompetenceResultId,
+                        IsCompleted = LanguageCompetenceResults.IsCompleted
+                    }).ToList(),
+
                     UserLanguageLevels = enrollment.Value.UserLanguageLevels.Select(UserLanguageLevels => new UserLanguageLevels.Queries.UserLanguageLevelDto
                     {
                         EnrollmentId = UserLanguageLevels.EnrollmentId,

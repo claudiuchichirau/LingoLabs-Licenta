@@ -5,7 +5,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
     public class CreateLanguageCompetenceResultCommand: IRequest<CreateLanguageCompetenceResultCommandResponse>
     {
         public Guid LanguageCompetenceId { get; set; }
-        public Guid ChapterResultId { get; set; }
+        public Guid EnrollmentId { get; set; }
         public bool IsCompleted { get; set; }
     }
 }

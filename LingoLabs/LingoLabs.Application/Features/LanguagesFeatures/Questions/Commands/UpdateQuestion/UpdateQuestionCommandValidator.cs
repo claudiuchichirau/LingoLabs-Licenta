@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities;
+using System.Net;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.UpdateQuestion
 {
@@ -23,13 +24,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                 .NotNull()
                 .MaximumLength(500).WithMessage("{PropertyName} must not exceed 500 characters.");
 
-            RuleFor(p => p.UpdateQuestionDto.QuestionLearningType)
-                .NotNull()
-                .Must(type => type == LearningType.Auditory || type == LearningType.Visual || type == LearningType.Kinesthetic || type == LearningType.Logical)
-                .WithMessage("{PropertyName} must have one of the following values: Auditory, Visual, Kinesthetic, Logical");
-
             RuleFor(p => p.UpdateQuestionDto.QuestionImageData)
-                .Must(BeJpgOrPng).When(p => p.UpdateQuestionDto.QuestionImageData != null && p.UpdateQuestionDto.QuestionImageData.Length > 0)
+                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateQuestionDto.QuestionImageData))
                 .WithMessage("{PropertyName} should be a .jpg or .png image if it exists.");
 
             RuleFor(p => p.UpdateQuestionDto.QuestionVideoLink)
@@ -54,14 +50,20 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
 
         }
 
-        private bool BeJpgOrPng(byte[] imageData)
+        private static bool BeImageValidUrl(string url)
         {
-            var jpgHeader = new byte[] { 0xFF, 0xD8 };
-            var pngHeader = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
+            Uri uriResult;
+            bool result = Uri.TryCreate(url, UriKind.Absolute, out uriResult)
+                && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 
-            if (imageData.Take(2).SequenceEqual(jpgHeader) || imageData.Take(4).SequenceEqual(pngHeader))
+            if (result)
             {
-                return true;
+                var request = WebRequest.Create(uriResult) as HttpWebRequest;
+                request.Method = "HEAD";
+                using (var response = request.GetResponse() as HttpWebResponse)
+                {
+                    return response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase);
+                }
             }
 
             return false;
