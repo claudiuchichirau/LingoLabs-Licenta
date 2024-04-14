@@ -7,6 +7,7 @@ namespace LingoLabs.Application.Persistence.Languages
     {
         Task<Result<IReadOnlyList<Question>>> GetQuestionsByLanguageLevelIdAsync(Guid languageLevelId);
         Task<Result<IReadOnlyList<Question>>> GetQuestionsByLanguageCompetenceIdAsync(Guid languageCompetenceId);
+        Task<Result<IReadOnlyList<Question>>> GetQuestionsByLanguageLevelAndCompetenceIdAsync(Guid languageLevelId, Guid languageCompetenceId);
         Task<bool> ExistsQuestionPriorityNumberAsync(int priorityNumber, Guid questionId);
     }
 }

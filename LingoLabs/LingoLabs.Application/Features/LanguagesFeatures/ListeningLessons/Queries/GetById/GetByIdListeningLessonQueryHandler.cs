@@ -6,15 +6,21 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
 {
     public class GetByIdListeningLessonQueryHandler : IRequestHandler<GetByIdListeningLessonQuery, GetSingleListeningLessonDto>
     {
-        private readonly IListeningLessonRepository repository;
+        private readonly IListeningLessonRepository listeningLessonRepository;
+        private readonly IChapterRepository chapterRepository;
+        private readonly ILanguageCompetenceRepository languageCompetenceRepository;
+        private readonly ILanguageLevelRepository languageLevelRepository;
 
-        public GetByIdListeningLessonQueryHandler(IListeningLessonRepository repository)
+        public GetByIdListeningLessonQueryHandler(IListeningLessonRepository listeningLessonRepository, IChapterRepository chapterRepository, ILanguageCompetenceRepository languageCompetenceRepository, ILanguageLevelRepository languageLevelRepository)
         {
-            this.repository = repository;
+            this.listeningLessonRepository = listeningLessonRepository;
+            this.chapterRepository = chapterRepository;
+            this.languageCompetenceRepository = languageCompetenceRepository;
+            this.languageLevelRepository = languageLevelRepository;
         }
         public async Task<GetSingleListeningLessonDto> Handle(GetByIdListeningLessonQuery request, CancellationToken cancellationToken)
         {
-            var listeningLesson = await repository.FindByIdAsync(request.Id);
+            var listeningLesson = await listeningLessonRepository.FindByIdAsync(request.Id);
             if(listeningLesson.IsSuccess)
             {
                 var sortedLessonQuestions = listeningLesson.Value.LessonQuestions
@@ -26,6 +32,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
                         QuestionType = question.QuestionType,
                         LessonId = question.LessonId
                     }).ToList();
+
+                var chapter = await chapterRepository.FindByIdAsync(listeningLesson.Value.ChapterId);
+
+                var languageCompetence = await languageCompetenceRepository.FindByIdAsync(listeningLesson.Value.LanguageCompetenceId);
+
+                var languageLevel = await languageLevelRepository.FindByIdAsync(chapter.Value.LanguageLevelId);
 
                 return new GetSingleListeningLessonDto
                 {
@@ -39,6 +51,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
                     LessonPriorityNumber = listeningLesson.Value.LessonPriorityNumber,
                     ChapterId = listeningLesson.Value.ChapterId,
                     LanguageCompetenceId = listeningLesson.Value.LanguageCompetenceId,
+                    ChapterName = chapter.Value.ChapterName,
+                    LanguageCompetenceName = languageCompetence.Value.LanguageCompetenceName,
+                    LanguageLevelName = languageLevel.Value.LanguageLevelName,
                     LessonQuestions = sortedLessonQuestions,
                     TextScript = listeningLesson.Value.TextScript,
                     Accents = listeningLesson.Value.Accents

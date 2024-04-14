@@ -6,17 +6,23 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
 {
     public class GetByIdLessonQueryHandler : IRequestHandler<GetByIdLessonQuery, GetSingleLessonDto>
     {
-        private readonly ILessonRepository repository;
+        private readonly ILessonRepository lessonRepository;
+        private readonly IChapterRepository chapterRepository;
+        private readonly ILanguageCompetenceRepository languageCompetenceRepository;
+        private readonly ILanguageLevelRepository languageLevelRepository;
         private readonly ITagRepository tagRepository;
 
-        public GetByIdLessonQueryHandler(ILessonRepository repository, ITagRepository tagRepository)
+        public GetByIdLessonQueryHandler(ILessonRepository repository, ITagRepository tagRepository, IChapterRepository chapterRepository, ILanguageCompetenceRepository languageCompetenceRepository, ILanguageLevelRepository languageLevelRepository)
         {
-            this.repository = repository;
+            this.lessonRepository = repository;
             this.tagRepository = tagRepository;
+            this.chapterRepository = chapterRepository;
+            this.languageCompetenceRepository = languageCompetenceRepository;
+            this.languageLevelRepository = languageLevelRepository;
         }
         public async Task<GetSingleLessonDto> Handle(GetByIdLessonQuery request, CancellationToken cancellationToken)
         {
-            var lesson = await repository.FindByIdAsync(request.Id);
+            var lesson = await lessonRepository.FindByIdAsync(request.Id);
             if(lesson.IsSuccess)
             {
                 var sortedLessonQuestions = lesson.Value.LessonQuestions
@@ -50,6 +56,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
 
                 var unassociatedTags = allTagsDto.Where(tag => !lessonKeyWords.Any(lkw => lkw.TagId == tag.TagId)).ToList();
 
+                var chapter = await chapterRepository.FindByIdAsync(lesson.Value.ChapterId);
+
+                var languageCompetence = await languageCompetenceRepository.FindByIdAsync(lesson.Value.LanguageCompetenceId);
+
+                var languageLevel = await languageLevelRepository.FindByIdAsync(chapter.Value.LanguageLevelId);
+
                 return new GetSingleLessonDto
                 {
                     LessonId = lesson.Value.LessonId,
@@ -61,6 +73,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
                     LessonImageData = lesson.Value.LessonImageData,
                     ChapterId = lesson.Value.ChapterId,
                     LanguageCompetenceId = lesson.Value.LanguageCompetenceId,
+                    ChapterName = chapter.Value.ChapterName,
+                    LanguageCompetenceName = languageCompetence.Value.LanguageCompetenceName,
+                    LanguageLevelName = languageLevel.Value.LanguageLevelName,
                     LessonPriorityNumber = lesson.Value.LessonPriorityNumber,
                     LessonQuestions = sortedLessonQuestions,
                     LessonTags = lessonKeyWords,

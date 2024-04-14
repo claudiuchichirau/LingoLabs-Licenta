@@ -8,7 +8,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
         public string LessonRequirement { get; set; } = string.Empty;      
         public string LessonVideoLink { get; set; } = string.Empty;
         public string LessonImageData { get; set; } = string.Empty;
-        public int? LessonPriorityNumber { get; set; }
+        public string ChapterName { get; set; } = string.Empty;
+        public string LanguageCompetenceName { get; set; } = string.Empty;
+        public string LanguageLevelName { get; set; } = string.Empty;
         public List<QuestionDto> LessonQuestions { get; set; } = [];
         public List<TagDto> LessonTags { get; set; } = [];
         public List<TagDto> UnassociatedTags { get; set; } = [];

@@ -84,6 +84,50 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             return Result<IReadOnlyList<Question>>.Success(questions);
         }
 
+        public async Task<Result<IReadOnlyList<Question>>> GetQuestionsByLanguageLevelAndCompetenceIdAsync(Guid languageLevelId, Guid languageCompetenceId)
+        {
+            var languageLevel = await context.LanguageLevels
+                .Include(l => l.LanguageLevelChapters)
+                .ThenInclude(lc => lc.ChapterLessons)
+                .ThenInclude(l => l.LessonQuestions)
+                .FirstOrDefaultAsync(l => l.LanguageLevelId == languageLevelId);
+
+            if (languageLevel == null)
+            {
+                return Result<IReadOnlyList<Question>>.Failure($"Entity with id {languageLevelId} not found");
+            }
+
+            var languageCompetence = await context.LanguageCompetences
+                .Include(lc => lc.LanguageCompetenceLessons)
+                .ThenInclude(l => l.LessonQuestions)
+                .FirstOrDefaultAsync(lc => lc.LanguageCompetenceId == languageCompetenceId);
+
+            if (languageCompetence == null)
+            {
+                return Result<IReadOnlyList<Question>>.Failure($"Entity with id {languageCompetenceId} not found");
+            }
+
+            var questions = new List<Question>();
+
+            foreach (var chapter in languageLevel.LanguageLevelChapters)
+            {
+                foreach (var lesson in chapter.ChapterLessons)
+                {
+                    if (lesson.LanguageCompetenceId == languageCompetenceId)
+                    {
+                        var result = await context.Questions
+                            .Include(q => q.QuestionChoices)
+                            .Where(q => q.LessonId == lesson.LessonId)
+                            .ToListAsync();
+
+                        questions.AddRange(result);
+                    }
+                }
+            }
+
+            return Result<IReadOnlyList<Question>>.Success(questions);
+        }
+
         public async Task<bool> ExistsQuestionPriorityNumberAsync(int priorityNumber, Guid questionId)
         {
             var questionFound = await context.Questions.FirstOrDefaultAsync(question => question.QuestionId == questionId);
