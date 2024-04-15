@@ -425,18 +425,18 @@
         foreach (QuestionElement question in lesson.Questions)
         {
             userQuestions.Add(new UserQuestionElement
-                {
-                    QuestionId = question.QuestionId,
-                    QuestionType = question.QuestionType,
-                    QuestionCompleted = false
-                });
+            {
+                QuestionId = question.QuestionId,
+                // QuestionType = question.QuestionType,
+                QuestionCompleted = false
+            });
         }
 
         userQuiz = new UserQuizElement
-            {
-                LessonId = lesson.LessonId,
-                UserQuestions = userQuestions
-            };
+        {
+            LessonId = lesson.LessonId,
+            UserQuestions = userQuestions
+        };
     }
 
     void SelectAnswer(QuestionElement questionElement, ChoiceElement choice)    // grila question
@@ -496,7 +496,7 @@
                 questionResultElements = userQuiz.UserQuestions.Select(q => new QuestionResultElement
                 {
                     QuestionId = q.QuestionId,
-                    QuestionType = q.QuestionType
+                    // QuestionType = q.QuestionType
                 }).ToList()
             };
 

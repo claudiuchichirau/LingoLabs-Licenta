@@ -1,10 +1,15 @@
 ﻿@page "/lesson-dashboard"
+@using LingoLabs.App.Auth
+@using LingoLabs.App.Contracts.LanguageContracts
+@using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
+@using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @using MatBlazor
 @using System.Net.Http.Json
 @using ViewModel.MudBlazor
 @inject NavigationManager NavigationManager
+@inject CustomStateProvider authStateProvider
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
@@ -87,11 +92,11 @@
         </div>
     }
 
-    @if (!string.IsNullOrEmpty(lesson.LessonImageLink))
+    @if (!string.IsNullOrEmpty(lesson.LessonImageData))
     {
         <div class="row" style="margin-top: 70px; margin-bottom: 150px;">
             <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
-                <img src="@lesson.LessonImageLink" style="max-width: 700px; height: auto;">
+                <img src="@lesson.LessonImageData" style="max-width: 700px; height: auto;">
             </div>
         </div>
     }
@@ -188,7 +193,7 @@
         </MudFileUpload>
     </MudStack>
 
-    @if (!showQuizResults)
+   @*  @if (!showQuizResults)
     {
         <div class="text-center" style="margin-bottom: 50px;">
             <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
@@ -199,7 +204,7 @@
             </h2>
             <MudButton Variant="Variant.Filled" OnClick="() => StartQuiz()" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Quiz"></MudIcon> START NOW!</MudButton>
         </div>        
-    }
+    } *@
 
 </MudContainer>
 
@@ -240,11 +245,11 @@
                 </div>
             </NextButtonTemplate>
             <ChildContent>
-                @foreach (QuestionElement question in lesson.Questions)
+                @foreach (QuestionViewModel question in lesson.LessonQuestions)
                 {
-                    var counter = lesson.Questions.IndexOf(question) + 1;
+                    var counter = lesson.LessonQuestions.IndexOf(question) + 1;
                     <MudCarouselItem>
-                        @if (question.QuestionType == QuestionTypeElement.Grila)
+                        @if (question.QuestionType == QuestionTypeViewModel.MultipleChoice)
                         {
                             var columns = Math.Ceiling(Math.Sqrt(question.QuestionChoices.Count()));
                             <div class="d-flex flex-column align-items-center justify-content-center" style="height:100%; padding: 30px; margin-bottom: 15px;">
@@ -259,7 +264,7 @@
                                 </div>
 
                                 <div style="display: grid; grid-template-columns: repeat(@columns, 1fr); gap: 35px; margin-top: 25px; justify-items: center;">
-                                    @foreach (ChoiceElement choice in question.QuestionChoices)
+                                    @foreach (ChoiceViewModel choice in question.QuestionChoices)
                                     {
                                         <div style="display: flex; justify-content: center;">
                                             <MudButton Color="Color.Primary" Variant="Variant.Outlined" Style="@(choice.ChoiceId == userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceId ? "color: white; border-color: #2563EB; background-color: #2563EB; padding: 10px; font-size: 20px;" : "color: #2563EB; border-color: #2563EB; background-color: white; padding: 10px; font-size: 20px;")" OnClick="() => {SelectAnswer(question, choice); CheckAllQuestionsCompleted();}">
@@ -271,7 +276,7 @@
                             </div>
                         }
 
-                        @if (question.QuestionType == QuestionTypeElement.TrueFalse)
+                        @if (question.QuestionType == QuestionTypeViewModel.TrueFalse)
                         {
                             <div class="d-flex flex-column align-items-center justify-content-center" style="height:100%; padding: 30px; margin-bottom: 15px;">
                                 <div class="md-2 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 10px; margin-bottom: 40px; margin-top: -10px;">
@@ -300,7 +305,7 @@
                             </div>
                         }
 
-                        @if (question.QuestionType == QuestionTypeElement.CuvantLipsa)
+                        @if (question.QuestionType == QuestionTypeViewModel.MissingWord)
                         {
                             <div class="d-flex flex-column align-items-center justify-content-center" style="height:100%; padding: 30px; margin-bottom: 15px;">
                                 <div class="md-2 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 10px; margin-bottom: 40px; margin-top: -10px;">
@@ -330,14 +335,15 @@
     {
         <div class="row" style="margin-top: 35px; margin-bottom: 50px;">
             <div class="col text-center">
-                <MudButton Variant="Variant.Filled" OnClick="() => SubmitQuiz(userQuiz)" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> SUBMIT</MudButton>
+                @* <MudButton Variant="Variant.Filled" OnClick="() => SubmitQuiz(userQuiz)" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> SUBMIT</MudButton> *@
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> SUBMIT</MudButton>
             </div>
         </div>
     }
 }
 
 @* QUIZ RESULTS *@
-@if (showQuizResults)
+@* @if (showQuizResults)
 {
     <div id="quizResults" class="text-center" style="margin-bottom: 50px;">
         <hr style="width: 20%; border: 1px solid rgba(128, 128, 128, 0.5); margin: auto; margin-top: 50px; margin-bottom: 50px;">
@@ -382,9 +388,9 @@
         }
     </div>
 }
-
+ *@
 @* QUIZ RESULTS TABLE *@
-@if (showQuizResultsTable)
+@* @if (showQuizResultsTable)
 {
     <div class="text-center" style="margin-bottom: 50px;">
         <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
@@ -413,17 +419,17 @@
                 <MudTd DataLabel="Question Type" Class="text-center">@context.QuestionType</MudTd>
                 <MudTd DataLabel="Question Requirement" Class="text-center">@context.QuestionRequirement</MudTd>
 
-                @if (context.QuestionType == QuestionTypeElement.Grila)
+                @if (context.QuestionType == QuestionTypeViewModel.MultipleChoice)
                 {
                     <MudTd DataLabel="Your Answer" Class="text-center">@context.GrilaUserChoiceId</MudTd>
                     <MudTd DataLabel="Correct Answer" Class="text-center">@context.GrilaCorrectChoiceId</MudTd>
                 }
-                else if (context.QuestionType == QuestionTypeElement.TrueFalse)
+                else if (context.QuestionType == QuestionTypeViewModel.TrueFalse)
                 {
                     <MudTd DataLabel="Your Answer" Class="text-center">@context.TrueFalseUserValue</MudTd>
                     <MudTd DataLabel="Correct Answer" Class="text-center">@context.TrueFalseCorrectValue</MudTd>
                 }
-                else if (context.QuestionType == QuestionTypeElement.CuvantLipsa)
+                else if (context.QuestionType == QuestionTypeViewModel.MissingWord)
                 {
                     <MudTd DataLabel="Your Answer" Class="text-center">@context.CuvantLipsaUserValue</MudTd>
 
@@ -448,7 +454,7 @@
         </MudTable>
     </div>
 }
-
+ *@
 <style>
     @@keyframes moveArrow {
         0% {
@@ -469,110 +475,122 @@
     }
 </style>
 
-@* COMPLETE QUIZ *@
 @code {
+    [Inject]
+    public ILessonDataService lessonDataService { get; set; }
+    public LessonViewModel lesson { get; set; } = new LessonViewModel();
+    private AuthenticationState authState;
+}
+
+@* COMPLETE QUIZ *@
+@functions {
     private bool showCompleteQuiz = false;
     private bool showSubmitButton = false;
     private bool bordered = false;
-    private LessonElement lesson = new LessonElement();
+    // private LessonElement lesson = new LessonElement();
     private UserQuizElement userQuiz = new UserQuizElement();
 
     protected override async Task OnInitializedAsync()
     {
-        await PopulateLesson();
+        authState = await authStateProvider.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+        var claims = user.Claims.ToList();
+
+        lesson = await lessonDataService.GetLessonByIdAsync(Guid.Parse("991ef7e4-4794-4217-932d-c1ccc448c1a8"));
     }
 
-    private async Task PopulateLesson()
-    {
-        lesson = new LessonElement
-            {
-                LessonId = Guid.NewGuid(),
-                ChapterId = Guid.NewGuid(),
+    // private async Task PopulateLesson()
+    // {
+    //     lesson = new LessonElement
+    //         {
+    //             LessonId = Guid.NewGuid(),
+    //             ChapterId = Guid.NewGuid(),
                 
-                LanguageCompetenceId = Guid.NewGuid(),
-                LessonTitle = "Introduction in English",
-                LessonDescription = "Welcome to the first lesson of our English language course. This introductory session is designed to ease you into the world of English, starting from the very basics. We'll explore the building blocks of the language, ensuring a solid foundation for your linguistic journey.",
-                LessonContent = "Hello and a warm welcome! I hope you're excited to embark on this adventure into the English language. Today, we'll begin with the alphabet, delving into the sounds and pronunciations of each letter. Understanding these fundamentals is crucial as they form the backbone of English communication. \n\nWe'll then transition to basic vocabulary, introducing you to essential words that will be your tools for constructing simple sentences. By the end of this lesson, you'll have a grasp of key phrases and the confidence to use them in everyday conversations.\n\nLet's dive in and start our path to mastering English!",
-                LessonVideoLink = "https://www.youtube.com/embed/1y6smkh6c-0",
-                LessonImageLink = "https://psenglish.co.uk/wp-content/uploads/2021/11/Do-you-speak-English.jpg",
-                LessonTags = new List<string> { "English", "Beginner", "Alphabet", "Vocabulary", "Pronunciation", "Communication", "Conversation" },
-                LessonRequirement = "At this Writing English Lesson, your first assignement will be to write a short text about yourself. You will have to use the vocabulary and the grammar rules that you have learned in this lesson. The text should have at least 100 words. You can write your essay in the text field below or you can upload a photo of your essay. Good luck!",
-                Questions = new List<QuestionElement>
-                {
-                    new QuestionElement
-                    {
-                        QuestionId = Guid.NewGuid(),
-                        QuestionRequirement = "What is the first letter of the English alphabet?",
-                        QuestionType = QuestionTypeElement.Grila,
-                        QuestionPriorityNumber = 1,
-                        QuestionChoices = new List<ChoiceElement>
-                        {
-                            new ChoiceElement
-                            {
-                                ChoiceId = Guid.NewGuid(),
-                                ChoiceContent = "A",
-                                IsCorrect = true
-                            },
-                            new ChoiceElement
-                            {
-                                ChoiceId = Guid.NewGuid(),
-                                ChoiceContent = "B",
-                                IsCorrect = false
-                            },
-                            new ChoiceElement
-                            {
-                                ChoiceId = Guid.NewGuid(),
-                                ChoiceContent = "C",
-                                IsCorrect = false
-                            },
-                            new ChoiceElement
-                            {
-                                ChoiceId = Guid.NewGuid(),
-                                ChoiceContent = "D",
-                                IsCorrect = false
-                            }
-                        }
-                    },
-                    new QuestionElement
-                    {
-                        QuestionId = Guid.NewGuid(),
-                        QuestionRequirement = "<Apple> is a verb?",
-                        QuestionType = QuestionTypeElement.TrueFalse,
-                        QuestionPriorityNumber = 2,
-                        QuestionChoices = new List<ChoiceElement>
-                        {
-                            new ChoiceElement
-                            {
-                                ChoiceId = Guid.NewGuid(),
-                                ChoiceContent = "Apple",
-                                IsCorrect = false
-                            }
-                        }
-                    },
-                    new QuestionElement
-                    {
-                        QuestionId = Guid.NewGuid(),
-                        QuestionRequirement = "The solar system has ____ planets.",
-                        QuestionType = QuestionTypeElement.CuvantLipsa,
-                        QuestionChoices = new List<ChoiceElement>
-                        {
-                            new ChoiceElement
-                            {
-                                ChoiceId = Guid.NewGuid(),
-                                ChoiceContent = "8",
-                                IsCorrect = true
-                            },
-                        }
-                    }
-                }
-            };
-    }
+    //             LanguageCompetenceId = Guid.NewGuid(),
+    //             LessonTitle = "Introduction in English",
+    //             LessonDescription = "Welcome to the first lesson of our English language course. This introductory session is designed to ease you into the world of English, starting from the very basics. We'll explore the building blocks of the language, ensuring a solid foundation for your linguistic journey.",
+    //             LessonContent = "Hello and a warm welcome! I hope you're excited to embark on this adventure into the English language. Today, we'll begin with the alphabet, delving into the sounds and pronunciations of each letter. Understanding these fundamentals is crucial as they form the backbone of English communication. \n\nWe'll then transition to basic vocabulary, introducing you to essential words that will be your tools for constructing simple sentences. By the end of this lesson, you'll have a grasp of key phrases and the confidence to use them in everyday conversations.\n\nLet's dive in and start our path to mastering English!",
+    //             LessonVideoLink = "https://www.youtube.com/embed/1y6smkh6c-0",
+    //             LessonImageLink = "https://psenglish.co.uk/wp-content/uploads/2021/11/Do-you-speak-English.jpg",
+    //             LessonTags = new List<string> { "English", "Beginner", "Alphabet", "Vocabulary", "Pronunciation", "Communication", "Conversation" },
+    //             LessonRequirement = "At this Writing English Lesson, your first assignement will be to write a short text about yourself. You will have to use the vocabulary and the grammar rules that you have learned in this lesson. The text should have at least 100 words. You can write your essay in the text field below or you can upload a photo of your essay. Good luck!",
+    //             Questions = new List<QuestionElement>
+    //             {
+    //                 new QuestionElement
+    //                 {
+    //                     QuestionId = Guid.NewGuid(),
+    //                     QuestionRequirement = "What is the first letter of the English alphabet?",
+    //                     QuestionType = QuestionTypeElement.Grila,
+    //                     QuestionPriorityNumber = 1,
+    //                     QuestionChoices = new List<ChoiceElement>
+    //                     {
+    //                         new ChoiceElement
+    //                         {
+    //                             ChoiceId = Guid.NewGuid(),
+    //                             ChoiceContent = "A",
+    //                             IsCorrect = true
+    //                         },
+    //                         new ChoiceElement
+    //                         {
+    //                             ChoiceId = Guid.NewGuid(),
+    //                             ChoiceContent = "B",
+    //                             IsCorrect = false
+    //                         },
+    //                         new ChoiceElement
+    //                         {
+    //                             ChoiceId = Guid.NewGuid(),
+    //                             ChoiceContent = "C",
+    //                             IsCorrect = false
+    //                         },
+    //                         new ChoiceElement
+    //                         {
+    //                             ChoiceId = Guid.NewGuid(),
+    //                             ChoiceContent = "D",
+    //                             IsCorrect = false
+    //                         }
+    //                     }
+    //                 },
+    //                 new QuestionElement
+    //                 {
+    //                     QuestionId = Guid.NewGuid(),
+    //                     QuestionRequirement = "<Apple> is a verb?",
+    //                     QuestionType = QuestionTypeElement.TrueFalse,
+    //                     QuestionPriorityNumber = 2,
+    //                     QuestionChoices = new List<ChoiceElement>
+    //                     {
+    //                         new ChoiceElement
+    //                         {
+    //                             ChoiceId = Guid.NewGuid(),
+    //                             ChoiceContent = "Apple",
+    //                             IsCorrect = false
+    //                         }
+    //                     }
+    //                 },
+    //                 new QuestionElement
+    //                 {
+    //                     QuestionId = Guid.NewGuid(),
+    //                     QuestionRequirement = "The solar system has ____ planets.",
+    //                     QuestionType = QuestionTypeElement.CuvantLipsa,
+    //                     QuestionChoices = new List<ChoiceElement>
+    //                     {
+    //                         new ChoiceElement
+    //                         {
+    //                             ChoiceId = Guid.NewGuid(),
+    //                             ChoiceContent = "8",
+    //                             IsCorrect = true
+    //                         },
+    //                     }
+    //                 }
+    //             }
+    //         };
+    // }
 
     void StartQuiz()
     {
         showCompleteQuiz = true;
         List<UserQuestionElement> userQuestions = new List<UserQuestionElement>();
-        foreach (QuestionElement question in lesson.Questions)
+        foreach (QuestionViewModel question in lesson.LessonQuestions)
         {
             userQuestions.Add(new UserQuestionElement
             {
@@ -589,25 +607,25 @@
         };
     }
 
-    void SelectAnswer(QuestionElement questionElement, ChoiceElement choice)    // grila question
+    void SelectAnswer(QuestionViewModel questionElement, ChoiceViewModel choice)    // grila question
     {
-        if (questionElement.QuestionType == QuestionTypeElement.Grila)
+        if (questionElement.QuestionType == QuestionTypeViewModel.MultipleChoice)
         {
             userQuiz.UserQuestions.Find(x => x.QuestionId == questionElement.QuestionId).ChoiceId = choice.ChoiceId;
             userQuiz.UserQuestions.Find(x => x.QuestionId == questionElement.QuestionId).QuestionCompleted = true;
         }
     }
 
-    void SelectAnswer(QuestionElement questionElement, bool trueFalseAnswer)        // true/false question
+    void SelectAnswer(QuestionViewModel questionElement, bool trueFalseAnswer)        // true/false question
     {
-        if(questionElement.QuestionType == QuestionTypeElement.TrueFalse)
+        if (questionElement.QuestionType == QuestionTypeViewModel.TrueFalse)
         {
             userQuiz.UserQuestions.Find(x => x.QuestionId == questionElement.QuestionId).ChoiceIsCorrect = trueFalseAnswer;
             userQuiz.UserQuestions.Find(x => x.QuestionId == questionElement.QuestionId).QuestionCompleted = true;
         }
     }
 
-    void ValidateMissingWordQuestion(string value, QuestionElement question)        // missing word question
+    void ValidateMissingWordQuestion(string value, QuestionViewModel question)        // missing word question
     {
         if (!string.IsNullOrEmpty(value))
         {
@@ -632,7 +650,7 @@
 
 
 @* SHOW QUIZ RESULTS *@
-@code {
+@* @functions {
     private bool showQuizResultsTable = false;
     private bool showQuizResults = false;
     private QuizResultsElement quizResultsElement = new QuizResultsElement();
@@ -654,15 +672,15 @@
         {
             UserQuestionElement userQuestion = userQuiz.UserQuestions.Find(x => x.QuestionId == questionResult.QuestionId);
 
-            if (questionResult.QuestionType == QuestionTypeElement.Grila)
+            if (questionResult.QuestionType == QuestionTypeViewModel.MultipleChoice)
             {
                 questionResult.GrilaUserChoiceId = userQuiz.UserQuestions.Find(x => x.QuestionId == questionResult.QuestionId).ChoiceId;
             }
-            else if (questionResult.QuestionType == QuestionTypeElement.TrueFalse)
+            else if (questionResult.QuestionType == QuestionTypeViewModel.TrueFalse)
             {
                 questionResult.TrueFalseUserValue = userQuestion.ChoiceIsCorrect;
             }
-            else if (questionResult.QuestionType == QuestionTypeElement.CuvantLipsa)
+            else if (questionResult.QuestionType == QuestionTypeViewModel.MissingWord)
             {
                 questionResult.CuvantLipsaUserValue = userQuestion.ChoiceContent;
             }
@@ -670,11 +688,11 @@
 
         foreach (QuestionResultElement questionResult in quizResultsElement.questionResultElements)
         {
-            QuestionElement question = lesson.Questions.Find(x => x.QuestionId == questionResult.QuestionId);
+            QuestionViewModel question = lesson.LessonQuestions.Find(x => x.QuestionId == questionResult.QuestionId);
 
             questionResult.QuestionRequirement = question.QuestionRequirement;
 
-            if (question.QuestionType == QuestionTypeElement.Grila)
+            if (question.QuestionType == QuestionTypeViewModel.MultipleChoice)
             {
                 questionResult.GrilaCorrectChoiceId = question.QuestionChoices.Find(x => x.IsCorrect).ChoiceId;
                 if (questionResult.GrilaUserChoiceId == questionResult.GrilaCorrectChoiceId)
@@ -682,7 +700,7 @@
                 else
                     questionResult.UserAnswerIsCorrect = false;
             }
-            else if (question.QuestionType == QuestionTypeElement.TrueFalse)
+            else if (question.QuestionType == QuestionTypeViewModel.TrueFalse)
             {                
                 questionResult.TrueFalseCorrectValue = question.QuestionChoices[0].IsCorrect;
                 if (questionResult.TrueFalseUserValue == questionResult.TrueFalseCorrectValue)
@@ -690,7 +708,7 @@
                 else
                     questionResult.UserAnswerIsCorrect = false;
             }
-            else if (question.QuestionType == QuestionTypeElement.CuvantLipsa)
+            else if (question.QuestionType == QuestionTypeViewModel.MissingWord)
             {
                 List<string> cuvantLipsaCorrectValues = new List<string>();
                 foreach (var choice in question.QuestionChoices)
@@ -771,9 +789,9 @@
     }
 }
 
-
+ *@
 @* UPLOAD ESSAY IMAGE *@
-@code {
+@functions {
     #nullable enable
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
     private string _dragClass = DefaultDragClass;

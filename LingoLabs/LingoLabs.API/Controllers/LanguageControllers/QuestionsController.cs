@@ -3,6 +3,7 @@ using LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Delete
 using LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.UpdateQuestion;
 using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.GetAll;
 using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.GetAllByLanguageCompetenceId;
+using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.GetAllByLanguageLevelAndCompetenceId;
 using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.GetAllByLanguageLevelId;
 using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.GetById;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,16 @@ namespace LingoLabs.API.Controllers.LanguageControllers
         public async Task<IActionResult> GetAllByLanguageLevelId(Guid languageLevelId)
         {
             var result = await Mediator.Send(new GetAllQuestionsByLanguageLevelIdQuery { LanguageLevelId = languageLevelId });
+            return Ok(result);
+        }
+
+        [Authorize(Roles = "Admin, Student, AdimPending")]
+        [HttpGet]
+        [Route("language-competence/{languageCompetenceId}/language-level/{languageLevelId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllByLevelAndCompeteceId(Guid languageCompetenceId, Guid languageLevelId)
+        {
+            var result = await Mediator.Send(new GetAllByLevelAndCompetenceIdQuery { LanguageCompetenceId = languageCompetenceId, LanguageLevelId = languageLevelId });
             return Ok(result);
         }
 

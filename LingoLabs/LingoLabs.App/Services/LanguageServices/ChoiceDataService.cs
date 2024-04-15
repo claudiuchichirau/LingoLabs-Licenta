@@ -25,7 +25,11 @@ namespace LingoLabs.App.Services.LanguageServices
             var token = await tokenService.GetTokenAsync();
             if (token == null)
             {
-                throw new ApplicationException("Authentication token is null.");
+                return new ApiResponse<ChoiceViewModel>
+                {
+                    IsSuccess = false,
+                    Message = "Authentication token is null."
+                };
             }
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -38,50 +42,56 @@ namespace LingoLabs.App.Services.LanguageServices
 
         public async Task<ApiResponse<ChoiceViewModel>> UpdateChoiceAsync(ChoiceViewModel updateChoiceViewModel)
         {
-            try
+            var token = await tokenService.GetTokenAsync();
+            if (token == null)
             {
-                var token = await tokenService.GetTokenAsync();
-                if (token == null)
+                return new ApiResponse<ChoiceViewModel>
                 {
-                    throw new ApplicationException("Authentication token is null.");
-                }
-
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                var choiceViewModel = new
-                {
-                    ChoiceId = updateChoiceViewModel.ChoiceId,
-                    ChoiceContent = updateChoiceViewModel.ChoiceContent,
-                    IsCorrect = updateChoiceViewModel.IsCorrect
-                    
+                    IsSuccess = false,
+                    Message = "Authentication token is null."
                 };
-
-                var result = await httpClient.PutAsJsonAsync(RequestUri, choiceViewModel);
-                result.EnsureSuccessStatusCode();
-
-                var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChoiceViewModel>>();
-                if (response != null)
-                {
-                    response.IsSuccess = result.IsSuccessStatusCode;
-                    return response;
-                }
-
-                throw new ApplicationException("Failed to deserialize the response JSON.");
             }
-            catch (HttpRequestException ex)
+
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var choiceViewModel = new
             {
-                Console.WriteLine($"HTTP request failed: {ex.Message}");
-                throw;
-            }
-            catch (Exception ex)
+                ChoiceId = updateChoiceViewModel.ChoiceId,
+                ChoiceContent = updateChoiceViewModel.ChoiceContent,
+                IsCorrect = updateChoiceViewModel.IsCorrect
+                    
+            };
+
+            var result = await httpClient.PutAsJsonAsync(RequestUri, choiceViewModel);
+            result.EnsureSuccessStatusCode();
+
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChoiceViewModel>>();
+            if (response != null)
             {
-                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
-                throw;
+                response.IsSuccess = result.IsSuccessStatusCode;
+                return response;
             }
+
+            return new ApiResponse<ChoiceViewModel>
+            {
+                IsSuccess = false,
+                ValidationErrors = response.ValidationErrors,
+            };
+
         }
 
         public async Task<ApiResponse<ChoiceViewModel>> DeleteChoiceAsync(Guid choiceId)
         {
+            var token = await tokenService.GetTokenAsync();
+            if (token == null)
+            {
+                return new ApiResponse<ChoiceViewModel>
+                {
+                    IsSuccess = false,
+                    Message = "Authentication token is null."
+                };
+            }
+
             var result = await httpClient.DeleteAsync($"{RequestUri}/{choiceId}");
 
             result.EnsureSuccessStatusCode();
@@ -89,7 +99,11 @@ namespace LingoLabs.App.Services.LanguageServices
             if (!result.IsSuccessStatusCode)
             {
                 var content = await result.Content.ReadAsStringAsync();
-                throw new ApplicationException(content);
+                return new ApiResponse<ChoiceViewModel>
+                {
+                    IsSuccess = false,
+                    Message = content
+                };
             }
 
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChoiceViewModel>>();
@@ -110,6 +124,12 @@ namespace LingoLabs.App.Services.LanguageServices
 
         public async Task<ChoiceViewModel> GetChoiceByIdAsync(Guid choiceId)
         {
+            var token = await tokenService.GetTokenAsync();
+            if (token == null)
+            {
+                throw new Exception("Authentication token is null.");
+            }
+
             var result = await httpClient.GetAsync($"{RequestUri}/{choiceId}");
 
             result.EnsureSuccessStatusCode();
@@ -119,10 +139,6 @@ namespace LingoLabs.App.Services.LanguageServices
             //return response!;
 
             var content = await result.Content.ReadAsStringAsync();
-            if (!result.IsSuccessStatusCode)
-            {
-                throw new ApplicationException(content);
-            }
 
             var choiceViewModel = JsonSerializer.Deserialize<ChoiceViewModel>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             return new ApiResponse<ChoiceViewModel> { Data = choiceViewModel, IsSuccess = true }.Data!;

@@ -16,16 +16,19 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
         {
             GetAllLanguagesResponse response = new();
             var result = await repository.GetAllAsync();
-            if(result.IsSuccess)
+
+            if (result.IsSuccess)
             {
-                response.Languages = result.Value.Select(language => new LanguageDto
+                response.Languages = (await Task.WhenAll(result.Value.Select(async language => new LanguageDto
                 {
                     LanguageId = language.LanguageId,
                     LanguageName = language.LanguageName,
                     LanguageFlag = language.LanguageFlag,
                     LanguageDescription = language.LanguageDescription,
-                    LanguageVideoLink = language.LanguageVideoLink
-                }).ToList();
+                    LanguageVideoLink = language.LanguageVideoLink,
+                    LanguageLevelCount = await repository.GetLanguageLevelCountAsync(language.LanguageId),
+                    LessonCount = await repository.GetLessonCountAsync(language.LanguageId)
+                }))).ToList();
             }
 
             return response;

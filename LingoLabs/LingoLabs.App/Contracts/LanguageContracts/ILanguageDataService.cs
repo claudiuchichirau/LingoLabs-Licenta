@@ -1,6 +1,7 @@
 ﻿using LingoLabs.App.Services.Responses;
 using LingoLabs.App.ViewModel.LanguageModels;
 using LingoLabs.App.ViewModel.LanguageModels.LanguagePlacementTest;
+using LingoLabs.App.ViewModel.Responses;
 
 namespace LingoLabs.App.Contracts.AuthContracts
 {

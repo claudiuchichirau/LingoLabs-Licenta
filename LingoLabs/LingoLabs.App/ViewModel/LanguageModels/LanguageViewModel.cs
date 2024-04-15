@@ -12,6 +12,8 @@ namespace LingoLabs.App.ViewModel.LanguageModels
 
         public string LanguageDescription { get; set; } = string.Empty;
         public string LanguageVideoLink { get; set; } = string.Empty;
+        public int LanguageLevelCount { get; set; }
+        public int LessonCount { get; set; }
         public List<LanguageLevelViewModel> LanguageLevels { get; set; } = [];
         public List<LanguageCompetenceViewModel> LanguageCompetences { get; set; } = [];
         public List<QuestionViewModel> PlacementTest { get; set; } = [];

@@ -2,8 +2,10 @@ using Blazored.LocalStorage;
 using LingoLabs.App;
 using LingoLabs.App.Auth;
 using LingoLabs.App.Contracts.AuthContracts;
+using LingoLabs.App.Contracts.LanguageContracts;
 using LingoLabs.App.Services;
 using LingoLabs.App.Services.AuthServices;
+using LingoLabs.App.Services.LanguageServices;
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -30,6 +32,35 @@ builder.Services.AddBlazoredLocalStorage(config =>
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<CustomStateProvider>();
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
+
+builder.Services.AddHttpClient<IChoiceDataService, ChoiceDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<IQuestionDataService, QuestionDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<ILessonDataService, LessonDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<IChapterDataService, ChapterDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<ILanguageCompetenceDataService, LanguageCompetenceDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<ILanguageLevelDataService, LanguageLevelDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<ILanguageDataService, LanguageDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
 
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>(client =>

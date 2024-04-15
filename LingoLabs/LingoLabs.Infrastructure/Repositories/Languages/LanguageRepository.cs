@@ -54,5 +54,15 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             return await context.LanguageLevels
                 .AnyAsync(languageLevel => languageLevel.PriorityNumber == priorityNumber && languageLevel.LanguageId == languageLevelFound.LanguageId && languageLevel.LanguageLevelId != languageLevelFound.LanguageLevelId);
         }
+
+        public async Task<int> GetLanguageLevelCountAsync(Guid languageId)
+        {
+            return await context.LanguageLevels.CountAsync(languageLevel => languageLevel.LanguageId == languageId);
+        }
+
+        public async Task<int> GetLessonCountAsync(Guid languageId)
+        {
+            return await context.Lessons.CountAsync(lesson => lesson.Chapter.LanguageLevel.Language.LanguageId == languageId);
+        }
     }
 }

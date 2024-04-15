@@ -7,5 +7,7 @@
         public string LanguageFlag { get; set; } = default!;
         public string? LanguageDescription { get; set; } = default!;
         public string? LanguageVideoLink { get; set; } = default!;
+        public int LanguageLevelCount { get; set; }
+        public int LessonCount { get; set; }
     }
 }

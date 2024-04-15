@@ -4,6 +4,7 @@ namespace LingoLabs.App.ViewModel.LanguageModels.LessonQuiz
 {
     public class QuestionQuizViewModel
     {
+        public Guid QuestionId { get; set; }
         [Required(ErrorMessage = "QuestionRequirement is required")]
         public string QuestionRequirement { get; set; } = string.Empty;
         [Required(ErrorMessage = "QuestionType is required")]
