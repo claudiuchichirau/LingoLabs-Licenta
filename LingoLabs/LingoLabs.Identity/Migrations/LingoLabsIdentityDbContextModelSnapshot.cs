@@ -83,6 +83,9 @@ namespace LingoLabs.Identity.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
+                    b.Property<string>("UserRole")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedEmail")
@@ -98,9 +101,9 @@ namespace LingoLabs.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "c42ec06b-a41f-467f-9c3d-62af0e04fdbf",
+                            Id = "15c325bc-8cd3-4990-9e76-470c126e1eff",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a4e0f995-224f-4f88-9460-fa34aa66bcb6",
+                            ConcurrencyStamp = "2d26bc37-8280-42e4-a8af-c79382bb6c24",
                             Email = "admin@example.com",
                             EmailConfirmed = false,
                             FirstName = "admin",
@@ -108,10 +111,10 @@ namespace LingoLabs.Identity.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@EXAMPLE.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBebBJ0eux0Dyc3MLez5qhrc0PQLFX3G0NzMqT+FR+5H3z81SPoCVCj4RFxj3UKI/g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECN7feTgxVIwHq/WI8sudw2e71qpqaR87mxb3LEKk71DbiXNwAV38vHTyiWqovNcPQ==",
                             PhoneNumber = "0000000000",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8a33ccbc-9551-4e8b-970e-adfbd1d4c540",
+                            SecurityStamp = "47ae79b3-bc94-40f6-9760-2c2e6576f2fa",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -146,7 +149,7 @@ namespace LingoLabs.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "34e92d8b-1168-4a90-bdfb-5e45e50c6edf",
+                            Id = "9cdaaa55-5e5c-4633-a4b5-83b874b42895",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -241,8 +244,8 @@ namespace LingoLabs.Identity.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "c42ec06b-a41f-467f-9c3d-62af0e04fdbf",
-                            RoleId = "34e92d8b-1168-4a90-bdfb-5e45e50c6edf"
+                            UserId = "15c325bc-8cd3-4990-9e76-470c126e1eff",
+                            RoleId = "9cdaaa55-5e5c-4633-a4b5-83b874b42895"
                         });
                 });
 

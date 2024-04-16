@@ -1,5 +1,7 @@
-﻿using LingoLabs.Application.Persistence.Languages;
+﻿using LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Commands.UpdateLanguageLevel;
+using LingoLabs.Application.Persistence.Languages;
 using MediatR;
+using System.Web;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.UpdateLesson
 {
@@ -35,8 +37,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                     ValidationsErrors = new List<string> { lesson.Error }
                 };
             }
-
             var updateLessonDto = request.UpdateLessonDto;
+
+            var videoId = HttpUtility.ParseQueryString(new Uri(updateLessonDto.LessonVideoLink).Query).Get("v");
+
+            // Construct the new URL
+            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
 
             lesson.Value.UpdateLesson(
                 updateLessonDto.LessonTitle,
@@ -44,7 +50,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 updateLessonDto.LessonRequirement,
                 updateLessonDto.LessonContent,
                 updateLessonDto.LessonImageData,
-                updateLessonDto.LessonVideoLink,
+                newVideoLink,
                 updateLessonDto.LessonPriorityNumber);
 
             await lessonRepository.UpdateAsync(lesson.Value);

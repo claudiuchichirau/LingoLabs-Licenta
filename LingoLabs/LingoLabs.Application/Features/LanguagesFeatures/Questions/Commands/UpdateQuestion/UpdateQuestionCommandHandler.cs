@@ -1,6 +1,8 @@
-﻿using LingoLabs.Application.Persistence.Languages;
+﻿using LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Commands.UpdateListeningLesson;
+using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities.Languages;
 using MediatR;
+using System.Web;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.UpdateQuestion
 {
@@ -38,13 +40,17 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                     ValidationsErrors = new List<string> { question.Error }
                 };
             }
-
             var updateQuestioDto = request.UpdateQuestionDto;
+
+            var videoId = HttpUtility.ParseQueryString(new Uri(updateQuestioDto.QuestionVideoLink).Query).Get("v");
+
+            // Construct the new URL
+            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
 
             question.Value.UpdateQuestion(
                 updateQuestioDto.QuestionRequirement,
                 updateQuestioDto.QuestionImageData,
-                updateQuestioDto.QuestionVideoLink,
+                newVideoLink,
                 updateQuestioDto.LanguageId,
                 updateQuestioDto.QuestionPriorityNumber);
 

@@ -32,7 +32,14 @@ builder.Services.AddBlazoredLocalStorage(config =>
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<CustomStateProvider>();
 builder.Services.AddScoped<CustomAuthenticationStateProvider>();
+builder.Services.AddScoped<RoleAuthorizationService, RoleAuthorizationService>();
 
+builder.Services.AddSingleton<StateService>();
+
+builder.Services.AddHttpClient<IUserDataService, UserDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
 builder.Services.AddHttpClient<IChoiceDataService, ChoiceDataService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7210/");

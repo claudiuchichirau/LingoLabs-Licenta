@@ -1,5 +1,7 @@
-﻿using LingoLabs.Application.Persistence.Languages;
+﻿using LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.UpdateChapter;
+using LingoLabs.Application.Persistence.Languages;
 using MediatR;
+using System.Web;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.UpdateLanguageCompetence
 {
@@ -36,12 +38,17 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
                     ValidationsErrors = new List<string> { languageCompetence.Error }
                 };
             }
-
             var updateLanguageCompetenceDto = request.UpdateLanguageCompetenceDto;
+
+            var videoId = HttpUtility.ParseQueryString(new Uri(updateLanguageCompetenceDto.LanguageCompetenceVideoLink).Query).Get("v");
+
+            // Construct the new URL
+            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+
             languageCompetence.Value.UpdateLanguageCompetence
             (
                 updateLanguageCompetenceDto.LanguageCompetenceDescription,
-                updateLanguageCompetenceDto.LanguageCompetenceVideoLink,
+                newVideoLink,
                 updateLanguageCompetenceDto.LanguageCompetencePriorityNumber
             );
 

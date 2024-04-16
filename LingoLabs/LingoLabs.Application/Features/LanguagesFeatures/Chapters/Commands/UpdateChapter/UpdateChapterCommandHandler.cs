@@ -1,5 +1,7 @@
-﻿using LingoLabs.Application.Persistence.Languages;
+﻿using LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.UpdateLanguage;
+using LingoLabs.Application.Persistence.Languages;
 using MediatR;
+using System.Web;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.UpdateChapter
 {
@@ -35,14 +37,18 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Upd
                     ValidationsErrors = new List<string> { chapter.Error }
                 };
             }
-
             var updateChapterDto = request.UpdateChapterDto;
+
+            var videoId = HttpUtility.ParseQueryString(new Uri(updateChapterDto.ChapterVideoLink).Query).Get("v");
+
+            // Construct the new URL
+            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
 
             chapter.Value.UpdateChapter(
                 updateChapterDto.ChapterName,
                 updateChapterDto.ChapterDescription,
                 updateChapterDto.ChapterImageData,
-                updateChapterDto.ChapterVideoLink,
+                newVideoLink,
                 updateChapterDto.ChapterPriorityNumber
             );
 

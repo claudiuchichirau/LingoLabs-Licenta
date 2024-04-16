@@ -16,7 +16,7 @@ namespace LingoLabs.Identity.Services
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
-            loginService = loginService;
+            this.loginService = loginService;
         }
 
         public async Task<Result<UserInfoModel>> GetCurrentUserInfoAsync(string userId)
@@ -28,15 +28,18 @@ namespace LingoLabs.Identity.Services
                 return Result<UserInfoModel>.Failure($"User with the id:{userId} was not found!");
             }
 
+            Guid userIdGuid = Guid.Parse(userId);
+
             return Result<UserInfoModel>.Success(
-                    new UserInfoModel(
-                        user.UserName,
-                        user.Email,
-                        user.PhoneNumber,
-                        user.FirstName,
-                        user.LastName
-                    )
-                );
+                new UserInfoModel(
+                    userIdGuid,
+                    user.UserName,
+                    user.Email,
+                    user.PhoneNumber,
+                    user.FirstName,
+                    user.LastName
+                )
+            );
         }
 
         public async Task<(int status, string message)> ApproveAdmin(string userId)
@@ -68,11 +71,6 @@ namespace LingoLabs.Identity.Services
         public async Task<Result<List<UserInfoModel>>> GetPendingAdmins()
         {
             var users = await userManager.GetUsersInRoleAsync("AdminPending");
-
-            if (users == null || !users.Any())
-            {
-                return Result<List<UserInfoModel>>.Failure("No users found with the AdminPending role");
-            }
 
             var userInfoList = new List<UserInfoModel>();
 
@@ -140,5 +138,53 @@ namespace LingoLabs.Identity.Services
             return (true, "Password changed successfully.");
         }
 
+        public async Task<(int status, string message)> RejectAdmin(string userId)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return (UserAuthenticationStatus.USER_NOT_FOUND, "User not found");
+            }
+
+            var roles = await userManager.GetRolesAsync(user);
+            if (!roles.Contains("AdminPending"))
+            {
+                return (UserAuthenticationStatus.APPROVAL_FAIL, "User is not in the AdminPending role");
+            }
+
+            await userManager.RemoveFromRoleAsync(user, "AdminPending");
+
+            if (!await roleManager.RoleExistsAsync("Student"))
+            {
+                await roleManager.CreateAsync(new IdentityRole("Student"));
+            }
+
+            await userManager.AddToRoleAsync(user, "Student");
+
+            return (UserAuthenticationStatus.REGISTRATION_SUCCES, "User rejected successfully and added to Student role");
+        }
+        
+        public async Task<(bool success, string message)> UpdateUserInfoAsync(string userId, UserInfoModel model)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return (false, "User not found.");
+            }
+
+            user.UserName = model.UserName;
+            user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
+            user.FirstName = model.FirstName;
+            user.LastName = model.LastName;
+
+            var result = await userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return (false, "Failed to update user info.");
+            }
+
+            return (true, "User info updated successfully.");
+        }
     }
 }

@@ -88,9 +88,9 @@
         try
         {
             await authStateProvider.Login(loginRequest);
-            NavigationManager.NavigateTo("/");
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
             snackbar = Snackbar.Add("Login successful!", Severity.Success);
+            NavigationManager.NavigateTo("/dashboard");
         }
         catch (Exception ex)
         {

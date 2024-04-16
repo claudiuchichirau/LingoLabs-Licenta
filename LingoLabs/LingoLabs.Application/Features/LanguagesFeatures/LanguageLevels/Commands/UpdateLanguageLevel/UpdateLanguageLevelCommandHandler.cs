@@ -1,5 +1,7 @@
-﻿using LingoLabs.Application.Persistence.Languages;
+﻿using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.UpdateLanguageCompetence;
+using LingoLabs.Application.Persistence.Languages;
 using MediatR;
+using System.Web;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Commands.UpdateLanguageLevel
 {
@@ -37,13 +39,17 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
                     ValidationsErrors = new List<string> { languageLevel.Error }
                 };
             }
-
             var updateLanguageLevelDto = request.UpdateLanguageLevelDto;
+
+            var videoId = HttpUtility.ParseQueryString(new Uri(updateLanguageLevelDto.LanguageLevelVideoLink).Query).Get("v");
+
+            // Construct the new URL
+            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
 
             languageLevel.Value.UpdateLanguageLevel(
                 updateLanguageLevelDto.LanguageLevelAlias,
                 updateLanguageLevelDto.LanguageLevelDescription,
-                updateLanguageLevelDto.LanguageLevelVideoLink, 
+                newVideoLink, 
                 updateLanguageLevelDto.PriorityNumber);
 
             await languageLevelRepository.UpdateAsync(languageLevel.Value);

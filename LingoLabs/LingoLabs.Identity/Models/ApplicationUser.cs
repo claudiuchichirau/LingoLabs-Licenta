@@ -7,5 +7,6 @@ namespace LingoLabs.Identity.Models
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? DefaultLanguage { get; set; }
+        public string? UserRole { get; set; }
     }
 }

@@ -1,4 +1,8 @@
 ﻿@page "/choose-language"
+@using LingoLabs.App.Auth
+@using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Services.AuthServices
+@using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
 @using MudBlazor
 @using MatBlazor
@@ -6,8 +10,10 @@
 @using ViewModel.MudBlazor
 @inject NavigationManager NavigationManager
 @inject HttpClient httpClient
+@inject CustomStateProvider AuthStateProvider
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject StateService StateService
 
 <MudContainer>
     <div class="text-center" style="margin-top: 50px; margin-bottom:50px;">
@@ -15,61 +21,76 @@
     </div>
 </MudContainer>
 
-<div class="container-fluid p-3" style="margin-bottom: 80px;">
-    <div class="row justify-content-center">
-
-        <div class="col-md-3 d-flex align-items-stretch" style="display: flex; justify-content: center;">
-            <MudButton Variant="Variant.Text" OnClick="NavigateToLanguage" Style="padding: 10px;">
-                <div class="card d-flex flex-column justify-content-center" style="box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);">
-                    <div class="row text-center" style="padding: 20px;">
-                        <img src="https://vectorflags.s3-us-west-2.amazonaws.com/flags/uk-circle-01.png" style="max-width: 150px; height: auto;">
-                    </div>
-                    <div class="row text-center" style="font-size: 19px; margin-bottom: 10px;">
-                        <strong>
-                            English
-                        </strong>
-                    </div>
-                </div>
-            </MudButton>
-        </div>
-
+@if (!IsDataLoaded)
+{
+    <div class="text-center" style="margin-top: 10px; margin-bottom: 25px;">
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
     </div>
-</div>
+}
+else if (Languages == null || !Languages.Any())
+{
+    <div class="text-center">
+        <h2 style="font-size: 17px; margin-bottom: 30px;">
+            Nu există niciun curs disponibil.
+        </h2>
+    </div>
+}
+else
+{
+    <div class="container-fluid p-3" style="margin-bottom: 80px;">
+        <div class="row justify-content-center">
+
+            @foreach (LanguageViewModel language in Languages)
+            {
+                <div class="col-md-3 d-flex align-items-stretch" style="display: flex; justify-content: center;">
+                    <MudButton Variant="Variant.Text" OnClick="() => NavigateToWantPlacementTest(language.LanguageId)" Style="padding: 10px;">
+                        <div class="card d-flex flex-column justify-content-center" style="box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);">
+                            <div class="row text-center" style="padding: 20px;">
+                                <img src="@language.LanguageFlag" style="max-width: 150px; height: auto;">
+                            </div>
+                            <div class="row text-center" style="font-size: 19px; margin-bottom: 10px;">
+                                <strong>
+                                    @language.LanguageName
+                                </strong>
+                            </div>
+                        </div>
+                    </MudButton>
+                </div>
+            }
+
+        </div>
+    </div>
+ }
+
 
 @code {
-    // private IEnumerable<> Languages = new List<QuestionElement>();
+    [Inject]
+    public ILanguageDataService LanguageDataService { get; set; }
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     await PopulateLanguages();
-    // }
+    [Inject]
+    public IAuthenticationService AuthenticationService { get; set; }
 
-    // protected async Task PopulateLanguages()
-    // {
-    //     Questions = new List<QuestionElement>
-    //     {
-    //         new QuestionElement
-    //         {
-    //             QuestionId = Guid.NewGuid(),
-    //             QuestionPriorityNumber = 1,
-    //             QuestionType = QuestionTypeElement.TrueFalse,
-    //             QuestionRequirement = "Aveti de facut 2 teme?",
-    //             QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
-    //             QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-    //             QuestionChoices = new List<ChoiceElement>
-    //             {
-    //                 new ChoiceElement
-    //                 {
-    //                     ChoiceContent = "TrueFalse",
-    //                     IsCorrect = true
-    //                 }
-    //             }
-    //         }
-    //     };
-    // }
+    public List<LanguageViewModel> Languages { get; set; } = new List<LanguageViewModel>();
+    private bool IsDataLoaded = false;
+}
 
-    void NavigateToLanguage()
+@functions {
+    protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+        var claims = user.Claims.ToList();
+
+        Languages = (await LanguageDataService.GetAllLanguagesAsync()).Take(3).ToList();
+
+        IsDataLoaded = true;
+    }
+
+    void NavigateToWantPlacementTest(Guid languageId)
+    {
+        StateService.RemoveId();
+        StateService.SetId(languageId);
         NavigationManager.NavigateTo("/want-placement-test");
     }
 }

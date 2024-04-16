@@ -38,7 +38,7 @@
 
                     <MudTextField T="string" Label="Prenume" Required="true" RequiredError="Prenumele este obligatoriu!"
                                   @bind-Value="registerRequest.FirstName"
-                                  Validation="@((string s) => s.Length <= 50 && s.Length > 4 && Regex.IsMatch(s, @"^[a-zA-Z]+$") ? "" : "Prenumele nu poate depăși 50 de caractere și trebuie să conțină doar litere.")"
+                                  Validation="@((string s) => s.Length <= 100 && s.Length > 4 && Regex.IsMatch(s, @"^[a-zA-Z]+$") ? "" : "Prenumele nu poate depăși 100 de caractere și trebuie să conțină doar litere.")"
                                   ValidationMessage For="@(() => registerRequest.FirstName)" />
 
                     <MudTextField T="string" Label="Nume" Required="true" RequiredError="Numele este obligatoriu!"

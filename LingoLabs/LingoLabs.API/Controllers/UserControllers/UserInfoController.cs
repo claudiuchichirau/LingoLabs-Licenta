@@ -1,15 +1,12 @@
 ﻿using LingoLabs.Application.Contracts.Identity;
 using LingoLabs.Application.Contracts.Interfaces;
 using LingoLabs.Application.Models.Identity;
+using LingoLabs.Identity.Models;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace LingoLabs.API.Controllers.UserControllers
 {
-    [Route("api/v1/[controller]")]
-    [ApiController]
     public class UserInfoController : ApiControllerBase
     {
         private readonly ICurrentUserService currentUserService;
@@ -56,6 +53,38 @@ namespace LingoLabs.API.Controllers.UserControllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        [HttpPut("approveadmin/{userId}")]
+        public async Task<IActionResult> ApproveAdmin(string userId)
+        {
+            var (status, message) = await userService.ApproveAdmin(userId);
+
+            if (status == UserAuthenticationStatus.REGISTRATION_SUCCES)
+            {
+                return Ok(message);
+            }
+            else
+            {
+                return BadRequest(message);
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("rejectadmin/{userId}")]
+        public async Task<IActionResult> RejectAdmin(string userId)
+        {
+            var (status, message) = await userService.RejectAdmin(userId);
+
+            if (status == UserAuthenticationStatus.REGISTRATION_SUCCES)
+            {
+                return Ok(message);
+            }
+            else
+            {
+                return BadRequest(message);
+            }
+        }
+
         [Authorize]
         [HttpDelete("deletecurrentuser")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -74,12 +103,30 @@ namespace LingoLabs.API.Controllers.UserControllers
         }
 
         [Authorize(Roles = "Admin, Student, AdminPending")]
-        [HttpPut("changepassword")]
+        [HttpPut("change-password")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
         {
             var result = await userService.ChangePassword(currentUserService.UserId, model);
+
+            if (result.success)
+            {
+                return Ok(result.message);
+            }
+            else
+            {
+                return BadRequest(result.message);
+            }
+        }
+
+        [Authorize(Roles = "Admin, Student, AdminPending")]
+        [HttpPut("update-user-info")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateUserInfo(UserInfoModel model)
+        {
+            var result = await userService.UpdateUserInfoAsync(currentUserService.UserId, model);
 
             if (result.success)
             {

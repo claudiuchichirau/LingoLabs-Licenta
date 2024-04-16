@@ -3,7 +3,6 @@ using LingoLabs.Application.Contracts.Identity;
 using LingoLabs.Application.Contracts.Interfaces;
 using LingoLabs.Application.Models.Identity;
 using LingoLabs.Identity.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LingoLabs.API.Controllers.UserControllers
@@ -108,22 +107,6 @@ namespace LingoLabs.API.Controllers.UserControllers
                 UserId = currentUserService.GetCurrentUserId(),
                 Claims = currentUserService.GetCurrentClaimsPrincipal().Claims.ToDictionary(c => c.Type, c => c.Value)
             };
-        }
-
-        [Authorize(Roles = "Admin")]
-        [HttpPut("approveadmin/{userId}")]
-        public async Task<IActionResult> ApproveAdmin(string userId)
-        {
-            var (status, message) = await userService.ApproveAdmin(userId);
-
-            if (status == UserAuthenticationStatus.REGISTRATION_SUCCES)
-            {
-                return Ok(message);
-            }
-            else
-            {
-                return BadRequest(message);
-            }
         }
     }
 }

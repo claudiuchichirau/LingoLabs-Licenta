@@ -1,6 +1,4 @@
-﻿using LingoLabs.Domain.Entities.Languages;
-
-namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.UpdateLanguageCompetence
+﻿namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.UpdateLanguageCompetence
 {
     public class UpdateLanguageCompetenceDto
     {

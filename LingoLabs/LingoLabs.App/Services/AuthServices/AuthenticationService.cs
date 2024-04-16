@@ -7,6 +7,7 @@ namespace LingoLabs.App.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
+        private const string RequestUri = "api/v1/authentication";
         private readonly HttpClient httpClient;
         private readonly ITokenService tokenService;
 
@@ -18,7 +19,7 @@ namespace LingoLabs.App.Services
 
         public async Task Login(LoginViewModel loginRequest)
         {
-            var response = await httpClient.PostAsJsonAsync("api/v1/Authentication/login", loginRequest);
+            var response = await httpClient.PostAsJsonAsync($"{RequestUri}/login", loginRequest);
             if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 throw new Exception(await response.Content.ReadAsStringAsync());
@@ -31,13 +32,13 @@ namespace LingoLabs.App.Services
         public async Task Logout()
         {
             await tokenService.RemoveTokenAsync();
-            var result = await httpClient.PostAsync("api/v1/authentication/logout", null);
+            var result = await httpClient.PostAsync($"{RequestUri}/logout", null);
             result.EnsureSuccessStatusCode();
         }
 
         public async Task Register(RegisterViewModel registerRequest)
         {
-            var result = await httpClient.PostAsJsonAsync("api/v1/authentication/register", registerRequest);
+            var result = await httpClient.PostAsJsonAsync($"{RequestUri}/register", registerRequest);
             if (result.StatusCode == System.Net.HttpStatusCode.BadRequest)
             {
                 throw new Exception(await result.Content.ReadAsStringAsync());

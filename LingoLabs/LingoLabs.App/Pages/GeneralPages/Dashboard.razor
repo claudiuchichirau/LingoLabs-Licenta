@@ -1,5 +1,7 @@
 ﻿@page "/dashboard"
 @using LingoLabs.App.Auth
+@using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.ViewModel.AuthenticationModels
 @using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @using System.Net.Http.Json
@@ -22,63 +24,94 @@
     <img src="/images/homepage/sus.png" style="position: absolute; top: 0; right: 0; max-width: 200px;">
 </div>
 
+@if (!IsUSerDataLoaded)
+{
 <MudContainer>
     <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
         <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
             <div class="row">
-                <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Bine ai revenit, !</h2>
+                <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Bine ai revenit!</h2>
             </div>
         </div>
     </div>
 </MudContainer>
+}
+else
+{
+    <MudContainer>
+        <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
+            <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                <div class="row">
+                    <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Bine ai revenit, @userInfo.FirstName !</h2>
+                </div>
+            </div>
+        </div>
+    </MudContainer>
+}
 
 @if (HasAdminRole)
 {
-    <div class="text-left">
-        <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 100px; margin-bottom: 20px;" class="poppins-semi-bold">Aprobarea administratorilor</h1>
-    </div>
+    @if(!IsPendingAdminDataLoaded)
+    {
+        <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
+            <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                <div class="row">
+                    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        @if (pendingAdmins.Any())
+        {
+            <div class="text-left">
+                <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 100px; margin-bottom: 20px;" class="poppins-semi-bold">Aprobarea administratorilor</h1>
+            </div>
 
-    <div style="max-width: 80%; margin: auto;">
-        <MudPaper Class="pa-4">
-            <MudStack Spacing="0">
-                <MudButton OnClick="OnExpandCollapseClick" Class="poppins-semi-bold">
-                    @if (Elements.Any())
-                    {
-                        <MudIcon Icon="@Icons.Material.Filled.FiberNew" Size=Size.Large Style="background-color: transparent; color: #FC6F05; margin-right: 10px;" />
-                    }
-                    @(_expanded ? "Ascunde" : "Vezi cererile Administratorilor")
-                </MudButton>
+            <div style="max-width: 80%; margin: auto;">
+                <MudPaper Class="pa-4">
+                    <MudStack Spacing="0">
+                        <MudButton OnClick="OnExpandCollapseClick" Class="poppins-semi-bold">
+                            @if (pendingAdmins.Any())
+                            {
+                                <MudIcon Icon="@Icons.Material.Filled.FiberNew" Size=Size.Large Style="background-color: transparent; color: #FC6F05; margin-right: 10px;" />
+                            }
+                            @(_expanded ? "Ascunde" : "Vezi cererile Administratorilor")
+                        </MudButton>
 
-                <MudCollapse Expanded="_expanded">
-                    <MudTable Items="@Elements" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<AdminElement,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
-                        <ToolBarContent>
-                            <MudText Typo="Typo.h6" Style="color: black;">Tabel Aprobare Administratori</MudText>
-                            <MudSpacer />
-                            <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-                        </ToolBarContent>
-                        <HeaderContent>
-                            <MudTh Class="text-center poppins-semi-bold">Prenume</MudTh>
-                            <MudTh Class="text-center poppins-semi-bold">Nume</MudTh>
-                            <MudTh Class="text-center poppins-semi-bold">Email</MudTh>
-                            <MudTh Class="text-center poppins-semi-bold">Acțiune</MudTh>
-                        </HeaderContent>
-                        <RowTemplate>
-                            <MudTd DataLabel="Prenume" Class="text-center">@context.FirstName</MudTd>
-                            <MudTd DataLabel="Nume" Class="text-center">@context.LastName</MudTd>
-                            <MudTd DataLabel="Email" Class="text-center">@context.Email</MudTd>
-                            <MudTd DataLabel="Acțiune" Class="d-flex justify-content-evenly">
-                                <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="@( () => Approve(context) )">Aprobă</MudButton>
-                                <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@( () => Reject(context) )">Respinge</MudButton>
-                            </MudTd>
-                        </RowTemplate>
-                        <PagerContent>
-                            <MudTablePager />
-                        </PagerContent>
-                    </MudTable>
-                </MudCollapse>
-            </MudStack>
-        </MudPaper>
-    </div>
+                        <MudCollapse Expanded="_expanded">
+                            <MudTable Items="@pendingAdmins" T="UserDto" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<UserDto,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+                                <ToolBarContent>
+                                    <MudText Typo="Typo.h6" Style="color: black;">Tabel Aprobare Administratori</MudText>
+                                    <MudSpacer />
+                                    <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                                </ToolBarContent>
+                                <HeaderContent>
+                                    <MudTh Class="text-center poppins-semi-bold">Prenume</MudTh>
+                                    <MudTh Class="text-center poppins-semi-bold">Nume</MudTh>
+                                    <MudTh Class="text-center poppins-semi-bold">Email</MudTh>
+                                    <MudTh Class="text-center poppins-semi-bold">Acțiune</MudTh>
+                                </HeaderContent>
+                                <RowTemplate>
+                                    <MudTd DataLabel="Prenume" Class="text-center">@context.FirstName</MudTd>
+                                    <MudTd DataLabel="Nume" Class="text-center">@context.LastName</MudTd>
+                                    <MudTd DataLabel="Email" Class="text-center">@context.Email</MudTd>
+                                    <MudTd DataLabel="Acțiune" Class="d-flex justify-content-evenly">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="@( () => Approve(context) )">Aprobă</MudButton>
+                                        <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="@( () => Reject(context) )">Respinge</MudButton>
+                                    </MudTd>
+                                </RowTemplate>
+                                <PagerContent>
+                                    <MudTablePager />
+                                </PagerContent>
+                            </MudTable>
+                        </MudCollapse>
+                    </MudStack>
+                </MudPaper>
+            </div>
+        }
+    }
 
     <div class="text-left">
         <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 100px;" class="poppins-semi-bold">Cursuri</h1>
@@ -182,7 +215,7 @@
 
 
 
-@if (HasStudentRole)
+@if (!HasAdminRole)
 {
 
     <div class="text-left">
@@ -353,28 +386,18 @@
     }
 </style>
 
-@* ADIM APPROVAL *@
+
 @code {
-    private bool dense = false;
-    private bool hover = true;
-    private bool striped = false;
-    private bool bordered = true;
-    private string searchString1 = "";
-    private AdminElement selectedItem1 = null;
-    private HashSet<AdminElement> selectedItems = new HashSet<AdminElement>();
-    private Snackbar snackbar;
-    bool _expanded = false;
-    private AuthenticationState authState;
-    public bool HasAdminRole = false;
-    public bool HasStudentRole = false;
+    [Inject]
+    private IUserDataService UserDataService { get; set; }
+    private UserDto userInfo { get; set; } 
+    private bool IsUSerDataLoaded = false;
 
-    private void OnExpandCollapseClick()
-    {
-        _expanded = !_expanded;
-    }
+    private List<UserDto> pendingAdmins = new List<UserDto>();
+    private bool IsPendingAdminDataLoaded = false;
+}
 
-    private IEnumerable<AdminElement> Elements = new List<AdminElement>();
-
+@functions {
     protected override async Task OnInitializedAsync()
     {
         authState = await authStateProvider.GetAuthenticationStateAsync();
@@ -387,24 +410,41 @@
         HasAdminRole = claims.Any(claim => claim.Type == "role" && claim.Value == "Admin");
         HasStudentRole = claims.Any(claim => claim.Type == "role" && (claim.Value == "Student" || claim.Value == "AdminPending"));
 
-        await PopulateAdminAprovalTable();
+        var response = await UserDataService.GetUserInfoAsync();
+        userInfo = response.Data;
+        IsUSerDataLoaded = true;
+
+        pendingAdmins = (await UserDataService.GetPendingAdminsAsync()).ToList();
+        IsPendingAdminDataLoaded = true;
+
         await PopulateLanguagesTable();
     }
+}
 
-    private async Task PopulateAdminAprovalTable()
+
+@* ADIM APPROVAL *@
+@functions {
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = true;
+    private string searchString1 = "";
+    private UserDto selectedItem1 = null;
+    private HashSet<UserDto> selectedItems = new HashSet<UserDto>();
+    private Snackbar snackbar;
+    bool _expanded = false;
+    private AuthenticationState authState;
+    public bool HasAdminRole = false;
+    public bool HasStudentRole = false;
+
+    private void OnExpandCollapseClick()
     {
-        Elements = new List<AdminElement>
-        {
-            new AdminElement { FirstName = "Test", LastName = "Test", Email = "test@example.com" },
-            new AdminElement { FirstName = "Claudiu", LastName = "Vasile", Email = "claudiu@vasile.com" },
-        };
-
-        // Elements = await httpClient.GetFromJsonAsync<List<AdminElement>>("webapi/periodictable");
+        _expanded = !_expanded;
     }
 
-    private bool FilterFunc1(AdminElement element) => FilterFunc(element, searchString1);
+    private bool FilterFunc1(UserDto element) => FilterFunc(element, searchString1);
 
-    private bool FilterFunc(AdminElement element, string searchString)
+    private bool FilterFunc(UserDto element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -417,24 +457,50 @@
         return false;
     }
 
-    void Approve(AdminElement element)
+    async void Approve(UserDto element)
     {
-        // Do something
+        Guid userId = element.UserId;
+
+        var response = await UserDataService.ApproveAdminAsync(userId);
+
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Administratorul " + element.FirstName + " " + element.LastName + " a fost aprobat cu succes!", Severity.Success);
+
+        if (response.IsSuccess)
+        {
+            snackbar = Snackbar.Add("Userul " + element.FirstName + " " + element.LastName + " a fost aprobat cu succes ca admin!", Severity.Success);
+            pendingAdmins = (await UserDataService.GetPendingAdminsAsync()).ToList();
+            StateHasChanged();
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Aprobarea a eșuat: " + response.Message, Severity.Error);
+        }
     }
 
-    void Reject(AdminElement element)
+    async void Reject(UserDto element)
     {
-        // Do something
+        Guid userId = element.UserId;
+
+        var response = await UserDataService.RejectAdminAsync(userId);
+
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Administratorul " + element.FirstName + " " + element.LastName + " a fost respins!", Severity.Error);
+
+        if (response.IsSuccess)
+        {
+            snackbar = Snackbar.Add("Userul " + element.FirstName + " " + element.LastName + " a fost respins cu succes din rolul 'Admin'!", Severity.Error);
+            pendingAdmins = (await UserDataService.GetPendingAdminsAsync()).ToList();
+            StateHasChanged();
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Respingerea administratorului a eșuat: " + response.Message, Severity.Error);
+        }
     }
 }
 
 
 @* ADMIN VIEW & EDIT COURSES *@
-@code {
+@functions {
     private List<string> editEvents = new();
     private bool ronly = false;
     private bool canCancelEdit = true;
@@ -529,7 +595,7 @@
 
 
 @* STUDENT VIEW HIS COURSES *@
-@code {
+@functions {
     public class UserLanguage
     {
         public string LanguageName { get; set; }

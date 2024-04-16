@@ -1,5 +1,6 @@
 ﻿using LingoLabs.Application.Persistence.Languages;
 using MediatR;
+using System.Web;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.UpdateLanguage
 {
@@ -38,7 +39,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Up
 
             var updateLanguageDto = request.UpdateLanguageDto;
 
-            language.Value.UpdateLanguage(updateLanguageDto.LanguageName, updateLanguageDto.LanguageDescription, updateLanguageDto.LanguageVideoLink, updateLanguageDto.LanguageFlag);
+            var videoId = HttpUtility.ParseQueryString(new Uri(updateLanguageDto.LanguageVideoLink).Query).Get("v");
+
+            // Construct the new URL
+            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+
+            language.Value.UpdateLanguage(updateLanguageDto.LanguageName, updateLanguageDto.LanguageDescription, newVideoLink, updateLanguageDto.LanguageFlag);
 
             var result = await languageRepository.UpdateAsync(language.Value);
 

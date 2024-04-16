@@ -144,14 +144,6 @@ namespace LingoLabs.App.Services.LanguageServices
 
         public async Task<List<LanguageViewModel>> GetAllLanguagesAsync()
         {
-            var token = await tokenService.GetTokenAsync();
-            if (token == null)
-            {
-                throw new ApplicationException("Authentication token is null.");
-            }
-
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
             var result = await httpClient.GetAsync(RequestUri, HttpCompletionOption.ResponseHeadersRead);
             result.EnsureSuccessStatusCode();
             var content = await result.Content.ReadAsStringAsync();
@@ -245,7 +237,7 @@ namespace LingoLabs.App.Services.LanguageServices
                 updatePlacementTestViewModel.Questions
             };
 
-            var result = await httpClient.PutAsJsonAsync(RequestUri, placementTestViewModel);
+            var result = await httpClient.PutAsJsonAsync($"{RequestUri}/placement-test", placementTestViewModel);
             result.EnsureSuccessStatusCode();
 
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<PlacementTestViewModel>>();
