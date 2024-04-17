@@ -17,38 +17,38 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} is required.");
 
-            RuleFor(p => p.UpdateLessonDto.LessonTitle)
+            RuleFor(p => p.LessonTitle)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidateLesson(p.UpdateLessonDto.LessonTitle, lessonRepository, p.LessonId))
+                .MustAsync((p, cancellation) => ValidateLesson(p.LessonTitle, lessonRepository, p.LessonId))
                 .WithMessage("LessonTitle must be unique.");
 
-            RuleFor(p => p.UpdateLessonDto.LessonDescription)
-                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.UpdateLessonDto.LessonDescription))
+            RuleFor(p => p.LessonDescription)
+                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.LessonDescription))
                 .WithMessage("{PropertyName} must not exceed 500 characters.");
 
-            RuleFor(p => p.UpdateLessonDto.LessonRequirement)
-                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.UpdateLessonDto.LessonRequirement))
+            RuleFor(p => p.LessonRequirement)
+                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.LessonRequirement))
                 .WithMessage("{PropertyName} must not exceed 500 characters.");
 
-            RuleFor(p => p.UpdateLessonDto.LessonContent)
-                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.UpdateLessonDto.LessonContent))
+            RuleFor(p => p.LessonContent)
+                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.LessonContent))
                 .WithMessage("{PropertyName} must not exceed 500 characters.");
 
-            RuleFor(p => p.UpdateLessonDto.LessonVideoLink)
-                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateLessonDto.LessonVideoLink))
+            RuleFor(p => p.LessonVideoLink)
+                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.LessonVideoLink))
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
 
-            RuleFor(p => p.UpdateLessonDto.LessonImageData)
-                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateLessonDto.LessonImageData))
+            RuleFor(p => p.LessonImageData)
+                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.LessonImageData))
                 .WithMessage("{PropertyName} should be a .jpg or .png image if it exists.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.UpdateLessonDto.LessonPriorityNumber.Value, p.LessonId, lessonRepository))
-                .When(p => p.UpdateLessonDto.LessonPriorityNumber.HasValue && p.UpdateLessonDto.LessonPriorityNumber.Value > 0)
+                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.LessonPriorityNumber.Value, p.LessonId, lessonRepository))
+                .When(p => p.LessonPriorityNumber.HasValue && p.LessonPriorityNumber.Value > 0)
                 .WithMessage("PriorityNumber must be unique.");
         }
 

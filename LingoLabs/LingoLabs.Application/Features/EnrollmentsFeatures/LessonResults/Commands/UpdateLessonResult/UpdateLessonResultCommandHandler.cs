@@ -36,9 +36,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
                 };
             }
 
-            var updateLessonResultDto = request.UpdateLessonResultDto;
-
-            lessonResult.Value.UpdateLessonResult(updateLessonResultDto.IsCompleted);
+            lessonResult.Value.UpdateLessonResult(request.IsCompleted);
 
             await lessonResultRepository.UpdateAsync(lessonResult.Value);
 

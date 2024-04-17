@@ -1,13 +1,21 @@
 ﻿@page "/language-overview"
+@using LingoLabs.App.Auth
+@using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Contracts.LanguageContracts
+@using LingoLabs.App.Services.AuthServices
+@using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
+@using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @using MatBlazor
 @using System.Net.Http.Json
 @using ViewModel.MudBlazor
 @inject NavigationManager NavigationManager
+@inject CustomStateProvider authStateProvider
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject StateService StateService
 
 <div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top: -10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
     <img src="/images/homepage/line.png" style="position: absolute; top: 0; left: -45px; max-width: 150px;">
@@ -27,13 +35,22 @@
     </div>
 </MudContainer>
 
+@if(!IsLanguageInfoLoaded)
+{
+    <div class="row mx-0 justify-content-md-center">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-item-center" style="margin-top: 50px;">
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        </div>
+    </div>
+}
+else {
 <div class="row" style="max-width: 100vw; overflow-x: auto;">
     <div class="col">
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; margin-left: 75px; margin-top: 50px; padding: 5px;" class="poppins-semi-bold">
                 Nume:&emsp;
                 <span style="color: #2563EB; font-size: 25px;">
-                    Limba Engleza
+                    @language.LanguageName
                 </span>
             </h1>
         </div>
@@ -42,7 +59,7 @@
             <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
                 Descriere:&emsp;
                 <span style="font-size: 21px; color: #2563EB; text-align: justify;">
-                    Cursul de limba engleza este un curs de nivel incepator, care se adreseaza persoanelor care doresc sa invete limba engleza de la zero.
+                    @language.LanguageDescription
                 </span>
             </h1>
         </div>
@@ -59,18 +76,18 @@
 
             <!-- Second Column (2/3 width) -->
             <div class="col-md-8">
-                <iframe style="width: 426px; height: 240px; margin-top: 9px;" src="https://www.youtube.com/embed/CA1L7_hyRqs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe style="width: 426px; height: 240px; margin-top: 9px;" src="@language.LanguageVideoLink" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
 
 
     </div>
     <div class="col d-flex align-items-center justify-content-center">
-        <img src="https://vectorflags.s3-us-west-2.amazonaws.com/flags/uk-circle-01.png" alt="Limba Engleza" style="width: 350px; height: auto;">
+        <img src="@language.LanguageFlag" alt="@language.LanguageName's Flag" style="width: 350px; height: auto;">
     </div>
 </div>
 
-<div class="text-left" style="max-width: 100vw; overflow-x: auto;">
+@* <div class="text-left" style="max-width: 100vw; overflow-x: auto;">
     <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
         Cuvinte cheie:
     </h1>
@@ -109,7 +126,7 @@
         </DialogActions>
     </MudDialog>
 
-</div>
+</div> *@
 
 @* LANGUEAGE LEVELS *@
 <div class="text-left">
@@ -117,10 +134,8 @@
 </div>
 
 <div style="max-width: 80%; margin: auto; margin-bottom: 55px;">
-    <MudTable Items="@LanguageLevels" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<LanguageLevelElement,bool>(FilterFuncViewLanguage)"
-              @bind-SelectedItem="selectedAdminLanguage" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
-              OnCommitEditClick="@(() => EditLanguageLevel())"
-              IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
+    <MudTable Items="@language.LanguageLevels" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<LanguageLevelViewModel,bool>(FilterFuncViewLanguage)"
+              @bind-SelectedItem="selectedAdminLanguage" SortLabel="Sort By" IsEditRowSwitchingBlocked="@blockSwitch" >
         <ToolBarContent>
             <MudText Typo="Typo.h6">Niveluri Lingvistice</MudText>
             <MudSpacer />
@@ -128,21 +143,9 @@
                 <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Style="width: 50%;" />
             </div>
             <MudTooltip Text="Add">
-                <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialogLanguageLevel()' />
+                <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialogAddLanguageLevel()' />
             </MudTooltip>
         </ToolBarContent>
-
-        <ColGroup>
-            @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
-            {
-                <col style="width:50px;" />
-            }
-            <col />
-            @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
-            {
-                <col style="width:50px;" />
-            }
-        </ColGroup>
         <HeaderContent>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelPriorityNumber)">Nr. Crt.</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageLevelElement, object>(x=>x.LanguageLevelName)">Nume</MudTableSortLabel></MudTh>
@@ -152,49 +155,27 @@
             <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Nr. Crt.">@context.LanguageLevelPriorityNumber</MudTd>
-            <MudTd DataLabel="Nume">@context.LanguageLevelName</MudTd>
-            <MudTd DataLabel="Alias">@context.LanguageLevelAlias</MudTd>
-            <MudTd DataLabel="Descriere">@context.LanguageLevelDescription</MudTd>
-            <MudTd DataLabel="Link Video">@context.LanguageLevelVideoLink</MudTd>
-            <MudTd DataLabel="Vizualizează">
-                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLanguageLevelOverview() )">Vezi mai multe</MudButton>
+            <MudTd DataLabel="Nr. Crt." Style="text-align: center;">@(context.LanguageLevelPriorityNumber.HasValue ? context.LanguageLevelPriorityNumber.ToString() : "-")</MudTd>
+            <MudTd DataLabel="Nume" Style="text-align: center;">@context.LanguageLevelName</MudTd>
+            <MudTd DataLabel="Alias" Style="text-align: center;">@context.LanguageLevelAlias</MudTd>
+                <MudTd DataLabel="Descriere" Style="text-align: center;">@(string.IsNullOrEmpty(context.LanguageLevelDescription) ? "-" : context.LanguageLevelDescription)</MudTd>
+                <MudTd DataLabel="Link Video" Style="text-align: center;">@(string.IsNullOrEmpty(context.LanguageLevelVideoLink) ? "-" : context.LanguageLevelVideoLink)</MudTd>
+            <MudTd DataLabel="Vizualizează" Style="text-align: center;">
+                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLanguageLevelOverview(context.LanguageLevelId) )">Vezi mai multe</MudButton>
+            </MudTd>
+            <MudTd>
+                <div style="display: flex; justify-content: space-between;">
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Edit" OnClick="() => OpenDialogEditLanguageLevel(context)" Class="pa-0" Style="margin-right: 10px;" />
+                    <MudIconButton Text="Delete Course" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="() => DeleteLanguageLevel(context.LanguageLevelId)" Class="pa-0" Style="margin-left: 10px;" />
+                </div>
             </MudTd>
         </RowTemplate>
-        <RowEditingTemplate>
-            <MudTd DataLabel="Nr. Crt.">
-                <MudTextField @bind-Value="@context.LanguageLevelPriorityNumber" />
-            </MudTd>
-            <MudTd DataLabel="Nume">
-                <MudTextField @bind-Value="@context.LanguageLevelName" />
-            </MudTd>
-            <MudTd DataLabel="Alias">
-                <MudTextField @bind-Value="@context.LanguageLevelAlias" />
-            </MudTd>
-            <MudTd DataLabel="Descriere">
-                <MudTextField @bind-Value="@context.LanguageLevelDescription" />
-            </MudTd>
-            <MudTd DataLabel="Link Video">
-                <MudTextField @bind-Value="@context.LanguageLevelVideoLink" />
-            </MudTd>
-            <MudTd DataLabel="Vizualizează"></MudTd>
-        </RowEditingTemplate>
         <PagerContent>
             <MudTablePager />
         </PagerContent>
-        <EditButtonContent Context="button">
-            <div style="display: flex; flex-direction: row;">
-                <MudTooltip Text="Editeaza nivelul lingvistic">
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" Style="margin-right: 10px;" />
-                </MudTooltip>
-                <MudTooltip Text="Delete Course">
-                    <MudIconButton Text="Șterge nivelul lingvistic" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteLanguageLevel" Class="pa-0" Style="margin-left: 10px;" />
-                </MudTooltip>
-            </div>
-        </EditButtonContent>
     </MudTable>
 
-    <MudDialog @bind-IsVisible="visibleLanguageLevel" Options="dialogOptionsForLanguageLevel">
+    <MudDialog @bind-IsVisible="visibleAddLanguageLevel" Options="dialogOptionsForLanguageLevel">
         <TitleContent>
             <MudText Typo="Typo.h6">
                 <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
@@ -202,15 +183,46 @@
             </MudText>
         </TitleContent>
         <DialogContent>
-            <MudTextField T="string" @bind-Value="LanguageLevelNameValue" Label="Nume"></MudTextField>
-            <MudTextField T="string" @bind-Value="LanguageLevelAliasValue" Label="Alias"></MudTextField>
+            <EditForm Model="addNewLanguageLevel">
+                <DataAnnotationsValidator />
+                <MudTextField T="string" @bind-Value="addNewLanguageLevel.LanguageLevelName" Label="Nume"></MudTextField>
+                <MudTextField T="string" @bind-Value="addNewLanguageLevel.LanguageLevelAlias" Label="Alias"></MudTextField>
+                <ValidationSummary />
+            </EditForm>
         </DialogContent>
         <DialogActions>
-            <MudButton Variant="Variant.Filled" OnClick="CancelLanguageLevel" Class="px-10" Style="color: black;">Close</MudButton>
-            <MudButton Disabled="LanguageLevelNameValue == null || LanguageLevelAliasValue == null" OnClick="@(async () => AddLanguageLevel(LanguageLevelNameValue, LanguageLevelAliasValue))" Style="color: #2563EB;">Add</MudButton>
+            <MudButton Variant="Variant.Filled" OnClick="CancelAddLanguageLevel" Class="px-10" Style="color: black;">Close</MudButton>
+            <MudButton Disabled="!ValidateAddLanguageLevel()" OnClick="@(async () => AddLanguageLevel())" Style="color: #2563EB;">Add</MudButton>
 
         </DialogActions>
     </MudDialog>
+
+
+    <MudDialog @bind-IsVisible="visibleEditLanguageLevel" Options="dialogOptions">
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
+                <span style="color: #2563EB;">Editează conținutul nivelului de limbă</span>
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <EditForm Model="editLanguageLevel">
+                <DataAnnotationsValidator />
+                    <MudTextField T="string" @bind-Value="editLanguageLevel.LanguageLevelName" Label="Nume"></MudTextField>
+                    <MudTextField T="string" @bind-Value="editLanguageLevel.LanguageLevelAlias" Label="Alias"></MudTextField>
+                    <MudTextField T="string" @bind-Value="editLanguageLevel.LanguageLevelDescription" Label="Descriere"></MudTextField>
+                    <MudTextField T="string" @bind-Value="editLanguageLevel.LanguageLevelVideoLink" Label="Link Video"></MudTextField>
+                    <MudTextField T="int?" @bind-Value="editLanguageLevel.LanguageLevelPriorityNumber" Label="Număr de referință"></MudTextField>
+                <ValidationSummary />
+            </EditForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Filled" OnClick="CloseEditLanguageLevel" Class="px-10" Style="color: black;">Close</MudButton>
+                <MudButton Disabled="!ValidateEditLanguageLevel()" OnClick="@(async () => EditLanguageLevel(editLanguageLevel))" Style="color: #2563EB;">Update</MudButton>
+
+        </DialogActions>
+    </MudDialog>
+
 </div>
 
 @* LANGUAGE COMPETENCES *@
@@ -219,10 +231,8 @@
 </div>
 
 <div style="max-width: 80%; margin: auto; margin-bottom: 55px;">
-    <MudTable Items="@LanguageCompetences" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<LanguageCompetenceElement,bool>(FilterFuncViewCompetence)"
-              @bind-SelectedItem="selectedLanguageCompetence" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
-              OnCommitEditClick="@(() => EditLanguageCompetence())"
-              IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
+    <MudTable Items="@language.LanguageCompetences" Dense="@dense" Hover="@hover" ReadOnly="@ronly" Filter="new Func<LanguageCompetenceViewModel,bool>(FilterFuncViewCompetence)"
+              @bind-SelectedItem="selectedLanguageCompetence" SortLabel="Sort By" CommitEditTooltip="Commit Edit" IsEditRowSwitchingBlocked="@blockSwitch" >
         <ToolBarContent>
             <MudText Typo="Typo.h6">Competențe Lingvistice</MudText>
             <MudSpacer />
@@ -233,18 +243,6 @@
                 <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialogLanguageCompetence()' />
             </MudTooltip>
         </ToolBarContent>
-
-        <ColGroup>
-            @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
-            {
-                <col style="width:50px;" />
-            }
-            <col />
-            @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
-            {
-                <col style="width:50px;" />
-            }
-        </ColGroup>
         <HeaderContent>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageCompetenceElement, object>(x=>x.LanguageCompetencePriorityNumber)">Nr. Crt.</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageCompetenceElement, object>(x=>x.LanguageCompetenceName)">Nume</MudTableSortLabel></MudTh>
@@ -254,46 +252,24 @@
             <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Nr. Crt.">@context.LanguageCompetencePriorityNumber</MudTd>
-            <MudTd DataLabel="Nume">@context.LanguageCompetenceName</MudTd>
-            <MudTd DataLabel="Tip">@context.LanguageCompetenceType</MudTd>
-            <MudTd DataLabel="Descriere">@context.LanguageCompetenceDescription</MudTd>
-            <MudTd DataLabel="Link Video">@context.LanguageCompetenceVideoLink</MudTd>
-            <MudTd DataLabel="Vizualizează">
-                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLanguageCompetenceOverview() )">Vezi mai multe</MudButton>
+                <MudTd DataLabel="Nr. Crt." Style="text-align: center;">@(context.LanguageCompetencePriorityNumber.HasValue ? context.LanguageCompetencePriorityNumber.ToString() : "-")</MudTd>
+            <MudTd DataLabel="Nume" Style="text-align: center;">@context.LanguageCompetenceName</MudTd>
+            <MudTd DataLabel="Tip" Style="text-align: center;">@context.LanguageCompetenceType</MudTd>
+            <MudTd DataLabel="Descriere" Style="text-align: center;">@(string.IsNullOrEmpty(context.LanguageCompetenceDescription) ? "-" : context.LanguageCompetenceDescription)</MudTd>
+                <MudTd DataLabel="Link Video" Style="text-align: center;">@(string.IsNullOrEmpty(context.LanguageCompetenceVideoLink) ? "-" : context.LanguageCompetenceVideoLink)</MudTd>
+            <MudTd DataLabel="Vizualizează" Style="text-align: center;">
+                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLanguageCompetenceOverview(context.LanguageCompetenceId) )">Vezi mai multe</MudButton>
+            </MudTd>
+            <MudTd>
+                <div style="display: flex; justify-content: space-between;">
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Edit" OnClick="() => OpenDialogEditLanguageCompetence(context)" Class="pa-0" Style="margin-right: 10px;" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="() => DeleteLanguageCompetence(context.LanguageCompetenceId)" Class="pa-0" Style="margin-left: 10px;" />
+                </div>
             </MudTd>
         </RowTemplate>
-        <RowEditingTemplate>
-            <MudTd DataLabel="Nr. Crt.">
-                <MudTextField @bind-Value="@context.LanguageCompetencePriorityNumber" />
-            </MudTd>
-            <MudTd DataLabel="Nume">
-                <MudTextField @bind-Value="@context.LanguageCompetenceName" />
-            </MudTd>
-            <MudTd DataLabel="Tip">
-                <MudTextField @bind-Value="@context.LanguageCompetenceType" />
-            </MudTd>
-            <MudTd DataLabel="Descriere">
-                <MudTextField @bind-Value="@context.LanguageCompetenceDescription" />
-            </MudTd>
-            <MudTd DataLabel="Link Video">
-                <MudTextField @bind-Value="@context.LanguageCompetenceVideoLink" />
-            </MudTd>
-            <MudTd DataLabel="Vizualizează"></MudTd>
-        </RowEditingTemplate>
         <PagerContent>
             <MudTablePager />
         </PagerContent>
-        <EditButtonContent Context="button">
-            <div style="display: flex; flex-direction: row;">
-                <MudTooltip Text="Editeaza competența lingvistică">
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" Style="margin-right: 10px;" />
-                </MudTooltip>
-                <MudTooltip Text="Șterge competența lingvistică">
-                    <MudIconButton Text="Strege nivelul lingvistic" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteLanguageLevel" Class="pa-0" Style="margin-left: 10px;" />
-                </MudTooltip>
-            </div>
-        </EditButtonContent>
     </MudTable>
 
     <MudDialog @bind-IsVisible="visibleLanguageCompetence" Options="dialogOptionsForLanguageCompetence">
@@ -304,20 +280,48 @@
             </MudText>
         </TitleContent>
         <DialogContent>
-            <MudTextField T="string" @bind-Value="LanguageCompetenceNameValue" Label="Nume"></MudTextField>
-            <MudSelect T="LanguageCompetenceTypeElement" Label="Tip" @bind-Value="LanguageCompetenceTypeValue">
-                <MudSelectItem Value="LanguageCompetenceTypeElement.Grammar">Grammar</MudSelectItem>
-                <MudSelectItem Value="LanguageCompetenceTypeElement.Listening">Listening</MudSelectItem>
-                <MudSelectItem Value="LanguageCompetenceTypeElement.Speaking">Speaking</MudSelectItem>
-                <MudSelectItem Value="LanguageCompetenceTypeElement.Writing">Writing</MudSelectItem>
-            </MudSelect>
+            <EditForm Model="addLanguageCompetence">
+                <DataAnnotationsValidator />
+                    <MudTextField T="string" @bind-Value="addLanguageCompetence.LanguageCompetenceName" Label="Nume"></MudTextField>
+                    <MudSelect T="LanguageCompetenceTypeViewModel" Label="Tip" @bind-Value="addLanguageCompetence.LanguageCompetenceType">
+                        <MudSelectItem Value="LanguageCompetenceTypeViewModel.Grammar">Grammar</MudSelectItem>
+                        <MudSelectItem Value="LanguageCompetenceTypeViewModel.Listening">Listening</MudSelectItem>
+                        <MudSelectItem Value="LanguageCompetenceTypeViewModel.Reading">Reading</MudSelectItem>
+                        <MudSelectItem Value="LanguageCompetenceTypeViewModel.Writing">Writing</MudSelectItem>
+                    </MudSelect>
+                <ValidationSummary />
+            </EditForm>
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Filled" OnClick="CancelLanguageCompetence" Class="px-10" Style="color: black;">Close</MudButton>
-            <MudButton Disabled="LanguageCompetenceNameValue == null || LanguageCompetenceTypeValue == null" OnClick="@(async () => AddLanguageCompetence(LanguageCompetenceNameValue, LanguageCompetenceTypeValue))" Style="color: #2563EB;">Add</MudButton>
+                <MudButton Disabled="!ValidateAddLanguageCompetence()" OnClick="@(async () => AddLanguageCompetence(addLanguageCompetence))" Style="color: #2563EB;">Add</MudButton>
 
         </DialogActions>
     </MudDialog>
+
+        <MudDialog @bind-IsVisible="visibleEditLanguageCompetence" Options="dialogOptions">
+            <TitleContent>
+                <MudText Typo="Typo.h6">
+                    <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
+                    <span style="color: #2563EB;">Editează conținutul competenței lingvistice</span>
+                </MudText>
+            </TitleContent>
+            <DialogContent>
+                <EditForm Model="editLanguageCompetence">
+                    <DataAnnotationsValidator />
+                    <MudTextField T="string" @bind-Value="editLanguageCompetence.LanguageCompetenceName" Label="Nume" Disabled="true"></MudTextField>
+                    <MudTextField T="string" @bind-Value="editLanguageCompetence.LanguageCompetenceDescription" Label="Descriere"></MudTextField>
+                    <MudTextField T="string" @bind-Value="editLanguageCompetence.LanguageCompetenceVideoLink" Label="Link Video"></MudTextField>
+                    <MudTextField T="int?" @bind-Value="editLanguageCompetence.LanguageCompetencePriorityNumber" Label="Număr de referință"></MudTextField>
+                    <ValidationSummary />
+                </EditForm>
+            </DialogContent>
+            <DialogActions>
+                <MudButton Variant="Variant.Filled" OnClick="CloseEditLanguageCompetence" Class="px-10" Style="color: black;">Close</MudButton>
+                <MudButton Disabled="!ValidateEditLanguageCompetence()" OnClick="@(async () => EditLanguageCompetence(editLanguageCompetence))" Style="color: #2563EB;">Update</MudButton>
+
+            </DialogActions>
+        </MudDialog>
 </div>
 
 <div class="text-left">
@@ -374,7 +378,7 @@
             <span style="font-size: 16px;">Nivelurile lingvistice:</span>
         </MudText>
 
-        @foreach (var level in LanguageLevels)
+        @foreach (var level in language.LanguageLevels)
         {
             <MudStack Spacing="2" Style="margin-top: 35px;">
                 <MudButton OnClick="() => OnExpandCollapseClick(level.LanguageLevelName)">@(IsExpanded(level.LanguageLevelName) ? $"Ascunde - {level.LanguageLevelName}" : level.LanguageLevelName)</MudButton>
@@ -383,7 +387,7 @@
                     <MudText Typo="Typo.body1">
                         <span style="font-size: 16px; margin-top: 5px; margin-left: 31px;">Competențe lingvistice:</span>
 
-                        @foreach (var competence in LanguageCompetences)
+                        @foreach (var competence in @language.LanguageCompetences)
                         {
                             <MudStack Spacing="2" Style="max-width: 95%; margin-left: auto; margin-right: auto;">
                                 <MudButton Style="color: #2563EB;" OnClick="() => OnExpandCollapseClick(competence.LanguageCompetenceName)">@(IsExpanded(competence.LanguageCompetenceName) ? $"Ascunde - {competence.LanguageCompetenceName}" : competence.LanguageCompetenceName)</MudButton>
@@ -646,7 +650,7 @@
     <DialogActions>
         <MudButton Variant="Variant.Filled" OnClick="CancelQuestion" Class="px-10" Style="color: black;">Close</MudButton>
     </DialogActions>
-</MudDialog>
+</MudDialog> }
 
 
 <style type="text/css">
@@ -661,8 +665,43 @@
 </style>
 
 
-@* KEW WORDS *@
 @code {
+    [Inject]
+    public ILanguageDataService LanguageDataService { get; set; }
+    [Inject]
+    public ILanguageLevelDataService LanguageLevelDataService { get; set; }
+    [Inject]
+    public ILanguageCompetenceDataService LanguageCompetenceDataService { get; set; }
+
+    private LanguageViewModel language = new LanguageViewModel();
+    private AuthenticationState authState;
+    private bool IsLanguageInfoLoaded = false;
+    public bool HasAdminRole = false;
+    Guid CurrentLanguageId = Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await authStateProvider.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+        var claims = user.Claims.ToList();
+
+        //var userIdClaim = claims.FirstOrDefault(claim => claim.Type == "nameid");
+
+        HasAdminRole = claims.Any(claim => claim.Type == "role" && claim.Value == "Admin");
+
+        CurrentLanguageId = await StateService.GetId();
+
+        language = await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId);
+        IsLanguageInfoLoaded = true;
+
+        await PopulateKewWords();
+        await PopulateQuestions();
+    }
+}
+
+@* KEW WORDS *@
+@functions {
     private Snackbar snackbar;
     private bool visible;
     private string currentField;
@@ -692,14 +731,6 @@
         snackbar = Snackbar.Add("Cuvântul cheie a fost adăugat cu succes!", Severity.Success);
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await PopulateKewWords();
-        await PopulateLanguagesLevelsTable();
-        await PopulateLanguagesCompetencesTable();
-        await PopulateQuestions();
-    }
-
     private IEnumerable<string> KewWords = new List<string>();
     int containerWidth = 333; // Width of MudContainer (in vh units)
     int totalWidth; // Total width of elements (in vh units)
@@ -726,7 +757,7 @@
 
 
 @* VIEW & EDIT LANGUAGE LEVELS *@
-@code {
+@functions {
     private bool dense = false;
     private bool hover = true;
     private List<string> editEvents = new();
@@ -734,38 +765,14 @@
     private bool canCancelEdit = true;
     private bool blockSwitch = false;
     private string searchString = "";
-    private LanguageLevelElement selectedAdminLanguage = null;
-    private LanguageLevelElement elementBeforeEdit;
-    private HashSet<LanguageLevelElement> selectedItems1 = new HashSet<LanguageLevelElement>();
+    private LanguageLevelViewModel selectedAdminLanguage = null;
+    private LanguageLevelViewModel elementBeforeEdit;
+    private HashSet<LanguageLevelViewModel> selectedItems1 = new HashSet<LanguageLevelViewModel>();
     private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
     private TableEditButtonPosition editButtonPosition = TableEditButtonPosition.End;
     private TableEditTrigger editTrigger = TableEditTrigger.EditButton;
-    private IEnumerable<LanguageLevelElement> LanguageLevels = new List<LanguageLevelElement>();
-
-    protected async Task PopulateLanguagesLevelsTable()
-    {
-        LanguageLevels = new List<LanguageLevelElement>
-        {
-            new LanguageLevelElement
-            {
-                LanguageLevelName = "A1",
-                LanguageLevelAlias = "Beginner",
-                LanguageLevelDescription = "Descriere sasa lorem ipsum vede vidi vici bini",
-                LanguageLevelVideoLink = "https://www.youtube.com/watch?v=EzlRcGUdhA4&ab_channel=TheMotans-Topic",
-                LanguageLevelPriorityNumber = 1
-            },
-            new LanguageLevelElement
-            {
-                LanguageLevelName = "A2",
-                LanguageLevelAlias = "Beginner",
-                LanguageLevelDescription = null,
-                LanguageLevelVideoLink = null,
-                LanguageLevelPriorityNumber = null
-            }
-        };
-
-        // AdminLanguageElements = await httpClient.GetFromJsonAsync<List<AdminViewLanguageElement>>("webapi/periodictable");
-    }
+    private LanguageLevelViewModel addNewLanguageLevel = new LanguageLevelViewModel();
+    private LanguageLevelViewModel editLanguageLevel = new LanguageLevelViewModel();
 
     private void AddEditionEvent(string message)
     {
@@ -773,9 +780,9 @@
         StateHasChanged();
     }
 
-    private bool FilterFuncViewLanguage(LanguageLevelElement element) => FilterFuncViewLanguage1(element, searchString);
+    private bool FilterFuncViewLanguage(LanguageLevelViewModel element) => FilterFuncViewLanguage1(element, searchString);
 
-    private bool FilterFuncViewLanguage1(LanguageLevelElement element, string searchString)
+    private bool FilterFuncViewLanguage1(LanguageLevelViewModel element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -786,83 +793,146 @@
         return false;
     }
 
-    void EditLanguageLevel()
+    async void DeleteLanguageLevel(Guid languageLevelId)
     {
-        // Do something
+        var response = await LanguageLevelDataService.DeleteLanguageLevelAsync(languageLevelId);
+
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes!", Severity.Success);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit ștererea nivelului de limbă: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Nivelul de limbă a fost șters cu succes!", Severity.Success);
+            language = (await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId));
+            StateHasChanged();
+        }
     }
 
-    void DeleteLanguageLevel()
-    {
-        // Do something
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Nivelul de limbă a fost șters cu succes!", Severity.Success);
-    }
-
-    private bool visibleLanguageLevel;
-    private string LanguageLevelNameValue;
-    private string LanguageLevelAliasValue;
+    private bool visibleAddLanguageLevel;
     private DialogOptions dialogOptionsForLanguageLevel = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
 
-    void CancelLanguageLevel() => visibleLanguageLevel = false;
+    void CancelAddLanguageLevel() => visibleAddLanguageLevel = false;
 
-    void AddLanguageLevel(string languageNameValue, string languageAliasValue)
+    async void AddLanguageLevel()
     {
-        visibleLanguageLevel = false;
-        // Do something
+        visibleAddLanguageLevel = false;
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Nivelul de limbă a fost adăugat cu succes!", Severity.Success);
+
+        addNewLanguageLevel.LanguageId = CurrentLanguageId;
+
+        var response = await LanguageLevelDataService.CreateLanguageLevelAsync(addNewLanguageLevel);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit crearea unui nou nivel de limbă: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Nivelul de limbă '" + addNewLanguageLevel.LanguageLevelName + "' a fost adăugat cu succes!", Severity.Success);
+            language = (await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId));
+            StateHasChanged();
+        }
     }
 
-    void OpenDialogLanguageLevel()
+    void OpenDialogAddLanguageLevel()
     {
-        visibleLanguageLevel = true;
+        addNewLanguageLevel = new LanguageLevelViewModel();
+        visibleAddLanguageLevel = true;
     }
 
-    void NavigateToLanguageLevelOverview()
+    bool ValidateAddLanguageLevel()
     {
+        return !string.IsNullOrWhiteSpace(addNewLanguageLevel.LanguageLevelName) && !string.IsNullOrWhiteSpace(addNewLanguageLevel.LanguageLevelAlias);
+    }
+
+    void NavigateToLanguageLevelOverview(Guid languageLevelId)
+    {
+        StateService.RemoveId();
+        StateService.SetId(languageLevelId);
         NavigationManager.NavigateTo("/language-level-overview");
+    }
+
+    private bool visibleEditLanguageLevel = false;
+
+    void CloseEditLanguageLevel() => visibleEditLanguageLevel = false;
+
+    void OpenDialogEditLanguageLevel(LanguageLevelViewModel languageLevel)
+    {
+        editLanguageLevel = new LanguageLevelViewModel
+        {
+            LanguageLevelId = languageLevel.LanguageLevelId,
+            LanguageLevelName = languageLevel.LanguageLevelName,
+            LanguageLevelAlias = languageLevel.LanguageLevelAlias,
+            LanguageLevelDescription = languageLevel.LanguageLevelDescription,
+            LanguageLevelPriorityNumber = languageLevel.LanguageLevelPriorityNumber
+        };
+        elementBeforeEdit = languageLevel;
+        visibleEditLanguageLevel = true;
+    }
+
+    async void EditLanguageLevel(LanguageLevelViewModel editLanguageLevel)
+    {
+        int? prNumb = editLanguageLevel.LanguageLevelPriorityNumber;
+
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+        var response = await LanguageLevelDataService.UpdateLanguageLevelAsync(editLanguageLevel);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit actualizarea nivelului de limbă: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            visibleEditLanguageLevel = false;
+            snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes!", Severity.Success);
+            language = (await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId));
+            StateHasChanged();
+        }
+    }
+
+    bool ValidateEditLanguageLevel()
+    {
+        if (string.IsNullOrWhiteSpace(editLanguageLevel.LanguageLevelName) || string.IsNullOrWhiteSpace(editLanguageLevel.LanguageLevelAlias))
+            return false;
+        if (editLanguageLevel.LanguageLevelName == elementBeforeEdit.LanguageLevelName && editLanguageLevel.LanguageLevelAlias == elementBeforeEdit.LanguageLevelAlias && editLanguageLevel.LanguageLevelDescription == elementBeforeEdit.LanguageLevelDescription && editLanguageLevel.LanguageLevelVideoLink == elementBeforeEdit.LanguageLevelVideoLink && editLanguageLevel.LanguageLevelPriorityNumber == elementBeforeEdit.LanguageLevelPriorityNumber)
+            return false;
+        return true;
+        
     }
 }
 
 
 @* VIEW & EDIT COMPETENCES *@
-@code {
-    private LanguageCompetenceElement selectedLanguageCompetence = null;
-    private LanguageCompetenceElement LanguageCompetenceBeforeEdit;
-    private HashSet<LanguageCompetenceElement> competenceItems = new HashSet<LanguageCompetenceElement>();
+@functions {
+    private LanguageCompetenceViewModel selectedLanguageCompetence = null;
+    private LanguageCompetenceViewModel LanguageCompetenceBeforeEdit;
+    private HashSet<LanguageCompetenceViewModel> competenceItems = new HashSet<LanguageCompetenceViewModel>();
 
-    private IEnumerable<LanguageCompetenceElement> LanguageCompetences = new List<LanguageCompetenceElement>();
+    private bool FilterFuncViewCompetence(LanguageCompetenceViewModel element) => FilterFuncViewCompetence1(element, searchString);
 
-    protected async Task PopulateLanguagesCompetencesTable()
-    {
-        LanguageCompetences = new List<LanguageCompetenceElement>
-        {
-            new LanguageCompetenceElement
-            {
-                LanguageCompetenceName = "Listening",
-                LanguageCompetenceType = LanguageCompetenceTypeElement.Listening,
-                LanguageCompetenceDescription = "Descriere sasa lorem ipsum vede vidi vici bini",
-                LanguageCompetenceVideoLink = "https://www.youtube.com/watch?v=EzlRcGUdhA4&ab_channel=TheMotans-Topic",
-                LanguageCompetencePriorityNumber = 1
-            },
-            new LanguageCompetenceElement
-            {
-                LanguageCompetenceName = "Writing",
-                LanguageCompetenceType = LanguageCompetenceTypeElement.Writing,
-                LanguageCompetenceDescription = null,
-                LanguageCompetenceVideoLink = null,
-                LanguageCompetencePriorityNumber = null
-            }
-        };
-
-        // AdminLanguageElements = await httpClient.GetFromJsonAsync<List<AdminViewLanguageElement>>("webapi/periodictable");
-    }
-
-    private bool FilterFuncViewCompetence(LanguageCompetenceElement element) => FilterFuncViewCompetence1(element, searchString);
-
-    private bool FilterFuncViewCompetence1(LanguageCompetenceElement element, string searchString)
+    private bool FilterFuncViewCompetence1(LanguageCompetenceViewModel element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -871,48 +941,140 @@
         return false;
     }
 
-    void EditLanguageCompetence()
+    async void DeleteLanguageCompetence(Guid languageCompetenceId)
     {
-        // Do something
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes!", Severity.Success);
-    }
+        var response = await LanguageCompetenceDataService.DeleteLanguageCompetenceAsync(languageCompetenceId);
 
-    void DeleteLanguageCompetence()
-    {
-        // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Competența lingvistică a fost ștearsă cu succes!", Severity.Success);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit ștererea competenței lingvistice: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Competența lingvistică a fost ștearsă cu succes!", Severity.Success);
+            language = (await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId));
+            StateHasChanged();
+        }
     }
 
     private bool visibleLanguageCompetence;
-    private string LanguageCompetenceNameValue;
-    private LanguageCompetenceTypeElement LanguageCompetenceTypeValue;
     private DialogOptions dialogOptionsForLanguageCompetence = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
+    private LanguageCompetenceViewModel addLanguageCompetence = new LanguageCompetenceViewModel();
 
     void CancelLanguageCompetence() => visibleLanguageCompetence = false;
 
-    void AddLanguageCompetence(string languageCompetenceNameValue, LanguageCompetenceTypeElement languageCompetenceTypeValue)
+    async void AddLanguageCompetence(LanguageCompetenceViewModel addLanguageCompetence)
     {
         visibleLanguageCompetence = false;
-        // Do something
+
+        addLanguageCompetence.LanguageId = CurrentLanguageId;
+
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Competența lingvistică a fost adăugată cu succes!", Severity.Success);
+
+        var response = await LanguageCompetenceDataService.CreateLanguageCompetenceAsync(addLanguageCompetence);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit crearea unei noi competențe lingvistice: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Competența lingvistică a fost adăugată cu succes!", Severity.Success);
+            language = (await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId));
+            StateHasChanged();
+        }
     }
 
     void OpenDialogLanguageCompetence()
     {
+        addLanguageCompetence = new LanguageCompetenceViewModel();
         visibleLanguageCompetence = true;
     }
 
-    void NavigateToLanguageCompetenceOverview()
+    bool ValidateAddLanguageCompetence()
     {
+        if (string.IsNullOrEmpty(addLanguageCompetence.LanguageCompetenceName))
+            return false;
+        return true;
+    }
+
+    void NavigateToLanguageCompetenceOverview(Guid languageCompetenceId)
+    {
+        StateService.RemoveId();
+        StateService.SetId(languageCompetenceId);
         NavigationManager.NavigateTo("/language-competence-overview");
+    }
+
+    private bool visibleEditLanguageCompetence = false;
+    private LanguageCompetenceViewModel editLanguageCompetence = new LanguageCompetenceViewModel();
+
+    void CloseEditLanguageCompetence() => visibleEditLanguageCompetence = false;
+
+    void OpenDialogEditLanguageCompetence(LanguageCompetenceViewModel languageCompetence)
+    {
+        editLanguageCompetence = new LanguageCompetenceViewModel
+        {
+            LanguageCompetenceId = languageCompetence.LanguageCompetenceId,
+            LanguageCompetenceName = languageCompetence.LanguageCompetenceName,
+            LanguageCompetenceDescription = languageCompetence.LanguageCompetenceDescription, 
+            LanguageCompetenceVideoLink = languageCompetence.LanguageCompetenceVideoLink,
+            LanguageCompetencePriorityNumber = languageCompetence.LanguageCompetencePriorityNumber
+        };
+        selectedLanguageCompetence = languageCompetence;
+        visibleEditLanguageCompetence = true;
+    }
+
+    async void EditLanguageCompetence(LanguageCompetenceViewModel editLanguageCompetence)
+    {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+        var response = await LanguageCompetenceDataService.UpdateLanguageCompetenceAsync(editLanguageCompetence);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit actualizarea competenței lingvistice: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            visibleEditLanguageCompetence = false;
+            snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes!", Severity.Success);
+            language = (await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId));
+            StateHasChanged();
+        }
+    }
+
+    bool ValidateEditLanguageCompetence()
+    {
+        if (string.IsNullOrWhiteSpace(editLanguageCompetence.LanguageCompetenceName))
+            return false;
+        if (editLanguageCompetence.LanguageCompetenceName == selectedLanguageCompetence.LanguageCompetenceName && editLanguageCompetence.LanguageCompetenceDescription == selectedLanguageCompetence.LanguageCompetenceDescription && editLanguageCompetence.LanguageCompetenceVideoLink == selectedLanguageCompetence.LanguageCompetenceVideoLink && editLanguageCompetence.LanguageCompetencePriorityNumber == selectedLanguageCompetence.LanguageCompetencePriorityNumber)
+            return false;
+        return true;
     }
 }
 
 @* VIEW & EDIT PLACEMENT TEST *@
-@code {
+@functions {
     private bool visibleCreatePlacementTest;
     private DialogOptions dialogOptionsForCreatePlacementTest = new() { FullWidth = true, MaxWidth = MaxWidth.Large };
     private Dictionary<string, bool> _expandedStates = new Dictionary<string, bool>();

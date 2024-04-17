@@ -15,17 +15,17 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
                 .NotEmpty().WithMessage("Language competence id is required")
                 .NotEqual(Guid.Empty).WithMessage("Language competence id is required");
 
-            RuleFor(x => x.UpdateLanguageCompetenceDto.LanguageCompetenceDescription)
+            RuleFor(x => x.LanguageCompetenceDescription)
                 .MaximumLength(500)
                 .WithMessage($"Language competence description must be less than 500 characters");
 
-            RuleFor(x => x.UpdateLanguageCompetenceDto.LanguageCompetenceVideoLink)
-                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateLanguageCompetenceDto.LanguageCompetenceVideoLink))
+            RuleFor(x => x.LanguageCompetenceVideoLink)
+                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.LanguageCompetenceVideoLink))
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.UpdateLanguageCompetenceDto.LanguageCompetencePriorityNumber.Value, p.LanguageCompetenceId, languageCompetenceRepository))
-                .When(p => p.UpdateLanguageCompetenceDto.LanguageCompetencePriorityNumber.HasValue && p.UpdateLanguageCompetenceDto.LanguageCompetencePriorityNumber.Value > 0)
+                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.LanguageCompetencePriorityNumber.Value, p.LanguageCompetenceId, languageCompetenceRepository))
+                .When(p => p.LanguageCompetencePriorityNumber.HasValue && p.LanguageCompetencePriorityNumber.Value > 0)
                 .WithMessage("PriorityNumber must be unique.");
         }
 

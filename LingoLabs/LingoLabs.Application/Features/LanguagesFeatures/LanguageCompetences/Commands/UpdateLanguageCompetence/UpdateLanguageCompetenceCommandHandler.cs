@@ -38,18 +38,22 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
                     ValidationsErrors = new List<string> { languageCompetence.Error }
                 };
             }
-            var updateLanguageCompetenceDto = request.UpdateLanguageCompetenceDto;
 
-            var videoId = HttpUtility.ParseQueryString(new Uri(updateLanguageCompetenceDto.LanguageCompetenceVideoLink).Query).Get("v");
+            string newVideoLink = null;
 
-            // Construct the new URL
-            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            if (!string.IsNullOrEmpty(request.LanguageCompetenceVideoLink))
+            {
+                string videoId = HttpUtility.ParseQueryString(new Uri(request.LanguageCompetenceVideoLink).Query).Get("v");
+
+                // Construct the new URL
+                newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            }
 
             languageCompetence.Value.UpdateLanguageCompetence
             (
-                updateLanguageCompetenceDto.LanguageCompetenceDescription,
+                request.LanguageCompetenceDescription,
                 newVideoLink,
-                updateLanguageCompetenceDto.LanguageCompetencePriorityNumber
+                request.LanguageCompetencePriorityNumber
             );
 
             await languageCompetenceRepository.UpdateAsync(languageCompetence.Value);

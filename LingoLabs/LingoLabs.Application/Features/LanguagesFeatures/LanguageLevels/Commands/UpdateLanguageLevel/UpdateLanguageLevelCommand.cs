@@ -5,6 +5,10 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
     public class UpdateLanguageLevelCommand: IRequest<UpdateLanguageLevelCommandResponse>
     {
         public Guid LanguageLevelId { get; set; }
-        public UpdateLanguageLevelDto UpdateLanguageLevelDto { get; set; } = new UpdateLanguageLevelDto();
+        public string LanguageLevelName { get; set; } = string.Empty;
+        public string LanguageLevelAlias { get; set; } = string.Empty;
+        public string LanguageLevelDescription { get; set; } = string.Empty;
+        public string LanguageLevelVideoLink { get; set; } = string.Empty;
+        public int? LanguageLevelPriorityNumber { get; set; }
     }
 }

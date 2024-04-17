@@ -40,19 +40,23 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                     ValidationsErrors = new List<string> { question.Error }
                 };
             }
-            var updateQuestioDto = request.UpdateQuestionDto;
 
-            var videoId = HttpUtility.ParseQueryString(new Uri(updateQuestioDto.QuestionVideoLink).Query).Get("v");
+            string newVideoLink = null;
 
-            // Construct the new URL
-            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            if (!string.IsNullOrEmpty(request.QuestionVideoLink))
+            {
+                string videoId = HttpUtility.ParseQueryString(new Uri(request.QuestionVideoLink).Query).Get("v");
+
+                // Construct the new URL
+                newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            }
 
             question.Value.UpdateQuestion(
-                updateQuestioDto.QuestionRequirement,
-                updateQuestioDto.QuestionImageData,
+                request.QuestionRequirement,
+                request.QuestionImageData,
                 newVideoLink,
-                updateQuestioDto.LanguageId,
-                updateQuestioDto.QuestionPriorityNumber);
+                request.LanguageId,
+                request.QuestionPriorityNumber);
 
             await questionRepository.UpdateAsync(question.Value);
 

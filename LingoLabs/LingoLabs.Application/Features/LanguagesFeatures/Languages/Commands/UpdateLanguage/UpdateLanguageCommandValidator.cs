@@ -16,25 +16,25 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Up
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} must not be default.");
 
-            RuleFor(p => p.UpdateLanguageDto.LanguageFlag)
+            RuleFor(p => p.LanguageFlag)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
-                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateLanguageDto.LanguageFlag))
+                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.LanguageFlag))
                 .WithMessage("{PropertyName} should be a valid url if it exists.");
 
-            RuleFor(p => p.UpdateLanguageDto.LanguageName)
+            RuleFor(p => p.LanguageName)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidateLanguage(p.UpdateLanguageDto.LanguageName, languageRepository, p.LanguageId))
+                .MustAsync((p, cancellation) => ValidateLanguage(p.LanguageName, languageRepository, p.LanguageId))
                 .WithMessage("LanguageName must be unique.");
 
-            RuleFor(p => p.UpdateLanguageDto.LanguageDescription)
+            RuleFor(p => p.LanguageDescription)
                 .MaximumLength(1000).WithMessage("{PropertyName} must not exceed 1000 characters.");
 
-            RuleFor(p => p.UpdateLanguageDto.LanguageVideoLink)
-                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateLanguageDto.LanguageVideoLink))
+            RuleFor(p => p.LanguageVideoLink)
+                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.LanguageVideoLink))
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
         }
 

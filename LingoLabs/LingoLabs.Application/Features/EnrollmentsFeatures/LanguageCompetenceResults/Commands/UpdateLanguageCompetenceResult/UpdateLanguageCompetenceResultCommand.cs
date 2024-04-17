@@ -5,6 +5,6 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
     public class UpdateLanguageCompetenceResultCommand : IRequest<UpdateLanguageCompetenceResultCommandResponse>
     {
         public Guid LanguageCompetenceResultId { get; set; }
-        public UpdateLanguageCompetenceResultDto UpdateLanguageCompetenceResultDto { get; set; } = new UpdateLanguageCompetenceResultDto();
+        public bool IsCompleted { get; set; }
     }
 }

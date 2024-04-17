@@ -36,9 +36,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResult
                 };
             }
 
-            var updateLanguageLevelResultDto = request.UpdateLanguageLevelResultDto;
-
-            languageLevelResult.Value.UpdateLanguageLevelResult(updateLanguageLevelResultDto.IsCompleted);
+            languageLevelResult.Value.UpdateLanguageLevelResult(request.IsCompleted);
 
             await languageLevelResultRepository.UpdateAsync(languageLevelResult.Value);
 

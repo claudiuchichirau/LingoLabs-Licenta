@@ -5,6 +5,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
     public class UpdateLanguageCompetenceCommand: IRequest<UpdateLanguageCompetenceCommandResponse>
     {
         public Guid LanguageCompetenceId { get; set; }
-        public UpdateLanguageCompetenceDto UpdateLanguageCompetenceDto { get; set; } = new UpdateLanguageCompetenceDto();
+        //public string LanguageCompetenceName { get; set; } = string.Empty;
+        public string LanguageCompetenceDescription { get; set; } = string.Empty;
+        public string LanguageCompetenceVideoLink { get; set; } = string.Empty;
+        public int? LanguageCompetencePriorityNumber { get; set; }
     }
 }

@@ -36,9 +36,8 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
                 };
             }
 
-            var updateChapterResultDto = request.UpdateChapterResultDto;
 
-            chapterResult.Value.UpdateChapterResult(updateChapterResultDto.IsCompleted);
+            chapterResult.Value.UpdateChapterResult(request.IsCompleted);
 
             await chapterResultRepository.UpdateAsync(chapterResult.Value);
 

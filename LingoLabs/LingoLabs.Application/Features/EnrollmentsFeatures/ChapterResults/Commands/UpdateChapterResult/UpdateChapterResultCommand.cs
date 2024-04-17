@@ -5,6 +5,6 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
     public class UpdateChapterResultCommand: IRequest<UpdateChapterResultCommandResponse>
     {
         public Guid ChapterResultId { get; set; }
-        public UpdateChapterResultDto UpdateChapterResultDto { get; set; } = new UpdateChapterResultDto();
+        public bool IsCompleted { get; set; }
     }
 }

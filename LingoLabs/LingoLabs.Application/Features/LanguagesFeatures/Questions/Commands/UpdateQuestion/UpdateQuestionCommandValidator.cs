@@ -19,20 +19,20 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} must not be empty.");
 
-            RuleFor(p => p.UpdateQuestionDto.QuestionRequirement)
+            RuleFor(p => p.QuestionRequirement)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(500).WithMessage("{PropertyName} must not exceed 500 characters.");
 
-            RuleFor(p => p.UpdateQuestionDto.QuestionImageData)
-                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateQuestionDto.QuestionImageData))
+            RuleFor(p => p.QuestionImageData)
+                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.QuestionImageData))
                 .WithMessage("{PropertyName} should be a .jpg or .png image if it exists.");
 
-            RuleFor(p => p.UpdateQuestionDto.QuestionVideoLink)
-                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateQuestionDto.QuestionVideoLink))
+            RuleFor(p => p.QuestionVideoLink)
+                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.QuestionVideoLink))
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
 
-            RuleFor(p => p.UpdateQuestionDto.LanguageId)
+            RuleFor(p => p.LanguageId)
                 .MustAsync(async (languageId, cancellation) =>
                 {
                     if (languageId == Guid.Empty)
@@ -44,8 +44,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                 .WithMessage("LanguageId must exist.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.UpdateQuestionDto.QuestionPriorityNumber.Value, p.QuestionId, questionRepository))
-                .When(p => p.UpdateQuestionDto.QuestionPriorityNumber.HasValue && p.UpdateQuestionDto.QuestionPriorityNumber.Value > 0)
+                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.QuestionPriorityNumber.Value, p.QuestionId, questionRepository))
+                .When(p => p.QuestionPriorityNumber.HasValue && p.QuestionPriorityNumber.Value > 0)
                 .WithMessage("PriorityNumber must be unique.");
 
         }

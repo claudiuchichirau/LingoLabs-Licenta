@@ -18,5 +18,6 @@ namespace LingoLabs.App.ViewModel.LanguageModels
         public List<TagViewModel> LearningCompetenceKeyWords { get; set; } = [];
         public List<UserLanguageLevelViewModel> UserLanguageLevels { get; set; } = [];
         public List<LessonViewModel> LanguageCompetenceLessons { get; set; } = [];
+        public string LanguageName { get; set; } = string.Empty;
     }
 }

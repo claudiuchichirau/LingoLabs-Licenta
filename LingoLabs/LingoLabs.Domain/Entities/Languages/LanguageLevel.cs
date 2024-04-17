@@ -59,8 +59,9 @@ namespace LingoLabs.Domain.Entities.Languages
                 LanguageLevelVideoLink = languageLevelVideoLink;
         }
 
-        public void UpdateLanguageLevel(string languageLevelAlias, string languageLevelDescription, string languageLevelVideoLink, int? priorityNumber)
+        public void UpdateLanguageLevel(string languageLevelName, string languageLevelAlias, string languageLevelDescription, string languageLevelVideoLink, int? priorityNumber)
         {
+            LanguageLevelName = languageLevelName;
             LanguageLevelAlias = languageLevelAlias;
             LanguageLevelDescription = languageLevelDescription;
             LanguageLevelVideoLink = languageLevelVideoLink;

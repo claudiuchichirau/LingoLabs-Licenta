@@ -39,18 +39,25 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
                     ValidationsErrors = new List<string> { languageLevel.Error }
                 };
             }
-            var updateLanguageLevelDto = request.UpdateLanguageLevelDto;
 
-            var videoId = HttpUtility.ParseQueryString(new Uri(updateLanguageLevelDto.LanguageLevelVideoLink).Query).Get("v");
+            string newVideoLink = null;
 
-            // Construct the new URL
-            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            if (!string.IsNullOrEmpty(request.LanguageLevelVideoLink))
+            {
+                string videoId = HttpUtility.ParseQueryString(new Uri(request.LanguageLevelVideoLink).Query).Get("v");
+
+                // Construct the new URL
+                newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            }
+
+            int? prNumb = request.LanguageLevelPriorityNumber;
 
             languageLevel.Value.UpdateLanguageLevel(
-                updateLanguageLevelDto.LanguageLevelAlias,
-                updateLanguageLevelDto.LanguageLevelDescription,
-                newVideoLink, 
-                updateLanguageLevelDto.PriorityNumber);
+                request.LanguageLevelName,
+                request.LanguageLevelAlias,
+                request.LanguageLevelDescription,
+                newVideoLink,
+                request.LanguageLevelPriorityNumber);
 
             await languageLevelRepository.UpdateAsync(languageLevel.Value);
 

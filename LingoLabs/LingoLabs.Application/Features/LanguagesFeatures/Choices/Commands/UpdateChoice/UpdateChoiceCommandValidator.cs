@@ -6,12 +6,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.Upda
     {
         public UpdateChoiceCommandValidator()
         {
-            RuleFor(p => p.UpdateChoiceDto.ChoiceContent)
+            RuleFor(p => p.ChoiceContent)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(100).WithMessage("{PropertyName} must not exceed 100 characters.");
 
-            RuleFor(p => p.UpdateChoiceDto.IsCorrect)
+            RuleFor(p => p.IsCorrect)
                 .NotNull().WithMessage("{PropertyName} is required.");
         }
     }

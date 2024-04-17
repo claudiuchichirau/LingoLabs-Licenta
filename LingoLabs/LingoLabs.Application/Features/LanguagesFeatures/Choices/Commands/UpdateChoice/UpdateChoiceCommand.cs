@@ -5,6 +5,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.Upda
     public class UpdateChoiceCommand: IRequest<UpdateChoiceCommandResponse>
     {
         public Guid ChoiceId { get; set; }
-        public UpdateChoiceDto UpdateChoiceDto { get; set; } = new UpdateChoiceDto();
+        public string ChoiceContent { get; set; } = string.Empty;
+        public bool IsCorrect { get; set; }
     }
 }

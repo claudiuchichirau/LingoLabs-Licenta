@@ -11,5 +11,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
         public List<TagDto> UnassociatedTags { get; set; } = [];
         public List<UserLanguageLevelDto> UserLanguageLevels { get; set; } = [];
         public List<LessonDto> LanguageCompetenceLessons { get; set; } = [];
+        public string LanguageName { get; set; } = string.Empty;
     }
 }

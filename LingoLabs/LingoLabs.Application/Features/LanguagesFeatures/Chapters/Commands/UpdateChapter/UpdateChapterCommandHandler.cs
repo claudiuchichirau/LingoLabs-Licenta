@@ -37,19 +37,23 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Upd
                     ValidationsErrors = new List<string> { chapter.Error }
                 };
             }
-            var updateChapterDto = request.UpdateChapterDto;
 
-            var videoId = HttpUtility.ParseQueryString(new Uri(updateChapterDto.ChapterVideoLink).Query).Get("v");
+            string newVideoLink = null;
 
-            // Construct the new URL
-            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            if (!string.IsNullOrEmpty(request.ChapterVideoLink))
+            {
+                string videoId = HttpUtility.ParseQueryString(new Uri(request.ChapterVideoLink).Query).Get("v");
+
+                // Construct the new URL
+                newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            }
 
             chapter.Value.UpdateChapter(
-                updateChapterDto.ChapterName,
-                updateChapterDto.ChapterDescription,
-                updateChapterDto.ChapterImageData,
+                request.ChapterName,
+                request.ChapterDescription,
+                request.ChapterImageData,
                 newVideoLink,
-                updateChapterDto.ChapterPriorityNumber
+                request.ChapterPriorityNumber
             );
 
             await chapterRepository.UpdateAsync(chapter.Value);

@@ -58,7 +58,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Up
 
             List<CreatePlacementTestQuestionDto> questions = [];
 
-            foreach (var question in request.PlacementTest.Questions)
+            foreach (var question in request.Questions)
             {
                 var questionExists = await questionRepository.FindByIdAsync(question.QuestionId);
 

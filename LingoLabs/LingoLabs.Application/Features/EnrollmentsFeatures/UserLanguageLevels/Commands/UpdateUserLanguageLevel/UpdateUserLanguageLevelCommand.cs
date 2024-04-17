@@ -5,6 +5,6 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.
     public class UpdateUserLanguageLevelCommand: IRequest<UpdateUserLanguageLevelCommandResponse>
     {
         public Guid UserLanguageLevelId { get; set; }
-        public UpdateUserLanguageLevelDto UpdateUserLanguageLevel { get; set; } = new UpdateUserLanguageLevelDto();
+        public Guid LanguageLevelId { get; set; }
     }
 }

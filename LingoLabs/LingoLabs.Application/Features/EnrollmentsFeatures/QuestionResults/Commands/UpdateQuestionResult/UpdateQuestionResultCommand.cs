@@ -5,6 +5,6 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Com
     public class UpdateQuestionResultCommand: IRequest<UpdateQuestionResultCommandResponse>
     {
         public Guid QuestionResultId { get; set; }
-        public UpdateQuestionResultDto UpdateQuestionResultDto { get; set; } = new UpdateQuestionResultDto();
+        public bool IsCorrect { get; set; }
     }
 }

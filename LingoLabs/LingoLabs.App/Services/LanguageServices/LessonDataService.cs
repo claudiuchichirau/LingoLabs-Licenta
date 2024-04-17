@@ -35,7 +35,17 @@ namespace LingoLabs.App.Services.LanguageServices
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await httpClient.PostAsJsonAsync(RequestUri, createLessonViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<LessonViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
+
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<LessonViewModel>>();
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
@@ -57,6 +67,7 @@ namespace LingoLabs.App.Services.LanguageServices
 
             var lessonViewModel = new
             {
+                updateLessonViewModel.LessonId,
                 updateLessonViewModel.LessonTitle,
                 updateLessonViewModel.LessonDescription,
                 updateLessonViewModel.LessonPriorityNumber,
@@ -67,7 +78,16 @@ namespace LingoLabs.App.Services.LanguageServices
             };
 
             var result = await httpClient.PutAsJsonAsync(RequestUri, lessonViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<LessonViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
 
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<LessonViewModel>>();
 
@@ -181,7 +201,17 @@ namespace LingoLabs.App.Services.LanguageServices
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await httpClient.PostAsJsonAsync($"{RequestUri}/create-quiz", createQuizViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<QuizViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
+
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<QuizViewModel>>();
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
@@ -207,7 +237,16 @@ namespace LingoLabs.App.Services.LanguageServices
             };
 
             var result = await httpClient.PutAsJsonAsync($"{RequestUri}/update-quiz", quizViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<QuizViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
 
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<QuizViewModel>>();
 

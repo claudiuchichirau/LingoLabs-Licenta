@@ -5,6 +5,6 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResult
     public class UpdateLanguageLevelResultCommand: IRequest<UpdateLanguageLevelResultCommandResponse>
     {
         public Guid LanguageLevelResultId { get; set; }
-        public UpdateLanguageLevelResultDto UpdateLanguageLevelResultDto { get; set; } = new UpdateLanguageLevelResultDto();
+        public bool IsCompleted { get; set; }
     }
 }

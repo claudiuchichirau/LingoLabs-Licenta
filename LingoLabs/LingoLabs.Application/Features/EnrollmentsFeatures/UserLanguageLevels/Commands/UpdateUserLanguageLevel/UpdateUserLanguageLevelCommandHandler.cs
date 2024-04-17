@@ -36,9 +36,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.
                 };
             }
 
-            var updateUserLanguageLevel = request.UpdateUserLanguageLevel;
-
-            userLanguageLevel.Value.Update(updateUserLanguageLevel.LanguageLevelId);
+            userLanguageLevel.Value.Update(request.LanguageLevelId);
 
             await userLanguageLevelRepository.UpdateAsync(userLanguageLevel.Value);
 

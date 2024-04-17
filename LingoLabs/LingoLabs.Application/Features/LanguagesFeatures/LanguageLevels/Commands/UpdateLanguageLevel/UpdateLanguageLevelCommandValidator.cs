@@ -16,34 +16,34 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} is required.");
 
-            RuleFor(p => p.UpdateLanguageLevelDto.LanguageLevelName)
+            RuleFor(p => p.LanguageLevelName)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidateLanguageLevelName(p.UpdateLanguageLevelDto.LanguageLevelName, languageLevelRepository, p.LanguageLevelId))
-                .WithMessage("{PropertyName} must be unique.");
+                .MustAsync((p, cancellation) => ValidateLanguageLevelName(p.LanguageLevelName, languageLevelRepository, p.LanguageLevelId))
+                .WithMessage("LanguageLevelName must be unique.");
 
-            RuleFor(p => p.UpdateLanguageLevelDto.LanguageLevelAlias)
+            RuleFor(p => p.LanguageLevelAlias)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
 
-            RuleFor(p => p.UpdateLanguageLevelDto.LanguageLevelDescription)
+            RuleFor(p => p.LanguageLevelDescription)
                 .MaximumLength(500).WithMessage("{PropertyName} must not exceed 500 characters.");
 
-            RuleFor(p => p.UpdateLanguageLevelDto.LanguageLevelVideoLink)
-                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateLanguageLevelDto.LanguageLevelVideoLink))
+            RuleFor(p => p.LanguageLevelVideoLink)
+                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.LanguageLevelVideoLink))
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
 
-            RuleFor(p => p.UpdateLanguageLevelDto.PriorityNumber)
-                .GreaterThan(0).When(p => p.UpdateLanguageLevelDto.PriorityNumber.HasValue)
+            RuleFor(p => p.LanguageLevelPriorityNumber)
+                .GreaterThan(0).When(p => p.LanguageLevelPriorityNumber.HasValue)
                 .WithMessage("{PropertyName} must be greater than 0.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.UpdateLanguageLevelDto.PriorityNumber.Value, p.LanguageLevelId, languageLevelRepository, languageRepository))
-                .When(p => p.UpdateLanguageLevelDto.PriorityNumber.HasValue && p.UpdateLanguageLevelDto.PriorityNumber.Value > 0)
+                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.LanguageLevelPriorityNumber.Value, p.LanguageLevelId, languageLevelRepository, languageRepository))
+                .When(p => p.LanguageLevelPriorityNumber.HasValue && p.LanguageLevelPriorityNumber.Value > 0)
                 .WithMessage("PriorityNumber must be unique.");
 
         }

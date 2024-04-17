@@ -17,7 +17,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
 
             RuleFor(p => p)
                .MustAsync((p, cancellation) => ValidateLanguageLevel(p.LanguageLevelName, repository))
-               .WithMessage("{PropertyName} must be unique.");
+               .WithMessage("LanguageLevelName must be unique.");
 
 
             RuleFor(p => p.LanguageLevelAlias)

@@ -9,12 +9,14 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
         private readonly ILanguageCompetenceRepository repository;
         private readonly IUserLanguageLevelRepository userLanguageLevelRepository;
         private readonly ITagRepository tagRepository;
+        private readonly ILanguageRepository languageRepository;
 
-        public GetByIdLanguageCompetenceQueryHandler(ILanguageCompetenceRepository repository, IUserLanguageLevelRepository userLanguageLevelRepository, ITagRepository tagRepository)
+        public GetByIdLanguageCompetenceQueryHandler(ILanguageCompetenceRepository repository, IUserLanguageLevelRepository userLanguageLevelRepository, ITagRepository tagRepository, ILanguageRepository languageRepository)
         {
             this.repository = repository;
             this.userLanguageLevelRepository = userLanguageLevelRepository;
             this.tagRepository = tagRepository;
+            this.languageRepository = languageRepository;
         }
         public async Task<GetSingleLanguageCompetenceDto> Handle(GetByIdLanguageCompetenceQuery request, CancellationToken cancellationToken)
         {
@@ -52,6 +54,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
 
                 var unassociatedTags = allTagsDto.Where(tag => !languageCompetenceKeyWords.Any(lkw => lkw.TagId == tag.TagId)).ToList();
 
+                var language = await languageRepository.FindByIdAsync(languageCompetence.Value.LanguageId);
+
                 return new GetSingleLanguageCompetenceDto
                 {
                     LanguageCompetenceId = languageCompetence.Value.LanguageCompetenceId,
@@ -61,6 +65,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Q
                     LanguageCompetenceDescription = languageCompetence.Value.LanguageCompetenceDescription,
                     LanguageCompetenceVideoLink = languageCompetence.Value.LanguageCompetenceVideoLink,
                     LanguageCompetencePriorityNumber = languageCompetence.Value.LanguageCompetencePriorityNumber,
+                    LanguageName = language.Value.LanguageName,
 
                     LearningCompetenceKeyWords = languageCompetenceKeyWords,
 

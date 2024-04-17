@@ -36,9 +36,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Choices.Commands.Upda
                 };
             }
 
-            var updateChoiceDto = request.UpdateChoiceDto;
-
-            choice.Value.UpdateChoice(updateChoiceDto.ChoiceContent, updateChoiceDto.IsCorrect);
+            choice.Value.UpdateChoice(request.ChoiceContent, request.IsCorrect);
 
             await choiceRepository.UpdateAsync(choice.Value);
 

@@ -28,13 +28,23 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<ChoiceViewModel>
                 {
                     IsSuccess = false,
-                    Message = "Authentication token is null."
+                    ValidationErrors = "Authentication token is null."
                 };
             }
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await httpClient.PostAsJsonAsync(RequestUri, createChoiceViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<ChoiceViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
+
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChoiceViewModel>>();
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
@@ -48,7 +58,7 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<ChoiceViewModel>
                 {
                     IsSuccess = false,
-                    Message = "Authentication token is null."
+                    ValidationErrors = "Authentication token is null."
                 };
             }
 
@@ -56,14 +66,22 @@ namespace LingoLabs.App.Services.LanguageServices
 
             var choiceViewModel = new
             {
-                ChoiceId = updateChoiceViewModel.ChoiceId,
-                ChoiceContent = updateChoiceViewModel.ChoiceContent,
-                IsCorrect = updateChoiceViewModel.IsCorrect
-                    
+                updateChoiceViewModel.ChoiceId,
+                updateChoiceViewModel.ChoiceContent,
+                updateChoiceViewModel.IsCorrect
             };
 
             var result = await httpClient.PutAsJsonAsync(RequestUri, choiceViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<ChoiceViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
 
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChoiceViewModel>>();
             if (response != null)
@@ -88,13 +106,11 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<ChoiceViewModel>
                 {
                     IsSuccess = false,
-                    Message = "Authentication token is null."
+                    ValidationErrors = "Authentication token is null."
                 };
             }
 
             var result = await httpClient.DeleteAsync($"{RequestUri}/{choiceId}");
-
-            result.EnsureSuccessStatusCode();
 
             if (!result.IsSuccessStatusCode)
             {
@@ -102,7 +118,7 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<ChoiceViewModel>
                 {
                     IsSuccess = false,
-                    Message = content
+                    ValidationErrors = content
                 };
             }
 

@@ -1,4 +1,7 @@
 ﻿@page "/language-competence-overview"
+@using LingoLabs.App.Contracts.LanguageContracts
+@using LingoLabs.App.Services.AuthServices
+@using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
 @using MudBlazor
 @using MatBlazor
@@ -7,6 +10,7 @@
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject StateService StateService
 
 <div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top: -10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
     <img src="/images/homepage/line.png" style="position: absolute; top: 0; left: -45px; max-width: 150px;">
@@ -16,80 +20,119 @@
     <img src="/images/homepage/sus.png" style="position: absolute; top: 0; right: 0; max-width: 200px;">
 </div>
 
-<MudContainer>
-    <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
-        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
-            <div class="row">
-                <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Competența lingvistică - Overview</h2>
+@if (!isLoaded)
+{
+    <div class="row mx-0 justify-content-md-center">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-item-center" style="margin-top: 50px;">
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        </div>
+    </div>
+}
+else
+{
+    <MudContainer>
+        <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
+            <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                <div class="row">
+                    <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Competența lingvistică - Overview</h2>
+                </div>
             </div>
         </div>
-    </div>
-</MudContainer>
+    </MudContainer>
 
-<div class="row" style="max-width: 100vw; overflow-x: auto;">
-    <div class="col">
-        <div class="text-left">
-            <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-top: 50px; margin-bottom: 10px;" class="poppins-semi-bold">
-                Curs:&emsp;
-                <span style="color: #FC6F05; font-size: 25px;">
-                    English
-                </span>
-            </h1>
-        </div>
-
-        <div class="text-left">
-            <h1 style="color: black; font-size: 33px; margin-left: 75px; padding: 5px;" class="poppins-semi-bold">
-                Nume:&emsp;
-                <span style="color: #2563EB; font-size: 25px;">
-                    Listening
-                </span>
-            </h1>
-        </div>
-
-        <div class="text-left">
-            <h1 style="color: black; font-size: 33px; margin-left: 75px; padding: 5px;" class="poppins-semi-bold">
-                Tip:&emsp;
-                <span style="color: #2563EB; font-size: 21px;">
-                    Listening
-                </span>
-            </h1>
-        </div>
-
-        <div class="text-left">
-            <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
-                Descriere:&emsp;
-                <span style="font-size: 21px; color: #2563EB; text-align: justify;">
-                    Nivelul lingvistic A1 este cel mai mic nivel de cunoștințe lingvistice. Persoanele care au acest nivel de cunoștințe lingvistice pot să înțeleagă și să folosească expresii simple și cotidiene, precum și să răspundă la întrebări simple. Acest nivel este cel mai mic nivel de cunoștințe lingvistice și este cel mai potrivit pentru persoanele care nu au cunoștințe de limba respectivă.
-                </span>
-            </h1>
-        </div>
-
-        <div class="text-left">
-            <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
-                Nr. Crt.:&emsp;
-                <span style="font-size: 21px; color: #2563EB; text-align: justify;">
-                    1
-                </span>
-            </h1>
-        </div>
-
-    </div>
-    <div class="col align-items-center justify-content-center">
-        <div class="row">
-            <div class="text-center">
-                <h1 style="color: black; font-size: 33px; padding: 5px; margin-top: 50px;" class="poppins-semi-bold">
-                    Video:
+    <div class="row" style="max-width: 100vw; overflow-x: auto;">
+        <div class="col">
+            <div class="text-left">
+                <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-top: 50px; margin-bottom: 10px;" class="poppins-semi-bold">
+                    Curs:&emsp;
+                    <span style="color: #FC6F05; font-size: 25px;">
+                        @languageCompetence.LanguageName
+                    </span>
                 </h1>
             </div>
+
+            <div class="text-left">
+                <h1 style="color: black; font-size: 33px; margin-left: 75px; padding: 5px;" class="poppins-semi-bold">
+                    Nume:&emsp;
+                    <span style="color: #2563EB; font-size: 25px;">
+                        @languageCompetence.LanguageCompetenceName
+                    </span>
+                </h1>
+            </div>
+
+            <div class="text-left">
+                <h1 style="color: black; font-size: 33px; margin-left: 75px; padding: 5px;" class="poppins-semi-bold">
+                    Tip:&emsp;
+                    <span style="color: #2563EB; font-size: 21px;">
+                        @languageCompetence.LanguageCompetenceType
+                    </span>
+                </h1>
+            </div>
+
+            <div class="text-left">
+                <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
+                    Descriere:&emsp;
+                    @if (!string.IsNullOrEmpty(languageCompetence.LanguageCompetenceDescription))
+                    {
+                        <span style="font-size: 21px; color: #2563EB; text-align: justify;">
+                            @languageCompetence.LanguageCompetenceDescription
+                        </span>
+                    }
+                    else
+                    {
+                        <span style="font-size: 21px; color: #2563EB; text-align: justify;">-</span>
+                    }
+                </h1>
+            </div>
+
+            <div class="text-left">
+                <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
+                    Nr. Crt.:&emsp;
+                    @if (languageCompetence.LanguageCompetencePriorityNumber != 0)
+                    {
+                        <span style="font-size: 21px; color: #2563EB; text-align: justify;">
+                            @languageCompetence.LanguageCompetencePriorityNumber
+                        </span>
+                    }
+                    else
+                    {
+                        <span style="font-size: 21px; color: #2563EB; text-align: justify;">-</span>
+                    }
+                </h1>
+            </div>
+
         </div>
 
-        <div class="row justify-content-center">
-            <iframe style="width: 600px; height: 338px; margin-top: 5px;" src="https://www.youtube.com/embed/CA1L7_hyRqs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-        </div>
+        @if (!string.IsNullOrEmpty(languageCompetence.LanguageCompetenceVideoLink))
+        {
+            <div class="col align-items-center justify-content-center">
+                <div class="row">
+                    <div class="text-center">
+                        <h1 style="color: black; font-size: 33px; padding: 5px; margin-top: 50px;" class="poppins-semi-bold">
+                            Video:
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <iframe style="width: 600px; height: 338px; margin-top: 5px; margin-bottom: 45px;" src="@languageCompetence.LanguageCompetenceVideoLink" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+        }
+        else {
+            <div class="col align-items-center justify-content-center">
+                <div class="row">
+                    <div class="text-center">
+                        <h1 style="color: black; font-size: 33px; padding: 5px; margin-top: 50px;" class="poppins-semi-bold">
+                            Video: -
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
-</div>
-
-<div class="text-left" style="max-width: 100vw; overflow-x: auto;">
+}
+@* <div class="text-left" style="max-width: 100vw; overflow-x: auto;">
     <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
         Cuvinte cheie:
     </h1>
@@ -128,11 +171,28 @@
         </DialogActions>
     </MudDialog>
 
-</div>
+</div> *@
 
+
+@code {
+    [Inject]
+    private ILanguageCompetenceDataService LanguageCompetenceDataService { get; set; }
+    private LanguageCompetenceViewModel languageCompetence = new LanguageCompetenceViewModel();
+    private bool isLoaded = false;
+    private Guid CurrentLanguageCompetenceId = Guid.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentLanguageCompetenceId = await StateService.GetId();
+        languageCompetence = await LanguageCompetenceDataService.GetLanguageCompetenceByIdAsync(CurrentLanguageCompetenceId);
+        isLoaded = true;
+
+        await PopulateKewWords();
+    }
+}
 
 @* KEW WORDS *@
-@code {
+@functions {
     private Snackbar snackbar;
     private bool visible;
     private string currentField;
@@ -160,11 +220,6 @@
         // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
         snackbar = Snackbar.Add("Cuvântul cheie a fost adăugat cu succes!", Severity.Success);
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        await PopulateKewWords();
     }
 
     private IEnumerable<string> KewWords = new List<string>();

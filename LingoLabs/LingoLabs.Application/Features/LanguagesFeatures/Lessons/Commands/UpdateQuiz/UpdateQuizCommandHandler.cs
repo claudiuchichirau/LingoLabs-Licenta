@@ -3,6 +3,7 @@ using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.CreateQu
 using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries;
 using LingoLabs.Application.Persistence.Languages;
 using MediatR;
+using System.Web;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.UpdateQuiz
 {
@@ -44,7 +45,19 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 question.Value.UpdateQuestionRequirement(questionDto.QuestionRequirement);
                 question.Value.UpdateQuestionType(questionDto.QuestionType);
                 question.Value.UpdateQuestionImageData(questionDto.QuestionImageData);
-                question.Value.UpdateQuestionVideoLink(questionDto.QuestionVideoLink);
+
+
+                string newVideoLink = null;
+
+                if (!string.IsNullOrEmpty(questionDto.QuestionVideoLink))
+                {
+                    string videoId = HttpUtility.ParseQueryString(new Uri(questionDto.QuestionVideoLink).Query).Get("v");
+
+                    // Construct the new URL
+                    newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+                }
+
+                question.Value.UpdateQuestionVideoLink(newVideoLink);
 
                 foreach (var choiceDto in questionDto.Choices)
                 {

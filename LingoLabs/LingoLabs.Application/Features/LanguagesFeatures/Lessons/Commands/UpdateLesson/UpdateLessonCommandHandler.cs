@@ -37,21 +37,25 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                     ValidationsErrors = new List<string> { lesson.Error }
                 };
             }
-            var updateLessonDto = request.UpdateLessonDto;
 
-            var videoId = HttpUtility.ParseQueryString(new Uri(updateLessonDto.LessonVideoLink).Query).Get("v");
+            string newVideoLink = null;
 
-            // Construct the new URL
-            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            if (!string.IsNullOrEmpty(request.LessonVideoLink))
+            {
+                string videoId = HttpUtility.ParseQueryString(new Uri(request.LessonVideoLink).Query).Get("v");
+
+                // Construct the new URL
+                newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            }
 
             lesson.Value.UpdateLesson(
-                updateLessonDto.LessonTitle,
-                updateLessonDto.LessonDescription,
-                updateLessonDto.LessonRequirement,
-                updateLessonDto.LessonContent,
-                updateLessonDto.LessonImageData,
+                request.LessonTitle,
+                request.LessonDescription,
+                request.LessonRequirement,
+                request.LessonContent,
+                request.LessonImageData,
                 newVideoLink,
-                updateLessonDto.LessonPriorityNumber);
+                request.LessonPriorityNumber);
 
             await lessonRepository.UpdateAsync(lesson.Value);
 
@@ -60,13 +64,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 Success = true,
                 UpdateLesson = new UpdateLessonDto
                 {
-                    LessonTitle = updateLessonDto.LessonTitle,
-                    LessonDescription = updateLessonDto.LessonDescription,
-                    LessonRequirement = updateLessonDto.LessonRequirement,
-                    LessonContent = updateLessonDto.LessonContent,
-                    LessonImageData = updateLessonDto.LessonImageData,
-                    LessonVideoLink = updateLessonDto.LessonVideoLink,
-                    LessonPriorityNumber = updateLessonDto.LessonPriorityNumber
+                    LessonTitle = request.LessonTitle,
+                    LessonDescription = request.LessonDescription,
+                    LessonRequirement = request.LessonRequirement,
+                    LessonContent = request.LessonContent,
+                    LessonImageData = request.LessonImageData,
+                    LessonVideoLink = newVideoLink,
+                    LessonPriorityNumber = request.LessonPriorityNumber
                 }
             };
         }

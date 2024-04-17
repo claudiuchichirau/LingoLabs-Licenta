@@ -29,13 +29,24 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<LanguageViewModel>
                 {
                     IsSuccess = false,
-                    Message = "Authentication token is null."
+                    ValidationErrors = "Authentication token is null."
                 };
             }
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await httpClient.PostAsJsonAsync(RequestUri, createLanguageViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var errorResponse = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<LanguageViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = errorResponse
+                };
+            }
+
+
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<LanguageViewModel>>();
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
@@ -49,13 +60,23 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<PlacementTestViewModel>
                 {
                     IsSuccess = false,
-                    Message = "Authentication token is null."
+                    ValidationErrors = "Authentication token is null."
                 };
             }
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await httpClient.PostAsJsonAsync($"{RequestUri}/placement-test", createPlacementTestViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var errorResponse = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<PlacementTestViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = errorResponse
+                };
+            }
+
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<PlacementTestViewModel>>();
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
@@ -69,7 +90,7 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<LanguageViewModel>
                 {
                     IsSuccess = false,
-                    Message = "Authentication token is null."
+                    ValidationErrors = "Authentication token is null."
                 };
             }
 
@@ -82,7 +103,7 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<LanguageViewModel>
                 {
                     IsSuccess = false,
-                    Message = content
+                    ValidationErrors = content
                 };
             }
 
@@ -110,19 +131,20 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<PlacementTestViewModel>
                 {
                     IsSuccess = false,
-                    Message = "Authentication token is null."
+                    ValidationErrors = "Authentication token is null."
                 };
             }
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await httpClient.DeleteAsync($"{RequestUri}/placement-test/{languageId}");
+
             if (!result.IsSuccessStatusCode) 
             {
                 var content = await result.Content.ReadAsStringAsync();
                 return new ApiResponse<PlacementTestViewModel>
                 {
                     IsSuccess = false,
-                    Message = content
+                    ValidationErrors = content
                 };
             }
 
@@ -145,7 +167,7 @@ namespace LingoLabs.App.Services.LanguageServices
         public async Task<List<LanguageViewModel>> GetAllLanguagesAsync()
         {
             var result = await httpClient.GetAsync(RequestUri, HttpCompletionOption.ResponseHeadersRead);
-            result.EnsureSuccessStatusCode();
+
             var content = await result.Content.ReadAsStringAsync();
             if (!result.IsSuccessStatusCode)
             {
@@ -183,7 +205,7 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<LanguageViewModel>
                 {
                     IsSuccess = false,
-                    Message = "Authentication token is null."
+                    ValidationErrors = "Authentication token is null."
                 };
             }
 
@@ -191,14 +213,24 @@ namespace LingoLabs.App.Services.LanguageServices
 
             var languageViewModel = new
             {
+                updateLanguageViewModel.LanguageId,
                 updateLanguageViewModel.LanguageName,
                 updateLanguageViewModel.LanguageDescription,
                 updateLanguageViewModel.LanguageVideoLink,
                 updateLanguageViewModel.LanguageFlag
             };
 
-            var result = await httpClient.PutAsJsonAsync($"{RequestUri}/placement-test", languageViewModel);
-            result.EnsureSuccessStatusCode();
+            var result = await httpClient.PutAsJsonAsync(RequestUri, languageViewModel);
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<LanguageViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
 
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<LanguageViewModel>>();
 
@@ -226,7 +258,7 @@ namespace LingoLabs.App.Services.LanguageServices
                 return new ApiResponse<PlacementTestViewModel>
                 {
                     IsSuccess = false,
-                    Message = "Authentication token is null."
+                    ValidationErrors = "Authentication token is null."
                 };
             }
 
@@ -234,11 +266,21 @@ namespace LingoLabs.App.Services.LanguageServices
 
             var placementTestViewModel = new
             {
+                updatePlacementTestViewModel.LanguageId,
                 updatePlacementTestViewModel.Questions
             };
 
             var result = await httpClient.PutAsJsonAsync($"{RequestUri}/placement-test", placementTestViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<PlacementTestViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
 
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<PlacementTestViewModel>>();
 

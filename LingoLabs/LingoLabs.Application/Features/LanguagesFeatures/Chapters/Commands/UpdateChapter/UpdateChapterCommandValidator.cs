@@ -16,29 +16,29 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Commands.Upd
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} must not be empty.");
 
-            RuleFor(p => p.UpdateChapterDto.ChapterName)
+            RuleFor(p => p.ChapterName)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(100).WithMessage("{PropertyName} must not exceed 100 characters.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidateChapter(p.UpdateChapterDto.ChapterName, chapterRepository, p.ChapterId))
+                .MustAsync((p, cancellation) => ValidateChapter(p.ChapterName, chapterRepository, p.ChapterId))
                 .WithMessage("ChapterName must be unique.");
             
-            RuleFor(p => p.UpdateChapterDto.ChapterDescription)
+            RuleFor(p => p.ChapterDescription)
                 .MaximumLength(500).WithMessage("{PropertyName} must not exceed 500 characters.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.UpdateChapterDto.ChapterPriorityNumber.Value, p.ChapterId, chapterRepository))
-                .When(p => p.UpdateChapterDto.ChapterPriorityNumber.HasValue && p.UpdateChapterDto.ChapterPriorityNumber.Value > 0)
+                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.ChapterPriorityNumber.Value, p.ChapterId, chapterRepository))
+                .When(p => p.ChapterPriorityNumber.HasValue && p.ChapterPriorityNumber.Value > 0)
                 .WithMessage("PriorityNumber must be unique.");
 
-            RuleFor(p => p.UpdateChapterDto.ChapterVideoLink)
-                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateChapterDto.ChapterVideoLink))
+            RuleFor(p => p.ChapterVideoLink)
+                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.ChapterVideoLink))
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
 
-            RuleFor(p => p.UpdateChapterDto.ChapterImageData)
-                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateChapterDto.ChapterImageData))
+            RuleFor(p => p.ChapterImageData)
+                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.ChapterImageData))
                 .WithMessage("{PropertyName} should be a valid url if it exists.");
 
 

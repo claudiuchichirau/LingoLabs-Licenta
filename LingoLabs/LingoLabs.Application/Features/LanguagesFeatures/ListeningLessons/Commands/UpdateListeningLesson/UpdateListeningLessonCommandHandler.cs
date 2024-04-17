@@ -39,23 +39,27 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                     ValidationsErrors = new List<string> { listeningLesson.Error }
                 };
             }
-            var updateListeningLessonDto = request.UpdateListeningLessonDto;
 
-            var videoId = HttpUtility.ParseQueryString(new Uri(updateListeningLessonDto.LessonVideoLink).Query).Get("v");
+            string newVideoLink = null;
 
-            // Construct the new URL
-            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            if (!string.IsNullOrEmpty(request.LessonVideoLink))
+            {
+                string videoId = HttpUtility.ParseQueryString(new Uri(request.LessonVideoLink).Query).Get("v");
+
+                // Construct the new URL
+                newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            }
 
             listeningLesson.Value.UpdateListeningLanguage(
-                updateListeningLessonDto.LessonTitle,
-                updateListeningLessonDto.LessonDescription,
-                updateListeningLessonDto.LessonRequirement,
-                updateListeningLessonDto.LessonContent,
-                updateListeningLessonDto.LessonImageData,
+                request.LessonTitle,
+                request.LessonDescription,
+                request.LessonRequirement,
+                request.LessonContent,
+                request.LessonImageData,
                 newVideoLink,
-                updateListeningLessonDto.TextScript,
-                updateListeningLessonDto.Accents,
-                updateListeningLessonDto.LessonPriorityNumber);
+                request.TextScript,
+                request.Accents,
+                request.LessonPriorityNumber);
 
             await listeningLessonRepository.UpdateAsync(listeningLesson.Value);
 
@@ -64,15 +68,15 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                 Success = true,
                 UpdateListeningLesson = new UpdateListeningLessonDto
                 {
-                    LessonTitle = updateListeningLessonDto.LessonTitle,
-                    LessonDescription = updateListeningLessonDto.LessonDescription,
-                    LessonRequirement = updateListeningLessonDto.LessonRequirement,
-                    LessonContent = updateListeningLessonDto.LessonContent,
-                    LessonImageData = updateListeningLessonDto.LessonImageData,
-                    LessonVideoLink = updateListeningLessonDto.LessonVideoLink,
-                    LessonPriorityNumber = updateListeningLessonDto.LessonPriorityNumber,
-                    TextScript = updateListeningLessonDto.TextScript,
-                    Accents = updateListeningLessonDto.Accents
+                    LessonTitle = request.LessonTitle,
+                    LessonDescription = request.LessonDescription,
+                    LessonRequirement = request.LessonRequirement,
+                    LessonContent = request.LessonContent,
+                    LessonImageData = request.LessonImageData,
+                    LessonVideoLink = newVideoLink,
+                    LessonPriorityNumber = request.LessonPriorityNumber,
+                    TextScript = request.TextScript,
+                    Accents = request.Accents
                 }
             };
         }

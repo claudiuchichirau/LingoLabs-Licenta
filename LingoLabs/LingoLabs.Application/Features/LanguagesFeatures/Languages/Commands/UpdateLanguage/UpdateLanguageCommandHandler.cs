@@ -37,14 +37,17 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Up
                 };
             }
 
-            var updateLanguageDto = request.UpdateLanguageDto;
+            string newVideoLink = null;
 
-            var videoId = HttpUtility.ParseQueryString(new Uri(updateLanguageDto.LanguageVideoLink).Query).Get("v");
+            if (!string.IsNullOrEmpty(request.LanguageVideoLink))
+            {
+                string videoId = HttpUtility.ParseQueryString(new Uri(request.LanguageVideoLink).Query).Get("v");
 
-            // Construct the new URL
-            var newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+                // Construct the new URL
+                newVideoLink = $"https://www.youtube.com/embed/{videoId}";
+            }
 
-            language.Value.UpdateLanguage(updateLanguageDto.LanguageName, updateLanguageDto.LanguageDescription, newVideoLink, updateLanguageDto.LanguageFlag);
+            language.Value.UpdateLanguage(request.LanguageName, request.LanguageDescription, newVideoLink, request.LanguageFlag);
 
             var result = await languageRepository.UpdateAsync(language.Value);
 

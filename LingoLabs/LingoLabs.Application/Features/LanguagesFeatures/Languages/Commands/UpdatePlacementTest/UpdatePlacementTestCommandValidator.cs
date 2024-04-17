@@ -10,7 +10,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Up
         {
             this.questionRepository = questionRepository;
 
-            RuleFor(x => x.PlacementTest.Questions)
+            RuleFor(x => x.Questions)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .Must((questions) =>
                 {

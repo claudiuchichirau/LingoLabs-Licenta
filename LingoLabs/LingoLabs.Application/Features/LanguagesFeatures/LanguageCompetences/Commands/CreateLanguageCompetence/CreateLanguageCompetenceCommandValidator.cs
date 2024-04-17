@@ -19,7 +19,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
 
             RuleFor(p => p)
                 .MustAsync((p, cancellation) => ValidateLanguageCompetence(p.LanguageCompetenceName, p.LanguageCompetenceType, p.LanguageId))
-                .WithMessage("{PropertyName} must have one of the following values: Grammar, Listening, Reading, Writing and must be the same as LanguageCompetenceName");
+                .WithMessage("LanguageCompetenceType must have one of the following values: Grammar, Listening, Reading, Writing and must be the same as LanguageCompetenceName");
 
             RuleFor(p => p.LanguageId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
@@ -32,13 +32,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.C
             if (await repository.ExistsLanguageCompetenceAsync(type, languageId))
                 return false;
 
-            if (name == "Listening" && type != LanguageCompetenceType.Listening)
+            if (name != "Listening" && type == LanguageCompetenceType.Listening)
                 return false;
-            if (name == "Grammar" && type != LanguageCompetenceType.Grammar)
+            if (name != "Grammar" && type == LanguageCompetenceType.Grammar)
                 return false;
-            if (name == "Reading" && type != LanguageCompetenceType.Reading)
+            if (name != "Reading" && type == LanguageCompetenceType.Reading)
                 return false;
-            if (name == "Writing" && type != LanguageCompetenceType.Writing)
+            if (name != "Writing" && type == LanguageCompetenceType.Writing)
                 return false;
 
             return true;

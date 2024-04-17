@@ -11,7 +11,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} is required.");
 
-            RuleFor(p => p.UpdateUserLanguageLevel.LanguageLevelId)
+            RuleFor(p => p.LanguageLevelId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} is required.");

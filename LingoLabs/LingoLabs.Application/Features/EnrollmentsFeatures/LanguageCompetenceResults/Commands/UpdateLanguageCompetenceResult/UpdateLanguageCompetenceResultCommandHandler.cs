@@ -36,9 +36,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
                 };
             }
 
-            var updateLanguageCompetenceResultDto = request.UpdateLanguageCompetenceResultDto;
-
-            languageCompetenceResult.Value.UpdateLanguageCompetenceResult(updateLanguageCompetenceResultDto.IsCompleted);
+            languageCompetenceResult.Value.UpdateLanguageCompetenceResult(request.IsCompleted);
 
             await languageCompetenceResultRepository.UpdateAsync(languageCompetenceResult.Value);
 
@@ -47,7 +45,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceR
                 Success = true,
                 UpdateLanguageCompetenceResult = new UpdateLanguageCompetenceResultDto
                 {
-                    IsCompleted = updateLanguageCompetenceResultDto.IsCompleted
+                    IsCompleted = request.IsCompleted
                 }
             };
         }

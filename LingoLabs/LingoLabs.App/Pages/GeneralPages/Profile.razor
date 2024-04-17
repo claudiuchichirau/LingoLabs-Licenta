@@ -305,13 +305,11 @@
 
         if (!response.IsSuccess)
         {
-            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
             snackbar = Snackbar.Add("Failed to delete user account: " + response.Message, Severity.Error);
             return;
         }
         else
         {
-            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
             snackbar = Snackbar.Add("Contul a fost sters cu succes!", Severity.Success);
             await authStateProvider.Logout();
             NavigationManager.NavigateTo("/");

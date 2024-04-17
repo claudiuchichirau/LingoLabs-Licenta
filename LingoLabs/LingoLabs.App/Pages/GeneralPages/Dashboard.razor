@@ -1,17 +1,21 @@
 ﻿@page "/dashboard"
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Services.AuthServices
 @using LingoLabs.App.ViewModel.AuthenticationModels
+@using LingoLabs.App.ViewModel.LanguageModels
 @using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @using System.Net.Http.Json
 @using static MudBlazor.CategoryTypes
+@using System.Net
 @using ViewModel.MudBlazor
 @inject HttpClient httpClient
 @inject NavigationManager NavigationManager
 @inject CustomStateProvider authStateProvider
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
+@inject StateService StateService
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 
@@ -30,7 +34,7 @@
     <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
         <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
             <div class="row">
-                <h2 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">Bine ai revenit!</h2>
+                    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
             </div>
         </div>
     </div>
@@ -47,21 +51,8 @@ else
             </div>
         </div>
     </MudContainer>
-}
 
-@if (HasAdminRole)
-{
-    @if(!IsPendingAdminDataLoaded)
-    {
-        <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom:50px;">
-            <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
-                <div class="row">
-                    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
-                </div>
-            </div>
-        </div>
-    }
-    else
+    @if (HasAdminRole)
     {
         @if (pendingAdmins.Any())
         {
@@ -111,269 +102,271 @@ else
                 </MudPaper>
             </div>
         }
+
+        <div class="text-left">
+            <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 100px;" class="poppins-semi-bold">Cursuri</h1>
+        </div>
+
+        <div style="max-width: 80%; margin: auto; margin-bottom: 55px;">
+            <MudTable Items="@AdminViewLanguages" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<LanguageViewModel,bool>(FilterFuncViewLanguage)"
+                      SortLabel="Sort By"
+                      IsEditRowSwitchingBlocked="@blockSwitch" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
+                <ToolBarContent>
+                    <MudText Typo="Typo.h6">Cursurile LingoLabs</MudText>
+                    <MudSpacer />
+                    <div class="text-center" style="width: 55%;">
+                        <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Style="width: 50%;" />
+                    </div>
+                    <MudTooltip Text="Add">
+                        <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialog()' />
+                    </MudTooltip>
+                </ToolBarContent>
+
+                <ColGroup>
+                    <col style="width:10%;" />
+                    <col style="width:30%;" />
+                    <col style="width:10%;" />
+                    <col style="width:10%;" />
+                    <col style="width:15%;" />
+                </ColGroup>
+                <HeaderContent>
+                    <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<LanguageViewModel, object>(x=>x.LanguageName)">Nume</MudTableSortLabel></MudTh>
+                    <MudTh>Descriere</MudTh>
+                    <MudTh>Link Video</MudTh>
+                    <MudTh>Steag</MudTh>
+                    <MudTh>Vizualizează</MudTh>
+                    <MudTh> </MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Nume">@context.LanguageName</MudTd>
+                    <MudTd DataLabel="Descriere">@(string.IsNullOrEmpty(context.LanguageDescription) ? "-" : context.LanguageDescription)</MudTd>
+                    <MudTd DataLabel="Link Video">@(string.IsNullOrEmpty(context.LanguageVideoLink) ? "-" : context.LanguageVideoLink)</MudTd>
+                    <MudTd DataLabel="Steag">
+                        <img src="@context.LanguageFlag" style="max-width: 50px;"/>
+                    </MudTd>
+                    <MudTd DataLabel="Vizualizează">
+                        <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLanguageOverview(context.LanguageId) )">Vezi mai multe</MudButton>
+                    </MudTd>
+                    <MudTd>
+                        <div style="display: flex; justify-content: space-between;">
+                            <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Edit" OnClick="() => OpenEditDialog(context)" Class="pa-0" Style="margin-right: 10px;" />
+                            <MudIconButton Text="Delete Course" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="() => DeleteLanguage(context.LanguageId)" Class="pa-0" Style="margin-left: 10px;" />
+                        </div>
+                    </MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager />
+                </PagerContent>
+            </MudTable>
+
+            <MudDialog @bind-IsVisible="visibleEditLanguage" Options="dialogOptions">
+                <TitleContent>
+                    <MudText Typo="Typo.h6">
+                        <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
+                        <span style="color: #2563EB;">Editează conținutul cursului</span>
+                    </MudText>
+                </TitleContent>
+                <DialogContent>
+                    <EditForm Model="editLanguage">
+                        <DataAnnotationsValidator />
+                        <MudTextField T="string" @bind-Value="editLanguage.LanguageName" Label="Nume"></MudTextField>
+                        <MudTextField T="string" @bind-Value="editLanguage.LanguageDescription" Label="Descriere"></MudTextField>
+                        <MudTextField T="string" @bind-Value="editLanguage.LanguageVideoLink" Label="Link Video"></MudTextField>
+                        <MudTextField T="string" @bind-Value="editLanguage.LanguageFlag" Label="Pictograma Steagului (imagine .jpg / .png)"></MudTextField>
+                        <ValidationSummary />
+                    </EditForm>
+                </DialogContent>
+                <DialogActions>
+                    <MudButton Variant="Variant.Filled" OnClick="CloseEditLanguage" Class="px-10" Style="color: black;">Close</MudButton>
+                    <MudButton Disabled="!ValidateEditCourse()" OnClick="@(async () => EditLanguage(editLanguage))" Style="color: #2563EB;">Update</MudButton>
+
+                </DialogActions>
+            </MudDialog>
+
+            <MudDialog @bind-IsVisible="visible" Options="dialogOptions">
+                <TitleContent>
+                    <MudText Typo="Typo.h6">
+                        <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
+                        <span style="color: #2563EB;">Adaugă un curs</span>
+                    </MudText>
+                </TitleContent>
+                <DialogContent>
+                    <EditForm Model="addNewLanguage">
+                        <DataAnnotationsValidator />
+                        <MudTextField T="string" @bind-Value="addNewLanguage.LanguageName" Label="Nume"></MudTextField>
+                        <MudTextField T="string" @bind-Value="addNewLanguage.LanguageFlag" Label="Pictograma Steagului (imagine .jpg / .png)"></MudTextField>
+                        <ValidationSummary />
+                    </EditForm>
+                </DialogContent>
+                <DialogActions>
+                    <MudButton Variant="Variant.Filled" OnClick="Cancel" Class="px-10" Style="color: black;">Close</MudButton>
+                    <MudButton Disabled="!ValidateAddCourse()" OnClick="@(async () => AddLanguage())" Style="color: #2563EB;">Add</MudButton>
+
+                </DialogActions>
+            </MudDialog>
+        </div>
     }
 
-    <div class="text-left">
-        <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 100px;" class="poppins-semi-bold">Cursuri</h1>
-    </div>
+    @if (!HasAdminRole)
+    {
 
-    <div style="max-width: 80%; margin: auto; margin-bottom: 55px;">
-        <MudTable Items="@AdminLanguageElements" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<AdminViewLanguageElement,bool>(FilterFuncViewLanguage)"
-                  @bind-SelectedItem="selectedAdminLanguage" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
-                  OnCommitEditClick="@(() => EditLanguage())"
-                  IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
-            <ToolBarContent>
-                <MudText Typo="Typo.h6">Cursurile LingoLabs</MudText>
-                <MudSpacer />
-                <div class="text-center" style="width: 55%;">
-                    <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Style="width: 50%;" />
-                </div>
-                <MudTooltip Text="Add">
-                    <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialog()' />
-                </MudTooltip>
-            </ToolBarContent>
+        <div class="text-left">
+            <h1 style="color: #FC6F05; font-size: 33px; padding: 15px; margin-left: 85px; margin-top: 85px;" class="poppins-semi-bold">Cursurile Mele</h1>
+        </div>
 
-            <ColGroup>
-                @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
+
+        <MudExpansionPanels MultiExpansion="true">
+            <div class="custom-width">
+                @foreach (var language in UserLanguages)
                 {
-                    <col style="width:50px;" />
+                    <MudExpansionPanel Text="@language.LanguageName" Style="color: #2563EB;">
+                        <div>
+                            <div style="padding: 15px; margin-bottom: 10px;">
+                                <p class="text-center" style="color: black; font-size: 18px;"><MudIcon Icon="@Icons.Material.Filled.Analytics" Size=Size.Large Color="Color.Success" />Tabla ta de progres pentru @language.LanguageName</p>
+                            </div>
+
+                            @foreach (var competence in language.UserLanguageLevels)
+                            {
+                                <div class="row justify-content-center align-items-center" style="padding: 15px;">
+                                    <div class="col text-center">
+                                        <p style="font-size: 22px; color: black;">@competence.LanguageCompetence</p>
+                                    </div>
+                                    <div class="col text-left" style="width: 70%; height: 70%;">
+                                        <MudTimeline TimelineOrientation=TimelineOrientation.Horizontal TimelinePosition=TimelinePosition.Bottom Reverse=false>
+                                            @foreach (var level in LanguageLevels)
+                                            {
+                                                if (String.Compare(level, competence.LanguageLevel) <= 0)
+                                                {
+                                                    <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+                                                        <ItemContent>
+                                                            <MudAlert Severity="Severity.Success">@level</MudAlert>
+                                                        </ItemContent>
+                                                    </MudTimelineItem>
+                                                }
+                                                else
+                                                {
+                                                    <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
+                                                        <ItemContent>
+                                                            <MudAlert Severity="Severity.Normal">@level</MudAlert>
+                                                        </ItemContent>
+                                                    </MudTimelineItem>
+                                                }
+                                            }
+                                        </MudTimeline>
+                                    </div>
+                                    <div class="col text-center">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Progresează!</MudButton>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="container-fluid p-3" style="background-color: #E9EFFD; margin-top: 60px;">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-6 text-center">
+                                        <h2 class="p-2" style="color: #2563EB; margin-left: 76px; font-size: 18px;">Optimizează-ți timpul și efortul îmbunătățindu-ți simultan toate competențele</h2>
+                                    </div>
+                                    <div class="col-md-6 d-flex justify-content-center align-items-center">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Începe acum!</MudButton>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="padding: 15px; margin-bottom: 10px; margin-top: 60px;">
+                                <p class="text-center" style="color: black; font-size: 18px;">
+                                    <MudIcon icon="@Icons.Material.Filled.Checklist" Size=Size.Large Color="Color.Success" />
+                                    Dornic de progres rapid? Evaluează-ți cunoștințele cu un test scurt și avansează la nivelul următor:
+                                </p>
+                                <div class="text-center">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 25%;">Începe testul de evaluare!</MudButton>
+                                </div>
+                            </div>
+
+                        </div>
+                    </MudExpansionPanel>
                 }
-                <col style="width:10%;" />
-                <col style="width:30%x;" />
-                <col style="width:20%;" />
-                <col style="width:15%;" />
-                <col />
-                @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
-                {
-                    <col style="width:50px;" />
-                }
-            </ColGroup>
-            <HeaderContent>
-                <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<AdminViewLanguageElement, object>(x=>x.LanguageName)">Nume</MudTableSortLabel></MudTh>
-                <MudTh>Descriere</MudTh>
-                <MudTh>Link Video</MudTh>
-                <MudTh>Steag</MudTh>
-                <MudTh>Vizualizează</MudTh>
-            </HeaderContent>
-            <RowTemplate>
-                <MudTd DataLabel="Nume">@context.LanguageName</MudTd>
-                <MudTd DataLabel="Descriere">@context.LanguageDescription</MudTd>
-                <MudTd DataLabel="Link Video">@context.LanguageVideoLink</MudTd>
-                <MudTd DataLabel="Steag">
-                    <img src="@context.LanguageFlag" style="max-width: 50px;"/>
-                </MudTd>
-                <MudTd DataLabel="Vizualizează">
-                    <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLanguageOverview() )">Vezi mai multe</MudButton>
-                </MudTd>
-            </RowTemplate>
-            <RowEditingTemplate>
-                <MudTd DataLabel="Nume">@context.LanguageName</MudTd>
-                <MudTd DataLabel="Descriere">
-                    <MudTextField @bind-Value="@context.LanguageDescription" />
-                </MudTd>
-                <MudTd DataLabel="Link Video">
-                    <MudTextField @bind-Value="@context.LanguageVideoLink" />
-                </MudTd>
-                <MudTd DataLabel="Steag">
-                    <MudTextField @bind-Value="@context.LanguageFlag" />
-                </MudTd>
-                <MudTd DataLabel="Vizualizează"></MudTd>
-            </RowEditingTemplate>
-            <PagerContent>
-                <MudTablePager />
-            </PagerContent>
-            <EditButtonContent Context="button">
-                <div style="display: flex; flex-direction: row;" >
-                    <MudTooltip Text="Edit Course">
-                        <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" Style="margin-right: 10px;" />
-                    </MudTooltip>
-                    <MudTooltip Text="Delete Course">
-                        <MudIconButton Text="Delete Course" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteLanguage" Class="pa-0" Style="margin-left: 10px;" />
-                    </MudTooltip>
+            </div>
+        </MudExpansionPanels>
+
+
+
+        <div class="text-left">
+            <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 100px;" class="poppins-semi-bold">Alte cursuri</h1>
+        </div>
+
+        <div class="container p-3">
+            <div class="row justify-content-center">
+
+                <div class="col-md-4">
+                    <div class="card m-3" style="width: 375px;">
+                        <img class="card-img-top" src="/images/homepage/homepage-1.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto; margin-top: 15px;">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">English 1</h5>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
+                                </div>
+                                <div class="col text-center">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: center;">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToWantPlacementTest" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </EditButtonContent>
-        </MudTable>
 
-        <MudDialog @bind-IsVisible="visible" Options="dialogOptions">
-            <TitleContent>
-                <MudText Typo="Typo.h6">
-                    <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
-                    <span style="color: #2563EB;">Adaugă un curs</span>
-                </MudText>
-            </TitleContent>
-            <DialogContent>
-                <MudTextField T="string" @bind-Value="LanguageNameValue" Label="Nume"></MudTextField>
-            </DialogContent>
-            <DialogActions>
-                <MudButton Variant="Variant.Filled" OnClick="Cancel" Class="px-10" Style="color: black;">Close</MudButton>
-                <MudButton Disabled="LanguageNameValue == null" OnClick="@(async () => AddLanguage(LanguageNameValue))" Style="color: #2563EB;">Add</MudButton>
+                <div class="col-md-4">
+                    <div class="card m-3" style="width: 375px;">
+                        <img class="card-img-top" src="/images/homepage/homepage-1.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto; margin-top: 15px;">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">English 1</h5>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
+                                </div>
+                                <div class="col text-center">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
+                                </div>
+                            </div>
 
-            </DialogActions>
-        </MudDialog>
-    </div>
+                            <div style="display: flex; justify-content: center;">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToWantPlacementTest" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="card m-3" style="width: 375px;">
+                        <img class="card-img-top" src="/images/homepage/homepage-1.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto; margin-top: 15px;">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">English 1</h5>
+                            <div class="row">
+                                <div class="col text-center">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
+                                </div>
+                                <div class="col text-center">
+                                    <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; justify-content: center;">
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToWantPlacementTest" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: center;">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px; margin-top: 15px;">Vezi toate cursurile</MudButton>
+                </div>
+
+            </div>
+        </div>
+    }    
 }
-
-
-
-@if (!HasAdminRole)
-{
-
-    <div class="text-left">
-        <h1 style="color: #FC6F05; font-size: 33px; padding: 15px; margin-left: 85px; margin-top: 85px;" class="poppins-semi-bold">Cursurile Mele</h1>
-    </div>
-
-
-    <MudExpansionPanels MultiExpansion="true">
-        <div class="custom-width">
-            @foreach (var language in UserLanguages)
-            {
-                <MudExpansionPanel Text="@language.LanguageName" Style="color: #2563EB;">
-                    <div>
-                        <div style="padding: 15px; margin-bottom: 10px;">
-                            <p class="text-center" style="color: black; font-size: 18px;"><MudIcon Icon="@Icons.Material.Filled.Analytics" Size=Size.Large Color="Color.Success" />Tabla ta de progres pentru @language.LanguageName</p>
-                        </div>
-
-                        @foreach (var competence in language.UserLanguageLevels)
-                        {
-                            <div class="row justify-content-center align-items-center" style="padding: 15px;">
-                                <div class="col text-center">
-                                    <p style="font-size: 22px; color: black;">@competence.LanguageCompetence</p>
-                                </div>
-                                <div class="col text-left" style="width: 70%; height: 70%;">
-                                    <MudTimeline TimelineOrientation=TimelineOrientation.Horizontal TimelinePosition=TimelinePosition.Bottom Reverse=false>
-                                        @foreach (var level in LanguageLevels)
-                                        {
-                                            if (String.Compare(level, competence.LanguageLevel) <= 0)
-                                            {
-                                                <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
-                                                    <ItemContent>
-                                                        <MudAlert Severity="Severity.Success">@level</MudAlert>
-                                                    </ItemContent>
-                                                </MudTimelineItem>
-                                            }
-                                            else
-                                            {
-                                                <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
-                                                    <ItemContent>
-                                                        <MudAlert Severity="Severity.Normal">@level</MudAlert>
-                                                    </ItemContent>
-                                                </MudTimelineItem>
-                                            }
-                                        }
-                                    </MudTimeline>
-                                </div>
-                                <div class="col text-center">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Progresează!</MudButton>
-                                </div>
-                            </div>
-                        }
-
-                        <div class="container-fluid p-3" style="background-color: #E9EFFD; margin-top: 60px;">
-                            <div class="row justify-content-center">
-                                <div class="col-md-6 text-center">
-                                    <h2 class="p-2" style="color: #2563EB; margin-left: 76px; font-size: 18px;">Optimizează-ți timpul și efortul îmbunătățindu-ți simultan toate competențele</h2>
-                                </div>
-                                <div class="col-md-6 d-flex justify-content-center align-items-center">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Începe acum!</MudButton>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="padding: 15px; margin-bottom: 10px; margin-top: 60px;">
-                            <p class="text-center" style="color: black; font-size: 18px;">
-                                <MudIcon icon="@Icons.Material.Filled.Checklist" Size=Size.Large Color="Color.Success" />
-                                Dornic de progres rapid? Evaluează-ți cunoștințele cu un test scurt și avansează la nivelul următor:
-                            </p>
-                            <div class="text-center">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 25%;">Începe testul de evaluare!</MudButton>
-                            </div>
-                        </div>
-
-                    </div>
-                </MudExpansionPanel>
-            }
-        </div>
-    </MudExpansionPanels>
-
-
-
-    <div class="text-left">
-        <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 100px;" class="poppins-semi-bold">Alte cursuri</h1>
-    </div>
-
-    <div class="container p-3">
-        <div class="row justify-content-center">
-
-            <div class="col-md-4">
-                <div class="card m-3" style="width: 375px;">
-                    <img class="card-img-top" src="/images/homepage/homepage-1.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto; margin-top: 15px;">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">English 1</h5>
-                        <div class="row">
-                            <div class="col text-center">
-                                <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
-                            </div>
-                            <div class="col text-center">
-                                <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
-                            </div>
-                        </div>
-
-                        <div style="display: flex; justify-content: center;">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToWantPlacementTest" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card m-3" style="width: 375px;">
-                    <img class="card-img-top" src="/images/homepage/homepage-1.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto; margin-top: 15px;">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">English 1</h5>
-                        <div class="row">
-                            <div class="col text-center">
-                                <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
-                            </div>
-                            <div class="col text-center">
-                                <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
-                            </div>
-                        </div>
-
-                        <div style="display: flex; justify-content: center;">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToWantPlacementTest" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <div class="card m-3" style="width: 375px;">
-                    <img class="card-img-top" src="/images/homepage/homepage-1.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto; margin-top: 15px;">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">English 1</h5>
-                        <div class="row">
-                            <div class="col text-center">
-                                <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
-                            </div>
-                            <div class="col text-center">
-                                <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
-                            </div>
-                        </div>
-
-                        <div style="display: flex; justify-content: center;">
-                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToWantPlacementTest" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div style="display: flex; justify-content: center;">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px; margin-top: 15px;">Vezi toate cursurile</MudButton>
-            </div>
-
-        </div>
-    </div>
-}    
 
 <style>
     .poppins-semi-bold {
@@ -390,14 +383,17 @@ else
 @code {
     [Inject]
     private IUserDataService UserDataService { get; set; }
+    [Inject]
+    public ILanguageDataService LanguageDataService { get; set; }
+
     private UserDto userInfo { get; set; } 
     private bool IsUSerDataLoaded = false;
 
     private List<UserDto> pendingAdmins = new List<UserDto>();
     private bool IsPendingAdminDataLoaded = false;
-}
 
-@functions {
+    public List<LanguageViewModel> AdminViewLanguages { get; set; } = new List<LanguageViewModel>();
+
     protected override async Task OnInitializedAsync()
     {
         authState = await authStateProvider.GetAuthenticationStateAsync();
@@ -415,9 +411,10 @@ else
         IsUSerDataLoaded = true;
 
         pendingAdmins = (await UserDataService.GetPendingAdminsAsync()).ToList();
-        IsPendingAdminDataLoaded = true;
 
-        await PopulateLanguagesTable();
+        AdminViewLanguages = (await LanguageDataService.GetAllLanguagesAsync()).ToList();
+
+        IsPendingAdminDataLoaded = true;
     }
 }
 
@@ -506,36 +503,12 @@ else
     private bool canCancelEdit = true;
     private bool blockSwitch = false;
     private string searchString = "";
-    private AdminViewLanguageElement selectedAdminLanguage = null;
-    private AdminViewLanguageElement elementBeforeEdit;
-    private HashSet<AdminViewLanguageElement> selectedItems1 = new HashSet<AdminViewLanguageElement>();
+    private LanguageViewModel elementBeforeEdit;
+    private HashSet<LanguageViewModel> selectedItems1 = new HashSet<LanguageViewModel>();
+    private LanguageViewModel editLanguage { get; set; } = new LanguageViewModel();
     private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
     private TableEditButtonPosition editButtonPosition = TableEditButtonPosition.End;
     private TableEditTrigger editTrigger = TableEditTrigger.EditButton;
-    private IEnumerable<AdminViewLanguageElement> AdminLanguageElements = new List<AdminViewLanguageElement>();
-
-    protected async Task PopulateLanguagesTable()
-    {
-        AdminLanguageElements = new List<AdminViewLanguageElement>
-        {
-            new AdminViewLanguageElement
-            {
-                LanguageName = "English",
-                LanguageDescription = "Descriere buna",
-                LanguageVideoLink = "https://www.youtube.com/watch?v=EzlRcGUdhA4&ab_channel=TheMotans-Topic",
-                LanguageFlag = "https://vectorflags.s3-us-west-2.amazonaws.com/flags/uk-circle-01.png"
-            },
-            new AdminViewLanguageElement
-            {
-                LanguageName = "French",
-                LanguageDescription = "Descriere sasa",
-                LanguageVideoLink = "https://www.youtube.com/watch?v=EzlRcGUdhA4&ab_channel=TheMotans-Topic",
-                LanguageFlag = "https://cdn2.iconfinder.com/data/icons/world-flag-2/30/3-512.png"
-            },
-        };
-
-        // AdminLanguageElements = await httpClient.GetFromJsonAsync<List<AdminViewLanguageElement>>("webapi/periodictable");
-    }
 
     private void AddEditionEvent(string message)
     {
@@ -543,9 +516,9 @@ else
         StateHasChanged();
     }
 
-    private bool FilterFuncViewLanguage(AdminViewLanguageElement element) => FilterFuncViewLanguage1(element, searchString);
+    private bool FilterFuncViewLanguage(LanguageViewModel element) => FilterFuncViewLanguage1(element, searchString);
 
-    private bool FilterFuncViewLanguage1(AdminViewLanguageElement element, string searchString)
+    private bool FilterFuncViewLanguage1(LanguageViewModel element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -554,41 +527,212 @@ else
         return false;
     }
 
-    void EditLanguage()
+    private bool visibleEditLanguage = false;
+
+    void OpenEditDialog(LanguageViewModel language)
     {
-        // Do something
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes!", Severity.Success);
+        editLanguage = new LanguageViewModel
+            {
+                LanguageId = language.LanguageId,
+                LanguageName = language.LanguageName,
+                LanguageDescription = language.LanguageDescription,
+                LanguageVideoLink = language.LanguageVideoLink,
+                LanguageFlag = language.LanguageFlag
+            };
+        elementBeforeEdit = language;
+        visibleEditLanguage = true;
     }
 
-    void DeleteLanguage()
+    bool ValidateEditCourse()
     {
-        // Do something
+        if (string.IsNullOrEmpty(editLanguage.LanguageName) || string.IsNullOrEmpty(editLanguage.LanguageFlag))
+            return false;
+        if (editLanguage.LanguageName == elementBeforeEdit.LanguageName && editLanguage.LanguageDescription == elementBeforeEdit.LanguageDescription && editLanguage.LanguageVideoLink == elementBeforeEdit.LanguageVideoLink && editLanguage.LanguageFlag == elementBeforeEdit.LanguageFlag)
+            return false;
+        return true;
+    }
+
+    void CloseEditLanguage()
+    {
+        visibleEditLanguage = false;
+        editLanguage = new LanguageViewModel();
+    }
+
+    async void EditLanguage(LanguageViewModel editLanguage)
+    {
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Cursul a fost șters cu succes!", Severity.Success);
+
+        Uri uriResult;
+        bool result = Uri.TryCreate(editLanguage.LanguageFlag, UriKind.Absolute, out uriResult)
+            && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+        if (result)
+        {
+            using var client = new HttpClient();
+            try
+            {
+                var responseUrl = await client.GetAsync(uriResult);
+                if (responseUrl.IsSuccessStatusCode)
+                {
+                    var contentType = responseUrl.Content.Headers.ContentType.MediaType;
+                    if (!contentType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
+                    {
+                        snackbar = Snackbar.Add("URL-ul nu indică o imagine.", Severity.Error);
+                        return;
+                    }
+                }
+                else
+                {
+                    snackbar = Snackbar.Add("URL-ul imaginii nu este valid sau accesibil.", Severity.Error);
+                    return;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                snackbar = Snackbar.Add("URL-ul imaginii nu este valid sau accesibil.", Severity.Error);
+                return;
+            }
+
+        }
+        else
+        {
+            snackbar = Snackbar.Add("URL-ul imaginii nu este valid.", Severity.Error);
+            return;
+        }
+
+        var response = await LanguageDataService.UpdateLanguageAsync(editLanguage);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit actualizarea cursului: ";
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            StateHasChanged();
+            return;
+        }
+        else
+        {
+            visibleEditLanguage = false;
+            snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes!", Severity.Success);
+            AdminViewLanguages = (await LanguageDataService.GetAllLanguagesAsync()).ToList();
+            StateHasChanged();
+        }
+    }
+
+    async void DeleteLanguage(Guid languageId)
+    {
+        var response = await LanguageDataService.DeleteLanguageAsync(languageId);
+
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit ștererea cursului: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Cursul a fost șters cu succes!", Severity.Success);
+            AdminViewLanguages = (await LanguageDataService.GetAllLanguagesAsync()).ToList();
+            StateHasChanged();
+        }
     }
 
     private bool visible;
-    private string LanguageNameValue;
+    LanguageViewModel addNewLanguage = new LanguageViewModel();
     private DialogOptions dialogOptions = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
 
     void Cancel() => visible = false;
 
-    void AddLanguage(string languageNameValue)
+    async void AddLanguage()
     {
         visible = false;
-        // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Cursul '" + languageNameValue + "' a fost adăugat cu succes!", Severity.Success);
+        //validate image
+
+        Uri uriResult;
+        bool result = Uri.TryCreate(addNewLanguage.LanguageFlag, UriKind.Absolute, out uriResult)
+            && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+
+        if (result)
+        {
+            using var client = new HttpClient();
+            try
+            {
+                var responseUrl = await client.GetAsync(uriResult);
+                if (responseUrl.IsSuccessStatusCode)
+                {
+                    var contentType = responseUrl.Content.Headers.ContentType.MediaType;
+                    if (!contentType.StartsWith("image", StringComparison.OrdinalIgnoreCase))
+                    {
+                        snackbar = Snackbar.Add("URL-ul nu indică o imagine.", Severity.Error);
+                        return;
+                    }
+                }
+                else
+                {
+                    snackbar = Snackbar.Add("URL-ul imaginii nu este valid sau accesibil.", Severity.Error);
+                    return;
+                }
+            }
+            catch (HttpRequestException ex)
+            {
+                snackbar = Snackbar.Add("URL-ul imaginii nu este valid sau accesibil.", Severity.Error);
+                return;
+            }
+
+        }
+        else
+        {
+            snackbar = Snackbar.Add("URL-ul imaginii nu este valid.", Severity.Error);
+            return;
+        }
+
+        var response = await LanguageDataService.CreateLanguageAsync(addNewLanguage);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit crearea unui nou curs: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Cursul '" + addNewLanguage.LanguageName + "' a fost adăugat cu succes!", Severity.Success);
+            AdminViewLanguages = (await LanguageDataService.GetAllLanguagesAsync()).ToList();
+            StateHasChanged();
+        }
     }
 
     void OpenDialog()
     {
+        addNewLanguage = new LanguageViewModel();
         visible = true;
     }
 
-    void NavigateToLanguageOverview()
+    bool ValidateAddCourse()
     {
+        if (string.IsNullOrEmpty(addNewLanguage.LanguageName) || string.IsNullOrEmpty(addNewLanguage.LanguageFlag))
+            return false;
+        return true;
+    }
+
+    void NavigateToLanguageOverview(Guid languageId)
+    {
+        StateService.RemoveId();
+        StateService.SetId(languageId);
         NavigationManager.NavigateTo("/language-overview");
     }
 }

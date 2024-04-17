@@ -34,7 +34,17 @@ namespace LingoLabs.App.Services.LanguageServices
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await httpClient.PostAsJsonAsync(RequestUri, createLanguageLevelViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<LanguageLevelViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
+
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<LanguageLevelViewModel>>();
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
@@ -138,6 +148,7 @@ namespace LingoLabs.App.Services.LanguageServices
 
             var languageLevelViewModel = new
             {
+                updateLanguageLevelViewModel.LanguageLevelId,
                 updateLanguageLevelViewModel.LanguageLevelName,
                 updateLanguageLevelViewModel.LanguageLevelAlias,
                 updateLanguageLevelViewModel.LanguageLevelDescription,
@@ -146,7 +157,16 @@ namespace LingoLabs.App.Services.LanguageServices
             };
 
             var result = await httpClient.PutAsJsonAsync(RequestUri, languageLevelViewModel);
-            result.EnsureSuccessStatusCode();
+
+            if (!result.IsSuccessStatusCode)
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<LanguageLevelViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
 
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<LanguageLevelViewModel>>();
 

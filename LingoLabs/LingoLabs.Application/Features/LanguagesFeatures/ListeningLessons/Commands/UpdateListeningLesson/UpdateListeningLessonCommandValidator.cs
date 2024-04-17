@@ -16,44 +16,44 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} is required.");
 
-            RuleFor(p => p.UpdateListeningLessonDto.LessonTitle)
+            RuleFor(p => p.LessonTitle)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
 
-            RuleFor(p => p.UpdateListeningLessonDto.LessonDescription)
-                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.UpdateListeningLessonDto.LessonDescription))
+            RuleFor(p => p.LessonDescription)
+                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.LessonDescription))
                 .WithMessage("{PropertyName} must not exceed 500 characters.");
 
-            RuleFor(p => p.UpdateListeningLessonDto.LessonRequirement)
-                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.UpdateListeningLessonDto.LessonRequirement))
+            RuleFor(p => p.LessonRequirement)
+                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.LessonRequirement))
                 .WithMessage("{PropertyName} must not exceed 500 characters.");
 
-            RuleFor(p => p.UpdateListeningLessonDto.LessonContent)
-                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.UpdateListeningLessonDto.LessonContent))
+            RuleFor(p => p.LessonContent)
+                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.LessonContent))
                 .WithMessage("{PropertyName} must not exceed 500 characters.");
 
-            RuleFor(p => p.UpdateListeningLessonDto.LessonVideoLink)
-                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateListeningLessonDto.LessonVideoLink))
+            RuleFor(p => p.LessonVideoLink)
+                .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.LessonVideoLink))
                 .WithMessage("{PropertyName} should be a valid URL if it exists.");
 
-            RuleFor(p => p.UpdateListeningLessonDto.LessonImageData)
-                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.UpdateListeningLessonDto.LessonImageData))
+            RuleFor(p => p.LessonImageData)
+                .Must(BeImageValidUrl).When(p => !string.IsNullOrEmpty(p.LessonImageData))
                 .WithMessage("{PropertyName} should be a .jpg or .png image if it exists.");
 
-            RuleFor(p => p.UpdateListeningLessonDto.TextScript)
+            RuleFor(p => p.TextScript)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .MaximumLength(1000).WithMessage("{PropertyName} must not exceed 1000 characters.");
 
-            RuleFor(p => p.UpdateListeningLessonDto.Accents)
+            RuleFor(p => p.Accents)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .Must(accents => accents.Count >= 2).WithMessage("{PropertyName} must contain at least 2 elements.");
 
             RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.UpdateListeningLessonDto.LessonPriorityNumber.Value, p.LessonId, lessonRepository))
-                .When(p => p.UpdateListeningLessonDto.LessonPriorityNumber.HasValue && p.UpdateListeningLessonDto.LessonPriorityNumber.Value > 0)
+                .MustAsync((p, cancellation) => ValidatePriorityNumber(p.LessonPriorityNumber.Value, p.LessonId, lessonRepository))
+                .When(p => p.LessonPriorityNumber.HasValue && p.LessonPriorityNumber.Value > 0)
                 .WithMessage("PriorityNumber must be unique.");
 
         }
