@@ -7,11 +7,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
     {
         private readonly IChapterRepository repository;
         private readonly ITagRepository tagRepository;
+        private readonly ILanguageLevelRepository languageLevelRepository;
 
-        public GetByIdChapterQueryHandler(IChapterRepository repository, ITagRepository tagRepository)
+        public GetByIdChapterQueryHandler(IChapterRepository repository, ITagRepository tagRepository, ILanguageLevelRepository languageLevelRepository)
         {
             this.repository = repository;
             this.tagRepository = tagRepository;
+            this.languageLevelRepository = languageLevelRepository;
         }
         public async Task<GetSingleChapterDto> Handle(GetByIdChapterQuery request, CancellationToken cancellationToken)
         {
@@ -39,6 +41,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
 
                 var unassociatedTags = allTagsDto.Where(tag => !chapterKeyWords.Any(lkw => lkw.TagId == tag.TagId)).ToList();
 
+                var languageLevel = await languageLevelRepository.FindByIdAsync(chapter.Value.LanguageLevelId);
+
                 return new GetSingleChapterDto
                 {
                     ChapterId = chapter.Value.ChapterId,
@@ -48,6 +52,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
                     ChapterPriorityNumber = chapter.Value.ChapterPriorityNumber,
                     ChapterImageData = chapter.Value.ChapterImageData,
                     ChapterVideoLink = chapter.Value.ChapterVideoLink,
+                    LanguageLevelName = languageLevel.Value.LanguageLevelName,
 
                     ChapterLessons = chapter.Value.ChapterLessons.Select(lesson => new Lessons.Queries.LessonDto
                     {

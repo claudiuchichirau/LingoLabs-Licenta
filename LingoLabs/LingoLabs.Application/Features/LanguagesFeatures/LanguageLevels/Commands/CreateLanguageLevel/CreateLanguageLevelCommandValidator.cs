@@ -16,7 +16,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
 
             RuleFor(p => p)
-               .MustAsync((p, cancellation) => ValidateLanguageLevel(p.LanguageLevelName, repository))
+               .MustAsync((p, cancellation) => ValidateLanguageLevelName(p.LanguageLevelName, repository, p.LanguageId))
                .WithMessage("LanguageLevelName must be unique.");
 
 
@@ -31,9 +31,10 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
                 .NotEqual(default(System.Guid)).WithMessage("{PropertyName} is required.");
         }
 
-        private async Task<bool> ValidateLanguageLevel(string name, ILanguageLevelRepository repository)
+        private async Task<bool> ValidateLanguageLevelName(string languageLevelName, ILanguageLevelRepository languageLevelRepository, Guid languageId)
         {
-            if (await repository.ExistLanguageLevelAsync(name))
+
+            if (await languageLevelRepository.ExistLanguageLevelAsync(languageLevelName, languageId) == true)
                 return false;
             return true;
         }

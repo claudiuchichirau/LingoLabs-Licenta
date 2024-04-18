@@ -29,9 +29,9 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             return Result<LanguageLevel>.Success(result);
         }
 
-        public async Task<bool> ExistLanguageLevelAsync(string languageLevelName)
+        public async Task<bool> ExistLanguageLevelAsync(string languageLevelName, Guid languageId)
         {
-            return await context.LanguageLevels.AnyAsync(languageLevel => languageLevel.LanguageLevelName == languageLevelName);
+            return await context.LanguageLevels.AnyAsync(languageLevel => languageLevel.LanguageLevelName == languageLevelName && languageLevel.LanguageId == languageId);
         }
 
         public async Task<bool> ExistLanguageLevelUpdateAsync(string languageLevelName, Guid languageLevelId)

@@ -13,7 +13,6 @@
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
-@inject StateService StateService
 
 
 <div class="text-center" style="margin-bottom: 50px;">
@@ -103,8 +102,6 @@ else
 
     void NavigateToWantPlacementTest(Guid languageId)
     {
-        StateService.RemoveId();
-        StateService.SetId(languageId);
-        NavigationManager.NavigateTo("/want-placement-test");
+        NavigationManager.NavigateTo($"/want-placement-test/{languageId}");
     }
 }

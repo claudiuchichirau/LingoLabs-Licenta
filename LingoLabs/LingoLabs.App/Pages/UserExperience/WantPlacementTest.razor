@@ -1,4 +1,4 @@
-﻿@page "/want-placement-test"
+﻿@page "/want-placement-test/{Id}"
 @using LingoLabs.App.Services.AuthServices
 @using LingoLabs.App.ViewModel.MudBlazor
 @using MudBlazor
@@ -9,7 +9,6 @@
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
-@inject StateService StateService
 
 <MudContainer>
     <div class="text-center" style="margin-top: 50px;">
@@ -38,23 +37,24 @@
 </MudContainer>
 
 @code {
-    Guid LanguageId;
+    [Parameter]
+    public string Id { get; set; }
+    Guid LanguageId = Guid.Empty;
 }
 
 @functions {
     protected override async Task OnInitializedAsync()
     {
-        LanguageId = await StateService.GetId();
+        LanguageId = Guid.Parse(Id);
     }
-
 
     void NavigateToStartPlacementTest()
     {
-        NavigationManager.NavigateTo("/placement-test");
+        NavigationManager.NavigateTo($"/placement-test/{LanguageId}");
     }
 
     void NavigateToLanguageDashboard()
     {
-        NavigationManager.NavigateTo("/language-dashboard");
+        NavigationManager.NavigateTo($"/language-dashboard/{LanguageId}");
     }
 }

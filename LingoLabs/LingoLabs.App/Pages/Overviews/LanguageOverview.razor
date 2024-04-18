@@ -1,4 +1,4 @@
-﻿@page "/language-overview"
+﻿@page "/language-overview/{Id}"
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
 @using LingoLabs.App.Contracts.LanguageContracts
@@ -15,7 +15,6 @@
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
-@inject StateService StateService
 
 <div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top: -10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
     <img src="/images/homepage/line.png" style="position: absolute; top: 0; left: -45px; max-width: 150px;">
@@ -58,9 +57,16 @@ else {
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
                 Descriere:&emsp;
-                <span style="font-size: 21px; color: #2563EB; text-align: justify;">
-                    @language.LanguageDescription
-                </span>
+                @if (!string.IsNullOrEmpty(@language.LanguageDescription))
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">
+                            @language.LanguageDescription
+                    </span>
+                }
+                else
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">-</span>
+                }
             </h1>
         </div>
 
@@ -158,8 +164,8 @@ else {
             <MudTd DataLabel="Nr. Crt." Style="text-align: center;">@(context.LanguageLevelPriorityNumber.HasValue ? context.LanguageLevelPriorityNumber.ToString() : "-")</MudTd>
             <MudTd DataLabel="Nume" Style="text-align: center;">@context.LanguageLevelName</MudTd>
             <MudTd DataLabel="Alias" Style="text-align: center;">@context.LanguageLevelAlias</MudTd>
-                <MudTd DataLabel="Descriere" Style="text-align: center;">@(string.IsNullOrEmpty(context.LanguageLevelDescription) ? "-" : context.LanguageLevelDescription)</MudTd>
-                <MudTd DataLabel="Link Video" Style="text-align: center;">@(string.IsNullOrEmpty(context.LanguageLevelVideoLink) ? "-" : context.LanguageLevelVideoLink)</MudTd>
+            <MudTd DataLabel="Descriere" Style="text-align: center;">@(string.IsNullOrEmpty(context.LanguageLevelDescription) ? "-" : context.LanguageLevelDescription)</MudTd>
+            <MudTd DataLabel="Link Video" Style="text-align: center;">@(string.IsNullOrEmpty(context.LanguageLevelVideoLink) ? "-" : context.LanguageLevelVideoLink)</MudTd>
             <MudTd DataLabel="Vizualizează" Style="text-align: center;">
                 <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLanguageLevelOverview(context.LanguageLevelId) )">Vezi mai multe</MudButton>
             </MudTd>
@@ -672,12 +678,14 @@ else {
     public ILanguageLevelDataService LanguageLevelDataService { get; set; }
     [Inject]
     public ILanguageCompetenceDataService LanguageCompetenceDataService { get; set; }
+    [Parameter]
+    public string Id { get; set; }
+    Guid CurrentLanguageId = Guid.Empty;
 
     private LanguageViewModel language = new LanguageViewModel();
     private AuthenticationState authState;
     private bool IsLanguageInfoLoaded = false;
     public bool HasAdminRole = false;
-    Guid CurrentLanguageId = Guid.Empty;
 
     protected override async Task OnInitializedAsync()
     {
@@ -690,7 +698,7 @@ else {
 
         HasAdminRole = claims.Any(claim => claim.Type == "role" && claim.Value == "Admin");
 
-        CurrentLanguageId = await StateService.GetId();
+        CurrentLanguageId = Guid.Parse(Id);
 
         language = await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId);
         IsLanguageInfoLoaded = true;
@@ -862,10 +870,10 @@ else {
 
     void NavigateToLanguageLevelOverview(Guid languageLevelId)
     {
-        StateService.RemoveId();
-        StateService.SetId(languageLevelId);
-        NavigationManager.NavigateTo("/language-level-overview");
+        NavigationManager.NavigateTo($"/language-level-overview/{languageLevelId}");
     }
+
+    //EDIT LANGUAGE LEVEL
 
     private bool visibleEditLanguageLevel = false;
 
@@ -887,8 +895,6 @@ else {
 
     async void EditLanguageLevel(LanguageLevelViewModel editLanguageLevel)
     {
-        int? prNumb = editLanguageLevel.LanguageLevelPriorityNumber;
-
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
 
         var response = await LanguageLevelDataService.UpdateLanguageLevelAsync(editLanguageLevel);
@@ -1014,9 +1020,7 @@ else {
 
     void NavigateToLanguageCompetenceOverview(Guid languageCompetenceId)
     {
-        StateService.RemoveId();
-        StateService.SetId(languageCompetenceId);
-        NavigationManager.NavigateTo("/language-competence-overview");
+        NavigationManager.NavigateTo($"/language-competence-overview/{languageCompetenceId}");
     }
 
     private bool visibleEditLanguageCompetence = false;

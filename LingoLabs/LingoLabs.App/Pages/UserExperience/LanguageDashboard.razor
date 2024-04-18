@@ -1,4 +1,4 @@
-﻿@page "/language-dashboard"
+﻿@page "/language-dashboard/{Id}"
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
 @using LingoLabs.App.Services.AuthServices
@@ -249,7 +249,10 @@ else
 
     public LanguageViewModel Language { get; set; } = new LanguageViewModel();
     private bool IsDataLoaded = false;
-    Guid LanguageId;
+
+    [Parameter]
+    public string Id { get; set; }
+    Guid LanguageId = Guid.Empty;
 }
 
 @functions {
@@ -262,7 +265,7 @@ else
         var user = authState.User;
         var claims = user.Claims.ToList();
 
-        LanguageId = await StateService.GetId();
+        LanguageId = Guid.Parse(Id);
 
         Language = (await LanguageDataService.GetLanguageByIdAsync(LanguageId));
         IsDataLoaded = true;
@@ -496,7 +499,6 @@ else
 
     void NavigateToLanguageLevel(Guid languageLevelId)
     {
-        StateService.RemoveId();
         StateService.SetId(languageLevelId);
         NavigationManager.NavigateTo("/language-level-dashboard");
     }

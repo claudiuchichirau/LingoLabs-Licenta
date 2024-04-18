@@ -89,7 +89,6 @@ else
 
     void NavigateToWantPlacementTest(Guid languageId)
     {
-        StateService.RemoveId();
         StateService.SetId(languageId);
         NavigationManager.NavigateTo("/want-placement-test");
     }

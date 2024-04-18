@@ -48,6 +48,10 @@ builder.Services.AddHttpClient<IQuestionDataService, QuestionDataService>(client
 {
     client.BaseAddress = new Uri("https://localhost:7210/");
 });
+builder.Services.AddHttpClient<IListeningLessonDataService, ListeningLessonDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
 builder.Services.AddHttpClient<ILessonDataService, LessonDataService>(client =>
 {
     client.BaseAddress = new Uri("https://localhost:7210/");

@@ -11,12 +11,13 @@ namespace LingoLabs.App.ViewModel.LanguageModels
         [Required(ErrorMessage = "LanguageLevel Alias is required")]
         public string LanguageLevelAlias { get; set; } = string.Empty;
         [Required(ErrorMessage = "LanguageId is required")]
-        public Guid? LanguageId { get; set; }
+        public Guid LanguageId { get; set; }
         public int? LanguageLevelPriorityNumber { get; set; }
         public string LanguageLevelDescription { get; set; } = string.Empty;
         public string LanguageLevelVideoLink { get; set; } = string.Empty;
-        public List<ChoicerViewModel> LanguageChapters { get; set; } = [];
+        public List<ChapterViewModel> LanguageChapters { get; set; } = [];
         public List<EntityTagViewModel> LanguageLeveKeyWords { get; set; } = [];
         public List<UserLanguageLevelViewModel> UserLanguageLevels { get; set; } = [];
+        public string LanguageName { get; set; } = string.Empty;
     }
 }

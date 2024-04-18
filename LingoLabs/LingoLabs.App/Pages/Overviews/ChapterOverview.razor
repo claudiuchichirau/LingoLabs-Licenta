@@ -1,4 +1,7 @@
-﻿@page "/chapter-overview"
+﻿@page "/chapter-overview/{Id}"
+@using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Contracts.LanguageContracts
+@using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
 @using MudBlazor
 @using MatBlazor
@@ -30,22 +33,22 @@
 
 @* CHAPTER - GET BY ID *@
 
+@if(!IsChapterLoaded)
+{
+    <div class="row mx-0 justify-content-md-center">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-item-center" style="margin-top: 50px;">
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        </div>
+    </div>
+}
+else {
 <div class="row" style="max-width: 100vw; overflow-x: auto;">
     <div class="col">
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-top: 50px; margin-bottom: 20px;" class="poppins-semi-bold">
                 Nivelul Lingvistic:&emsp;
                 <span style="color: #FC6F05; font-size: 25px;">
-                    A1
-                </span>
-            </h1>
-        </div>
-
-        <div class="text-left">
-            <h1 style="color: black; font-size: 33px; margin-left: 75px; padding: 5px; margin-bottom: 20px;" class="poppins-semi-bold">
-                Competența Lingvistică:&emsp;
-                <span style="color: #FC6F05; font-size: 25px;">
-                    Grammar
+                    @chapter.LanguageLevelName
                 </span>
             </h1>
         </div>
@@ -54,7 +57,7 @@
             <h1 style="color: black; font-size: 33px; margin-left: 75px; padding: 5px; margin-bottom: 20px;" class="poppins-semi-bold">
                 Nume:&emsp;
                 <span style="color: #2563EB; font-size: 25px;">
-                    Introduction in English
+                    @chapter.ChapterName
                 </span>
             </h1>
         </div
@@ -62,59 +65,107 @@
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
                 Descriere:&emsp;
-                <span style="font-size: 21px; color: #2563EB; text-align: justify;">
-                    This chapter is an introduction to the English language. It is designed for beginners who want to learn the basics of English. The chapter covers the alphabet, numbers, colors, and basic vocabulary.
-                </span>
+                @if (!string.IsNullOrEmpty(@chapter.ChapterDescription))
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">
+                        @chapter.ChapterDescription
+                    </span>
+                }
+                else
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">-</span>
+                }
             </h1>
         </div>
 
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
                 Nr. Crt.:&emsp;
-                <span style="font-size: 21px; color: #2563EB; text-align: justify;">
-                    1
-                </span>
+                @if (chapter.ChapterPriorityNumber != 0 || chapter.ChapterPriorityNumber != null)
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">
+                            @chapter.ChapterPriorityNumber
+                    </span>
+                }
+                else
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">-</span>
+                }
             </h1>
         </div>
 
-        <div class="row">
-            <!-- First Column (1/3 width) -->
-            <div class="col-md-4">
-                <div class="text-left">
-                    <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
-                        Video:
-                    </h1>
-                </div>
-            </div>
-
-            <!-- Second Column (2/3 width) -->
-            <div class="col-md-8">
-                <iframe style="width: 426px; height: 240px; margin-top: 9px;" src="https://www.youtube.com/embed/CA1L7_hyRqs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-            </div>
-        </div>
-
-
-    </div>
-
-    <div class="col">
-        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+        @if (!string.IsNullOrEmpty(chapter.ChapterVideoLink))
+        {
             <div class="row">
-                <div class="text-center">
-                    <h1 style="color: black; font-size: 33px; padding: 5px; margin-top: 50px;" class="poppins-semi-bold">
-                        Imagine:
-                    </h1>
+                <!-- First Column (1/3 width) -->
+                <div class="col-md-4">
+                    <div class="text-left">
+                        <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
+                            Video:
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Second Column (2/3 width) -->
+                <div class="col-md-8">
+                    <iframe style="width: 426px; height: 240px; margin-top: 9px;" src="chapter.ChapterVideoLink" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
+        }
+        else
+        {
+            <div class="row">
+                <!-- First Column (1/3 width) -->
+                <div class="col-md-4">
+                    <div class="text-left">
+                        <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
+                            Video: -
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        }
 
-            <div class="row justify-content-center">
-                <img src="https://img.freepik.com/free-vector/hand-drawn-english-school-illustration-design_23-2149525060.jpg?w=900&t=st=1712134206~exp=1712134806~hmac=bdb5ac074fc8d8d0720168efcfb28a3e9e0bc413b1eb1d288afc279bde140cf7" alt="Chapter Image" style="min-width: 480px; max-width: 680px; height: auto;">
+
+    </div>
+
+    @if (!string.IsNullOrEmpty(chapter.ChapterImageData))
+    {
+        <div class="col">
+            <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                <div class="row">
+                    <div class="text-center">
+                        <h1 style="color: black; font-size: 33px; padding: 5px; margin-top: 50px;" class="poppins-semi-bold">
+                            Imagine:
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center">
+                    <img src="@chapter.ChapterImageData" alt="Chapter Image" style="width: 350px; height: auto;">
+                </div>
             </div>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="col">
+            <div style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                <div class="row">
+                    <div class="text-center">
+                        <h1 style="color: black; font-size: 33px; padding: 5px; margin-top: 50px;" class="poppins-semi-bold">
+                            Imagine: -
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 
 </div>
 
-<div class="text-left" style="max-width: 100vw; overflow-x: auto;">
+@* KEY WORDS *@
+@* <div class="text-left" style="max-width: 100vw; overflow-x: auto;">
     <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
         Cuvinte cheie:
     </h1>
@@ -154,7 +205,7 @@
     </MudDialog>
 
 </div>
-
+ *@
 
 @* LESSONS *@
 <div class="text-left">
@@ -162,48 +213,47 @@
 </div>
 
 <div style="max-width: 80%; margin: auto; margin-bottom: 55px;">
-    <MudTable Items="@Lessons" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<ListeningLessonElement,bool>(FilterFuncViewLesson)"
-              @bind-SelectedItem="selectedLesson" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
-              IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
-              @* SortBy="new Func<ListeningLessonElement, object>(x=>x.LessonPriorityNumber)" SortDirection="SortDirection.Ascending"> *@
+    <MudTable Items="@chapter.ChapterLessons" Dense="@dense" Hover="@hover" ReadOnly="@ronly" Filter="new Func<ListeningLessonViewModel,bool>(FilterFuncViewLesson)"
+              @bind-SelectedItem="selectedLesson" SortLabel="Sort By" IsEditRowSwitchingBlocked="@blockSwitch" >
         <ToolBarContent>
             <MudText Typo="Typo.h6">Lecții</MudText>
             <MudSpacer />
             <div class="text-center" style="width: 55%;">
                 <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Style="width: 50%;" />
             </div>
-            <MudTooltip Text="Add">
-                <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialogAddLesson()' />
-            </MudTooltip>
+            @if (!AreLanguageCompetencesLoaded)
+            {
+                <MudTooltip>
+                    <MudProgressCircular Color="Color.Default" Indeterminate="true" Style="background-color: #FC6F05; color: white;"/>
+                </MudTooltip>
+            }
+            else if (!languageCompetences.Any())
+            {
+                <MudTooltip Text="Nu există nicio competență lingvistică creată. Crează una mai întâi și revino aici mai apoi.">
+                    <MudFab Icon="@Icons.Material.Filled.Cancel" Style="background-color: gray; color: white;" OnClick="() => NavigateToLanguageOverview()" />
+                </MudTooltip>
+            }
+            else {
+                <MudTooltip Text="Add">
+                    <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialogAddLesson()' />
+                </MudTooltip>
+            }
         </ToolBarContent>
 
-        <ColGroup>
-            @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
-            {
-                <col style="width:50px;" />
-            }
-            <col />
-            @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
-            {
-                <col style="width:50px;" />
-            }
-        </ColGroup>
         <HeaderContent>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LessonPriorityNumber)">Nr. Crt.</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LessonTitle)">Titlu</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;">Descriere</MudTh>
             <MudTh Style="text-align: center;">Conținut</MudTh>
-            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LanguageCompetenceId)">Competență Lingvistică</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Nr. Crt.">@context.LessonPriorityNumber</MudTd>
-            <MudTd DataLabel="Titlu">@context.LessonTitle</MudTd>
-            <MudTd DataLabel="Descriere">@context.LessonDescription</MudTd>
-            <MudTd DataLabel="Conținut">@context.LessonContent</MudTd>
-            <MudTd DataLabel="Competență Lingvistică">@context.LanguageCompetenceId</MudTd>
+            <MudTd DataLabel="Nr. Crt." Style="text-align: center;">@(context.LessonPriorityNumber.HasValue ? context.LessonPriorityNumber.ToString() : "-")</MudTd>
+            <MudTd DataLabel="Titlu" Style="text-align: center;">@context.LessonTitle</MudTd>
+            <MudTd DataLabel="Descriere" Style="text-align: center;">@(string.IsNullOrEmpty(context.LessonDescription) ? "-" : context.LessonDescription)</MudTd>
+            <MudTd DataLabel="Conținut" Style="text-align: center;">@(string.IsNullOrEmpty(context.LessonContent) ? "-" : context.LessonContent)</MudTd>
             <MudTd DataLabel="Vizualizează">
-                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLessonOverview() )">Vezi mai multe</MudButton>
+                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLessonOverview(context.LessonId) )">Vezi mai multe</MudButton>
             </MudTd>
             <MudTd>
                 <div style="display: flex; align-items: center; justify-content: space-between;">
@@ -234,8 +284,8 @@
                 <strong>Pentru început, selectează tipul de competență lingvistică pe care vrei să te concentrezi în noua lecție:</strong>
             </MudText>
 
-            <MudSelect T="LanguageCompetenceElement" Label="Competența Lingvistică:" @bind-Value="selectedCompetence" Style="margin-top: 10px;">
-                @foreach (var competence in LanguageCompetences)
+            <MudSelect T="LanguageCompetenceViewModel" Label="Competența Lingvistică:" @bind-Value="selectedCompetence" Style="margin-top: 10px;">
+                @foreach (var competence in languageCompetences)
                 {
                     <MudSelectItem Value="@competence">@competence.LanguageCompetenceName</MudSelectItem>
                 }
@@ -253,7 +303,7 @@
         <TitleContent>
             <MudText Typo="Typo.h6">
                 <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
-                <span style="color: #2563EB;">Adaugă o lecție nouă Listening</span>
+                <span style="color: #2563EB;">Adaugă o lecție nouă</span>
             </MudText>
         </TitleContent>
         <DialogContent>
@@ -282,14 +332,10 @@
         <TitleContent>
             <MudText Typo="Typo.h6">
                 <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
-                <span style="color: #2563EB;">Adaugă o lecție nouă Normal</span>
+                <span style="color: #2563EB;">Adaugă o lecție nouă</span>
             </MudText>
         </TitleContent>
         <DialogContent>
-
-            <MudText Typo="Typo.body1">Pentru a adăuga o lecție de tip <strong>Listening</strong>, va fi necesar să introduceți un text care va servi drept <strong>script</strong> pentru funcția de text-to-speech din aplicație. 
-                Acest text va fi transformat în audio și utilizat de către useri pentru exercițiile de ascultare. Asigurați-vă că textul este clar, corect din punct de vedere gramatical și adecvat nivelului de 
-                înțelegere al utilizatorilor. <strong>Textul redactat va trebui să fie scris în limba în care se desfășoară cursul.</strong></MudText>
 
             <MudTextField T="string" @bind-Value="addLesson.LessonTitle" Label="Titlu"></MudTextField>
 
@@ -310,34 +356,97 @@
         </TitleContent>
         <DialogContent>
             <MudPaper Class="pa-6" Style="margin-bottom: 40px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);">
-                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" OnValidSubmit="OnSubmit" Model="lessonRequest">
-                    <MudTextField T="Guid" Label="Competența Lingvistică" Disabled="true" @bind-Value="lessonRequest.LanguageCompetenceId"></MudTextField>
-                    <MudTextField T="string" Label="Titlu" @bind-Value="lessonRequest.LessonTitle"></MudTextField>
-                    <MudTextField T="string" Label="Descriere" @bind-Value="lessonRequest.LessonDescription"></MudTextField>
-                    <MudTextField T="string" Label="Conținut" @bind-Value="lessonRequest.LessonContent"></MudTextField>
-                    <MudTextField T="string" Label="Link Video" @bind-Value="lessonRequest.LessonVideoLink"></MudTextField>
-                    <MudTextField T="string" Label="Link Imagine" @bind-Value="lessonRequest.LessonImageLink"></MudTextField>
-                    <MudTextField T="int?" Label="Nr. Crt." @bind-Value="lessonRequest.LessonPriorityNumber"></MudTextField>
-                    <MudTextField T="string" Label="Text Script" @bind-Value="lessonRequest.TextScript"></MudTextField>
-                    <MudText Typo="Typo.h6">Acente</MudText>
-                    @foreach (var accent in Accents)
-                    {
-                        <MudCheckBox @bind-Checked="@accent.IsChecked">@accent.AccentName</MudCheckBox>
-                    }
-                </MudForm>
-            </MudPaper>
+                @if(editListeningLesson != null && editLesson == null)
+                {
+                    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" OnValidSubmit="OnSubmit" Model="editListeningLesson">
+                        <MudTextField T="string" Label="Titlu" @bind-Value="editListeningLesson.LessonTitle"></MudTextField>
+                        <MudTextField T="string" Label="Descriere" @bind-Value="editListeningLesson.LessonDescription"></MudTextField>
+                        <MudTextField T="string" Label="Conținut" @bind-Value="editListeningLesson.LessonContent"></MudTextField>
+                        <MudTextField T="string" Label="Link Video" @bind-Value="editListeningLesson.LessonVideoLink"></MudTextField>
+                        <MudTextField T="string" Label="Link Imagine" @bind-Value="editListeningLesson.LessonImageData"></MudTextField>
+                        <MudTextField T="int?" Label="Nr. Crt." @bind-Value="editListeningLesson.LessonPriorityNumber"></MudTextField>
+                        <MudTextField T="string" Label="Text Script" @bind-Value="editListeningLesson.TextScript"></MudTextField>
+                        <MudText Typo="Typo.h6">Acente</MudText>
+                        @foreach (var accent in Accents)
+                        {
+                            <MudCheckBox @bind-Checked="@accent.IsChecked">@accent.AccentName</MudCheckBox>
+                        }
+                    </MudForm>
+                } else if (editListeningLesson == null && editLesson != null)
+                {
+                    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors" OnValidSubmit="OnSubmit" Model="editLesson">
+                        <MudTextField T="string" Label="Titlu" @bind-Value="editLesson.LessonTitle"></MudTextField>
+                        <MudTextField T="string" Label="Descriere" @bind-Value="editLesson.LessonDescription"></MudTextField>
+                        <MudTextField T="string" Label="Conținut" @bind-Value="editLesson.LessonContent"></MudTextField>
+                        <MudTextField T="string" Label="Link Video" @bind-Value="editLesson.LessonVideoLink"></MudTextField>
+                        <MudTextField T="string" Label="Link Imagine" @bind-Value="editLesson.LessonImageData"></MudTextField>
+                        <MudTextField T="int?" Label="Nr. Crt." @bind-Value="editLesson.LessonPriorityNumber"></MudTextField>
+                    </MudForm>
+                }
+                </MudPaper>
         </DialogContent>
         <DialogActions>
             <MudButton Variant="Variant.Filled" OnClick="CancelEditLesson" Class="px-10" Style="color: black;">Cancel</MudButton>
-            <MudButton OnClick="@(async () => EditLesson(lessonRequest))" Style="color: #2563EB;" Disabled="@(!success)">Save</MudButton>
+            @if(editListeningLesson != null && editLesson == null)
+            {
+                <MudButton Disabled="!ValidateEditListeningLesson()" OnClick="@(async () => EditListeningLesson(editListeningLesson))" Style="color: #2563EB;">Save</MudButton>
+            } else if (editListeningLesson == null && editLesson != null)
+            {
+                <MudButton Disabled="!ValidateEditLesson()" OnClick="@(async () => EditLesson(editLesson))" Style="color: #2563EB;">Save</MudButton>
+            }
         </DialogActions>
     </MudDialog>
 
 </div>
+}
 
+
+@code {
+    [Inject]
+    private IChapterDataService ChapterDataService { get; set; }
+    [Inject]
+    private ILessonDataService LessonDataService { get; set; }
+    [Inject]
+    private ILanguageLevelDataService LanguageLevelDataService { get; set; }
+    [Inject]
+    private IListeningLessonDataService ListeningLessonDataService { get; set; }
+    [Inject]
+    private ILanguageDataService LanguageDataService { get; set; }
+    [Parameter]
+    public string Id { get; set; }
+    private Guid CurrentChapterId = Guid.Empty;
+    Guid languageId = Guid.Empty;
+    private ChapterViewModel chapter = new ChapterViewModel();
+    private List<LanguageCompetenceViewModel> languageCompetences = new List<LanguageCompetenceViewModel>();
+    private bool IsChapterLoaded = false;
+    private bool AreLanguageCompetencesLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentChapterId = Guid.Parse(Id);
+
+        chapter = await ChapterDataService.GetChapterByIdAsync(CurrentChapterId);
+        IsChapterLoaded = true;
+
+        Guid languageLevelId = chapter.LanguageLevelId;
+
+        LanguageLevelViewModel languageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(languageLevelId);
+
+        languageId = languageLevel.LanguageId;
+
+        LanguageViewModel language = await LanguageDataService.GetLanguageByIdAsync(languageId);
+
+        languageCompetences = language.LanguageCompetences.ToList();
+
+        AreLanguageCompetencesLoaded = true;
+
+        await PopulateKewWords();
+        await PopulateAccents();
+    }
+}
 
 @* KEW WORDS *@
-@code {
+@functions {
     private Snackbar snackbar;
     private bool visible;
     private string currentField;
@@ -367,14 +476,6 @@
         snackbar = Snackbar.Add("Cuvântul cheie a fost adăugat cu succes!", Severity.Success);
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await PopulateKewWords();
-        await PopulateLessonsTable();
-        await PopulateAccents();
-        await PopulateLanguagesCompetences();
-    }
-
     private IEnumerable<string> KewWords = new List<string>();
     int containerWidth = 333; // Width of MudContainer (in vh units)
     int totalWidth; // Total width of elements (in vh units)
@@ -400,8 +501,8 @@
 }
 
 
-@* VIEW & EDIT LESSONS *@
-@code {
+@* VIEW LESSONS *@
+@functions {
     private bool dense = false;
     private bool hover = true;
     private List<string> editEvents = new();
@@ -409,52 +510,12 @@
     private bool canCancelEdit = true;
     private bool blockSwitch = false;
     private string searchString = "";
-    private ListeningLessonElement selectedLesson = null;
-    private ListeningLessonElement elementBeforeEdit;
-    private HashSet<ListeningLessonElement> selectedItems1 = new HashSet<ListeningLessonElement>();
+    private ListeningLessonViewModel selectedLesson = null;
+    private ListeningLessonViewModel elementBeforeEdit;
+    private HashSet<ListeningLessonViewModel> selectedItems1 = new HashSet<ListeningLessonViewModel>();
     private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
     private TableEditButtonPosition editButtonPosition = TableEditButtonPosition.End;
     private TableEditTrigger editTrigger = TableEditTrigger.EditButton;
-    private IEnumerable<ListeningLessonElement> Lessons = new List<ListeningLessonElement>();
-
-    protected async Task PopulateLessonsTable()
-    {
-        Lessons = new List<ListeningLessonElement>
-        {
-            new ListeningLessonElement
-            {
-                LessonTitle = "First Lesson",
-                LessonDescription = "The first lesson is about the alphabet",
-                LessonContent = "We will start with the letter A",
-                LessonVideoLink = "https://www.youtube.com/watch?v=EzlRcGUdhA4&ab_channel=TheMotans-Topic",
-                LessonImageLink = "https://img.freepik.com/free-vector/hand-drawn-english-school-illustration-design_23-2149525060.jpg?w=900&t=st=1712134206",
-                LessonPriorityNumber = 1,
-                LanguageCompetenceId = Guid.NewGuid()
-            },
-            new ListeningLessonElement
-            {
-                LessonTitle = "Second Lesson",
-                LessonDescription = null,
-                LessonContent = null,
-                LessonVideoLink = null,
-                LessonImageLink = null,
-                LessonPriorityNumber = 2,
-                LanguageCompetenceId = Guid.NewGuid()
-            },
-            new ListeningLessonElement
-            {
-                LessonTitle = "Third Lesson",
-                LessonDescription = null,
-                LessonContent = null,
-                LessonVideoLink = null,
-                LessonImageLink = null,
-                LessonPriorityNumber = null,
-                LanguageCompetenceId = Guid.NewGuid()
-            }
-        };
-
-        // AdminLanguageElements = await httpClient.GetFromJsonAsync<List<AdminViewLanguageElement>>("webapi/periodictable");
-    }
 
     private void AddEditionEvent(string message)
     {
@@ -462,9 +523,9 @@
         StateHasChanged();
     }
 
-    private bool FilterFuncViewLesson(ListeningLessonElement element) => FilterFuncViewLesson1(element, searchString);
+    private bool FilterFuncViewLesson(ListeningLessonViewModel element) => FilterFuncViewLesson1(element, searchString);
 
-    private bool FilterFuncViewLesson1(ListeningLessonElement element, string searchString)
+    private bool FilterFuncViewLesson1(ListeningLessonViewModel element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -487,7 +548,7 @@
 
 
 @* DIALOG ADD LESSON *@
-@code {
+@functions {
     private bool visibleAddLesson;
     private bool visibleAddListeningLesson;
     private bool visibleAddNormalLesson;
@@ -496,51 +557,34 @@
     private DialogOptions dialogOptionsForAddLesson = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
     private DialogOptions dialogOptionsForAddListeningLesson = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
     private DialogOptions dialogOptionsForAddNormalLesson = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
-    private IEnumerable<LanguageCompetenceElement> LanguageCompetences = new List<LanguageCompetenceElement>();
-    private LanguageCompetenceElement selectedCompetence;
-    LessonElement addLesson;
-    ListeningLessonElement addListeningLesson;
+    private LanguageCompetenceViewModel selectedCompetence;
+    LessonViewModel addLesson;
+    ListeningLessonViewModel addListeningLesson;
 
-    protected async Task PopulateLanguagesCompetences()
-    {
-        LanguageCompetences = new List<LanguageCompetenceElement>
-        {
-            new LanguageCompetenceElement
-            {
-                LanguageCompetenceName = "Listening",
-                LanguageCompetenceType = LanguageCompetenceTypeElement.Listening,
-                LanguageCompetenceDescription = "Descriere sasa lorem ipsum vede vidi vici bini",
-                LanguageCompetenceVideoLink = "https://www.youtube.com/watch?v=EzlRcGUdhA4&ab_channel=TheMotans-Topic",
-                LanguageCompetencePriorityNumber = 1
-            },
-            new LanguageCompetenceElement
-            {
-                LanguageCompetenceName = "Writing",
-                LanguageCompetenceType = LanguageCompetenceTypeElement.Writing,
-                LanguageCompetenceDescription = null,
-                LanguageCompetenceVideoLink = null,
-                LanguageCompetencePriorityNumber = null
-            }
-        };
-
-        // AdminLanguageElements = await httpClient.GetFromJsonAsync<List<AdminViewLanguageElement>>("webapi/periodictable");
-    }
 
     void CancelAddLesson() => visibleAddLesson = false;
 
-    void NextStepAddLesson(LanguageCompetenceElement element)
+    void NextStepAddLesson(LanguageCompetenceViewModel element)
     {
         visibleAddLesson = false;
 
-        if (element.LanguageCompetenceType == LanguageCompetenceTypeElement.Listening)
+        if (element.LanguageCompetenceType == LanguageCompetenceTypeViewModel.Listening)
         {
-            addListeningLesson = new ListeningLessonElement();
+            addListeningLesson = new ListeningLessonViewModel
+            {
+                ChapterId = CurrentChapterId,
+                LanguageCompetenceId = element.LanguageCompetenceId,
+            };
             addListeningLesson.Accents = Accents.ToList();
             visibleAddListeningLesson = true;
         }
         else
         {
-            addLesson = new LessonElement();
+            addLesson = new LessonViewModel
+            {
+                ChapterId = CurrentChapterId,
+                LanguageCompetenceId = element.LanguageCompetenceId
+            };
             visibleAddNormalLesson = true;
         }
     }
@@ -552,28 +596,62 @@
         visibleAddLesson = true;
     }
 
-    void AddLesson(LessonElement lesson)
+    async void AddLesson(LessonViewModel lesson)
     {
-        visibleAddNormalLesson = false;
-        // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Lecția '" + lesson.LessonTitle + "' a fost creată cu succes!", Severity.Success);
+
+        var response = await LessonDataService.CreateLessonAsync(lesson);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Eroare la crearea lecției. :" + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            visibleAddNormalLesson = false;
+            snackbar = Snackbar.Add("Lecția a fost creată cu succes!", Severity.Success);
+            chapter = await ChapterDataService.GetChapterByIdAsync(CurrentChapterId);
+            StateHasChanged();
+        }
     }
 
-    void AddListeningLesson(ListeningLessonElement lesson)
+    async void AddListeningLesson(ListeningLessonViewModel lesson)
     {
-        visibleAddListeningLesson = false;
-        // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Lecția '" + lesson.LessonTitle + "' a fost creată cu succes!", Severity.Success);
+
+        var response = await ListeningLessonDataService.CreateListeningLessonAsync(lesson);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Eroare la crearea lecției. :" + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            visibleAddNormalLesson = false;
+            snackbar = Snackbar.Add("Lecția a fost creată cu succes!", Severity.Success);
+            chapter = await ChapterDataService.GetChapterByIdAsync(CurrentChapterId);
+            StateHasChanged();
+        }
     }
 
-    bool IsLesson(LessonElement lesson)
+    bool IsLesson(LessonViewModel lesson)
     {
         return !string.IsNullOrWhiteSpace(lesson.LessonTitle);
     }
 
-    bool IsListeningLesson(ListeningLessonElement lesson)
+    bool IsListeningLesson(ListeningLessonViewModel lesson)
     {
         return !string.IsNullOrWhiteSpace(lesson.LessonTitle) 
             && !string.IsNullOrWhiteSpace(lesson.TextScript)
@@ -586,39 +664,46 @@
         visibleAddLesson = true;
     }
 
-    void NavigateToLessonOverview()
+    void NavigateToLessonOverview(Guid lessonId)
     {
-        NavigationManager.NavigateTo("/lesson-overview");
+        NavigationManager.NavigateTo($"/lesson-overview/{lessonId}");
+    }
+
+    void NavigateToLanguageOverview()
+    {
+        NavigationManager.NavigateTo($"/language-overview/{languageId}");
     }
 }
 
 
 
 @* DIALOG EDIT LESSON *@
-@code {
+@functions {
     private bool visibleEditLesson;
     private DialogOptions dialogOptionsForEditLesson = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
-    ListeningLessonElement lessonRequest { get; set; } = new ListeningLessonElement();
+    ListeningLessonViewModel editListeningLesson { get; set; } = new ListeningLessonViewModel();
+    LessonViewModel editLesson { get; set; } = new LessonViewModel();
+    ListeningLessonViewModel lessonBeforeEdit = new ListeningLessonViewModel();
     MudForm form;
     bool success;
     string[] errors = { };
-    private IEnumerable<AccentElement> Accents = new List<AccentElement>();
+    private IEnumerable<AccentViewModel> Accents = new List<AccentViewModel>();
 
     protected async Task PopulateAccents()
     {
-        Accents = new List<AccentElement>
+        Accents = new List<AccentViewModel>
         {
-            new AccentElement
+            new AccentViewModel
             {
                 AccentId = Guid.NewGuid(),
                 AccentName = "British"
             },
-            new AccentElement
+            new AccentViewModel
             {
                 AccentId = Guid.NewGuid(),
                 AccentName = "American"
             },
-            new AccentElement
+            new AccentViewModel
             {
                 AccentId = Guid.NewGuid(),
                 AccentName = "Scottish"
@@ -631,7 +716,7 @@
 
     void CancelEditLesson() => visibleEditLesson = false;
 
-    void EditLesson(ListeningLessonElement lesson)
+    void EditLesson(LessonViewModel lesson)
     {
         visibleEditLesson = false;
         // Do something
@@ -639,10 +724,103 @@
         snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes! Titlu: " + lesson.LessonTitle, Severity.Success);
     }
 
-    void OpenDialogEditLesson(ListeningLessonElement lesson)
+    void EditListeningLesson(ListeningLessonViewModel lesson)
+    {
+        visibleEditLesson = false;
+        // Do something
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes! Titlu: " + lesson.LessonTitle, Severity.Success);
+    }
+
+    void OpenDialogEditLesson(ListeningLessonViewModel lesson)
     {
         lesson.Accents = Accents.ToList();
-        lessonRequest = lesson;
+
+        Guid languageCompetenceId = lesson.LanguageCompetenceId;
+
+        var languageCompetence = languageCompetences.FirstOrDefault(lc => lc.LanguageCompetenceId == languageCompetenceId);
+
+        editListeningLesson = null;
+        editLesson = null;
+
+        if (languageCompetence.LanguageCompetenceType == LanguageCompetenceTypeViewModel.Listening)
+        {
+            editListeningLesson = new ListeningLessonViewModel
+            {
+                LessonId = lesson.LessonId,
+                ChapterId = lesson.ChapterId,
+                LanguageCompetenceId = lesson.LanguageCompetenceId,
+                LessonTitle = lesson.LessonTitle,
+                LessonDescription = lesson.LessonDescription,
+                LessonContent = lesson.LessonContent,
+                LessonVideoLink = lesson.LessonVideoLink,
+                LessonImageData = lesson.LessonImageData,
+                LessonPriorityNumber = lesson.LessonPriorityNumber,
+                TextScript = lesson.TextScript,
+                Accents = lesson.Accents
+            };
+            lessonBeforeEdit = lesson;
+            visibleEditLesson = true;
+        }
+        else
+        {
+            editLesson = new LessonViewModel
+            {
+                LessonId = lesson.LessonId,
+                ChapterId = lesson.ChapterId,
+                LanguageCompetenceId = lesson.LanguageCompetenceId,
+                LessonTitle = lesson.LessonTitle,
+                LessonDescription = lesson.LessonDescription,
+                LessonContent = lesson.LessonContent,
+                LessonVideoLink = lesson.LessonVideoLink,
+                LessonImageData = lesson.LessonImageData,
+                LessonPriorityNumber = lesson.LessonPriorityNumber
+            };
+            lessonBeforeEdit = lesson;
+            visibleEditLesson = true;
+        }
+
+        editListeningLesson = lesson;
         visibleEditLesson = true;
+    }
+
+    bool ValidateEditListeningLesson()
+    {
+        if (string.IsNullOrWhiteSpace(editListeningLesson.LessonTitle) 
+            || string.IsNullOrWhiteSpace(editListeningLesson.TextScript) 
+            || !editListeningLesson.Accents.Any(a => a.IsChecked) )
+        {
+            return false;
+        }
+        if (editListeningLesson.LessonTitle == lessonBeforeEdit.LessonTitle 
+            && editListeningLesson.LessonDescription == lessonBeforeEdit.LessonDescription
+            && editListeningLesson.LessonContent == lessonBeforeEdit.LessonContent
+            && editListeningLesson.LessonVideoLink == lessonBeforeEdit.LessonVideoLink
+            && editListeningLesson.LessonImageData == lessonBeforeEdit.LessonImageData
+            && editListeningLesson.LessonPriorityNumber == lessonBeforeEdit.LessonPriorityNumber
+            && editListeningLesson.TextScript == lessonBeforeEdit.TextScript 
+            && editListeningLesson.Accents == lessonBeforeEdit.Accents)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool ValidateEditLesson()
+    {
+        if (string.IsNullOrWhiteSpace(editLesson.LessonTitle))
+        {
+            return false;
+        }
+        if (editLesson.LessonTitle == lessonBeforeEdit.LessonTitle
+            && editLesson.LessonDescription == lessonBeforeEdit.LessonDescription
+            && editLesson.LessonContent == lessonBeforeEdit.LessonContent
+            && editLesson.LessonVideoLink == lessonBeforeEdit.LessonVideoLink
+            && editLesson.LessonImageData == lessonBeforeEdit.LessonImageData
+            && editLesson.LessonPriorityNumber == lessonBeforeEdit.LessonPriorityNumber)
+        {
+            return false;
+        }
+        return true;
     }
 }

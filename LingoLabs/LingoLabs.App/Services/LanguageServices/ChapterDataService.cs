@@ -20,12 +20,12 @@ namespace LingoLabs.App.Services.LanguageServices
             this.httpClient = httpClient;
             this.tokenService = tokenService;
         }
-        public async Task<ApiResponse<ChoicerViewModel>> CreateChapterAsync(ChoicerViewModel createChapterViewModel)
+        public async Task<ApiResponse<ChapterViewModel>> CreateChapterAsync(ChapterViewModel createChapterViewModel)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
             {
-                return new ApiResponse<ChoicerViewModel>
+                return new ApiResponse<ChapterViewModel>
                 {
                     IsSuccess = false,
                     ValidationErrors = "Authentication token is null."
@@ -38,24 +38,24 @@ namespace LingoLabs.App.Services.LanguageServices
             if (!result.IsSuccessStatusCode)
             {
                 var content = await result.Content.ReadAsStringAsync();
-                return new ApiResponse<ChoicerViewModel>
+                return new ApiResponse<ChapterViewModel>
                 {
                     IsSuccess = false,
                     ValidationErrors = content
                 };
             }
 
-            var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChoicerViewModel>>();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChapterViewModel>>();
             response!.IsSuccess = result.IsSuccessStatusCode;
             return response!;
         }
 
-        public async Task<ApiResponse<ChoicerViewModel>> DeleteChapterAsync(Guid chapterId)
+        public async Task<ApiResponse<ChapterViewModel>> DeleteChapterAsync(Guid chapterId)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
             {
-                return new ApiResponse<ChoicerViewModel>
+                return new ApiResponse<ChapterViewModel>
                 {
                     IsSuccess = false,
                     ValidationErrors = "Authentication token is null."
@@ -68,14 +68,14 @@ namespace LingoLabs.App.Services.LanguageServices
             if (!result.IsSuccessStatusCode)
             {
                 var content = await result.Content.ReadAsStringAsync();
-                return new ApiResponse<ChoicerViewModel>
+                return new ApiResponse<ChapterViewModel>
                 {
                     IsSuccess = false,
                     ValidationErrors = content
                 };
             }
 
-            var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChoicerViewModel>>();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChapterViewModel>>();
             if (response != null)
             {
                 response.IsSuccess = result.IsSuccessStatusCode;
@@ -83,7 +83,7 @@ namespace LingoLabs.App.Services.LanguageServices
             }
             else
             {
-                return new ApiResponse<ChoicerViewModel>
+                return new ApiResponse<ChapterViewModel>
                 {
                     IsSuccess = false,
                     ValidationErrors = response.ValidationErrors
@@ -91,7 +91,7 @@ namespace LingoLabs.App.Services.LanguageServices
             }
         }
 
-        public async Task<List<ChoicerViewModel>> GetAllChaptersAsync()
+        public async Task<List<ChapterViewModel>> GetAllChaptersAsync()
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
@@ -109,16 +109,16 @@ namespace LingoLabs.App.Services.LanguageServices
                 throw new ApplicationException(content);
             }
 
-            var chapters = JsonSerializer.Deserialize<List<ChoicerViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var chapters = JsonSerializer.Deserialize<List<ChapterViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             return chapters!;
         }
 
-        public async Task<ChoicerViewModel> GetChapterByIdAsync(Guid chapterId)
+        public async Task<ChapterViewModel> GetChapterByIdAsync(Guid chapterId)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
             {
-                return new ChoicerViewModel();
+                return new ChapterViewModel();
             }
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -128,16 +128,16 @@ namespace LingoLabs.App.Services.LanguageServices
 
             var content = await result.Content.ReadAsStringAsync();
 
-            var chapter = JsonSerializer.Deserialize<ChoicerViewModel>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var chapter = JsonSerializer.Deserialize<ChapterViewModel>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             return chapter!;
         }
 
-        public async Task<ApiResponse<ChoicerViewModel>> UpdateChapterAsync(ChoicerViewModel updateChapterViewModel)
+        public async Task<ApiResponse<ChapterViewModel>> UpdateChapterAsync(ChapterViewModel updateChapterViewModel)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
             {
-                return new ApiResponse<ChoicerViewModel>
+                return new ApiResponse<ChapterViewModel>
                 {
                     IsSuccess = false,
                     ValidationErrors = "Authentication token is null."
@@ -161,14 +161,14 @@ namespace LingoLabs.App.Services.LanguageServices
             if (!result.IsSuccessStatusCode)
             {
                 var content = await result.Content.ReadAsStringAsync();
-                return new ApiResponse<ChoicerViewModel>
+                return new ApiResponse<ChapterViewModel>
                 {
                     IsSuccess = false,
                     ValidationErrors = content
                 };
             }
 
-            var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChoicerViewModel>>();
+            var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChapterViewModel>>();
 
             if (response != null)
             {
@@ -177,7 +177,7 @@ namespace LingoLabs.App.Services.LanguageServices
             }
             else
             {
-                return new ApiResponse<ChoicerViewModel>
+                return new ApiResponse<ChapterViewModel>
                 {
                     IsSuccess = false,
                     ValidationErrors = response.ValidationErrors

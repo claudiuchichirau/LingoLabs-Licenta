@@ -6,7 +6,6 @@
 @using MudBlazor
 @inject NavigationManager NavigationManager
 @inject CustomStateProvider AuthStateProvider
-@inject StateService StateService
 
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
@@ -351,9 +350,7 @@ else
 
     void NavigateToWantPlacementTest(Guid languageId)
     {
-        StateService.RemoveId();
-        StateService.SetId(languageId);
-        NavigationManager.NavigateTo("/want-placement-test");
+        NavigationManager.NavigateTo($"/want-placement-test/{languageId}");
     }
 
     void NavigateToCourses()

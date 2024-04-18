@@ -1,4 +1,4 @@
-﻿@page "/language-competence-overview"
+﻿@page "/language-competence-overview/{Id}"
 @using LingoLabs.App.Contracts.LanguageContracts
 @using LingoLabs.App.Services.AuthServices
 @using LingoLabs.App.ViewModel.LanguageModels
@@ -88,7 +88,7 @@ else
             <div class="text-left">
                 <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
                     Nr. Crt.:&emsp;
-                    @if (languageCompetence.LanguageCompetencePriorityNumber != 0)
+                    @if (languageCompetence.LanguageCompetencePriorityNumber != 0 || languageCompetence.LanguageCompetencePriorityNumber != null)
                     {
                         <span style="font-size: 21px; color: #2563EB; text-align: justify;">
                             @languageCompetence.LanguageCompetencePriorityNumber
@@ -178,12 +178,14 @@ else
     [Inject]
     private ILanguageCompetenceDataService LanguageCompetenceDataService { get; set; }
     private LanguageCompetenceViewModel languageCompetence = new LanguageCompetenceViewModel();
-    private bool isLoaded = false;
+    [Parameter]
+    public string Id { get; set; }
     private Guid CurrentLanguageCompetenceId = Guid.Empty;
+    private bool isLoaded = false;
 
     protected override async Task OnInitializedAsync()
     {
-        CurrentLanguageCompetenceId = await StateService.GetId();
+        CurrentLanguageCompetenceId = Guid.Parse(Id);
         languageCompetence = await LanguageCompetenceDataService.GetLanguageCompetenceByIdAsync(CurrentLanguageCompetenceId);
         isLoaded = true;
 

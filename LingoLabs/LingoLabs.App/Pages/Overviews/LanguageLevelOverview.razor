@@ -1,4 +1,6 @@
-﻿@page "/language-level-overview"
+﻿@page "/language-level-overview/{Id}"
+@using LingoLabs.App.Contracts.LanguageContracts
+@using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
 @using MudBlazor
 @using MatBlazor
@@ -27,13 +29,22 @@
     </div>
 </MudContainer>
 
+@if (!IsDataLoaded)
+{
+    <div class="row mx-0 justify-content-md-center">
+        <div class="col-md-6 d-flex flex-column align-items-center justify-item-center" style="margin-top: 50px;">
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        </div>
+    </div>
+}
+else {
 <div class="row" style="max-width: 100vw; overflow-x: auto;">
     <div class="col">
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; margin-left: 80px; margin-top: 50px; margin-bottom: 10px;" class="poppins-semi-bold">
                 Curs:&emsp;
                 <span style="color: #FC6F05; font-size: 25px;">
-                    English
+                    @languageLevel.LanguageName
                 </span>
             </h1>
         </div>
@@ -42,7 +53,7 @@
             <h1 style="color: black; font-size: 33px; margin-left: 75px; padding: 5px; padding: 5px;" class="poppins-semi-bold">
                 Nume:&emsp;
                 <span style="color: #2563EB; font-size: 25px;">
-                    A1
+                    @languageLevel.LanguageLevelName
                 </span>
             </h1>
         </div>
@@ -51,7 +62,7 @@
             <h1 style="color: black; font-size: 33px; margin-left: 75px; padding: 5px;" class="poppins-semi-bold">
                 Alias:&emsp;
                 <span style="color: #2563EB; font-size: 25px;">
-                    Beginner
+                        @languageLevel.LanguageLevelAlias
                 </span>
             </h1>
         </div>
@@ -59,37 +70,67 @@
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
                 Descriere:&emsp;
-                <span style="font-size: 21px; color: #2563EB; text-align: justify;">
-                    Nivelul lingvistic A1 este cel mai mic nivel de cunoștințe lingvistice. Persoanele care au acest nivel de cunoștințe lingvistice pot să înțeleagă și să folosească expresii simple și cotidiene, precum și să răspundă la întrebări simple. Acest nivel este cel mai mic nivel de cunoștințe lingvistice și este cel mai potrivit pentru persoanele care nu au cunoștințe de limba respectivă.
-                </span>
+                @if (!string.IsNullOrEmpty(@languageLevel.LanguageLevelDescription))
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">
+                        @languageLevel.LanguageLevelDescription
+                    </span>
+                }
+                else
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">-</span>
+                }
             </h1>
         </div>
 
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
                 Nr. Crt.:&emsp;
-                <span style="font-size: 21px; color: #2563EB; text-align: justify;">
-                    1
-                </span>
+                @if (languageLevel.LanguageLevelPriorityNumber != 0 || languageLevel.LanguageLevelPriorityNumber != null)
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">
+                            @languageLevel.LanguageLevelPriorityNumber
+                    </span>
+                }
+                else
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">-</span>
+                }
             </h1>
         </div>
 
     </div>
-    <div class="col align-items-center justify-content-center">
-        <div class="row">
-            <div class="text-center">
-                <h1 style="color: black; font-size: 33px; padding: 5px; margin-top: 50px;" class="poppins-semi-bold">
-                    Video:
-                 </h1>
+
+    @if (!string.IsNullOrEmpty(languageLevel.LanguageLevelVideoLink))
+    {
+        <div class="col align-items-center justify-content-center">
+            <div class="row">
+                <div class="text-center">
+                    <h1 style="color: black; font-size: 33px; padding: 5px; margin-top: 50px;" class="poppins-semi-bold">
+                        Video:
+                    </h1>
+                </div>
+            </div>
+
+            <div class="row justify-content-center">
+                    <iframe style="width: 600px; height: 338px; margin-top: 5px; margin-bottom: 45px;" src="@languageLevel.LanguageLevelVideoLink" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
         </div>
-
-        <div class="row justify-content-center">
-            <iframe style="width: 600px; height: 338px; margin-top: 5px;" src="https://www.youtube.com/embed/CA1L7_hyRqs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    }
+    else
+    {
+        <div class="col align-items-center justify-content-center">
+            <div class="row">
+                <div class="text-center">
+                    <h1 style="color: black; font-size: 33px; padding: 5px; margin-top: 50px;" class="poppins-semi-bold">
+                        Video: -
+                    </h1>
+                </div>
+            </div>
         </div>
-    </div>
+    }
 </div>
-
+@* 
 <div class="text-left" style="max-width: 100vw; overflow-x: auto;">
     <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
         Cuvinte cheie:
@@ -129,7 +170,7 @@
         </DialogActions>
     </MudDialog>
 
-</div>
+</div> *@
 
 @* CHAPTERS *@
 <div class="text-left">
@@ -137,10 +178,8 @@
 </div>
 
 <div style="max-width: 90%; margin: auto; margin-bottom: 55px;">
-    <MudTable Items="@Chapters" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<ChapterElement,bool>(FilterFuncViewChapter)"
-              @bind-SelectedItem="selectedChapter" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
-              OnCommitEditClick="@(() => EditChapter())"
-              IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
+    <MudTable Items="@languageLevel.LanguageChapters" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<ChapterViewModel,bool>(FilterFuncViewChapter)"
+              @bind-SelectedItem="selectedChapter" SortLabel="Sort By" IsEditRowSwitchingBlocked="@blockSwitch">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Capitole</MudText>
             <MudSpacer />
@@ -148,26 +187,9 @@
                 <MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0" Style="width: 50%;" />
             </div>
             <MudTooltip Text="Add">
-                <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialogChapter()' />
+                <MudFab Icon="@Icons.Material.Filled.Add" Style="background-color: #FC6F05; color: white;" @onclick='() => OpenDialogAddChapter()' />
             </MudTooltip>
         </ToolBarContent>
-
-        <ColGroup>
-            @if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
-            {
-                <col style="width:5%;" />
-            }
-            <col style="width:5%;" />
-            <col style="width:15%;" />
-            <col style="width:30%;" /> <!-- Descriere -->
-            <col style="width:20%;" /> <!-- Link Video -->
-            <col style="width:20%;" /> <!-- Link Imagine -->
-            @if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
-            {
-                <col style="width:5%;" />
-            }
-        </ColGroup>
-
 
         <HeaderContent>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ChapterElement, object>(x=>x.ChapterPriorityNumber)">Nr. Crt.</MudTableSortLabel></MudTh>
@@ -178,49 +200,27 @@
             <MudTh Style="text-align: center;">Vizualizează</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Nr. Crt.">@context.ChapterPriorityNumber</MudTd>
-            <MudTd DataLabel="Nume">@context.ChapterName</MudTd>
-            <MudTd DataLabel="Descriere" Class="descriere">@context.ChapterDescription</MudTd>
-            <MudTd DataLabel="Link Video" Class="video-data">@context.ChapterVideoData</MudTd>
-            <MudTd DataLabel="Link Imagine" Class="image-data">@context.ChapterImageData</MudTd>
-            <MudTd DataLabel="Vizualizează">
-                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToChapterOverview() )">Vezi mai multe</MudButton>
+            <MudTd DataLabel="Nr. Crt." Style="text-align: center;">@(context.ChapterPriorityNumber.HasValue ? context.ChapterPriorityNumber.ToString() : "-")</MudTd>
+            <MudTd DataLabel="Nume" Style="text-align: center;">@context.ChapterName</MudTd>
+            <MudTd DataLabel="Descriere" Class="descriere" Style="text-align: center;">@(string.IsNullOrEmpty(context.ChapterDescription) ? "-" : context.ChapterDescription)</MudTd>
+            <MudTd DataLabel="Link Video" Class="video-data" Style="text-align: center;">@(string.IsNullOrEmpty(context.ChapterVideoLink) ? "-" : context.ChapterVideoLink)</MudTd>
+            <MudTd DataLabel="Link Imagine" Class="image-data" Style="text-align: center;">@(string.IsNullOrEmpty(context.ChapterImageData) ? "-" : context.ChapterImageData)</MudTd>
+            <MudTd DataLabel="Vizualizează" Style="text-align: center;">
+                <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToChapterOverview(context.ChapterId) )">Vezi mai multe</MudButton>
+            </MudTd>
+            <MudTd>
+                <div style="display: flex; justify-content: space-between;">
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Edit" OnClick="() => OpenDialogEditChapter(context)" Class="pa-0" Style="margin-right: 10px;" />
+                     <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="() => DeleteChapter(context.ChapterId)" Class="pa-0" Style="margin-left: 10px;" />
+                </div>
             </MudTd>
         </RowTemplate>
-        <RowEditingTemplate>
-            <MudTd DataLabel="Nr. Crt.">
-                <MudTextField @bind-Value="@context.ChapterPriorityNumber" />
-            </MudTd>
-            <MudTd DataLabel="Nume">
-                <MudTextField @bind-Value="@context.ChapterName" />
-            </MudTd>
-            <MudTd DataLabel="Descriere">
-                <MudTextField @bind-Value="@context.ChapterDescription" />
-            </MudTd>
-            <MudTd DataLabel="Link Video">
-                <MudTextField @bind-Value="@context.ChapterVideoData" />
-            </MudTd>
-            <MudTd DataLabel="Link Imagine">
-                <MudTextField @bind-Value="@context.ChapterImageData" />
-            </MudTd>
-            <MudTd DataLabel="Vizualizează"></MudTd>
-        </RowEditingTemplate>
         <PagerContent>
             <MudTablePager />
         </PagerContent>
-        <EditButtonContent Context="button">
-            <div style="display: flex; flex-direction: row;">
-                <MudTooltip Text="Editeaza capitolul">
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" Style="margin-right: 10px;" />
-                </MudTooltip>
-                <MudTooltip Text="Șterge capitolul">
-                    <MudIconButton Text="Șterge capitolul" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="DeleteChapter" Class="pa-0" Style="margin-left: 10px;" />
-                </MudTooltip>
-            </div>
-        </EditButtonContent>
     </MudTable>
 
-    <MudDialog @bind-IsVisible="visibleChapter" Options="dialogOptionsForLanguageLevel">
+    <MudDialog @bind-IsVisible="visibleAddChapter" Options="dialogOptionsForLanguageLevel">
         <TitleContent>
             <MudText Typo="Typo.h6">
                 <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
@@ -228,26 +228,71 @@
             </MudText>
         </TitleContent>
         <DialogContent>
-            <MudTextField T="string" @bind-Value="ChapterNameValue" Label="Nume"></MudTextField>
-            <MudSelect T="Guid" Label="Selectează competența lingvistică" @bind-Value="selectedCompetenceId">
-                @foreach (var competence in LanguageCompetences)
-                {
-                    <MudSelectItem Value="@competence.LanguageCompetenceId">@competence.LanguageCompetenceName</MudSelectItem>
-                }
-            </MudSelect>
+            <EditForm Model="addNewChapter">
+                <DataAnnotationsValidator />
+                <MudTextField T="string" @bind-Value="addNewChapter.ChapterName" Label="Nume"></MudTextField>
+                <ValidationSummary />
+            </EditForm>
         </DialogContent>
         <DialogActions>
-            <MudButton Variant="Variant.Filled" OnClick="CancelAddChapter" Class="px-10" Style="color: black;">Close</MudButton>
-            <MudButton Disabled="ChapterNameValue == null || selectedCompetenceId == null" OnClick="@(async () => AddChapter(ChapterNameValue, selectedCompetenceId))" Style="color: #2563EB;">Add</MudButton>
+            <MudButton Variant="Variant.Filled" OnClick="CancelAddChapter" Class="px-10" Style="color: black;">Cancel</MudButton>
+            <MudButton Disabled="string.IsNullOrEmpty(addNewChapter.ChapterName)" OnClick="@(async () => AddChapter(addNewChapter))" Style="color: #2563EB;">Add</MudButton>
+        </DialogActions>
+    </MudDialog>
+
+    <MudDialog @bind-IsVisible="visibleEditChapter" Options="dialogOptions">
+        <TitleContent>
+            <MudText Typo="Typo.h6">
+                <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
+                <span style="color: #2563EB;">Editează conținutul nivelului de limbă</span>
+            </MudText>
+        </TitleContent>
+        <DialogContent>
+            <EditForm Model="editChapter">
+                <DataAnnotationsValidator />
+                    <MudTextField T="string" @bind-Value="editChapter.ChapterName" Label="Nume"></MudTextField>
+                    <MudTextField T="string" @bind-Value="editChapter.ChapterDescription" Label="Descriere"></MudTextField>
+                    <MudTextField T="string" @bind-Value="editChapter.ChapterVideoLink" Label="Link Video"></MudTextField>
+                    <MudTextField T="string" @bind-Value="editChapter.ChapterImageData" Label="Link Imagine"></MudTextField>
+                    <MudTextField T="int?" @bind-Value="editChapter.ChapterPriorityNumber" Label="Număr de referință"></MudTextField>
+                <ValidationSummary />
+            </EditForm>
+        </DialogContent>
+        <DialogActions>
+            <MudButton Variant="Variant.Filled" OnClick="CloseEditChapter" Class="px-10" Style="color: black;">Close</MudButton>
+            <MudButton Disabled="!ValidateEditChapter()" OnClick="@(async () => EditChapter(editChapter))" Style="color: #2563EB;">Update</MudButton>
 
         </DialogActions>
     </MudDialog>
 </div>
+}
+
+@code {
+    [Inject]
+    private ILanguageLevelDataService LanguageLevelDataService { get; set; }
+    [Inject]
+    private IChapterDataService ChapterDataService { get; set; }
+    [Parameter]
+    public string Id { get; set; }
+    private Guid CurrentLanguageLevelId = Guid.Empty;
+    private LanguageLevelViewModel languageLevel = new LanguageLevelViewModel();
+    bool IsDataLoaded = false;
 
 
+    protected override async Task OnInitializedAsync()
+    {
+        CurrentLanguageLevelId = Guid.Parse(Id);
+
+        languageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(CurrentLanguageLevelId);
+        IsDataLoaded = true;
+
+        await PopulateKewWords();
+        await PopulateLanguageCompetenceList();
+    }
+}
 
 @* KEW WORDS *@
-@code {
+@functions {
     private Snackbar snackbar;
     private bool visible;
     private string currentField;
@@ -277,13 +322,6 @@
         snackbar = Snackbar.Add("Cuvântul cheie a fost adăugat cu succes!", Severity.Success);
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await PopulateKewWords();
-        await PopulateChaptersTable();
-        await PopulateLanguageCompetenceList();
-    }
-
     private IEnumerable<string> KewWords = new List<string>();
     int containerWidth = 333; // Width of MudContainer (in vh units)
     int totalWidth; // Total width of elements (in vh units)
@@ -309,7 +347,7 @@
 }
 
 @* VIED & EDIT CHAPTERS *@
-@code {
+@functions {
     private bool dense = false;
     private bool hover = true;
     private List<string> editEvents = new();
@@ -317,38 +355,13 @@
     private bool canCancelEdit = true;
     private bool blockSwitch = false;
     private string searchString = "";
-    private ChapterElement selectedChapter = null;
-    private ChapterElement elementBeforeEdit;
-    private HashSet<ChapterElement> selectedItems1 = new HashSet<ChapterElement>();
+    private ChapterViewModel elementBeforeEdit;
+    private ChapterViewModel selectedChapter;
+    private HashSet<ChapterViewModel> selectedItems1 = new HashSet<ChapterViewModel>();
     private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
     private TableEditButtonPosition editButtonPosition = TableEditButtonPosition.End;
     private TableEditTrigger editTrigger = TableEditTrigger.EditButton;
-    private IEnumerable<ChapterElement> Chapters = new List<ChapterElement>();
 
-    protected async Task PopulateChaptersTable()
-    {
-        Chapters = new List<ChapterElement>
-        {
-            new ChapterElement
-            {
-                ChapterName = "Introduction",
-                ChapterDescription = "Acesta este primul capitol din cursul de limba engleză pentru nivelul A1. În acest capitol veți învăța despre saluturi, prezentări și alte aspecte de bază ale limbii engleze.",
-                ChapterVideoData = "https://www.youtube.com/watch?v=EzlRcGUdhA4&ab_channel=TheMotans-Topic",
-                ChapterImageData = "https://www.youtube.com/watch?v=EzlRcGUdhA4&ab_channel=TheMotans-Topic",
-                ChapterPriorityNumber = 1
-            },
-            new ChapterElement
-            {
-                ChapterName = "Xltceva",
-                ChapterDescription = null,
-                ChapterVideoData = null,
-                ChapterImageData = null,
-                ChapterPriorityNumber = null
-            }
-        };
-
-        // AdminLanguageElements = await httpClient.GetFromJsonAsync<List<AdminViewLanguageElement>>("webapi/periodictable");
-    }
 
     private IEnumerable<LanguageCompetenceElement> LanguageCompetences = new List<LanguageCompetenceElement>();
     private Guid selectedCompetenceId;
@@ -384,9 +397,9 @@
         StateHasChanged();
     }
 
-    private bool FilterFuncViewChapter(ChapterElement element) => FilterFuncViewChapter1(element, searchString);
+    private bool FilterFuncViewChapter(ChapterViewModel element) => FilterFuncViewChapter1(element, searchString);
 
-    private bool FilterFuncViewChapter1(ChapterElement element, string searchString)
+    private bool FilterFuncViewChapter1(ChapterViewModel element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -397,41 +410,141 @@
         return false;
     }
 
-    void EditChapter()
+    async void DeleteChapter(Guid chapterId)
     {
-        // Do something
+        var response = await ChapterDataService.DeleteChapterAsync(chapterId);
+
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes!", Severity.Success);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "A apărut o eroare la ștergerea capitolului!" + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Capitolul a fost șters cu succes!", Severity.Success);
+            languageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(CurrentLanguageLevelId);
+            StateHasChanged();
+        }
     }
 
-    void DeleteChapter()
-    {
-        // Do something
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Capitolul a fost șters cu succes!", Severity.Success);
-    }
+    // ADD CHAPTER
 
-    private bool visibleChapter;
-    private string ChapterNameValue;
+    private bool visibleAddChapter;
+    private ChapterViewModel addNewChapter;
     private DialogOptions dialogOptionsForLanguageLevel = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
 
-    void CancelAddChapter() => visibleChapter = false;
+    void CancelAddChapter() => visibleAddChapter = false;
 
-    void AddChapter(string chapterNameValue, Guid selectedCompetenceId)
+    async void AddChapter(ChapterViewModel addedChapter)
     {
-        visibleChapter = false;
-        // Do something
+        visibleAddChapter = false;
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Capitolul a fost adăugat cu succes!", Severity.Success);
+
+        var response = await ChapterDataService.CreateChapterAsync(addedChapter);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "A apărut o eroare la adăugarea capitolului!" + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Capitolul a fost adăugat cu succes!", Severity.Success);
+            languageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(CurrentLanguageLevelId);
+            StateHasChanged();
+        }
     }
 
-    void OpenDialogChapter()
+    void OpenDialogAddChapter()
     {
-        visibleChapter = true;
+        addNewChapter = new ChapterViewModel
+            {
+                LanguageLevelId = CurrentLanguageLevelId
+            };
+        visibleAddChapter = true;
     }
 
-    void NavigateToChapterOverview()
+
+    //EDIT CHAPTER
+    private bool visibleEditChapter = false;
+    private ChapterViewModel editChapter = new ChapterViewModel();
+
+    void OpenDialogEditChapter(ChapterViewModel chapter)
     {
-        NavigationManager.NavigateTo("/chapter-overview");
+        editChapter = new ChapterViewModel
+        {
+            ChapterId = chapter.ChapterId,
+            ChapterName = chapter.ChapterName,
+            ChapterDescription = chapter.ChapterDescription,
+            ChapterPriorityNumber = chapter.ChapterPriorityNumber,
+            ChapterVideoLink = chapter.ChapterVideoLink,
+            ChapterImageData = chapter.ChapterImageData
+        };
+        elementBeforeEdit = chapter;
+        visibleEditChapter = true;
+    }
+
+    void CloseEditChapter()
+    {
+        visibleEditChapter = false;
+    }
+
+    bool ValidateEditChapter()
+    {
+        if (editChapter.ChapterName == elementBeforeEdit.ChapterName &&
+            editChapter.ChapterDescription == elementBeforeEdit.ChapterDescription &&
+            editChapter.ChapterPriorityNumber == elementBeforeEdit.ChapterPriorityNumber &&
+            editChapter.ChapterVideoLink == elementBeforeEdit.ChapterVideoLink &&
+            editChapter.ChapterImageData == elementBeforeEdit.ChapterImageData)
+        {
+            return false;
+        }
+        if (string.IsNullOrEmpty(editChapter.ChapterName))
+        {
+            return false;
+        }
+        return true;
+    }
+
+    async void EditChapter(ChapterViewModel editChapter)
+    {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+        var response = await ChapterDataService.UpdateChapterAsync(editChapter);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "A apărut o eroare la actualizarea capitolului:" + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            visibleEditChapter = false;
+            snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes!", Severity.Success);
+            languageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(CurrentLanguageLevelId);
+            StateHasChanged();
+        }
+    }
+
+    void NavigateToChapterOverview(Guid chapterId)
+    {
+        NavigationManager.NavigateTo($"/chapter-overview/{chapterId}");
     }
 }

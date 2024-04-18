@@ -10,5 +10,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
         public List<TagDto> LanguageLeveKeyWords { get; set; } = [];
         public List<TagDto> UnassociatedTags { get; set; } = [];
         public List<UserLanguageLevelDto> UserLanguageLevels { get; set; } = [];
+        public string LanguageName { get; set; } = string.Empty;
     }
 }

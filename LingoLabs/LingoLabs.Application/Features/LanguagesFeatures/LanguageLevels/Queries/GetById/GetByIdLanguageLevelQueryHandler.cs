@@ -11,12 +11,14 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
         private readonly ILanguageLevelRepository repository;
         private readonly IUserLanguageLevelRepository userLanguageLevelRepository;
         private readonly ITagRepository tagRepository;
+        private readonly ILanguageRepository languageRepository;
 
-        public GetByIdLanguageLevelQueryHandler(ILanguageLevelRepository repository, IUserLanguageLevelRepository userLanguageLevelRepository, ITagRepository tagRepository)
+        public GetByIdLanguageLevelQueryHandler(ILanguageLevelRepository repository, IUserLanguageLevelRepository userLanguageLevelRepository, ITagRepository tagRepository, ILanguageRepository languageRepository)
         {
             this.repository = repository;
             this.userLanguageLevelRepository = userLanguageLevelRepository;
             this.tagRepository = tagRepository;
+            this.languageRepository = languageRepository;
         }
         public async Task<LanguageLevelDto> Handle(GetByIdLanguageLevelQuery request, CancellationToken cancellationToken)
         {
@@ -76,6 +78,8 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
 
                 var unassociatedTags = allTagsDto.Where(tag => !languageLevelKeyWords.Any(lkw => lkw.TagId == tag.TagId)).ToList();
 
+                var language = await languageRepository.FindByIdAsync(languageLevel.Value.LanguageId);
+
                 return new GetSingleLanguageLevelDto
                 {
                     LanguageLevelId = languageLevel.Value.LanguageLevelId,
@@ -85,6 +89,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
                     LanguageId = languageLevel.Value.LanguageId,
                     LanguageLevelDescription = languageLevel.Value.LanguageLevelDescription,
                     LanguageLevelVideoLink = languageLevel.Value.LanguageLevelVideoLink,
+                    LanguageName = language.Value.LanguageName,
 
                     LanguageChapters = languageChapterSorted,
 

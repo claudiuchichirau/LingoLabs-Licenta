@@ -8,5 +8,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
     {
         public List<TagDto> ChapterKeyWords { get; set; } = [];
         public List<TagDto> UnassociatedTags { get; set; } = [];
+        public string LanguageLevelName { get; set; } = string.Empty;
     }
 }

@@ -9,12 +9,12 @@ namespace LingoLabs.App.ViewModel.LanguageModels
         public string LessonTitle { get; set; } = string.Empty;
         [Required(ErrorMessage = "ChaperId is required")]
         public Guid ChapterId { get; set; }
-        [Required(ErrorMessage = "LanguageCompetenceId is required")]
-        public Guid LanguageCompetenceId { get; set; }
         [Required(ErrorMessage = "TextScript is required")]
         public string TextScript { get; set; } = string.Empty;
         [Required(ErrorMessage = "Accents are required")]
-        public List<string> Accents { get; set; } = [];
+        public List<AccentViewModel> Accents { get; set; } = [];
+        [Required(ErrorMessage = "LanguageCompetenceId are required")]
+        public Guid LanguageCompetenceId { get; set; }
         public int? LessonPriorityNumber { get; set; }
         public string LessonDescription { get; set; } = string.Empty;
         public string LessonContent { get; set; } = string.Empty;

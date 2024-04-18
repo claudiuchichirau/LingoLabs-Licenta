@@ -15,7 +15,6 @@
 @inject CustomStateProvider authStateProvider
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
-@inject StateService StateService
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
 
@@ -731,9 +730,7 @@ else
 
     void NavigateToLanguageOverview(Guid languageId)
     {
-        StateService.RemoveId();
-        StateService.SetId(languageId);
-        NavigationManager.NavigateTo("/language-overview");
+        NavigationManager.NavigateTo($"/language-overview/{languageId}");
     }
 }
 
