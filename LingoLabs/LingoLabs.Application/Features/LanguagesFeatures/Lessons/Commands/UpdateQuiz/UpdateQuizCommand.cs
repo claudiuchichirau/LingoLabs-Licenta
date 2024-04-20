@@ -5,6 +5,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
     public class UpdateQuizCommand: IRequest<UpdateQuizCommandResponse>
     {
         public Guid LessonId { get; set; }
-        public List<UpdateQuestionForDto> UpdateQuizDto { get; set; } = [];
+        public List<UpdateQuestionForDto> Questions { get; set; } = [];
     }
 }

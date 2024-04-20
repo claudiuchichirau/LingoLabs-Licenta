@@ -8,5 +8,6 @@ namespace LingoLabs.App.ViewModel.LanguageModels.LessonQuiz
         public string ChoiceContent { get; set; } = string.Empty;
         [Required(ErrorMessage = "IsCorrect is required")]
         public bool IsCorrect { get; set; }
+        public Guid QuestionId { get; set; }
     }
 }

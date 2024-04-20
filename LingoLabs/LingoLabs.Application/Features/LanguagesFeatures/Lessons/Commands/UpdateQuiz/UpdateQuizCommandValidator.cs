@@ -13,45 +13,48 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} must not be empty.");
 
-            RuleFor(p => p.UpdateQuizDto)
+            RuleFor(p => p.Questions)
                 .Must((questionList) =>
                 {
-                    if (questionList.Count >= 15)
+                    if (questionList.Count < 10)
                         return false;
 
                     foreach (var question in questionList)
                     {
-                        if (string.IsNullOrEmpty(question.QuestionRequirement) || question.QuestionRequirement.Length >= 500)
+                        if (string.IsNullOrEmpty(question.QuestionRequirement))
                             return false;
 
-                        if (question.QuestionType != QuestionType.MultipleChoice && question.QuestionType != QuestionType.TrueFalse && question.QuestionType != QuestionType.MissingWord)
-                            return false;
-
-                        if(question.QuestionImageData != null && question.QuestionImageData.Length > 0)
+                        if (question.QuestionType == Domain.Entities.Languages.QuestionType.MultipleChoice)
                         {
-                            return BeImageValidUrl(question.QuestionImageData);
-                        }
-
-                        if (!string.IsNullOrEmpty(question.QuestionVideoLink))
-                        {
-                            return BeValidUrl(question.QuestionVideoLink);
-                        }
-
-                        int goodAnswersCount = 0;
-                        foreach (var choice in question.Choices)
-                        {
-                            if (string.IsNullOrEmpty(choice.ChoiceContent))
+                            if (question.Choices.Count < 3)
                                 return false;
-                            if (choice.IsCorrect)
-                                goodAnswersCount++;
+
+                            int goodAnswersCount = 0;
+                            foreach (var choice in question.Choices)
+                            {
+                                if (choice.IsCorrect)
+                                    goodAnswersCount++;
+                            }
+
+                            if (goodAnswersCount != 1)
+                                return false;
                         }
 
-                        if (goodAnswersCount != 1)
-                            return false;
+                        if (question.QuestionType == Domain.Entities.Languages.QuestionType.TrueFalse)
+                        {
+                            if (question.Choices.Count != 1)
+                                return false;
+                        }
+
+                        if (question.QuestionType == Domain.Entities.Languages.QuestionType.MissingWord)
+                        {
+                            if (question.Choices.Count < 1)
+                                return false;
+                        }
                     }
 
                     return true;
-                }).WithMessage("Maximum of 15 questions and 1 correct answer per question is allowed.");
+                }).WithMessage("The question list must contain more than 10 questions. Each question must have a requirement. For multiple-choice questions, there must be exactly one correct answer. For true/false questions, there must be exactly two answer options. For fill-in-the-blank questions, there must be exactly one answer.");
         }
 
         private static bool BeImageValidUrl(string url)

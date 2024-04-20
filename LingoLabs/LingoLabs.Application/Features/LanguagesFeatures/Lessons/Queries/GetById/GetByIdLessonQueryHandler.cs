@@ -1,5 +1,4 @@
 ﻿using LingoLabs.Application.Persistence.Languages;
-using LingoLabs.Domain.Entities.Languages;
 using MediatR;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetById
@@ -27,11 +26,21 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
             {
                 var sortedLessonQuestions = lesson.Value.LessonQuestions
                     .OrderBy(question => question.QuestionPriorityNumber ?? int.MaxValue)
-                    .Select(question => new Questions.Queries.QuestionDto
+                    .Select(question => new Questions.Queries.GetById.GetSingleQuestionDto
                     {
                         QuestionId = question.QuestionId,
                         QuestionRequirement = question.QuestionRequirement,
                         QuestionType = question.QuestionType,
+                        QuestionVideoLink = question.QuestionVideoLink,
+                        QuestionImageData = question.QuestionImageData,
+                        QuestionPriorityNumber = question.QuestionPriorityNumber,
+                        Choices = question.Choices.Select(choice => new Choices.Queries.ChoiceDto
+                        {
+                            ChoiceId = choice.ChoiceId,
+                            ChoiceContent = choice.ChoiceContent,
+                            IsCorrect = choice.IsCorrect,
+                            QuestionId = choice.QuestionId
+                        }).ToList(),
                         LessonId = question.LessonId
                     }).ToList();
 

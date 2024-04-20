@@ -15,7 +15,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         public override async Task<Result<Question>> FindByIdAsync(Guid id)
         {
             var result = await context.Questions
-                .Include(l => l.QuestionChoices)
+                .Include(l => l.Choices)
                 .Include(l => l.Lesson)
                 .FirstOrDefaultAsync(l => l.QuestionId == id);
 
@@ -32,6 +32,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                 .Include(l => l.LanguageLevelChapters)
                 .ThenInclude(lc => lc.ChapterLessons)
                 .ThenInclude(l => l.LessonQuestions)
+                .ThenInclude(q => q.Choices)
                 .FirstOrDefaultAsync(l => l.LanguageLevelId == languageLevelId);
 
             if(languageLevel == null)
@@ -46,7 +47,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                 foreach (var lesson in chapter.ChapterLessons)
                 {
                     var result = await context.Questions
-                        .Include(q => q.QuestionChoices)
+                        .Include(q => q.Choices)
                         .Where(q => q.LessonId == lesson.LessonId)
                         .ToListAsync();
 
@@ -62,6 +63,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             var languageCompetence = await context.LanguageCompetences
                 .Include(lc => lc.LanguageCompetenceLessons)
                 .ThenInclude(l => l.LessonQuestions)
+                .ThenInclude(q => q.Choices)
                 .FirstOrDefaultAsync(lc => lc.LanguageCompetenceId == languageCompetenceId);
 
             if (languageCompetence == null)
@@ -74,7 +76,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
             foreach (var lesson in languageCompetence.LanguageCompetenceLessons)
             {
                 var result = await context.Questions
-                    .Include(q => q.QuestionChoices)
+                    .Include(q => q.Choices)
                     .Where(q => q.LessonId == lesson.LessonId)
                     .ToListAsync();
 
@@ -90,6 +92,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                 .Include(l => l.LanguageLevelChapters)
                 .ThenInclude(lc => lc.ChapterLessons)
                 .ThenInclude(l => l.LessonQuestions)
+                .ThenInclude(q => q.Choices)
                 .FirstOrDefaultAsync(l => l.LanguageLevelId == languageLevelId);
 
             if (languageLevel == null)
@@ -116,7 +119,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                     if (lesson.LanguageCompetenceId == languageCompetenceId)
                     {
                         var result = await context.Questions
-                            .Include(q => q.QuestionChoices)
+                            .Include(q => q.Choices)
                             .Where(q => q.LessonId == lesson.LessonId)
                             .ToListAsync();
 

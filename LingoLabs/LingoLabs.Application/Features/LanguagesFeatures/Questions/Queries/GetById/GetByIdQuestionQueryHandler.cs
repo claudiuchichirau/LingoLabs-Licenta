@@ -24,7 +24,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.Get
                     QuestionRequirement = question.Value.QuestionRequirement,
                     QuestionType = question.Value.QuestionType,
                     QuestionPriorityNumber = question.Value.QuestionPriorityNumber,
-                    QuestionChoices = question.Value.QuestionChoices.Select(c => new Choices.Queries.ChoiceDto
+                    Choices = question.Value.Choices.Select(c => new Choices.Queries.ChoiceDto
                     {
                         ChoiceId = c.ChoiceId,
                         ChoiceContent = c.ChoiceContent,

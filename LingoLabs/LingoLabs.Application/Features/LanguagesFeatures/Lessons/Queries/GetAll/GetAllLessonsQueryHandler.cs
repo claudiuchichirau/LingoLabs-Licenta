@@ -24,8 +24,10 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetAl
                     LessonTitle = lesson.LessonTitle,
                     LessonDescription = lesson.LessonDescription,
                     LessonContent = lesson.LessonContent,
+                    LessonImageData = lesson.LessonImageData,
+                    LessonVideoLink = lesson.LessonVideoLink,
                     ChapterId = lesson.ChapterId,
-                    LanguageCompetenceId = lesson.LanguageCompetenceId
+                    LanguageCompetenceId = lesson.LanguageCompetenceId,
                 }).ToList();
             }
 

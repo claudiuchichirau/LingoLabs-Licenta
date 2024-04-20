@@ -21,6 +21,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
         }
         public async Task<UpdateQuizCommandResponse> Handle(UpdateQuizCommand request, CancellationToken cancellationToken)
         {
+            Guid lessonId = request.LessonId;
             var validator = new UpdateQuizCommandValidator();
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -35,11 +36,9 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
 
             var lesson = await lessonRepository.FindByIdAsync(request.LessonId);
 
-            var updateQuizDto = request.UpdateQuizDto;
-
             var updatedQuestions = new List<UpdateQuestionForDto>();
 
-            foreach (var questionDto in updateQuizDto)
+            foreach (var questionDto in request.Questions)
             {
                 var question = await questionRepository.FindByIdAsync(questionDto.QuestionId);
                 question.Value.UpdateQuestionRequirement(questionDto.QuestionRequirement);
@@ -95,7 +94,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                     QuestionType = question.Value.QuestionType,
                     QuestionImageData = question.Value.QuestionImageData,
                     QuestionVideoLink = question.Value.QuestionVideoLink,
-                    Choices = question.Value.QuestionChoices.Select(choice => new UpdateChoiceForDto
+                    Choices = question.Value.Choices.Select(choice => new UpdateChoiceForDto
                     {
                         ChoiceId = choice.ChoiceId,
                         ChoiceContent = choice.ChoiceContent,

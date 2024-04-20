@@ -42,6 +42,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
 
             if (!string.IsNullOrEmpty(request.LessonVideoLink))
             {
+                string video = request.LessonVideoLink;
                 string videoId = HttpUtility.ParseQueryString(new Uri(request.LessonVideoLink).Query).Get("v");
 
                 // Construct the new URL

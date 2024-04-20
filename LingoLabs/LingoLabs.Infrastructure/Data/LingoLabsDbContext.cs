@@ -246,15 +246,20 @@ namespace LingoLabs.Infrastructure.Data
                 .WithOne(et => et.Lesson)
                 .HasForeignKey(et => et.LessonId);
 
+            modelBuilder.Entity<Lesson>()
+                .HasMany(l => l.LessonQuestions)
+                .WithOne(q => q.Lesson)
+                .HasForeignKey(q => q.LessonId);
+
             modelBuilder.Entity<Question>()
                 .HasOne(q => q.Lesson)
                 .WithMany(l => l.LessonQuestions)
                 .HasForeignKey(q => q.LessonId);
 
             modelBuilder.Entity<Question>()
-                .HasMany(q => q.QuestionChoices)
-                .WithOne()
-                .HasForeignKey("QuestionId");
+                .HasMany(q => q.Choices)
+                .WithOne(q => q.Question)
+                .HasForeignKey(q => q.QuestionId);
 
             modelBuilder.Entity<Question>()
                 .HasOne(q => q.Language)
@@ -263,7 +268,7 @@ namespace LingoLabs.Infrastructure.Data
 
             modelBuilder.Entity<Choice>()
                 .HasOne(c => c.Question)
-                .WithMany(q => q.QuestionChoices)
+                .WithMany(q => q.Choices)
                 .HasForeignKey(c => c.QuestionId);
 
             modelBuilder.Entity<Tag>()

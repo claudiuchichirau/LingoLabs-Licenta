@@ -7,7 +7,7 @@ namespace LingoLabs.Domain.Entities.Languages
         public Guid QuestionId { get; protected set; }
         public string QuestionRequirement { get; protected set; }
         public QuestionType QuestionType { get; protected set; }
-        public List<Choice>? QuestionChoices { get; protected set; } = [];
+        public List<Choice>? Choices { get; protected set; } = [];
         public string? QuestionImageData { get; private set; } = string.Empty;
         public string? QuestionVideoLink { get; private set; } = string.Empty;
         public int? QuestionPriorityNumber { get; private set; }

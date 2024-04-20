@@ -72,6 +72,8 @@ namespace LingoLabs.API.Controllers.LanguageControllers
         {
             var result = await Mediator.Send(new GetByIdLessonQuery(id));
 
+            //string content = result.LessonQuestions[0].Choices[0].ChoiceContent;
+
             if (result.LessonId == Guid.Empty)
             {
                 return NotFound(result);

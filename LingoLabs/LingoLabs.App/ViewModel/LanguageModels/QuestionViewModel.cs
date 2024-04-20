@@ -14,7 +14,7 @@ namespace LingoLabs.App.ViewModel.LanguageModels
         public int? QuestionPriorityNumber { get; set; }
         public string QuestionImageData { get; set; } = string.Empty;
         public string QuestionVideoLink { get; set; } = string.Empty;
-        public List<ChoiceViewModel> QuestionChoices { get; set; } = [];
+        public List<ChoiceViewModel> Choices { get; set; } = [];
         public Guid? LanguageId { get; set; }
     }
 }

@@ -183,7 +183,7 @@ namespace LingoLabs.App.Services.LanguageServices
             throw new NotImplementedException();
         }
 
-        public async Task<ApiResponse<QuizViewModel>> UpdateLessonQuizAsync(QuizViewModel updateQuizViewModel)
+        public async Task<ApiResponse<QuizViewModel>> UpdateLessonQuizAsync(UpdateQuizViewModel updateQuizViewModel)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
@@ -199,7 +199,7 @@ namespace LingoLabs.App.Services.LanguageServices
 
             var quizViewModel = new
             {
-                updateQuizViewModel.QuestionList
+                updateQuizViewModel.Questions
             };
 
             var result = await httpClient.PutAsJsonAsync($"{RequestUri}/update-quiz", quizViewModel);

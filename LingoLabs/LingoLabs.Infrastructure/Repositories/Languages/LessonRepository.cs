@@ -16,6 +16,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
         {
             var result = await context.Lessons
                 .Include(lesson => lesson.LessonQuestions)
+                .ThenInclude(question => question.Choices)
                 .Include(lesson => lesson.Chapter)
                 .FirstOrDefaultAsync(lesson => lesson.LessonId == id);
 

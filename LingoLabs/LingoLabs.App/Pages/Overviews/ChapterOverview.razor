@@ -241,7 +241,7 @@ else {
         </ToolBarContent>
 
         <HeaderContent>
-            <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LessonPriorityNumber)">Nr. Crt.</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align: center;">Nr. Crt.</MudTh>
             <MudTh Style="text-align: center;"><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<ListeningLessonElement, object>(x=>x.LessonTitle)">Titlu</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;">Descriere</MudTh>
             <MudTh Style="text-align: center;">Conținut</MudTh>
@@ -252,7 +252,7 @@ else {
             <MudTd DataLabel="Titlu" Style="text-align: center;">@context.LessonTitle</MudTd>
             <MudTd DataLabel="Descriere" Style="text-align: center;">@(string.IsNullOrEmpty(context.LessonDescription) ? "-" : context.LessonDescription)</MudTd>
             <MudTd DataLabel="Conținut" Style="text-align: center;">@(string.IsNullOrEmpty(context.LessonContent) ? "-" : context.LessonContent)</MudTd>
-            <MudTd DataLabel="Vizualizează">
+            <MudTd DataLabel="Vizualizează" Style="text-align: center;">
                 <MudButton Variant="Variant.Filled" Style="background-color: #2563EB; color: white;" OnClick="@( () => NavigateToLessonOverview(context.LessonId) )">Vezi mai multe</MudButton>
             </MudTd>
             <MudTd>
@@ -538,11 +538,28 @@ else {
         return false;
     }
 
-    void DeleteLesson(Guid lessonId)
+    async void DeleteLesson(Guid lessonId)
     {
-        // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Lecția a fost ștearsă cu succes!", Severity.Success);
+
+        var response = await LessonDataService.DeleteLessonAsync(lessonId);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Eroare la ștergerea lecției. :" + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Lecția a fost ștearsă cu succes!", Severity.Success);
+            chapter = await ChapterDataService.GetChapterByIdAsync(CurrentChapterId);
+            StateHasChanged();
+        }
     }
 }
 
@@ -716,20 +733,54 @@ else {
 
     void CancelEditLesson() => visibleEditLesson = false;
 
-    void EditLesson(LessonViewModel lesson)
+    async void EditLesson(LessonViewModel lesson)
     {
-        visibleEditLesson = false;
-        // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes! Titlu: " + lesson.LessonTitle, Severity.Success);
+
+        var response = await LessonDataService.UpdateLessonAsync(lesson);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Eroare la actualizarea lecției. :" + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            visibleEditLesson = false;
+            snackbar = Snackbar.Add("Lecția a fost actualizată cu succes!", Severity.Success);
+            chapter = await ChapterDataService.GetChapterByIdAsync(CurrentChapterId);
+            StateHasChanged();
+        }
     }
 
-    void EditListeningLesson(ListeningLessonViewModel lesson)
+    async void EditListeningLesson(ListeningLessonViewModel lesson)
     {
-        visibleEditLesson = false;
-        // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Informatiile au fost actualizate cu succes! Titlu: " + lesson.LessonTitle, Severity.Success);
+
+        var response = await ListeningLessonDataService.UpdateListeningLessonAsync(lesson);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Eroare la actualizarea lecției. :" + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            visibleEditLesson = false;
+            snackbar = Snackbar.Add("Lecția a fost actualizată cu succes!", Severity.Success);
+            chapter = await ChapterDataService.GetChapterByIdAsync(CurrentChapterId);
+            StateHasChanged();
+        }
     }
 
     void OpenDialogEditLesson(ListeningLessonViewModel lesson)
@@ -759,8 +810,6 @@ else {
                 TextScript = lesson.TextScript,
                 Accents = lesson.Accents
             };
-            lessonBeforeEdit = lesson;
-            visibleEditLesson = true;
         }
         else
         {
@@ -776,11 +825,8 @@ else {
                 LessonImageData = lesson.LessonImageData,
                 LessonPriorityNumber = lesson.LessonPriorityNumber
             };
-            lessonBeforeEdit = lesson;
-            visibleEditLesson = true;
         }
-
-        editListeningLesson = lesson;
+        lessonBeforeEdit = lesson;
         visibleEditLesson = true;
     }
 

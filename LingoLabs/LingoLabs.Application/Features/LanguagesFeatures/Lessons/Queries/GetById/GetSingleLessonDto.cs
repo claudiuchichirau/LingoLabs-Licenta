@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries;
+using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries.GetById;
 using LingoLabs.Application.Features.LanguagesFeatures.Tags.Queries;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetById
@@ -11,7 +12,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Queries.GetBy
         public string ChapterName { get; set; } = string.Empty;
         public string LanguageCompetenceName { get; set; } = string.Empty;
         public string LanguageLevelName { get; set; } = string.Empty;
-        public List<QuestionDto> LessonQuestions { get; set; } = [];
+        public List<GetSingleQuestionDto> LessonQuestions { get; set; } = [];
         public List<TagDto> LessonTags { get; set; } = [];
         public List<TagDto> UnassociatedTags { get; set; } = [];
     }

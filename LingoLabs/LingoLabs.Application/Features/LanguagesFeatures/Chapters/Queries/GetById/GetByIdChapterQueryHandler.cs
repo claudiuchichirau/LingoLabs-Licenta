@@ -43,6 +43,21 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
 
                 var languageLevel = await languageLevelRepository.FindByIdAsync(chapter.Value.LanguageLevelId);
 
+                var lessonsSorted = chapter.Value.ChapterLessons
+                    .OrderBy(lesson => lesson.LessonPriorityNumber ?? int.MaxValue)
+                    .Select(lesson => new Lessons.Queries.LessonDto
+                    {
+                        LessonId = lesson.LessonId,
+                        LessonPriorityNumber = lesson.LessonPriorityNumber,
+                        LessonTitle = lesson.LessonTitle,
+                        LessonDescription = lesson.LessonDescription,
+                        LessonContent = lesson.LessonContent,
+                        LessonVideoLink = lesson.LessonVideoLink,
+                        LessonImageData = lesson.LessonImageData,
+                        ChapterId = lesson.ChapterId,
+                        LanguageCompetenceId = lesson.LanguageCompetenceId
+                    }).ToList();
+
                 return new GetSingleChapterDto
                 {
                     ChapterId = chapter.Value.ChapterId,
@@ -54,16 +69,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
                     ChapterVideoLink = chapter.Value.ChapterVideoLink,
                     LanguageLevelName = languageLevel.Value.LanguageLevelName,
 
-                    ChapterLessons = chapter.Value.ChapterLessons.Select(lesson => new Lessons.Queries.LessonDto
-                    {
-                        LessonId = lesson.LessonId,
-                        LessonPriorityNumber = lesson.LessonPriorityNumber,
-                        LessonTitle = lesson.LessonTitle,
-                        LessonDescription = lesson.LessonDescription,
-                        LessonContent = lesson.LessonContent,
-                        ChapterId = lesson.ChapterId,
-                        LanguageCompetenceId = lesson.LanguageCompetenceId
-                    }).ToList(),
+                    ChapterLessons = lessonsSorted,
 
                     ChapterKeyWords = chapterKeyWords,
                     UnassociatedTags = unassociatedTags

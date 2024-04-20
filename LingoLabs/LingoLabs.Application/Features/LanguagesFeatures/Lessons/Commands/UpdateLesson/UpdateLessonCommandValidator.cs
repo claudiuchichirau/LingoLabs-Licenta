@@ -63,9 +63,20 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
             {
                 var request = WebRequest.Create(uriResult) as HttpWebRequest;
                 request.Method = "HEAD";
-                using (var response = request.GetResponse() as HttpWebResponse)
+                try
                 {
-                    return response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase);
+                    using (var response = request.GetResponse() as HttpWebResponse)
+                    {
+                        return response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase);
+                    }
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Response is HttpWebResponse errorResponse)
+                    {
+                        // Handle specific HTTP error codes here, if needed
+                    }
+                    return false;
                 }
             }
 

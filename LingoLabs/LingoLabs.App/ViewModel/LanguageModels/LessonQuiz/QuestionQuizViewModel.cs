@@ -11,5 +11,11 @@ namespace LingoLabs.App.ViewModel.LanguageModels.LessonQuiz
         public QuestionTypeViewModel QuestionType { get; set; }
         [Required(ErrorMessage = "Choices are required")]
         public List<ChoiceQuizViewModel> Choices { get; set; } = [];
+        public Guid LessonId { get; set; }
+        public int? QuestionPriorityNumber { get; set; }
+        public string QuestionImageData { get; set; } = string.Empty;
+        public string QuestionVideoLink { get; set; } = string.Empty;
+        public Guid? LanguageId { get; set; }
+
     }
 }

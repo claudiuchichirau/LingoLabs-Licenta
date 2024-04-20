@@ -251,7 +251,7 @@
                     <MudCarouselItem>
                         @if (question.QuestionType == QuestionTypeViewModel.MultipleChoice)
                         {
-                            var columns = Math.Ceiling(Math.Sqrt(question.QuestionChoices.Count()));
+                            var columns = Math.Ceiling(Math.Sqrt(question.Choices.Count()));
                             <div class="d-flex flex-column align-items-center justify-content-center" style="height:100%; padding: 30px; margin-bottom: 15px;">
                                 <div class="md-2 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 10px; margin-bottom: 40px; margin-top: -10px;">
                                     <div class="row text-center" style="width: 100%;">
@@ -264,7 +264,7 @@
                                 </div>
 
                                 <div style="display: grid; grid-template-columns: repeat(@columns, 1fr); gap: 35px; margin-top: 25px; justify-items: center;">
-                                    @foreach (ChoiceViewModel choice in question.QuestionChoices)
+                                    @foreach (ChoiceViewModel choice in question.Choices)
                                     {
                                         <div style="display: flex; justify-content: center;">
                                             <MudButton Color="Color.Primary" Variant="Variant.Outlined" Style="@(choice.ChoiceId == userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceId ? "color: white; border-color: #2563EB; background-color: #2563EB; padding: 10px; font-size: 20px;" : "color: #2563EB; border-color: #2563EB; background-color: white; padding: 10px; font-size: 20px;")" OnClick="() => {SelectAnswer(question, choice); CheckAllQuestionsCompleted();}">

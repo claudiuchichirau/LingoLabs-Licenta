@@ -12,7 +12,7 @@ namespace LingoLabs.App.Contracts.LanguageContracts
         Task<ApiResponse<LessonViewModel>> UpdateLessonAsync(LessonViewModel updateLessonViewModel);
         Task<ApiResponse<LessonViewModel>> DeleteLessonAsync(Guid lessonId);
         Task<ApiResponse<QuizViewModel>> CreateLessonQuizAsync (QuizViewModel createQuizViewModel);
-        Task<ApiResponse<QuizViewModel>> UpdateLessonQuizAsync (QuizViewModel updateQuizViewModel);
+        Task<ApiResponse<QuizViewModel>> UpdateLessonQuizAsync (UpdateQuizViewModel updateQuizViewModel);
         Task<ApiResponse<QuizViewModel>> DeleteLessonQuizAsync (Guid lessonId);
     }
 }
