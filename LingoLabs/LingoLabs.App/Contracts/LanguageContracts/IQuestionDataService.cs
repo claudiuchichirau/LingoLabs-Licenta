@@ -10,8 +10,8 @@ namespace LingoLabs.App.Contracts.LanguageContracts
         Task<List<QuestionViewModel>> GetAllQuestionsByLanguageCompetenceIdAndLevelId(Guid languageCompetenceId, Guid languageLevelId);
         Task<List<QuestionViewModel>> GetAllQuestionsByLanguageLevelId(Guid languageLevelId);
         Task<QuestionViewModel> GetQuestionByIdAsync(Guid questionId);
-        Task<ApiResponse<QuestionViewModel>> CreateLanguageAsync(QuestionViewModel createQuestionViewModel);
-        Task<ApiResponse<QuestionViewModel>> UpdateLanguageAsync(QuestionViewModel createQuestionViewModel);
-        Task<ApiResponse<QuestionViewModel>> DeleteLanguageAsync(Guid questionId);
+        Task<ApiResponse<QuestionViewModel>> CreateQuestionAsync(QuestionViewModel createQuestionViewModel);
+        Task<ApiResponse<QuestionViewModel>> UpdateQuestionAsync(QuestionViewModel createQuestionViewModel);
+        Task<ApiResponse<QuestionViewModel>> DeleteQuestionAsync(Guid questionId);
     }
 }

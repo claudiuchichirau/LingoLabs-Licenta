@@ -21,7 +21,7 @@ namespace LingoLabs.App.Services.LanguageServices
             this.tokenService = tokenService;
         }
 
-        public async Task<ApiResponse<QuestionViewModel>> CreateLanguageAsync(QuestionViewModel createQuestionViewModel)
+        public async Task<ApiResponse<QuestionViewModel>> CreateQuestionAsync(QuestionViewModel createQuestionViewModel)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
@@ -51,7 +51,7 @@ namespace LingoLabs.App.Services.LanguageServices
             return response!;
         }
 
-        public async Task<ApiResponse<QuestionViewModel>> UpdateLanguageAsync(QuestionViewModel updateQuestionViewModel)
+        public async Task<ApiResponse<QuestionViewModel>> UpdateQuestionAsync(QuestionViewModel updateQuestionViewModel)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
@@ -106,7 +106,7 @@ namespace LingoLabs.App.Services.LanguageServices
             }
         }
 
-        public async Task<ApiResponse<QuestionViewModel>> DeleteLanguageAsync(Guid questionId)
+        public async Task<ApiResponse<QuestionViewModel>> DeleteQuestionAsync(Guid questionId)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)

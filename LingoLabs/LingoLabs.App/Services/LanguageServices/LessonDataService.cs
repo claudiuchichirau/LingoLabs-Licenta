@@ -231,12 +231,7 @@ namespace LingoLabs.App.Services.LanguageServices
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-            var quizViewModel = new
-            {
-                updateQuizViewModel.Questions
-            };
-
-            var result = await httpClient.PutAsJsonAsync($"{RequestUri}/update-quiz", quizViewModel);
+            var result = await httpClient.PutAsJsonAsync($"{RequestUri}/update-quiz", updateQuizViewModel);
 
             if (!result.IsSuccessStatusCode)
             {

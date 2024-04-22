@@ -45,7 +45,7 @@ namespace LingoLabs.Domain.Entities.Languages
                    questionType == QuestionType.MultipleChoice;
         }
 
-        public void UpdateQuestion(string questionRequirement, string imageData, string videoLink, Guid languageId, int? questionPriorityNumber)
+        public void UpdateQuestion(string questionRequirement, string imageData, string videoLink, Guid? languageId, int? questionPriorityNumber)
         {
             if (!string.IsNullOrWhiteSpace(questionRequirement))
                 QuestionRequirement = questionRequirement;

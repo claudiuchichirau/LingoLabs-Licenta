@@ -10,11 +10,13 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
     {
         private readonly IQuestionRepository questionRepository;
         private readonly ILanguageRepository languageRepository;
+        private readonly IChoiceRepository choiceRepository;
 
-        public UpdateQuestionCommandHandler(IQuestionRepository questionRepository, ILanguageRepository languageRepository)
+        public UpdateQuestionCommandHandler(IQuestionRepository questionRepository, ILanguageRepository languageRepository, IChoiceRepository choiceRepository)
         {
             this.questionRepository = questionRepository;
             this.languageRepository = languageRepository;
+            this.choiceRepository = choiceRepository;
         }
         public async Task<UpdateQuestionCommandResponse> Handle(UpdateQuestionCommand request, CancellationToken cancellationToken)
         {
@@ -59,6 +61,24 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.Up
                 request.QuestionPriorityNumber);
 
             await questionRepository.UpdateAsync(question.Value);
+
+            foreach (var choice in question.Value.Choices)
+            {
+                var choiceResult = await choiceRepository.FindByIdAsync(choice.ChoiceId);
+
+                if (!choiceResult.IsSuccess)
+                {
+                    return new UpdateQuestionCommandResponse
+                    {
+                        Success = false,
+                        ValidationsErrors = new List<string> { choiceResult.Error }
+                    };
+                }
+
+                choiceResult.Value.UpdateChoice(choice.ChoiceContent, choice.IsCorrect);
+
+                await choiceRepository.UpdateAsync(choiceResult.Value);
+            }
 
             return new UpdateQuestionCommandResponse
             {

@@ -1,6 +1,4 @@
-﻿using LingoLabs.Application.Features.LanguagesFeatures.Choices.Queries;
-using LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.CreateQuiz;
-using LingoLabs.Application.Features.LanguagesFeatures.Questions.Queries;
+﻿using LingoLabs.Application.Features.LanguagesFeatures.Questions.Commands.DeleteQuestion;
 using LingoLabs.Application.Persistence.Languages;
 using MediatR;
 using System.Web;
@@ -12,16 +10,17 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
         private readonly ILessonRepository lessonRepository;
         private readonly IQuestionRepository questionRepository;
         private readonly IChoiceRepository choiceRepository;
+        private readonly DeleteQuestionCommandHandler deleteQuestionCommandHandler;
 
-        public UpdateQuizCommandHandler(ILessonRepository lessonRepository, IQuestionRepository questionRepository, IChoiceRepository choiceRepository)
+        public UpdateQuizCommandHandler(ILessonRepository lessonRepository, IQuestionRepository questionRepository, IChoiceRepository choiceRepository, DeleteQuestionCommandHandler deleteQuestionCommandHandler)
         {
             this.lessonRepository = lessonRepository;
             this.questionRepository = questionRepository;
             this.choiceRepository = choiceRepository;
+            this.deleteQuestionCommandHandler = deleteQuestionCommandHandler;
         }
         public async Task<UpdateQuizCommandResponse> Handle(UpdateQuizCommand request, CancellationToken cancellationToken)
         {
-            Guid lessonId = request.LessonId;
             var validator = new UpdateQuizCommandValidator();
             var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
@@ -38,12 +37,20 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
 
             var updatedQuestions = new List<UpdateQuestionForDto>();
 
+            // Obțineți toate întrebările existente pentru lecție
+            var existingQuestions = lesson.Value.LessonQuestions;
+
             foreach (var questionDto in request.Questions)
             {
                 var question = await questionRepository.FindByIdAsync(questionDto.QuestionId);
-                question.Value.UpdateQuestionRequirement(questionDto.QuestionRequirement);
-                question.Value.UpdateQuestionType(questionDto.QuestionType);
-                question.Value.UpdateQuestionImageData(questionDto.QuestionImageData);
+                
+
+                // Dați lista newChoices în metoda UpdateQuestion
+                question.Value.UpdateQuestion(questionDto.QuestionRequirement,
+                                              questionDto.QuestionImageData,
+                                              questionDto.QuestionVideoLink,
+                                              questionDto.LanguageId,
+                                              questionDto.QuestionPriorityNumber);
 
 
                 string newVideoLink = null;
@@ -103,6 +110,25 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
                 };
 
                 updatedQuestions.Add(updatedQuestion);
+            }
+
+            // Ștergeți întrebările care nu mai sunt în quiz
+            foreach (var existingQuestion in existingQuestions)
+            {
+                if (!request.Questions.Any(q => q.QuestionId == existingQuestion.QuestionId))
+                {
+                    var deleteQuestionCommand = new DeleteQuestionCommand { QuestionId = existingQuestion.QuestionId };
+                    var deleteQuestionCommandResponse = await deleteQuestionCommandHandler.Handle(deleteQuestionCommand, cancellationToken);
+
+                    if (!deleteQuestionCommandResponse.Success)
+                    {
+                        return new UpdateQuizCommandResponse
+                        {
+                            Success = false,
+                            ValidationsErrors = deleteQuestionCommandResponse.ValidationsErrors
+                        };
+                    }
+                }
             }
 
             return new UpdateQuizCommandResponse

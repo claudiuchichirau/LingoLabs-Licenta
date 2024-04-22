@@ -580,7 +580,7 @@ else{
             <MudTh Style="text-align: center;">Șterge întrebarea</MudTh>
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Nr. Crt" Style="text-align: center;">@context.QuestionPriorityNumber</MudTd>
+            <MudTd DataLabel="Nr. Crt" Style="text-align: center;">@(context.QuestionPriorityNumber.HasValue ? context.QuestionPriorityNumber.ToString() : "-")</MudTd>
             <MudTd DataLabel="Tipul Întrebării" Style="text-align: center;">@context.QuestionType</MudTd>
             <MudTd DataLabel="Cerință" Style="text-align: center;">@context.QuestionRequirement</MudTd>
             <MudTd DataLabel="Vizualizează & Modifică Întrebarea" Style="text-align: center;">
@@ -687,9 +687,135 @@ else{
     </DialogActions>
 </MudDialog>
 
+@* ADD QUESTION - QUIZ EXISTS *@
+<MudDialog @bind-IsVisible="visibleAddQuestionQuizExists" Options="dialogOptionsForCreateQuestion">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
+            <span style="color: #2563EB;">Adaugă o întrebare</span>
+        </MudText>
 
-@* ADD CHOICE - QUIZ EXISTS *@
-@* <MudDialog @bind-IsVisible="visibleAddChoiceViewQuiz" Options="dialogOptionsForCreateQuestion">
+    </TitleContent>
+
+    <DialogContent>
+        <MudText Style="margin-top:25px;">Pentru început va trebui să alegi tipul întrebării pe care vrei să o creezi:</MudText>
+
+        <MudSelect T="QuestionTypeViewModel" Label="Tipul întrebării:" @bind-Value="newQuestionQuizExists.QuestionType" Style="margin-top: 10px;">
+            <MudSelectItem Value="QuestionTypeViewModel.TrueFalse">True/False</MudSelectItem>
+            <MudSelectItem Value="QuestionTypeViewModel.MissingWord">Missing Word</MudSelectItem>
+            <MudSelectItem Value="QuestionTypeViewModel.MultipleChoice">Multiple Choice</MudSelectItem>
+        </MudSelect>
+
+        @if (newQuestionQuizExists.QuestionType == QuestionTypeViewModel.TrueFalse)     // TRUE / FALSE QUESTION
+        {
+            <MudTextField T="string" @bind-Value="newQuestionQuizExists.QuestionRequirement" Label="Cerință"></MudTextField>
+            <MudSelect T="bool" Label="Valoare de adevăr" @bind-Value="boolValueQuestionTrueFalse" Style="margin-top: 10px;" OnInput="(bool newValue) => SetTrueValueQuestionTrueFalse(newValue)">
+                <MudSelectItem Value="true">True</MudSelectItem>
+                <MudSelectItem Value="false">False</MudSelectItem>
+            </MudSelect>
+        }
+
+        @if (newQuestionQuizExists.QuestionType == QuestionTypeViewModel.MultipleChoice)         // GRID QUESTION
+        {
+            <MudText Style="margin-top:25px;">Întrebarea va trebui să aibă minim 3 variante de răspuns, dintre care <strong>una singură</strong> să fie corectă!</MudText>
+            <MudTextField T="string" @bind-Value="newQuestionQuizExists.QuestionRequirement" Label="Cerință"></MudTextField>
+            <MudText Style="margin-top:25px;">Variante de răspuns:</MudText>
+            @if(newQuestionQuizExists.Choices == null || newQuestionQuizExists.Choices.Count == 0)
+            {
+                <MudText Typo="Typo.body1" Style="margin-top: 5px;"><strong>Nu există nicio variantă de răspuns adăugată! Adaugă acum una folosind butonul de mai jos!</strong></MudText>
+            }
+            else
+            {
+                @foreach (var choice in newQuestionQuizExists.Choices)
+                {
+                    @if (choice.IsCorrect == true)
+                    {
+                        <MudText T="string" Label="Conținut" Style="color: green; margin-top: 5px;">
+                            <strong>-&emsp;@choice.ChoiceContent</strong>&emsp;<MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@( () => DeleteChoiceQuizExists(choice) )" />
+                        </MudText>
+                    }
+                    else if (choice.IsCorrect == false)
+                    {
+                        <MudText T="string" Label="Conținut" Style="color: red; margin-top: 5px;">
+                            <strong>-&emsp;@choice.ChoiceContent</strong>&emsp;<MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@( () => DeleteChoiceQuizExists(choice) )" />
+                        </MudText>
+                    }
+
+                }
+            }
+
+            <MudContainer Style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                <MudButton Variant="Variant.Text" FullWidth="true" OnClick="@( () => OpenDialogAddChoiceQuizExists() )" Style="height: 100%;">
+                    <MudTooltip Text="Adaugă o variantă de răspuns">
+                        <MudIcon Icon="@Icons.Material.Filled.Add" />
+                    </MudTooltip>
+                </MudButton>
+            </MudContainer>
+        }
+
+        @if (newQuestionQuizExists.QuestionType == QuestionTypeViewModel.MissingWord)    // MISSING WORD QUESTION
+        {
+            <MudTextField T="string" @bind-Value="newQuestionQuizExists.QuestionRequirement" Label="Cerință"></MudTextField>
+            <MudText Style="margin-top:25px;">Variante de răspuns:</MudText>
+            @if(newQuestionQuizExists.Choices == null || newQuestionQuizExists.Choices.Count == 0)
+            {
+                <MudText Typo="Typo.body1" Style="margin-top: 5px;"><strong>Nu există nicio variantă de răspuns adăugată! Adaugă numai variante corecte de răspuns!</strong></MudText>
+            }
+            else
+            {
+                @foreach (var choice in newQuestion.Choices)
+                {
+                    <MudText T="string" Label="Conținut" Style="color: green; margin-top: 5px;">
+                        <strong>-&emsp;@choice.ChoiceContent</strong>&emsp;<MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@( () => DeleteChoiceQuizExists(choice) )" />
+                    </MudText>
+                }
+            }
+
+            <MudContainer Style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; margin-top: 10px;">
+                <MudButton Variant="Variant.Text" FullWidth="true" OnClick="@( () => OpenDialogAddCorrectChoiceQuizExists() )" Style="height: 100%;">
+                    <MudTooltip Text="Adaugă o variantă de răspuns">
+                        <MudIcon Icon="@Icons.Material.Filled.Add" />
+                    </MudTooltip>
+                </MudButton>
+            </MudContainer>
+        }
+
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="CancelAddQuestionQuizExists" Class="px-10" Style="color: black;">Close</MudButton>
+        <MudButton OnClick="@(() => AddQuestionQuizExists(newQuestionQuizExists))" Style="color: #2563EB;" Disabled="@(!IsAddQuestionValid(newQuestionQuizExists))">Create</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@* ADD CHOICE - QUIZ EXISTS*@
+<MudDialog @bind-IsVisible="visibleAddChoiceQuizExists" Options="dialogOptionsForCreateQuestion">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
+            <span style="color: #2563EB;">Adaugă o variantă de răspuns</span>
+        </MudText>
+
+    </TitleContent>
+
+    <DialogContent>
+        <MudTextField T="string" @bind-Value="newChoiceQuizExists.ChoiceContent" Label="Conținut"></MudTextField>
+        <MudSelect T="bool" Label="Valoare de adevăr" @bind-Value="newChoiceQuizExists.IsCorrect" Style="margin-top: 10px;">
+            <MudSelectItem Value="true">True</MudSelectItem>
+            <MudSelectItem Value="false">False</MudSelectItem>
+        </MudSelect>
+        
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Variant="Variant.Filled" OnClick="CancelAddChoiceQuizExists" Class="px-10" Style="color: black;">Close</MudButton>
+        <MudButton OnClick="@(async () => AddChoiceQuizExists(newChoiceQuizExists))" Style="color: #2563EB;" Disabled="@string.IsNullOrWhiteSpace(newChoiceQuizExists.ChoiceContent)">Add</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@* ADD CORRECT CHOICE - QUIZ EXISTS*@
+<MudDialog @bind-IsVisible="visibleAddCorrectChoiceQuizExists" Options="dialogOptionsForCreateQuestion">
     <TitleContent>
         <MudText Typo="Typo.h6">
             <MudIcon Icon="@Icons.Material.Filled.PlaylistAddCircle" Size="Size.Large" Style="background-color: transparent; color: #2563EB;" />
@@ -698,33 +824,24 @@ else{
     </TitleContent>
 
     <DialogContent>
-        <MudTextField T="string" @bind-Value="newChoiceViewQuiz.ChoiceContent" Label="Conținut"></MudTextField>
-        @if (editedQuestion.QuestionType == QuestionTypeViewModel.MultipleChoice)
-        {
-            <MudSelect T="bool" Label="Valoare de adevăr" @bind-Value="newChoiceViewQuiz.IsCorrect" Style="margin-top: 10px;">
-                <MudSelectItem Value="true">True</MudSelectItem>
-                <MudSelectItem Value="false">False</MudSelectItem>
-            </MudSelect>
-        }
-        else if(editedQuestion.QuestionType == QuestionTypeViewModel.MissingWord)
-        {
-            newChoiceViewQuiz.IsCorrect = true;
-        }
-
+        <MudTextField T="string" @bind-Value="newCorrectChoiceQuizExists.ChoiceContent" Label="Conținut"></MudTextField>
+        
     </DialogContent>
 
     <DialogActions>
-        <MudButton Variant="Variant.Filled" OnClick="CancelAddChoiceViewQuiz" Class="px-10" Style="color: black;">Close</MudButton>
-        <MudButton OnClick="@(async () => AddChoiceViewQuiz(newChoiceViewQuiz))" Style="color: #2563EB;" Disabled="@string.IsNullOrWhiteSpace(newChoiceViewQuiz.ChoiceContent)">Add</MudButton>
+        <MudButton Variant="Variant.Filled" OnClick="CancelAddCorrectChoiceQuizExists" Class="px-10" Style="color: black;">Close</MudButton>
+        <MudButton OnClick="@(async () => AddCorrectChoiceQuizExists(newCorrectChoiceQuizExists))" Style="color: #2563EB;" Disabled="@string.IsNullOrWhiteSpace(newCorrectChoiceQuizExists.ChoiceContent)">Add</MudButton>
     </DialogActions>
 </MudDialog>
- *@
+
 
 }}
 
 @code {
     [Inject]
     private ILessonDataService LessonDataService { get; set; }
+    [Inject]
+    private IQuestionDataService QuestionDataService { get; set; }
     [Parameter]
     public string Id { get; set; }
     private Guid CurrentLessonId = Guid.Empty;
@@ -852,7 +969,6 @@ else{
             StateHasChanged();
         }
     }
-
 
     void OpenDialogCreateQuiz()
     {
@@ -1050,12 +1166,35 @@ else{
         }
     }
 
-    void DeleteQuestionViewQuiz(Guid questionId)
+    async void DeleteQuestionViewQuiz(Guid questionId)
     {
-        // questionsUpdateQuiz = lesson.LessonQuestions.Where(q => q.QuestionId != questionId);
-        // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Întrebarea a fost ștearsă cu succes!", Severity.Success);
+
+        UpdateQuizViewModel updatedQuiz = new UpdateQuizViewModel {
+            LessonId = CurrentLessonId,
+            Questions = new List<QuestionViewModel>(lesson.LessonQuestions)
+        };
+
+        updatedQuiz.Questions = updatedQuiz.Questions.Where(q => q.QuestionId != questionId).ToList();
+
+        var response = await LessonDataService.UpdateLessonQuizAsync(updatedQuiz);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Eroare la ștergerea întrebării :" + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Întrebarea a fost ștearsă cu succes!", Severity.Success);
+            lesson = await LessonDataService.GetLessonByIdAsync(CurrentLessonId);
+            StateHasChanged();
+        }
     }
 
     bool IsQuestionValid(QuestionViewModel question)
@@ -1063,7 +1202,17 @@ else{
         if (string.IsNullOrEmpty(question.QuestionRequirement))
             return false;
 
-        if (question.QuestionRequirement == questionBeforeEdit.QuestionRequirement && question.QuestionPriorityNumber == questionBeforeEdit.QuestionPriorityNumber && question.QuestionVideoLink == questionBeforeEdit.QuestionVideoLink && question.QuestionImageData == questionBeforeEdit.QuestionImageData)
+        bool choiceModified = false;
+        for (int i = 0; i < question.Choices.Count; i++)
+        {
+            if (question.Choices[i].ChoiceContent != questionBeforeEdit.Choices[i].ChoiceContent ||
+                question.Choices[i].IsCorrect != questionBeforeEdit.Choices[i].IsCorrect)
+            {
+                choiceModified = true;
+            }
+        }
+
+        if (question.QuestionRequirement == questionBeforeEdit.QuestionRequirement && question.QuestionPriorityNumber == questionBeforeEdit.QuestionPriorityNumber && question.QuestionVideoLink == questionBeforeEdit.QuestionVideoLink && question.QuestionImageData == questionBeforeEdit.QuestionImageData && !choiceModified) 
             return false;
 
         switch(question.QuestionType)
@@ -1127,7 +1276,6 @@ else{
         visibleEditQuestionViewQuiz = true;
     }
 
-
     async void UpdateQuestionViewQuiz(QuestionViewModel question)
     {
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
@@ -1147,6 +1295,7 @@ else{
             {
                 choiceA.QuestionId = questionA.QuestionId;
             }
+            questionA.LanguageId = null;
         }
 
         // Înlocuiți întrebarea de la acel index cu noua întrebare
@@ -1155,7 +1304,6 @@ else{
             updatedQuiz.Questions[index] = question;
         }
 
-        var guidId = updatedQuiz.LessonId;
         var response = await LessonDataService.UpdateLessonQuizAsync(updatedQuiz);
 
         if (!response.IsSuccess)
@@ -1182,13 +1330,128 @@ else{
         question.Choices.Remove(choice);
     }
 
-    // ADD QUESTION
+
+    // ADD QUESTION - QUIZ EXISTS
+
+
+    private bool visibleAddQuestionQuizExists = false;
+    protected QuestionQuizViewModel newQuestionQuizExists;
 
     void OpenDialogAddQuestionViewQuiz()
     {
+        visibleAddQuestionQuizExists = true;
+        newQuestionQuizExists = new QuestionQuizViewModel();
+    }
+
+    void CancelAddQuestionQuizExists() => visibleAddQuestionQuizExists = false;
+
+    async void AddQuestionQuizExists(QuestionQuizViewModel question)
+    {
+        visibleAddQuestionQuizExists = false;
+
+        QuestionViewModel newQuestion = new QuestionViewModel
+        {
+            QuestionType = question.QuestionType,
+            QuestionRequirement = question.QuestionRequirement,
+            QuestionVideoLink = question.QuestionVideoLink,
+            QuestionImageData = question.QuestionImageData,
+            QuestionPriorityNumber = question.QuestionPriorityNumber,
+            Choices = question.Choices.Select(choice => new ChoiceViewModel
+            {
+                ChoiceId = Guid.NewGuid(),
+                ChoiceContent = choice.ChoiceContent,
+                IsCorrect = choice.IsCorrect,
+                QuestionId = question.QuestionId
+            }).ToList(),
+            LessonId = CurrentLessonId
+        };
+
+        if (question.QuestionType == QuestionTypeViewModel.TrueFalse && question.Choices != null && question.Choices.Count == 0)
+        {
+            question.Choices.Add(
+                new ChoiceQuizViewModel
+                {
+                    ChoiceContent = "TrueFalse",
+                    IsCorrect = boolValueQuestionTrueFalse
+                }
+            );
+        }
+
+        var response = await QuestionDataService.CreateQuestionAsync(newQuestion);
+
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Eroare la adăugarea unei noi întrebări: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            visibleCreateQuiz = false;
+            snackbar = Snackbar.Add("Întrebarea a fost adăugat cu succes!", Severity.Success);
+            lesson = await LessonDataService.GetLessonByIdAsync(CurrentLessonId);
+            StateHasChanged();
+        }
+
+        CreateQuizQuestions = CreateQuizQuestions.Append(question);
+        StateHasChanged();
+    }
+
+
+    //ADD CHOICE - QUIZ EXISTS
+    private bool visibleAddChoiceQuizExists;
+    protected ChoiceQuizViewModel newChoiceQuizExists;
+
+    void OpenDialogAddChoiceQuizExists()
+    {
+        newChoiceQuizExists = new ChoiceQuizViewModel();
+        visibleAddChoiceQuizExists = true;
+        // Do something
+    }
+
+    void CancelAddChoiceQuizExists() => visibleAddChoiceQuizExists = false;
+
+    void AddChoiceQuizExists(ChoiceQuizViewModel choice)
+    {
+        visibleAddChoiceQuizExists = false;
+        newQuestionQuizExists.Choices.Add(choice);
+        StateHasChanged();
+    }
+
+    void DeleteChoiceQuizExists(ChoiceQuizViewModel choice)
+    {
+        newQuestionQuizExists.Choices.Remove(choice);
+        StateHasChanged();
+    }
+
+    // ADD CORRECT CHOICE - QUIZ EXISTS
+    private bool visibleAddCorrectChoiceQuizExists;
+    protected ChoiceQuizViewModel newCorrectChoiceQuizExists;
+
+    void OpenDialogAddCorrectChoiceQuizExists()
+    {
+        newCorrectChoiceQuizExists = new ChoiceQuizViewModel();
+        visibleAddCorrectChoiceQuizExists = true;
+        // Do something
+    }
+
+    void CancelAddCorrectChoiceQuizExists() => visibleAddCorrectChoiceQuizExists = false;
+
+    void AddCorrectChoiceQuizExists(ChoiceQuizViewModel choice)
+    {
+        visibleAddCorrectChoiceQuizExists = false;
+        choice.IsCorrect = true;
+        newQuestionQuizExists.Choices.Add(choice);
+        StateHasChanged();
         // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Întrebarea a fost creată cu succes!", Severity.Success);
+        snackbar = Snackbar.Add("Varianta de răspuns a fost adăugată cu succes!", Severity.Success);
     }
 
 

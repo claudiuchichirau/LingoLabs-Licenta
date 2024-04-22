@@ -1,6 +1,4 @@
 ﻿using FluentValidation;
-using LingoLabs.Domain.Entities;
-using LingoLabs.Domain.Entities.Languages;
 using System.Net;
 
 namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.UpdateQuiz
@@ -55,6 +53,30 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
 
                     return true;
                 }).WithMessage("The question list must contain more than 10 questions. Each question must have a requirement. For multiple-choice questions, there must be exactly one correct answer. For true/false questions, there must be exactly two answer options. For fill-in-the-blank questions, there must be exactly one answer.");
+
+            RuleFor(p => p.Questions)
+                .Must((questionList) =>
+                {
+                    foreach (var question in questionList)
+                    {
+                        if (!string.IsNullOrEmpty(question.QuestionImageData) && !BeImageValidUrl(question.QuestionImageData))
+                            return false;
+                    }
+
+                    return true;
+                }).WithMessage("The image link should be valid if it exists.");
+
+            RuleFor(p => p.Questions)
+                .Must((questionList) =>
+                {
+                    foreach (var question in questionList)
+                    {
+                        if (!string.IsNullOrEmpty(question.QuestionVideoLink) && !BeValidUrl(question.QuestionVideoLink))
+                            return false;
+                    }
+
+                    return true;
+                }).WithMessage("The image link should be valid if it exists.");
         }
 
         private static bool BeImageValidUrl(string url)
@@ -67,9 +89,20 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Upda
             {
                 var request = WebRequest.Create(uriResult) as HttpWebRequest;
                 request.Method = "HEAD";
-                using (var response = request.GetResponse() as HttpWebResponse)
+                try
                 {
-                    return response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase);
+                    using (var response = request.GetResponse() as HttpWebResponse)
+                    {
+                        return response.ContentType.StartsWith("image", StringComparison.OrdinalIgnoreCase);
+                    }
+                }
+                catch (WebException ex)
+                {
+                    if (ex.Response is HttpWebResponse errorResponse)
+                    {
+                        // Handle specific HTTP error codes here, if needed
+                    }
+                    return false;
                 }
             }
 
