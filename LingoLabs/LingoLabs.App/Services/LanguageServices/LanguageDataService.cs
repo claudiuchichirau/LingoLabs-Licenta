@@ -267,7 +267,7 @@ namespace LingoLabs.App.Services.LanguageServices
             var placementTestViewModel = new
             {
                 updatePlacementTestViewModel.LanguageId,
-                updatePlacementTestViewModel.Questions
+                updatePlacementTestViewModel.QuestionsId
             };
 
             var result = await httpClient.PutAsJsonAsync($"{RequestUri}/placement-test", placementTestViewModel);

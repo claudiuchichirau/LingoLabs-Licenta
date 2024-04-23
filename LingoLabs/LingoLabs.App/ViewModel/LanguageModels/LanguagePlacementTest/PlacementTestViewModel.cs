@@ -7,6 +7,6 @@ namespace LingoLabs.App.ViewModel.LanguageModels.LanguagePlacementTest
         [Required(ErrorMessage = "LanguageId is required")]
         public Guid LanguageId { get; set; }
         [Required(ErrorMessage = "Questions are required")]
-        public List<QuestionPlacementTestViewModel> Questions { get; set; } = [];
+        public List<Guid> QuestionsId { get; set; } = [];
     }
 }

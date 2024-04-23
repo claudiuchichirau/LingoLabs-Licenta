@@ -4,6 +4,7 @@
 @using LingoLabs.App.Contracts.LanguageContracts
 @using LingoLabs.App.Services.AuthServices
 @using LingoLabs.App.ViewModel.LanguageModels
+@using LingoLabs.App.ViewModel.LanguageModels.LanguagePlacementTest
 @using LingoLabs.App.ViewModel.MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
@@ -334,7 +335,7 @@ else {
     <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 35px;" class="poppins-semi-bold">Test Inițial</h1>
 </div>
 
-
+@if (language.PlacementTest == null || language.PlacementTest.Count == 0) {
 @* PLACEMENT TEST DOESN'T EXIST *@
 <MudContainer Style="overflow-x: hidden;">
     <div class="row justify-content-center" style="margin-top: 15px; margin-bottom: 50px; min-height: 12vh; background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
@@ -386,6 +387,11 @@ else {
 
         @foreach (var level in language.LanguageLevels)
         {
+            if (!LanguageLevelHasQuestions(level))
+            {
+                continue;
+            }
+
             <MudStack Spacing="2" Style="margin-top: 35px;">
                 <MudButton OnClick="() => OnExpandCollapseClick(level.LanguageLevelName)">@(IsExpanded(level.LanguageLevelName) ? $"Ascunde - {level.LanguageLevelName}" : level.LanguageLevelName)</MudButton>
                 <MudDivider />
@@ -395,13 +401,25 @@ else {
 
                         @foreach (var competence in @language.LanguageCompetences)
                         {
+                            var keyValidation = (level.LanguageLevelId, competence.LanguageCompetenceId);
+                            if (!questionsByLevelAndCompetence.ContainsKey(keyValidation) || questionsByLevelAndCompetence[keyValidation] == null || questionsByLevelAndCompetence[keyValidation].Count == 0)
+                            {
+                                continue;
+                            }
+                            string key = $"{level.LanguageLevelId}-{competence.LanguageCompetenceId}";
+                            
                             <MudStack Spacing="2" Style="max-width: 95%; margin-left: auto; margin-right: auto;">
-                                <MudButton Style="color: #2563EB;" OnClick="() => OnExpandCollapseClick(competence.LanguageCompetenceName)">@(IsExpanded(competence.LanguageCompetenceName) ? $"Ascunde - {competence.LanguageCompetenceName}" : competence.LanguageCompetenceName)</MudButton>
-                                <MudDivider />
-                                <MudCollapse Expanded="@IsExpanded(competence.LanguageCompetenceName)" Style="display: flex; justify-content: center; align-items: center;">
+                                 <MudButton Style="color: #2563EB;" OnClick="() => OnExpandCollapseClick(key)">@(IsExpanded(key) ? $"Ascunde - ({level.LanguageLevelName}) {competence.LanguageCompetenceName}" : $"({level.LanguageLevelName}) {competence.LanguageCompetenceName}")</MudButton>
+                            <MudDivider />
+                                        <MudCollapse Expanded="@IsExpanded(key)" Style="display: flex; justify-content: center; align-items: center;">
                                     <MudText Typo="Typo.body1" Style="margin-top: 20px;">
-                                        <MudTable Items="@Questions.Take(10)" MultiSelection="true" @bind-SelectedItems="selectedQuestions" Hover="true" Breakpoint="Breakpoint.Sm" Striped="true" Bordered="true"
-                                                  CustomHeader="true" CustomFooter="true" HeaderClass="table-head-bordered" FooterClass="table-foot-bordered" >
+
+                                        @{
+                                            SelectQuestions(level.LanguageLevelId, competence.LanguageCompetenceId);
+                                        }
+
+                                        <MudTable Items="@questionsByLevelAndCompetence[(level.LanguageLevelId, competence.LanguageCompetenceId)]" MultiSelection="true" @bind-SelectedItems="selectedQuestions" Hover="true" Breakpoint="Breakpoint.Sm" Striped="true" Bordered="true"
+                                            CustomHeader="true" CustomFooter="true" HeaderClass="table-head-bordered" FooterClass="table-foot-bordered" >
                                             <HeaderContent>
                                                 <MudTHeadRow IsCheckable="true">
                                                     <MudTh Style="text-align: center;">Tipul Întrebării</MudTh>
@@ -430,9 +448,9 @@ else {
                                                     <span style="font-size: 16px;">Cerință: @currentQuestion.QuestionRequirement</span>
                                                 </MudText>
 
-                                                @if (currentQuestion.QuestionType == QuestionTypeElement.TrueFalse)     // TRUE / FALSE QUESTION
+                                                @if (currentQuestion.QuestionType == QuestionTypeViewModel.TrueFalse)     // TRUE / FALSE QUESTION
                                                 {
-                                                    @foreach (var choice in currentQuestion.QuestionChoices)
+                                                    @foreach (var choice in currentQuestion.Choices)
                                                     {
                                                         @if (choice.IsCorrect == true)
                                                         {
@@ -451,11 +469,11 @@ else {
                                                     }
                                                 }
 
-                                                @if (currentQuestion.QuestionType == QuestionTypeElement.Grila)         // GRID QUESTION
+                                                @if (currentQuestion.QuestionType == QuestionTypeViewModel.MultipleChoice)         // GRID QUESTION
                                                 {
                                                     <MudText Typo="Typo.body1">
                                                         <strong>Variante de răspuns:</strong>
-                                                        @foreach (var choice in currentQuestion.QuestionChoices)
+                                                        @foreach (var choice in currentQuestion.Choices)
                                                         {
                                                             @if (choice.IsCorrect == true)
                                                             {
@@ -473,11 +491,11 @@ else {
                                                     </MudText>
                                                 }
 
-                                                @if (currentQuestion.QuestionType == QuestionTypeElement.CuvantLipsa)    // MISSING WORD QUESTION
+                                                @if (currentQuestion.QuestionType == QuestionTypeViewModel.MissingWord)    // MISSING WORD QUESTION
                                                 {
                                                     <MudText Typo="Typo.body1">
                                                         <strong>Variante de răspuns:</strong>
-                                                        @foreach (var choice in currentQuestion.QuestionChoices)
+                                                        @foreach (var choice in currentQuestion.Choices)
                                                         {
                                                             <MudText Typo="Typo.body1" Style="margin-top: 5px; color: green;">
                                                                 <strong>-&emsp;@choice.ChoiceContent</strong>
@@ -486,10 +504,10 @@ else {
                                                     </MudText>
                                                 }
 
-                                                @if (currentQuestion.QuestionImageData != null || currentQuestion.QuestionVideoLink != null)
+                                                @if (!string.IsNullOrEmpty(currentQuestion.QuestionImageData) || !string.IsNullOrEmpty(currentQuestion.QuestionVideoLink))
                                                 {
                                                     <MudText>
-                                                        <span style="font-size: 16px; margin-top:15px;">Resurse suplimentare:</span>
+                                                        <span style="font-size: 16px; margin-top:15px;">Resurse suplimentare: @currentQuestion.QuestionImageData</span>
                                                     </MudText>
                                                     <MudText Style="display: flex; flex-direction: column; align-items: center;">
                                                         @if (currentQuestion.QuestionImageData != null)
@@ -523,14 +541,15 @@ else {
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Filled" OnClick="CancelCreatePlacementTest" Class="px-10" Style="color: black;">Close</MudButton>
-        <MudButton OnClick="@(async () => CreatePlacementTest(selectedQuestions.Select(q => q.QuestionId).ToList()))" Style="color: #2563EB;" Disabled="@(!(selectedQuestions.Count >= 10))">Create</MudButton>
+        <MudButton OnClick="@(async () => CreatePlacementTest(selectedQuestions.Select(q => q.QuestionId).ToList()))" Style="color: #2563EB;" Disabled="@(!(selectedQuestions.Count > 10))">Create</MudButton>
     </DialogActions>
 </MudDialog>
-
+}
+else {
 
 @* PLACEMENT TEST EXISTS *@
 <div style="max-width: 80%; margin: auto; margin-bottom: 55px;">
-    <MudTable Items="@Questions" Hover="true" SortLabel="Sort By" Filter="new Func<QuestionElement,bool>(FilterFuncViewPlacementTest)">
+    <MudTable Items="@language.PlacementTest" Hover="true" SortLabel="Sort By" Filter="new Func<QuestionViewModel,bool>(FilterFuncViewPlacementTest)">
         <ToolBarContent>
             <MudText Typo="Typo.h6">Întrebări - Test Inițial</MudText>
             <MudSpacer />
@@ -545,8 +564,8 @@ else {
             </MudTooltip>
         </ToolBarContent>
         <HeaderContent>
-            <MudTh Style="text-align: center;"><MudTableSortLabel SortBy="new Func<QuestionElement, object>(x=>x.QuestionType)">Tipul Întrebării</MudTableSortLabel></MudTh>
-            <MudTh Style="text-align: center;"><MudTableSortLabel SortBy="new Func<QuestionElement, object>(x=>x.QuestionRequirement)">Cerință</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align: center;"><MudTableSortLabel SortBy="new Func<QuestionViewModel, object>(x=>x.QuestionType)">Tipul Întrebării</MudTableSortLabel></MudTh>
+            <MudTh Style="text-align: center;"><MudTableSortLabel SortBy="new Func<QuestionViewModel, object>(x=>x.QuestionRequirement)">Cerință</MudTableSortLabel></MudTh>
             <MudTh Style="text-align: center;">Vezi mai multe</MudTh>
             <MudTh Style="text-align: center;">Șterge întrebarea</MudTh>
         </HeaderContent>
@@ -557,7 +576,7 @@ else {
                 <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Filled.RemoveRedEye" Class="pa-0" OnClick="@( () => OpenDialogQuestion(context) )" Style="margin-right: 7px;" />
             </MudTd>
             <MudTd DataLabel="Șterge întrebarea" Style="text-align: center;">
-                <MudIconButton Text="Șterge Întrebarea" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => DeleteQuestionPlacementTest(context) )" Class="pa-0" Style="margin-left: 7px;" Disabled="Questions.Count() <=10" />
+                <MudIconButton Text="Șterge Întrebarea" Size="@Size.Small" Icon="@Icons.Material.Filled.Delete" OnClick="@( () => DeleteQuestionPlacementTest(context) )" Class="pa-0" Style="margin-left: 7px;" Disabled="language.PlacementTest.Count() <10" />
             </MudTd>
         </RowTemplate>
         <PagerContent>
@@ -577,9 +596,9 @@ else {
         <MudText Typo="Typo.body1">
             <span style="font-size: 16px;">Cerință: @currentQuestion.QuestionRequirement</span>
         </MudText>
-        @if (currentQuestion.QuestionType == QuestionTypeElement.TrueFalse)     // TRUE / FALSE QUESTION
+        @if (currentQuestion.QuestionType == QuestionTypeViewModel.TrueFalse)     // TRUE / FALSE QUESTION
         {
-            @foreach (var choice in currentQuestion.QuestionChoices)
+            @foreach (var choice in currentQuestion.Choices)
             {
                 @if (choice.IsCorrect == true)
                 {
@@ -598,11 +617,11 @@ else {
             }
         }
 
-        @if (currentQuestion.QuestionType == QuestionTypeElement.Grila)         // GRID QUESTION
+        @if (currentQuestion.QuestionType == QuestionTypeViewModel.MultipleChoice)         // GRID QUESTION
         {
             <MudText Typo="Typo.body1">
                 <strong>Variante de răspuns:</strong>
-                @foreach (var choice in currentQuestion.QuestionChoices)
+                @foreach (var choice in currentQuestion.Choices)
                 {
                     @if (choice.IsCorrect == true)
                     {
@@ -620,11 +639,11 @@ else {
             </MudText>
         }
 
-        @if (currentQuestion.QuestionType == QuestionTypeElement.CuvantLipsa)    // MISSING WORD QUESTION
+        @if (currentQuestion.QuestionType == QuestionTypeViewModel.MissingWord)    // MISSING WORD QUESTION
         {
             <MudText Typo="Typo.body1">
                 <strong>Variante de răspuns:</strong>
-                @foreach (var choice in currentQuestion.QuestionChoices)
+                @foreach (var choice in currentQuestion.Choices)
                 {
                     <MudText Typo="Typo.body1" Style="margin-top: 5px; color: green;">
                         <strong>-&emsp;@choice.ChoiceContent</strong>
@@ -633,7 +652,7 @@ else {
             </MudText>
         }
 
-        @if (currentQuestion.QuestionImageData != null || currentQuestion.QuestionVideoLink != null)
+        @if (!string.IsNullOrEmpty(currentQuestion.QuestionImageData) || !string.IsNullOrEmpty(currentQuestion.QuestionVideoLink))
         {
             <MudText>
                 <span style="font-size: 16px; margin-top:15px;">Resurse suplimentare:</span>
@@ -657,7 +676,7 @@ else {
         <MudButton Variant="Variant.Filled" OnClick="CancelQuestion" Class="px-10" Style="color: black;">Close</MudButton>
     </DialogActions>
 </MudDialog> }
-
+}
 
 <style type="text/css">
     .mud-table-head .header-centered th {
@@ -678,6 +697,8 @@ else {
     public ILanguageLevelDataService LanguageLevelDataService { get; set; }
     [Inject]
     public ILanguageCompetenceDataService LanguageCompetenceDataService { get; set; }
+    [Inject]
+    public IQuestionDataService QuestionDataService { get; set; }
     [Parameter]
     public string Id { get; set; }
     Guid CurrentLanguageId = Guid.Empty;
@@ -686,6 +707,7 @@ else {
     private AuthenticationState authState;
     private bool IsLanguageInfoLoaded = false;
     public bool HasAdminRole = false;
+    private Dictionary<(Guid, Guid), List<QuestionViewModel>> questionsByLevelAndCompetence = new Dictionary<(Guid, Guid), List<QuestionViewModel>>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -701,10 +723,22 @@ else {
         CurrentLanguageId = Guid.Parse(Id);
 
         language = await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId);
+
+        foreach (var level in language.LanguageLevels)
+        {
+            foreach (var competence in language.LanguageCompetences)
+            {
+                List<QuestionViewModel> questions = await SelectQuestions(competence.LanguageCompetenceId, level.LanguageLevelId);
+                if (questions != null && questions.Count > 0)
+                {
+                    questionsByLevelAndCompetence[(level.LanguageLevelId, competence.LanguageCompetenceId)] = questions;
+                }
+            }
+        }
+
         IsLanguageInfoLoaded = true;
 
         await PopulateKewWords();
-        await PopulateQuestions();
     }
 }
 
@@ -760,6 +794,23 @@ else {
     {
         totalWidth = KewWords.Sum(kw => kw.Length);
         numRows = (int)Math.Ceiling((double)totalWidth / containerWidth);
+    }
+
+    private bool LanguageLevelHasQuestions(LanguageLevelViewModel level)
+    {
+        foreach (var competence in language.LanguageCompetences)
+        {
+            if (questionsByLevelAndCompetence.ContainsKey((level.LanguageLevelId, competence.LanguageCompetenceId)))
+            {
+                var questions = questionsByLevelAndCompetence[(level.LanguageLevelId, competence.LanguageCompetenceId)];
+                if (questions != null && questions.Count > 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
 
@@ -929,7 +980,6 @@ else {
     }
 }
 
-
 @* VIEW & EDIT COMPETENCES *@
 @functions {
     private LanguageCompetenceViewModel selectedLanguageCompetence = null;
@@ -1085,15 +1135,36 @@ else {
 
     void CancelCreatePlacementTest() => visibleCreatePlacementTest = false;
 
-    void CreatePlacementTest(List<Guid> questionIds)
+    async void CreatePlacementTest(List<Guid> questionIds)
     {
-        visibleCreatePlacementTest = false;
-        // Do something with questionIds
-        var idsString = string.Join(", ", questionIds);
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add($"Testul inițial a fost creat cu succes! Lista e: {idsString}", Severity.Success);
-    }
 
+        PlacementTestViewModel newPlacementTest = new PlacementTestViewModel
+        {
+            LanguageId = CurrentLanguageId,
+            QuestionsId = questionIds
+        };
+
+        var response = await LanguageDataService.CreatePlacementTestAsync(newPlacementTest);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit crearea testului inițial: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            visibleCreatePlacementTest = false;
+            snackbar = Snackbar.Add($"Testul inițial a fost creat cu succes!", Severity.Success);
+            language = (await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId));
+            StateHasChanged();
+        }
+    }
 
     void OpenDialogCreatePlacementTest()
     {
@@ -1117,98 +1188,27 @@ else {
         return _expandedStates.ContainsKey(key) && _expandedStates[key];
     }
 
-    private IEnumerable<QuestionElement> Questions = new List<QuestionElement>();
-    private HashSet<QuestionElement> selectedQuestions = new HashSet<QuestionElement>();
-    private QuestionElement currentQuestion;
+    public async Task<List<QuestionViewModel>> SelectQuestions(Guid languageLevelId, Guid languageCompetenceId)
+    {
+        return await QuestionDataService.GetAllQuestionsByLanguageCompetenceIdAndLevelId(languageLevelId, languageCompetenceId);
+    }
+
+    private HashSet<QuestionViewModel> selectedQuestions = new HashSet<QuestionViewModel>();
+    private QuestionViewModel currentQuestion;
     private bool visibleQuestion;
     private DialogOptions dialogOptionsQuestion = new() { FullWidth = true, MaxWidth = MaxWidth.Small };
 
     void CancelQuestion() => visibleQuestion = false;
 
-    void OpenDialogQuestion(QuestionElement question)
+    async void OpenDialogQuestion(QuestionViewModel question)
     {
-        currentQuestion = question;
+        currentQuestion = await QuestionDataService.GetQuestionByIdAsync(question.QuestionId);
         visibleQuestion = true;
     }
 
-    protected async Task PopulateQuestions()
-    {
-        Questions = new List<QuestionElement>
-        {
-            new QuestionElement
-            {
-                QuestionId = Guid.NewGuid(),
-                QuestionPriorityNumber = 1,
-                QuestionType = QuestionTypeElement.TrueFalse,
-                QuestionRequirement = "Aveti de facut 2 teme?",
-                QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
-                QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                QuestionChoices = new List<ChoiceElement>
-                {
-                    new ChoiceElement
-                    {
-                        ChoiceContent = "TrueFalse",
-                        IsCorrect = true
-                    }
-                }
-            },
-            new QuestionElement
-            {
-                QuestionId = Guid.NewGuid(),
-                QuestionPriorityNumber = 2,
-                QuestionType = QuestionTypeElement.CuvantLipsa,
-                QuestionRequirement = "Ce luna e acum?",
-                QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
-                QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                QuestionChoices = new List<ChoiceElement>
-                {
-                    new ChoiceElement
-                    {
-                        ChoiceContent = "Aprilie",
-                        IsCorrect = true
-                    },
-                    new ChoiceElement
-                    {
-                        ChoiceContent = "Martie",
-                        IsCorrect = true
-                    }
-                }
-            },
-            new QuestionElement
-            {
-                QuestionId = Guid.NewGuid(),
-                QuestionPriorityNumber = null,
-                QuestionType = QuestionTypeElement.Grila,
-                QuestionRequirement = "Ce fac azi?",
-                QuestionImageData = null,
-                QuestionVideoLink = null,
-                QuestionChoices = new List<ChoiceElement>
-                {
-                    new ChoiceElement
-                    {
-                        ChoiceContent = "Dorm",
-                        IsCorrect = false
-                    },
-                    new ChoiceElement
-                    {
-                        ChoiceContent = "Licenta",
-                        IsCorrect = true
-                    },
-                    new ChoiceElement
-                    {
-                        ChoiceContent = "Plec in vacanta",
-                        IsCorrect = false
-                    }
-                }
-            }
-        };
+    private bool FilterFuncViewPlacementTest(QuestionViewModel element) => FilterFuncViewPlacementTest1(element, searchString);
 
-        // AdminLanguageElements = await httpClient.GetFromJsonAsync<List<AdminViewLanguageElement>>("webapi/periodictable");
-    }
-
-    private bool FilterFuncViewPlacementTest(QuestionElement element) => FilterFuncViewPlacementTest1(element, searchString);
-
-    private bool FilterFuncViewPlacementTest1(QuestionElement element, string searchString)
+    private bool FilterFuncViewPlacementTest1(QuestionViewModel element, string searchString)
     {
         if (string.IsNullOrWhiteSpace(searchString))
             return true;
@@ -1217,18 +1217,60 @@ else {
         return false;
     }
 
-    void DeletePlacementTest()
+    async void DeletePlacementTest()
     {
-        // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Testul inițial a fost șters cu succes!", Severity.Success);
+
+        var response = await LanguageDataService.DeletePlacementTestAsync(CurrentLanguageId);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit ștererea testului inițial: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else {
+            snackbar = Snackbar.Add("Testul inițial a fost șters cu succes!", Severity.Success);
+            language = (await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId));
+            StateHasChanged();
+        }
     }
 
-    void DeleteQuestionPlacementTest(QuestionElement question)
+    async void DeleteQuestionPlacementTest(QuestionViewModel question)
     {
-        // Do something
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        snackbar = Snackbar.Add("Întrebarea a fost ștearsă cu succes!", Severity.Success);
+
+        List<Guid> questionIds = language.PlacementTest.Select(q => q.QuestionId).ToList();
+        questionIds.Remove(question.QuestionId);
+
+        PlacementTestViewModel updatePlacementTest = new PlacementTestViewModel
+        {
+            LanguageId = CurrentLanguageId,
+                QuestionsId = questionIds
+        };
+
+        var response = await LanguageDataService.UpdatePlacementTestAsync(updatePlacementTest);
+
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "Nu s-a reușit ștererea întrebării din testul inițial: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Întrebarea a fost ștearsă cu succes!", Severity.Success);
+            language = (await LanguageDataService.GetLanguageByIdAsync(CurrentLanguageId));
+            StateHasChanged();
+        }
     }
 
     void OpenDialogUpdatePlacementTest()

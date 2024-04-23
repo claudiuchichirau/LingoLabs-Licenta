@@ -10,18 +10,18 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Up
         {
             this.questionRepository = questionRepository;
 
-            RuleFor(x => x.Questions)
+            RuleFor(x => x.QuestionsId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
-                .Must((questions) =>
+                .Must((questionsIds) =>
                 {
-                    if (questions.Count <= 2)
+                    if (questionsIds.Count <= 2)
                         return false;
 
-                    foreach (var question in questions)
+                    foreach (var questionId in questionsIds)
                     {
-                        if (question.QuestionId != Guid.Empty)
+                        if (questionId != Guid.Empty)
                         {
-                            var questionExists = questionRepository.FindByIdAsync(question.QuestionId);
+                            var questionExists = questionRepository.FindByIdAsync(questionId);
 
                             if (!questionExists.Result.IsSuccess)
                                 return false;

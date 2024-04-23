@@ -26,18 +26,18 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Commands.Cr
                     return true;
                 });
 
-            RuleFor(p => p.Questions)
+            RuleFor(p => p.QuestionsId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
-                .Must((questions) =>
+                .Must((questionsId) =>
                 {
-                    if (questions.Count <= 2)
+                    if (questionsId.Count <= 2)
                         return false;
 
-                    foreach (var question in questions)
+                    foreach (var questionId in questionsId)
                     {
-                        if (question.QuestionId != Guid.Empty)
+                        if (questionId != Guid.Empty)
                         {
-                            var questionExists = questionRepository.FindByIdAsync(question.QuestionId);
+                            var questionExists = questionRepository.FindByIdAsync(questionId);
 
                             if (!questionExists.Result.IsSuccess)
                                 return false;
