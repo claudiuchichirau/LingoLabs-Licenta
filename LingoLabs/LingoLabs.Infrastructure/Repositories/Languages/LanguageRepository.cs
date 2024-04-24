@@ -20,6 +20,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                 .Include(language => language.LanguageCompetences)
                 .Include(language => language.LanguageTags)
                 .Include(language => language.PlacementTest)
+                    .ThenInclude(question => question.Choices)
                 .FirstOrDefaultAsync(language => language.LanguageId == id);
 
             if (language == null)

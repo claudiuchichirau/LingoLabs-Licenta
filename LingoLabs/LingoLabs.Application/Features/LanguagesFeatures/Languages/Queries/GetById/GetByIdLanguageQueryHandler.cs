@@ -83,12 +83,19 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Languages.Queries.Get
 
                     UnassociatedTags = unassociatedTags,
 
-                    PlacementTest = language.Value.PlacementTest.Select(question => new Questions.Queries.QuestionDto
+                    PlacementTest = language.Value.PlacementTest.Select(question => new Questions.Queries.GetById.GetSingleQuestionDto
                     {
                         QuestionId = question.QuestionId,
                         QuestionRequirement = question.QuestionRequirement,
                         QuestionType = question.QuestionType,
-                        LessonId = question.LessonId
+                        LessonId = question.LessonId,
+                        Choices = question.Choices.Select(choice => new Choices.Queries.ChoiceDto
+                        {
+                            ChoiceId = choice.ChoiceId,
+                            ChoiceContent = choice.ChoiceContent,
+                            IsCorrect = choice.IsCorrect,
+                            QuestionId = choice.QuestionId
+                        }).ToList()
                     }).ToList()
                 };
             }

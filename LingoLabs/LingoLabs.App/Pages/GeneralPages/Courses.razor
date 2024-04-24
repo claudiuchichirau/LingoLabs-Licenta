@@ -100,8 +100,16 @@ else
         IsDataLoaded = true;
     }
 
-    void NavigateToWantPlacementTest(Guid languageId)
+    async void NavigateToWantPlacementTest(Guid languageId)
     {
-        NavigationManager.NavigateTo($"/want-placement-test/{languageId}");
+        var language = await LanguageDataService.GetLanguageByIdAsync(languageId);
+        if (language.PlacementTest != null && language.PlacementTest.Any())
+        {
+            NavigationManager.NavigateTo($"/want-placement-test/{languageId}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/language-dashboard/{languageId}");
+        }
     }
 }

@@ -25,8 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\EnrollmentContracts\" />
-    <Folder Include="Services\EnrollmentServices\" />
     <Folder Include="wwwroot\fonts\" />
   </ItemGroup>
 
