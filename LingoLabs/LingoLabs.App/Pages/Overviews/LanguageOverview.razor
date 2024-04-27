@@ -215,7 +215,7 @@ else {
         <DialogContent>
             <EditForm Model="editLanguageLevel">
                 <DataAnnotationsValidator />
-                    <MudTextField T="string" @bind-Value="editLanguageLevel.LanguageLevelName" Label="Nume"></MudTextField>
+                    <MudTextField T="string" @bind-Value="editLanguageLevel.LanguageLevelName" Label="Nume" Disabled="true"></MudTextField>
                     <MudTextField T="string" @bind-Value="editLanguageLevel.LanguageLevelAlias" Label="Alias"></MudTextField>
                     <MudTextField T="string" @bind-Value="editLanguageLevel.LanguageLevelDescription" Label="Descriere"></MudTextField>
                     <MudTextField T="string" @bind-Value="editLanguageLevel.LanguageLevelVideoLink" Label="Link Video"></MudTextField>
@@ -374,10 +374,10 @@ else {
                 <MudText Typo="Typo.body1"><strong>&nbsp;3. Selectați Întrebările:</strong> În cadrul fiecărei competențe lingvistice, vor apărea întrebări specifice pe care trebuie să le selectați. Asigurați-vă că alegeți întrebări care să acopere toate competențele lingvistice.</MudText>
             </MudListItem>
             <MudListItem>
-                <MudText Typo="Typo.body1"><strong>&nbsp;4. Verificați Diversitatea Întrebărilor:</strong> Este esențial să selectați <strong>minim 10 întrebări</strong>, asigurându-vă că acestea provin din toate nivelurile lingvistice și toate competențele lingvistice existente.</MudText>
+                <MudText Typo="Typo.body1"><strong>&nbsp;4. Verificați Diversitatea Întrebărilor:</strong> Este esențial să selectați <strong>minim 10 întrebări</strong> în total și să aveți <strong>același număr de întrebări selectate pentru fiecare categorie de competență lingvistică și nivel lingvistic</strong>.</MudText>
             </MudListItem>
             <MudListItem>
-                <MudText Typo="Typo.body1"><strong>&nbsp;5. Adăugați Întrebările la Test:</strong> După ce ați selectat întrebările dorite, apăsați butonul “Add” pentru a le include în testul inițial.</MudText>
+                <MudText Typo="Typo.body1"><strong>&nbsp;5. Trimiteți formularul:</strong> După ce ați selectat întrebările dorite, apăsați butonul “Create” pentru a le include în testul inițial.</MudText>
             </MudListItem>
         </MudList>
 
@@ -697,6 +697,10 @@ else {
     public ILanguageLevelDataService LanguageLevelDataService { get; set; }
     [Inject]
     public ILanguageCompetenceDataService LanguageCompetenceDataService { get; set; }
+    [Inject]
+    public IChapterDataService ChapterDataService { get; set; }
+    [Inject]
+    public ILessonDataService LessonDataService { get; set; }
     [Inject]
     public IQuestionDataService QuestionDataService { get; set; }
     [Parameter]
@@ -1138,6 +1142,29 @@ else {
     async void CreatePlacementTest(List<Guid> questionIds)
     {
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+        Dictionary<Guid, int> selectedQuestionsCount = new Dictionary<Guid, int>();
+        foreach (var questionId in questionIds)
+        {
+            QuestionViewModel question = await QuestionDataService.GetQuestionByIdAsync(questionId);
+            LessonViewModel lesson = await LessonDataService.GetLessonByIdAsync(question.LessonId);
+            ChapterViewModel chapter = await ChapterDataService.GetChapterByIdAsync(lesson.ChapterId);
+            string key = chapter.LanguageLevelId.ToString() + lesson.LanguageCompetenceId.ToString();
+            if (selectedQuestionsCount.ContainsKey(chapter.LanguageLevelId))
+            {
+                selectedQuestionsCount[chapter.LanguageLevelId]++;
+            }
+            else
+            {
+                selectedQuestionsCount[chapter.LanguageLevelId] = 1;
+            }
+        }
+
+        if (selectedQuestionsCount.Values.Distinct().Count() > 1)
+        {
+            snackbar = Snackbar.Add($"Trebuie să selectați un număr egal de întrebări pentru fiecare nivel de limbă și competență lingvistică!", Severity.Error);
+            return;
+        }
 
         PlacementTestViewModel newPlacementTest = new PlacementTestViewModel
         {

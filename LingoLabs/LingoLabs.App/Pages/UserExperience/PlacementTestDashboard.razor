@@ -1,7 +1,11 @@
 ﻿@page "/placement-test/{Id}"
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Contracts.EnrollmentContracts
+@using LingoLabs.App.Contracts.LanguageContracts
+@using LingoLabs.App.ViewModel.EnrollmentModels
 @using LingoLabs.App.ViewModel.LanguageModels
+@using LingoLabs.App.ViewModel.LanguageModels.EnrollmentModels
 @using LingoLabs.App.ViewModel.LanguageModels.LanguagePlacementTest
 @using LingoLabs.App.ViewModel.MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
@@ -192,44 +196,6 @@
             </div>
         }
     </div>
-
-    <div class="container">
-        <div style="padding: 15px; margin-bottom: 10px;">
-            <p class="text-center" style="color: black; font-size: 18px;"><MudIcon Icon="@Icons.Material.Filled.Analytics" Size=Size.Large Color="Color.Success" />This is your approximate levels for @languageLevels.LanguageName</p>
-        </div>
-
-        @foreach (var competence in languageLevels.UserLanguageLevels)
-        {
-            <div class="row justify-content-center align-items-center" style="padding: 15px;">
-                <div class="col text-center">
-                    <p style="font-size: 22px; color: black;">@competence.LanguageCompetence</p>
-                </div>
-                <div class="col text-left" style="width: 70%; height: 70%;">
-                    <MudTimeline TimelineOrientation=TimelineOrientation.Horizontal TimelinePosition=TimelinePosition.Bottom Reverse=false>
-                        @foreach (var level in LanguageLevels)
-                        {
-                            if (String.Compare(level, competence.LanguageLevel) <= 0)
-                            {
-                                <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
-                                    <ItemContent>
-                                        <MudAlert Severity="Severity.Success">@level</MudAlert>
-                                    </ItemContent>
-                                </MudTimelineItem>
-                            }
-                            else
-                            {
-                                <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
-                                    <ItemContent>
-                                        <MudAlert Severity="Severity.Normal">@level</MudAlert>
-                                    </ItemContent>
-                                </MudTimelineItem>
-                            }
-                        }
-                    </MudTimeline>
-                </div>
-            </div>
-        }
-    </div>
 }
 
 @* QUIZ RESULTS TABLE *@
@@ -265,19 +231,20 @@
                     QuestionViewModel correctQuestion = language.PlacementTest.Find(x => x.QuestionId == context.QuestionId);
                 }
 
-                @if (context.QuestionType == QuestionTypeViewModel.MultipleChoice)        // MULTIPLE CHOICE
+                @if (context.QuestionType == QuestionTypeViewModel.MultipleChoice && correctQuestion.Choices.Count > 0)        // MULTIPLE CHOICE
                 {
-                    Guid correctChoiceId = correctQuestion.Choices.Find(x => x.IsCorrect).ChoiceId;
-                    <MudTd DataLabel="Your Answer" Class="text-center">@context.UserChoiceId</MudTd>
-                    <MudTd DataLabel="Correct Answer" Class="text-center">@correctChoiceId</MudTd>
+                    var correctChoiceContent = correctQuestion.Choices.Find(x => x.IsCorrect).ChoiceContent;
+                    var userChoiceContent = correctQuestion.Choices.Find(x => x.ChoiceId == context.UserChoiceId).ChoiceContent;
+                    <MudTd DataLabel="Your Answer" Class="text-center">@userChoiceContent</MudTd>
+                    <MudTd DataLabel="Correct Answer" Class="text-center">@correctChoiceContent</MudTd>
                 }
-                else if (context.QuestionType == QuestionTypeViewModel.TrueFalse)         // TRUE / FALSE
+                else if (context.QuestionType == QuestionTypeViewModel.TrueFalse && correctQuestion.Choices.Count > 0)         // TRUE / FALSE
                 {
                     bool correctitudinesQuestion = correctQuestion.Choices[0].IsCorrect;
                     <MudTd DataLabel="Your Answer" Class="text-center">@context.ChoiceUserIsCorrect</MudTd>
                     <MudTd DataLabel="Correct Answer" Class="text-center">@correctitudinesQuestion</MudTd>
                 }
-                else if (context.QuestionType == QuestionTypeViewModel.MissingWord)       // MISSING WORD
+                else if (context.QuestionType == QuestionTypeViewModel.MissingWord && correctQuestion.Choices.Count > 0)       // MISSING WORD
                 {
                     <MudTd DataLabel="Your Answer" Class="text-center">@context.ChoiceContent</MudTd>
 
@@ -291,7 +258,7 @@
                     <MudTd DataLabel="Correct Answer" Class="text-center">@cuvantLipsaCorrectValuesString</MudTd>
                 }
 
-                @if (@context.ChoiceUserIsCorrect != null && @context.ChoiceUserIsCorrect == true)
+                @if (@context.Result == true)
                 {
                     <MudTd DataLabel="Is Correct" Style="color: forestgreen;" Class="text-center">Yes</MudTd>
                 }
@@ -305,13 +272,98 @@
             </PagerContent>
         </MudTable>
     </div>
+}
 
+@if (IsUSerLanguageLevelsInfoLoaded == true)
+{
+    <div class="container">
+        <div style="padding: 15px; margin-bottom: 10px;">
+            <p class="text-center" style="color: black; font-size: 18px;"><MudIcon Icon="@Icons.Material.Filled.Analytics" Size=Size.Large Color="Color.Success" />This is your approximate levels for @languageLevels.LanguageName</p>
+        </div>
+
+        @foreach (var competence in language.LanguageCompetences)
+        {
+            <div class="row justify-content-center align-items-center" style="padding: 15px;">
+                <div class="col text-center">
+                    <p style="font-size: 22px; color: black;">@competence.LanguageCompetenceName</p>
+                </div>
+                <div class="col text-left" style="width: 70%; height: 70%;">
+
+                    <MudTimeline TimelineOrientation=TimelineOrientation.Horizontal TimelinePosition=TimelinePosition.Bottom Reverse=false>
+                        @{
+                            bool found = false;
+                            if (competenceLevelDictionary.ContainsKey(competence.LanguageCompetenceId))
+                            {
+                                @foreach (var level in language.LanguageLevels)
+                                {
+                                    if (competenceLevelDictionary[competence.LanguageCompetenceId] == level.LanguageLevelId)
+                                    {
+                                        found = true;
+                                        <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+                                            <ItemContent>
+                                                <MudAlert Severity="Severity.Success">@level.LanguageLevelName</MudAlert>
+                                            </ItemContent>
+                                        </MudTimelineItem>
+                                    }
+                                    else if (!found && competenceLevelDictionary[competence.LanguageCompetenceId] != level.LanguageLevelId)
+                                    {
+                                        <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+                                            <ItemContent>
+                                                <MudAlert Severity="Severity.Success">@level.LanguageLevelName</MudAlert>
+                                            </ItemContent>
+                                        </MudTimelineItem>
+                                    }
+                                    else if (found && competenceLevelDictionary[competence.LanguageCompetenceId] != level.LanguageLevelId)
+                                    {
+                                        <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
+                                            <ItemContent>
+                                                <MudAlert Severity="Severity.Normal">@level.LanguageLevelName</MudAlert>
+                                            </ItemContent>
+                                        </MudTimelineItem>                                    
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                @foreach (var level in language.LanguageLevels)
+                                {
+                                    <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
+                                        <ItemContent>
+                                            <MudAlert Severity="Severity.Normal">@level.LanguageLevelName</MudAlert>
+                                        </ItemContent>
+                                    </MudTimelineItem>
+                                }
+                            }
+                        }
+                    </MudTimeline>
+                </div>
+            </div>
+        }
+    </div>
+}
+else if (IsUSerLanguageLevelsInfoLoaded == false && showQuizResults == true)
+{
+    <div class="text-center" style="margin-bottom: 50px;">
+        <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
+            Your <span style="color: #FC6F05;">LingoLab's</span> Quiz Results
+        </h1>
+        <h2 style="font-size: 19px; margin-bottom: 30px;">
+            Your quiz results are being processed. Please wait a moment while we calculate your language levels.
+            <div class="text-center" style="margin-top: 100px; margin-bottom: 48px;">
+                <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+            </div>
+        </h2>
+    </div>
+
+}
+
+@if (showQuizResults == true)
+{
     <div style="display: flex; justify-content: center; padding: 25px;">
         <MudButton Variant="Variant.Filled" OnClick="NavigateToLanguageDashboard" Color="Color.Primary" Style="background-color: #FC6F05; color: white;">
             <MudIcon Icon="@Icons.Material.Filled.Quiz"></MudIcon> Explore Lessons
         </MudButton>
     </div>
-
 }
 
 
@@ -339,13 +391,44 @@
 @code {
     [Inject]
     private ILanguageDataService LanguageDataService { get; set; }
+    [Inject]
+    private ILanguageCompetenceDataService LanguageCompetenceDataService { get; set; }
+    [Inject]
+    private ILanguageLevelDataService LanguageLevelDataService { get; set; }
+    [Inject]
+    private IChapterDataService ChapterDataService { get; set; }
+    [Inject]
+    private ILessonDataService LessonDataService { get; set; }
+    [Inject]
+    private IQuestionDataService QuestionDataService { get; set; }
+    [Inject]
+    private IChoiceDataService ChoiceDataService { get; set; }
+    [Inject]
+    private IUserLanguageLevelDataService UserLanguageLevelDataService { get; set; }
+
+    [Inject]
+    private IEnrollmentDataService EnrollmentDataService { get; set; }
+    [Inject]
+    private ILanguageLevelResultDataService LanguageLevelResultDataService { get; set; }
+    [Inject]
+    private IChapterResultDataService ChapterResultDataService { get; set; }
+    [Inject]
+    private ILessonResultDataService LessonResultDataService { get; set; }
+    [Inject]
+    private IQuestionResultDataService QuestionResultDataService { get; set; }
+
     [Parameter]
     public string Id { get; set; }
     Guid CurrentLanguageId = Guid.Empty;
+    Guid UserId = Guid.Empty;
+    Guid CurrentEnrollmentId = Guid.Empty;
 
     private LanguageViewModel language = new LanguageViewModel();
+    private EnrollmentViewModel enrollment = new EnrollmentViewModel();
+    Dictionary<Guid, Guid> competenceLevelDictionary = new Dictionary<Guid, Guid>();
     private AuthenticationState authState;
     private bool IsLanguageInfoLoaded = false;
+    private bool IsUSerLanguageLevelsInfoLoaded = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -353,6 +436,8 @@
 
         var user = authState.User;
         var claims = user.Claims.ToList();
+        var userId = claims.Find(x => x.Type == "nameid").Value;
+        UserId = Guid.Parse(userId);
 
         CurrentLanguageId = Guid.Parse(Id);
 
@@ -430,35 +515,44 @@
 
 @* SHOW QUIZ RESULTS *@
 @functions {
+    private Snackbar snackbar;
     private bool showQuizResultsTable = false;
     private bool showQuizResults = false;
     private string searchString1 = "";
 
     public async Task SubmitQuiz(List<UserQuestionResponseViewModel> userQuestionResponses)
     {
+        int correctAnswers = 0;
+
         foreach (UserQuestionResponseViewModel questionResult in userQuestionResponses)
         {
             Guid questionResultId = questionResult.QuestionId;
 
             QuestionViewModel correctQuestion = language.PlacementTest.Find(x => x.QuestionId == questionResultId);
 
-            if (questionResult.QuestionType == QuestionTypeViewModel.MultipleChoice)     // MULTIPLE CHOICES
+            if (questionResult.QuestionType == QuestionTypeViewModel.MultipleChoice && correctQuestion.Choices.Count > 0)     // MULTIPLE CHOICES
             {
                 Guid correctChoiceId = correctQuestion.Choices.Find(x => x.IsCorrect).ChoiceId;
                 if (questionResult.UserChoiceId == correctChoiceId)
-                    questionResult.ChoiceUserIsCorrect = true;
+                {
+                    questionResult.Result = true;
+                    correctAnswers++;
+                }
                 else
-                    questionResult.ChoiceUserIsCorrect = false;
+                    questionResult.Result = false;
             }
-            else if (questionResult.QuestionType == QuestionTypeViewModel.TrueFalse)     // TRUE / FALSE
+            else if (questionResult.QuestionType == QuestionTypeViewModel.TrueFalse && correctQuestion.Choices.Count > 0)     // TRUE / FALSE
             {
                 bool correctitudinesQuestion = correctQuestion.Choices[0].IsCorrect;
                 if (questionResult.ChoiceUserIsCorrect == correctitudinesQuestion)
-                    questionResult.ChoiceUserIsCorrect = true;
+                {
+                    questionResult.Result = true;
+                    correctAnswers++;
+                }
                 else
-                    questionResult.ChoiceUserIsCorrect = false;
+                    questionResult.Result = false;
             }
-            else if (questionResult.QuestionType == QuestionTypeViewModel.MissingWord)      // MISSING WORD
+            else if (questionResult.QuestionType == QuestionTypeViewModel.MissingWord && correctQuestion.Choices.Count > 0)      // MISSING WORD
             {
                 List<string> cuvantLipsaCorrectValues = new List<string>();
                 foreach (var choice in correctQuestion.Choices)
@@ -466,12 +560,13 @@
                     cuvantLipsaCorrectValues.Add(choice.ChoiceContent);
                 }
 
-                questionResult.ChoiceUserIsCorrect = false;
+                questionResult.Result = false;
                 foreach (string correctValue in cuvantLipsaCorrectValues)
                 {
                     if (questionResult.ChoiceContent == correctValue)
                     {
-                        questionResult.ChoiceUserIsCorrect = true;
+                        questionResult.Result = true;
+                        correctAnswers++;
                         break;
                     }
                 }
@@ -480,13 +575,38 @@
 
         showCompleteQuiz = false;
         showSubmitButton = false;
-        showQuizResults = true;
         showQuizResultsTable = true;
 
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        Snackbar.Add("Quiz submitted successfully!", Severity.Success);
 
-        CalculateScore();
+        // CREATE RESULTS
+
+        EnrollmentViewModel enrollmentViewModel = new EnrollmentViewModel
+        {
+            LanguageId = CurrentLanguageId,
+            UserId = UserId,
+        };
+
+        var response = await EnrollmentDataService.CreateEnrollmentAsync(enrollmentViewModel);
+        CurrentEnrollmentId = response.Data.EnrollmentId;
+
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "An error occurred while submitting the quiz. Please try again later: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            Snackbar.Add("Quiz submitted successfully!", Severity.Success);
+        }
+
+        CalculateScore(correctAnswers);
+        CalculateUserLanguageLevels(userQuestionResponses);
     }
 
     private bool FilterFunc1(UserQuestionResponseViewModel element) => FilterFunc(element, searchString1);
@@ -506,31 +626,119 @@
 
     private int score;
 
-    void CalculateScore()
+    void CalculateScore(int correctAnswers)
     {
         score = 0;
-        foreach (var questionResult in userQuestions)
+
+        score = (correctAnswers * 100) / userQuestions.Count;
+
+        showQuizResults = true;
+    }
+
+    async void CalculateUserLanguageLevels(List<UserQuestionResponseViewModel> userQuestionResponses)
+    {
+        foreach (var languageCompetence in language.LanguageCompetences)
         {
-            if (questionResult.ChoiceUserIsCorrect == true)
+            List<UserQuestionResponseViewModel> languageCompetenceQuestions = new List<UserQuestionResponseViewModel>();
+
+            foreach (var question in userQuestionResponses)
             {
-                score++;
+                var placementTestQuestion = language.PlacementTest.Find(q => q.QuestionId == question.QuestionId);
+                LessonViewModel lesson = await LessonDataService.GetLessonByIdAsync(placementTestQuestion.LessonId);
+
+                if (lesson.LanguageCompetenceId == languageCompetence.LanguageCompetenceId)
+                {
+                    languageCompetenceQuestions.Add(question);
+                }
+            }
+
+
+            if (!languageCompetenceQuestions.Any())
+            {
+                continue;
+            }
+
+            Guid? highestPassedLevelId = null;
+
+            foreach (var languageLevel in language.LanguageLevels)
+            {
+                List<UserQuestionResponseViewModel> levelQuestions = new List<UserQuestionResponseViewModel>();
+
+                foreach (var question in languageCompetenceQuestions)
+                {
+                    var placementTestQuestion = language.PlacementTest.Find(q => q.QuestionId == question.QuestionId);
+                    LessonViewModel lesson = await LessonDataService.GetLessonByIdAsync(placementTestQuestion.LessonId);
+                    ChapterViewModel chapter = await ChapterDataService.GetChapterByIdAsync(lesson.ChapterId);
+                    if (chapter.LanguageLevelId == languageLevel.LanguageLevelId)
+                    {
+                        levelQuestions.Add(question);
+                    }
+                }
+
+                var correctResponses = levelQuestions
+                    .Count(q => userQuestionResponses
+                        .Any(r => r.QuestionId == q.QuestionId && r.Result));
+
+                if ((double)correctResponses / levelQuestions.Count >= 0.65)
+                {
+                    highestPassedLevelId = languageLevel.LanguageLevelId;
+                }
+            }
+
+            if (highestPassedLevelId.HasValue)
+            {
+                UserLanguageLevelViewModel userLanguageLevelViewModel = new UserLanguageLevelViewModel
+                {
+                    EnrollmentId = CurrentEnrollmentId,
+                    LanguageCompetenceId = languageCompetence.LanguageCompetenceId,
+                    LanguageLevelId = highestPassedLevelId.Value
+                };
+
+                var response = await UserLanguageLevelDataService.CreateUserLanguageLevelAsync(userLanguageLevelViewModel);
+
+                Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+                if (!response.IsSuccess)
+                {
+                    var errorMessage = "An error occurred while saving the user language level. Please try again later: " + response.Message;
+                    if (response.ValidationErrors != null)
+                    {
+                        errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+                    }
+                    snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                    return;
+                }
+                else
+                {
+                    snackbar = Snackbar.Add("User language level saved successfully!", Severity.Success); 
+                }
+            }
+        }
+        enrollment = await EnrollmentDataService.GetEnrollmentByIdAsync(CurrentEnrollmentId);
+        StateHasChanged();
+
+        competenceLevelDictionary = new Dictionary<Guid, Guid>();
+
+        foreach (var userLanguageLevel in enrollment.UserLanguageLevels)
+        {
+            if (!competenceLevelDictionary.ContainsKey(userLanguageLevel.LanguageCompetenceId))
+            {
+                competenceLevelDictionary[userLanguageLevel.LanguageCompetenceId] = userLanguageLevel.LanguageLevelId;
             }
         }
 
-        score = (score * 100) / userQuestions.Count;
+        IsUSerLanguageLevelsInfoLoaded = true;
+        StateHasChanged();
     }
 
     void NavigateToLanguageDashboard()
     {
-        NavigationManager.NavigateTo("/language-dashboard");
+        NavigationManager.NavigateTo($"/language-dashboard/{CurrentLanguageId}");
     }
 }
 
 
 @* SHOW LANGUAGE LEVELS *@
 @functions {
-    private List<string> LanguageLevels { get; set; } = new List<string> { "A1", "A2", "B1", "B2", "C1", "C2" };
-
     private UserLanguage languageLevels { get; set; } = new UserLanguage
     {
         LanguageName = "Limba Engleza",

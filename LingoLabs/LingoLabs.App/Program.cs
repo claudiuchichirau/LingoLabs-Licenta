@@ -2,9 +2,11 @@ using Blazored.LocalStorage;
 using LingoLabs.App;
 using LingoLabs.App.Auth;
 using LingoLabs.App.Contracts.AuthContracts;
+using LingoLabs.App.Contracts.EnrollmentContracts;
 using LingoLabs.App.Contracts.LanguageContracts;
 using LingoLabs.App.Services;
 using LingoLabs.App.Services.AuthServices;
+using LingoLabs.App.Services.EnrollmentServices;
 using LingoLabs.App.Services.LanguageServices;
 using MatBlazor;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -72,6 +74,43 @@ builder.Services.AddHttpClient<ILanguageDataService, LanguageDataService>(client
 {
     client.BaseAddress = new Uri("https://localhost:7210/");
 });
+builder.Services.AddHttpClient<IUserLanguageLevelDataService, UserLanguageLevelDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<IEnrollmentDataService, EnrollmentDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<ILanguageCompetenceResultDataService, LanguageCompetenceResultDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<ILanguageLevelResultDataService, LanguageLevelResultDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<IChapterResultDataService, ChapterResultDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<ILessonResultDataService, LessonResultDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<IReadingQuestionResultDataService, ReadingQuestionResultDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<IWritingQuestionResultDataService, WritingQuestionResultDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+builder.Services.AddHttpClient<IQuestionResultDataService, QuestionResultDataService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7210/");
+});
+
 
 builder.Services.AddScoped<AuthenticationStateProvider>(s => s.GetRequiredService<CustomStateProvider>());
 builder.Services.AddHttpClient<IAuthenticationService, AuthenticationService>(client =>

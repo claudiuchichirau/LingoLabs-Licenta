@@ -1,8 +1,11 @@
 ﻿@page "/"
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Contracts.EnrollmentContracts
 @using LingoLabs.App.Services.AuthServices
 @using LingoLabs.App.ViewModel.LanguageModels
+@using LingoLabs.App.ViewModel.Responses
+@using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @inject NavigationManager NavigationManager
 @inject CustomStateProvider AuthStateProvider
@@ -14,7 +17,20 @@
     <div style="margin-left:100px; margin-top:10px;">
         <h1 style="font-size: 40px; color: white;">Studiul online este acum mult mai accesibil</h1>
         <p class="poppins-regular" style="font-size: 18px; padding:5px; color: white;">LingoLabs este o platformă unde poți învăța interactiv.</p>
-        <MudButton Variant="Variant.Filled" OnClick="NavigateToChooseLanguage" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Să începem!</MudButton>
+
+        <CascadingAuthenticationState>
+			<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+                <Authorized>
+                    <MudButton Variant="Variant.Filled" OnClick="NavigateToChooseLanguage" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Să începem!</MudButton>
+                </Authorized>
+
+                <NotAuthorized>
+                    <MudButton Variant="Variant.Filled" OnClick="NavigateToLogin" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Să începem!</MudButton>
+                </NotAuthorized>
+
+            </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+        </CascadingAuthenticationState>
     </div>
     <div>
         <img style="margin-left:80px; margin-right:100px; padding: 59px;" src="images/homepage/55761-removebg-preview.png">
@@ -92,9 +108,24 @@
             </p>
 
         </div>
-        <div class="col-md-6 d-flex justify-content-center align-items-center">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToLessonDashboard" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Să începem!</MudButton>
-        </div>
+
+        <CascadingAuthenticationState>
+			<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+                <Authorized>
+                    <div class="col-md-6 d-flex justify-content-center align-items-center">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToChooseLanguage" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Să începem!</MudButton>
+                    </div>
+                </Authorized>
+
+                <NotAuthorized>
+                    <div class="col-md-6 d-flex justify-content-center align-items-center">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToLogin" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Să începem!</MudButton>
+                    </div>
+                </NotAuthorized>
+
+            </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+        </CascadingAuthenticationState>
     </div>
 </div>
 
@@ -137,14 +168,31 @@ else
                                 </div>
                             </div>
 
-                            <div style="display: flex; justify-content: center;">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToWantPlacementTest(language.LanguageId)" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
-                            </div>
+                            <CascadingAuthenticationState>
+			                    <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
 
-                            @* daca e logat + daca e inscris deja la curs *@
-                            @* <div style="display: flex; justify-content: center;">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Vezi Progresul</MudButton>
-                            </div> *@
+                                    <Authorized>
+                                        @if (IsUserRegisterCourse(language.LanguageId) == false)
+                                        {
+                                            <div style="display: flex; justify-content: center;">
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToWantPlacementTest(language.LanguageId)" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                                            </div>
+                                        } else {
+                                            @* daca e logat + daca e inscris deja la curs *@
+                                            <div style="display: flex; justify-content: center;">
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;" OnClick="() => NavigateToLanguageDashboard(language.LanguageId)">Vezi Progresul</MudButton>
+                                            </div> 
+                                        }
+                                    </Authorized>
+
+                                    <NotAuthorized>
+                                        <div style="display: flex; justify-content: center;">
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToLogin()" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                                        </div>
+                                    </NotAuthorized>
+                                </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+                            </CascadingAuthenticationState>
+
                         </div>
                     </div>
                 </div>
@@ -184,7 +232,7 @@ else
 <div class="container-fluid p-3" style="background-color: #E9EFFD; padding: 10px; margin-top: 80px;">
     <div class="row justify-content-center">
         <div class="col-md-6 text-left">
-            <h2 class="p-2" style="color: #2563EB; margin-left: 76px;">Testează-ți Engleza chiar acum!</h2>
+            <h2 class="p-2" style="color: #2563EB; margin-left: 76px;">Testează-ți nivelul de limbă străină chiar acum!</h2>
             <p style="font-size: 16px; font-weight: bold; margin-left: 85px;">
                 Încearcă testele noastre rapide și gratuite online pentru a afla care este nivelul tău de limbă Engleză și care dintre Nivelele
                 <span style="color: #FC6F05;">LingoLabs</span>
@@ -193,7 +241,20 @@ else
         </div>
 
         <div class="col-md-6 d-flex justify-content-center align-items-center">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Testează acum!</MudButton>
+
+            <CascadingAuthenticationState>
+			    <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+
+                    <Authorized>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToChooseLanguage" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Testează acum!</MudButton>
+                    </Authorized>
+
+                    <NotAuthorized>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToLogin" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Testează acum!</MudButton>
+                    </NotAuthorized>
+
+                </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+            </CascadingAuthenticationState>
         </div>
     </div>
 </div>
@@ -327,8 +388,12 @@ else
     [Inject]
     public IAuthenticationService AuthenticationService { get; set; }
 
+    [Inject]
+    public IEnrollmentDataService EnrollmentDataService { get; set; }
+
     public List<LanguageViewModel> Languages { get; set; } = new List<LanguageViewModel>();
     private bool IsDataLoaded = false;
+    private UserEnrollmentsResponse userEnrollments = new UserEnrollmentsResponse();
 }
 
 @functions {
@@ -337,10 +402,19 @@ else
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
 
         var user = authState.User;
-        var claims = user.Claims.ToList();
+        if (user.Identity.IsAuthenticated)
+        {
+            var claims = user.Claims.ToList();
+            userEnrollments = await EnrollmentDataService.GetAllEnrollmentsByUserIdAsync();
+        }
 
         Languages = (await LanguageDataService.GetAllLanguagesAsync()).Take(3).ToList();
         IsDataLoaded = true;
+    }
+
+    private bool IsUserRegisterCourse(Guid languageId)
+    {
+        return userEnrollments.Enrollments.Any(e => e.LanguageId == languageId);
     }
 
     void NavigateToLessonDashboard()
@@ -359,6 +433,16 @@ else
         {
             NavigationManager.NavigateTo($"/language-dashboard/{languageId}");
         }
+    }
+
+    async void NavigateToLanguageDashboard(Guid languageId)
+    {
+        NavigationManager.NavigateTo($"/language-dashboard/{languageId}");
+    }
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
     }
 
     void NavigateToCourses()

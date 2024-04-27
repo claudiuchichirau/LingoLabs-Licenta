@@ -3,6 +3,7 @@ using LingoLabs.App.Contracts.EnrollmentContracts;
 using LingoLabs.App.Services.Responses;
 using LingoLabs.App.ViewModel.EnrollmentModels;
 using LingoLabs.App.ViewModel.LanguageModels;
+using LingoLabs.App.ViewModel.Responses;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -39,11 +40,11 @@ namespace LingoLabs.App.Services.EnrollmentServices
 
             if (result.IsSuccessStatusCode)
             {
-                var enrollment = await result.Content.ReadFromJsonAsync<EnrollmentViewModel>();
+                var enrollment = await result.Content.ReadFromJsonAsync<EnrollmentResponse>();
                 return new ApiResponse<EnrollmentViewModel>
                 {
                     IsSuccess = true,
-                    Data = enrollment
+                    Data = enrollment.Enrollment
                 };
             }
 
@@ -113,7 +114,7 @@ namespace LingoLabs.App.Services.EnrollmentServices
             return enrollments!;
         }
 
-        public async Task<List<EnrollmentViewModel>> GetAllEnrollmentsByUserIdAsync()
+        public async Task<UserEnrollmentsResponse> GetAllEnrollmentsByUserIdAsync()
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
@@ -131,7 +132,7 @@ namespace LingoLabs.App.Services.EnrollmentServices
                 throw new ApplicationException(content);
             }
 
-            var enrollments = JsonSerializer.Deserialize<List<EnrollmentViewModel>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var enrollments = JsonSerializer.Deserialize<UserEnrollmentsResponse>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             return enrollments!;
         }
 

@@ -1,9 +1,11 @@
 ﻿@page "/dashboard"
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Contracts.EnrollmentContracts
 @using LingoLabs.App.Services.AuthServices
 @using LingoLabs.App.ViewModel.AuthenticationModels
 @using LingoLabs.App.ViewModel.LanguageModels
+@using LingoLabs.App.ViewModel.Responses
 @using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @using System.Net.Http.Json
@@ -295,71 +297,32 @@ else
         <div class="container p-3">
             <div class="row justify-content-center">
 
-                <div class="col-md-4">
-                    <div class="card m-3" style="width: 375px;">
-                        <img class="card-img-top" src="/images/homepage/homepage-1.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto; margin-top: 15px;">
-                        <div class="card-body">
-                            <h5 class="card-title text-center">English 1</h5>
-                            <div class="row">
-                                <div class="col text-center">
-                                    <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
+                @foreach (var language in userUnEnrollments)
+                {
+                    <div class="col-md-4">
+                        <div class="card m-3">
+                            <img class="card-img-top" src="@language.LanguageFlag" style="max-height: 200px; width:auto; display: block; margin: auto; margin-top: 15px;">
+                            <div class="card-body">
+                                <h5 class="card-title text-center">@language.LanguageName</h5>
+                                <div class="row">
+                                    <div class="col text-center">
+                                        <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: @language.LanguageLevelCount</p>
+                                    </div>
+                                    <div class="col text-center">
+                                        <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: @language.LessonCount</p>
+                                    </div>
                                 </div>
-                                <div class="col text-center">
-                                    <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
-                                </div>
-                            </div>
 
-                            <div style="display: flex; justify-content: center;">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToWantPlacementTest" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                                <div style="display: flex; justify-content: center;">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToWantPlacementTest(language.LanguageId)" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card m-3" style="width: 375px;">
-                        <img class="card-img-top" src="/images/homepage/homepage-1.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto; margin-top: 15px;">
-                        <div class="card-body">
-                            <h5 class="card-title text-center">English 1</h5>
-                            <div class="row">
-                                <div class="col text-center">
-                                    <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
-                                </div>
-                                <div class="col text-center">
-                                    <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
-                                </div>
-                            </div>
-
-                            <div style="display: flex; justify-content: center;">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToWantPlacementTest" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="card m-3" style="width: 375px;">
-                        <img class="card-img-top" src="/images/homepage/homepage-1.png" style="max-width: 300px; max-height: 200px; display: block; margin: auto; margin-top: 15px;">
-                        <div class="card-body">
-                            <h5 class="card-title text-center">English 1</h5>
-                            <div class="row">
-                                <div class="col text-center">
-                                    <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: 2</p>
-                                </div>
-                                <div class="col text-center">
-                                    <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: 2</p>
-                                </div>
-                            </div>
-
-                            <div style="display: flex; justify-content: center;">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToWantPlacementTest" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                }
 
                 <div style="display: flex; justify-content: center;">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px; margin-top: 15px;">Vezi toate cursurile</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToCourses" Style="background-color: #FC6F05; color: white; padding: 10px; margin-top: 15px;">Vezi toate cursurile</MudButton>
                 </div>
 
             </div>
@@ -384,6 +347,8 @@ else
     private IUserDataService UserDataService { get; set; }
     [Inject]
     public ILanguageDataService LanguageDataService { get; set; }
+    [Inject]
+    public IEnrollmentDataService EnrollmentDataService { get; set; }
 
     private UserDto userInfo { get; set; } 
     private bool IsUSerDataLoaded = false;
@@ -392,6 +357,9 @@ else
     private bool IsPendingAdminDataLoaded = false;
 
     public List<LanguageViewModel> AdminViewLanguages { get; set; } = new List<LanguageViewModel>();
+    private UserEnrollmentsResponse userEnrollments = new UserEnrollmentsResponse();
+    private List<LanguageViewModel> userUnEnrollments = new List<LanguageViewModel>();
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -409,9 +377,22 @@ else
         userInfo = response.Data;
         IsUSerDataLoaded = true;
 
-        pendingAdmins = (await UserDataService.GetPendingAdminsAsync()).ToList();
+        if (HasAdminRole)
+        {
+            pendingAdmins = (await UserDataService.GetPendingAdminsAsync()).ToList();
+            AdminViewLanguages = (await LanguageDataService.GetAllLanguagesAsync()).ToList();
+        }
 
-        AdminViewLanguages = (await LanguageDataService.GetAllLanguagesAsync()).ToList();
+        if (HasStudentRole)
+        {
+            userEnrollments = await EnrollmentDataService.GetAllEnrollmentsByUserIdAsync();
+            userUnEnrollments = (await LanguageDataService.GetAllLanguagesAsync()).ToList();
+
+            var enrolledLanguageIds = userEnrollments.Enrollments.Select(e => e.LanguageId).ToList();
+
+            // Elimină din userUnEnrollments elementele care se găsesc și în userEnrollments
+            userUnEnrollments.RemoveAll(language => enrolledLanguageIds.Contains(language.LanguageId));
+        }
 
         IsPendingAdminDataLoaded = true;
     }
@@ -776,8 +757,26 @@ else
         }
     };
 
-    void NavigateToWantPlacementTest()
+    async void NavigateToWantPlacementTest(Guid languageId)
     {
-        NavigationManager.NavigateTo("/want-placement-test");
+        var language = await LanguageDataService.GetLanguageByIdAsync(languageId);
+        if (language.PlacementTest != null && language.PlacementTest.Any())
+        {
+            NavigationManager.NavigateTo($"/want-placement-test/{languageId}");
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/language-dashboard/{languageId}");
+        }
+    }
+
+    void NavigateToCourses()
+    {
+        NavigationManager.NavigateTo("/courses");
+    }
+
+    void NavigateToTakeQuiz()
+    {
+        NavigationManager.NavigateTo("/");
     }
 }

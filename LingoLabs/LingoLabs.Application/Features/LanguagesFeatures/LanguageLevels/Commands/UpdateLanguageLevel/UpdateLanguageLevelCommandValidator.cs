@@ -21,10 +21,6 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Comman
                 .NotNull()
                 .MaximumLength(50).WithMessage("{PropertyName} must not exceed 50 characters.");
 
-            RuleFor(p => p)
-                .MustAsync((p, cancellation) => ValidateLanguageLevelName(p.LanguageLevelName, languageLevelRepository, p.LanguageLevelId))
-                .WithMessage("LanguageLevelName must be unique.");
-
             RuleFor(p => p.LanguageLevelAlias)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()

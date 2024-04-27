@@ -9,5 +9,6 @@
         public string? ChoiceContent { get; set; }
         public Guid? UserChoiceId { get; set; }
         public bool QuestionCompleted { get; set; }
+        public bool Result { get; set; }
     }
 }

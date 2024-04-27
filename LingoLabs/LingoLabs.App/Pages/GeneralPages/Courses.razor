@@ -1,9 +1,13 @@
 ﻿@page "/courses"
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Contracts.EnrollmentContracts
 @using LingoLabs.App.Services.AuthServices
+@using LingoLabs.App.ViewModel.EnrollmentModels
 @using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
+@using LingoLabs.App.ViewModel.Responses
+@using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @using MatBlazor
 @using System.Net.Http.Json
@@ -60,14 +64,30 @@ else
                                 </div>
                             </div>
 
-                            <div style="display: flex; justify-content: center;">
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToWantPlacementTest(language.LanguageId)" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
-                            </div>
+                            <CascadingAuthenticationState>
+			                    <Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
 
-                            @* daca e logat + daca e inscris deja la curs *@
-                            @* <div style="display: flex; justify-content: center;">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;">Vezi Progresul</MudButton>
-                    </div> *@
+                                    <Authorized>
+                                        @if (IsUserRegisterCourse(language.LanguageId) == false)
+                                        {
+                                            <div style="display: flex; justify-content: center;">
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToWantPlacementTest(language.LanguageId)" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                                            </div>
+                                        } else {
+                                            @* daca e logat + daca e inscris deja la curs *@
+                                            <div style="display: flex; justify-content: center;">
+                                                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;" OnClick="() => NavigateToLanguageDashboard(language.LanguageId)">Vezi Progresul</MudButton>
+                                            </div> 
+                                        }
+                                    </Authorized>
+
+                                    <NotAuthorized>
+                                        <div style="display: flex; justify-content: center;">
+                                            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToLogin()" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                                        </div>
+                                    </NotAuthorized>
+                                </Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+                            </CascadingAuthenticationState>
                         </div>
                     </div>
                 </div>
@@ -84,8 +104,12 @@ else
     [Inject]
     public IAuthenticationService AuthenticationService { get; set; }
 
+    [Inject]
+    public IEnrollmentDataService EnrollmentDataService { get; set; }
+
     public List<LanguageViewModel> Languages { get; set; } = new List<LanguageViewModel>();
     private bool IsDataLoaded = false;
+    private UserEnrollmentsResponse userEnrollments = new UserEnrollmentsResponse();
 }
 
 @functions {
@@ -94,10 +118,20 @@ else
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
 
         var user = authState.User;
-        var claims = user.Claims.ToList();
+        
+        if (user.Identity.IsAuthenticated)
+        {
+            var claims = user.Claims.ToList();
+            userEnrollments = await EnrollmentDataService.GetAllEnrollmentsByUserIdAsync();
+        }
 
-        Languages = (await LanguageDataService.GetAllLanguagesAsync()).Take(3).ToList();
+        Languages = (await LanguageDataService.GetAllLanguagesAsync()).ToList();
         IsDataLoaded = true;
+    }
+
+    private bool IsUserRegisterCourse(Guid languageId)
+    {
+        return userEnrollments.Enrollments.Any(e => e.LanguageId == languageId);
     }
 
     async void NavigateToWantPlacementTest(Guid languageId)
@@ -111,5 +145,15 @@ else
         {
             NavigationManager.NavigateTo($"/language-dashboard/{languageId}");
         }
+    }
+
+    async void NavigateToLanguageDashboard(Guid languageId)
+    {
+        NavigationManager.NavigateTo($"/language-dashboard/{languageId}");
+    }
+
+    private void NavigateToLogin()
+    {
+        NavigationManager.NavigateTo("/login");
     }
 }
