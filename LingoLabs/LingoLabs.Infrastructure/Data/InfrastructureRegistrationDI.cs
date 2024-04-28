@@ -1,4 +1,5 @@
 ﻿using LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Commands.DeleteChapterResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Commands.DeleteEnrollment;
 using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageCompetenceResults.Commands.DeleteLanguageCompetenceResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResults.Commands.DeleteLanguageLevelResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.DeleteLessonResult;
@@ -67,6 +68,8 @@ namespace LingoLabs.Infrastructure.Data
             services.AddTransient<DeleteLessonCommandHandler>();
             services.AddTransient<DeleteQuestionCommandHandler>();
             services.AddTransient<DeleteChoiceCommandHandler>();
+            services.AddTransient<DeleteEnrollmentCommandHandler>();
+            services.AddTransient<DeleteUserLanguageLevelCommandHandler>();
 
             return services;
         }

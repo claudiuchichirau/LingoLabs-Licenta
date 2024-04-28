@@ -215,42 +215,81 @@ else
             <h1 style="color: #FC6F05; font-size: 33px; padding: 15px; margin-left: 85px; margin-top: 85px;" class="poppins-semi-bold">Cursurile Mele</h1>
         </div>
 
+        @if(userEnrollments.Enrollments == null || userEnrollments.Enrollments.Count == 0)
+        {
+            <MudContainer>
+                <div class="row mx-0 justify-content-md-center" style="margin-bottom:35px;">
+                    <div class="col-md-4 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                        <div class="row">
+                            <h2 style="color: black; padding: 20px; margin-top: 10px; font-size: 17px;" class="poppins-semi-bold">Momentan nu ești înscris la niciun curs!</h2>
+                        </div>
+                    </div>
+                </div>
+            </MudContainer>
+        }
+        else {
 
         <MudExpansionPanels MultiExpansion="true">
             <div class="custom-width">
-                @foreach (var language in UserLanguages)
+                @foreach (var enrollment in userEnrollments.Enrollments)
                 {
-                    <MudExpansionPanel Text="@language.LanguageName" Style="color: #2563EB;">
+                    <MudExpansionPanel Text="@enrollment.Language.LanguageName" Style="color: #2563EB;">
                         <div>
                             <div style="padding: 15px; margin-bottom: 10px;">
-                                <p class="text-center" style="color: black; font-size: 18px;"><MudIcon Icon="@Icons.Material.Filled.Analytics" Size=Size.Large Color="Color.Success" />Tabla ta de progres pentru @language.LanguageName</p>
+                                    <p class="text-center" style="color: black; font-size: 18px;"><MudIcon Icon="@Icons.Material.Filled.Analytics" Size=Size.Large Color="Color.Success" />Your progress board for @enrollment.Language.LanguageName</p>
                             </div>
 
-                            @foreach (var competence in language.UserLanguageLevels)
+                            @foreach (var competence in enrollment.Language.LanguageCompetences)
                             {
                                 <div class="row justify-content-center align-items-center" style="padding: 15px;">
                                     <div class="col text-center">
-                                        <p style="font-size: 22px; color: black;">@competence.LanguageCompetence</p>
+                                        <p style="font-size: 22px; color: black;">@competence.LanguageCompetenceName</p>
                                     </div>
                                     <div class="col text-left" style="width: 70%; height: 70%;">
                                         <MudTimeline TimelineOrientation=TimelineOrientation.Horizontal TimelinePosition=TimelinePosition.Bottom Reverse=false>
-                                            @foreach (var level in LanguageLevels)
-                                            {
-                                                if (String.Compare(level, competence.LanguageLevel) <= 0)
+                                            @{
+                                                bool found = false;
+                                                if (enrollment.UserCompetenceLevelDictionary.ContainsKey(competence.LanguageCompetenceId))
                                                 {
-                                                    <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
-                                                        <ItemContent>
-                                                            <MudAlert Severity="Severity.Success">@level</MudAlert>
-                                                        </ItemContent>
-                                                    </MudTimelineItem>
+                                                    @foreach (var level in enrollment.Language.LanguageLevels)
+                                                    {
+                                                        if (enrollment.UserCompetenceLevelDictionary[competence.LanguageCompetenceId] == level.LanguageLevelId)
+                                                        {
+                                                            found = true;
+                                                            <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+                                                                <ItemContent>
+                                                                    <MudAlert Severity="Severity.Success">@level.LanguageLevelName</MudAlert>
+                                                                </ItemContent>
+                                                            </MudTimelineItem>
+                                                        }
+                                                        else if (!found && enrollment.UserCompetenceLevelDictionary[competence.LanguageCompetenceId] != level.LanguageLevelId)
+                                                        {
+                                                            <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+                                                                <ItemContent>
+                                                                    <MudAlert Severity="Severity.Success">@level.LanguageLevelName</MudAlert>
+                                                                </ItemContent>
+                                                            </MudTimelineItem>
+                                                        }
+                                                        else if (found && enrollment.UserCompetenceLevelDictionary[competence.LanguageCompetenceId] != level.LanguageLevelId)
+                                                        {
+                                                            <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
+                                                                <ItemContent>
+                                                                    <MudAlert Severity="Severity.Normal">@level.LanguageLevelName</MudAlert>
+                                                                </ItemContent>
+                                                            </MudTimelineItem>
+                                                        }
+                                                    }
                                                 }
                                                 else
                                                 {
-                                                    <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
-                                                        <ItemContent>
-                                                            <MudAlert Severity="Severity.Normal">@level</MudAlert>
-                                                        </ItemContent>
-                                                    </MudTimelineItem>
+                                                    @foreach (var level in enrollment.Language.LanguageLevels)
+                                                    {
+                                                        <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
+                                                            <ItemContent>
+                                                                <MudAlert Severity="Severity.Normal">@level.LanguageLevelName</MudAlert>
+                                                            </ItemContent>
+                                                        </MudTimelineItem>
+                                                    }
                                                 }
                                             }
                                         </MudTimeline>
@@ -282,11 +321,22 @@ else
                                 </div>
                             </div>
 
+                            <div style="padding: 15px; margin-bottom: 10px; margin-top: 60px;">
+                                <p class="text-center" style="color: black; font-size: 18px;">
+                                    <MudIcon icon="@Icons.Material.Filled.SwapVerticalCircle" Size=Size.Large Style="color: red;" />
+                                    Vrei să experimentezi din nou emoția începuturilor? Începe cursul din nou și trăiește experiența completă!
+                                </p>
+                                <div class="text-center">
+                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => RetireCourse(enrollment.EnrollmentId)" Style="background-color: red; color: white; padding: 10px; width: 25%;">Resetare Curs!</MudButton>
+                                </div>
+                            </div>
+
                         </div>
                     </MudExpansionPanel>
                 }
             </div>
         </MudExpansionPanels>
+        }
 
 
 
@@ -386,6 +436,23 @@ else
         if (HasStudentRole)
         {
             userEnrollments = await EnrollmentDataService.GetAllEnrollmentsByUserIdAsync();
+
+            foreach (var enrollment in userEnrollments.Enrollments)
+            {
+                var language = await LanguageDataService.GetLanguageByIdAsync(enrollment.LanguageId);
+                var enrollmentDB = await EnrollmentDataService.GetEnrollmentByIdAsync(enrollment.EnrollmentId);
+                enrollment.UserLanguageLevels = enrollmentDB.UserLanguageLevels;
+                userEnrollments.Enrollments.First(e => e.LanguageId == enrollment.LanguageId).Language = language;
+
+                foreach (var userLanguageLevel in enrollment.UserLanguageLevels)
+                {
+                    if (!enrollment.UserCompetenceLevelDictionary.ContainsKey(userLanguageLevel.LanguageCompetenceId))
+                    {
+                        enrollment.UserCompetenceLevelDictionary[userLanguageLevel.LanguageCompetenceId] = userLanguageLevel.LanguageLevelId;
+                    }
+                }
+            }
+
             userUnEnrollments = (await LanguageDataService.GetAllLanguagesAsync()).ToList();
 
             var enrolledLanguageIds = userEnrollments.Enrollments.Select(e => e.LanguageId).ToList();
@@ -718,45 +785,6 @@ else
 
 @* STUDENT VIEW HIS COURSES *@
 @functions {
-    public class UserLanguage
-    {
-        public string LanguageName { get; set; }
-        public List<UserLanguageLevel> UserLanguageLevels { get; set; }
-    }
-
-    public class UserLanguageLevel
-    {
-        public string LanguageCompetence { get; set; }
-        public string LanguageLevel { get; set; }
-    }
-
-    private List<string> LanguageLevels { get; set; } = new List<string> { "A1", "A2", "B1", "B2", "C1", "C2" };
-    private List<UserLanguage> UserLanguages { get; set; } = new List<UserLanguage>
-    {
-        new UserLanguage
-        {
-            LanguageName = "Limba Engleza",
-            UserLanguageLevels = new List<UserLanguageLevel>
-            {
-                new UserLanguageLevel { LanguageCompetence = "Grammar", LanguageLevel = "B2" },
-                new UserLanguageLevel { LanguageCompetence = "Listening", LanguageLevel = "C1" },
-                new UserLanguageLevel { LanguageCompetence = "Speaking", LanguageLevel = "B1" },
-                new UserLanguageLevel { LanguageCompetence = "Writing", LanguageLevel = "C2" }
-            }
-        },
-        new UserLanguage
-        {
-            LanguageName = "Limba Franceza",
-            UserLanguageLevels = new List<UserLanguageLevel>
-            {
-                new UserLanguageLevel { LanguageCompetence = "Grammar", LanguageLevel = "A2" },
-                new UserLanguageLevel { LanguageCompetence = "Listening", LanguageLevel = "A1" },
-                new UserLanguageLevel { LanguageCompetence = "Speaking", LanguageLevel = "A2" },
-                new UserLanguageLevel { LanguageCompetence = "Writing", LanguageLevel = "C2" }
-            }
-        }
-    };
-
     async void NavigateToWantPlacementTest(Guid languageId)
     {
         var language = await LanguageDataService.GetLanguageByIdAsync(languageId);
@@ -778,5 +806,26 @@ else
     void NavigateToTakeQuiz()
     {
         NavigationManager.NavigateTo("/");
+    }
+
+    async void RetireCourse(Guid enrollmentId)
+    {
+        var response = await EnrollmentDataService.DeleteEnrollmentAsync(enrollmentId);
+
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+        if (response.IsSuccess)
+        {
+            snackbar = Snackbar.Add("Cursul a fost resetat cu succes!", Severity.Success);
+            userEnrollments = await EnrollmentDataService.GetAllEnrollmentsByUserIdAsync();
+            userUnEnrollments = (await LanguageDataService.GetAllLanguagesAsync()).ToList();
+            var enrolledLanguageIds = userEnrollments.Enrollments.Select(e => e.LanguageId).ToList();
+            userUnEnrollments.RemoveAll(language => enrolledLanguageIds.Contains(language.LanguageId));
+            StateHasChanged();
+        }
+        else
+        {
+            snackbar = Snackbar.Add("Resetarea cursului a eșuat: " + response.Message, Severity.Error);
+        }
     }
 }

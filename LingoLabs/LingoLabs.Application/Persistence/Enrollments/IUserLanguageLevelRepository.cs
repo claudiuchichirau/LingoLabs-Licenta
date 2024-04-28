@@ -7,5 +7,6 @@ namespace LingoLabs.Application.Persistence.Enrollments
     {
         Task<Result<IReadOnlyList<UserLanguageLevel>>> FindByLanguageCompetenceIdAsync(Guid languageCompetenceId);
         Task<Result<IReadOnlyList<UserLanguageLevel>>> FindByLanguageLevelIdAsync(Guid languageLeveleId);
+        Task<Result<List<UserLanguageLevel>>> GetUserLanguageLevelsByUserIdAsync(Guid userId);
     }
 }

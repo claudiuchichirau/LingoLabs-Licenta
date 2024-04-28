@@ -278,7 +278,7 @@
 {
     <div class="container">
         <div style="padding: 15px; margin-bottom: 10px;">
-            <p class="text-center" style="color: black; font-size: 18px;"><MudIcon Icon="@Icons.Material.Filled.Analytics" Size=Size.Large Color="Color.Success" />This is your approximate levels for @languageLevels.LanguageName</p>
+            <p class="text-center" style="color: black; font-size: 18px;"><MudIcon Icon="@Icons.Material.Filled.Analytics" Size=Size.Large Color="Color.Success" />This is your approximate levels for @language.LanguageName</p>
         </div>
 
         @foreach (var competence in language.LanguageCompetences)
@@ -736,18 +736,3 @@ else if (IsUSerLanguageLevelsInfoLoaded == false && showQuizResults == true)
     }
 }
 
-
-@* SHOW LANGUAGE LEVELS *@
-@functions {
-    private UserLanguage languageLevels { get; set; } = new UserLanguage
-    {
-        LanguageName = "Limba Engleza",
-        UserLanguageLevels = new List<UserLanguageLevel>
-        {
-            new UserLanguageLevel { LanguageCompetence = "Grammar", LanguageLevel = "B2" },
-            new UserLanguageLevel { LanguageCompetence = "Listening", LanguageLevel = "C1" },
-            new UserLanguageLevel { LanguageCompetence = "Speaking", LanguageLevel = "B1" },
-            new UserLanguageLevel { LanguageCompetence = "Writing", LanguageLevel = "C2" }
-        }
-    };
-}

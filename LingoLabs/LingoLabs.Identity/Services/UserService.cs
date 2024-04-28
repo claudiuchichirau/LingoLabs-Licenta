@@ -1,8 +1,12 @@
 ﻿using LingoLabs.Application.Contracts.Identity;
+using LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Commands.DeleteEnrollment;
+using LingoLabs.Application.Features.EnrollmentsFeatures.UserLanguageLevels.Commands.DeleteUserLanguageLevel;
 using LingoLabs.Application.Models.Identity;
+using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Domain.Common;
 using LingoLabs.Identity.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Threading;
 
 namespace LingoLabs.Identity.Services
 {
@@ -11,12 +15,21 @@ namespace LingoLabs.Identity.Services
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly ILoginService loginService;
+        private readonly IEnrollmentRepository enrollmentRepository;
+        private readonly IUserLanguageLevelRepository userLanguageLevelRepository;
+        private readonly DeleteEnrollmentCommandHandler deleteEnrollmentCommandHandler;
+        private readonly DeleteUserLanguageLevelCommandHandler deleteUserLanguageLevelCommandHandler;
+        private readonly CancellationToken cancellationToken = new CancellationToken();
 
-        public UserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILoginService loginService)
+        public UserService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ILoginService loginService, IEnrollmentRepository enrollmentRepository, IUserLanguageLevelRepository userLanguageLevelRepository, DeleteEnrollmentCommandHandler deleteEnrollmentCommandHandler, DeleteUserLanguageLevelCommandHandler deleteUserLanguageLevelCommandHandler)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
             this.loginService = loginService;
+            this.enrollmentRepository = enrollmentRepository;
+            this.userLanguageLevelRepository = userLanguageLevelRepository;
+            this.deleteEnrollmentCommandHandler = deleteEnrollmentCommandHandler;
+            this.deleteUserLanguageLevelCommandHandler = deleteUserLanguageLevelCommandHandler;
         }
 
         public async Task<Result<UserInfoModel>> GetCurrentUserInfoAsync(string userId)
@@ -92,6 +105,32 @@ namespace LingoLabs.Identity.Services
             if (user == null)
             {
                 return Result<string>.Failure($"User with the id:{userId} was not found!");
+            }
+
+            var userLanguageLevels = await userLanguageLevelRepository.GetUserLanguageLevelsByUserIdAsync(Guid.Parse(userId));
+
+            foreach (var userLanguageLevel in userLanguageLevels.Value)
+            {
+                var deleteUserLanguageLevelCommand = new DeleteUserLanguageLevelCommand { UserLanguageLevelId = userLanguageLevel.UserLanguageLevelId };
+                var deleteUserLanguageLevelCommandResponse = await deleteUserLanguageLevelCommandHandler.Handle(deleteUserLanguageLevelCommand, cancellationToken);
+
+                if (!deleteUserLanguageLevelCommandResponse.Success)
+                {
+                    return Result<string>.Failure("Failed to delete user language level");
+                }
+            }
+
+            var enrollments = await enrollmentRepository.GetEnrollmentsByUserIdAsync(Guid.Parse(userId));
+
+            foreach (var enrollment in enrollments.Value)
+            {
+                var deleteEnrollmentCommand = new DeleteEnrollmentCommand { EnrollmentId = enrollment.EnrollmentId };
+                var deleteEnrollmentCommandResponse = await deleteEnrollmentCommandHandler.Handle(deleteEnrollmentCommand, cancellationToken);
+
+                if (!deleteEnrollmentCommandResponse.Success)
+                {
+                    return Result<string>.Failure("Failed to delete enrollment");
+                }
             }
 
             var result = await userManager.DeleteAsync(user);
