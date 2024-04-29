@@ -26,12 +26,12 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Comm
                 .WithMessage("{PropertyName} must not exceed 500 characters.");
 
             RuleFor(p => p.LessonRequirement)
-                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.LessonRequirement))
-                .WithMessage("{PropertyName} must not exceed 500 characters.");
+                .MaximumLength(1000).When(p => !string.IsNullOrEmpty(p.LessonRequirement))
+                .WithMessage("{PropertyName} must not exceed 1000 characters.");
 
             RuleFor(p => p.LessonContent)
-                .MaximumLength(500).When(p => !string.IsNullOrEmpty(p.LessonContent))
-                .WithMessage("{PropertyName} must not exceed 500 characters.");
+                .MaximumLength(10000).When(p => !string.IsNullOrEmpty(p.LessonContent))
+                .WithMessage("{PropertyName} must not exceed 10000 characters.");
 
             RuleFor(p => p.LessonVideoLink)
                 .Must(BeValidUrl).When(p => !string.IsNullOrEmpty(p.LessonVideoLink))

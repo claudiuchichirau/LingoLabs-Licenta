@@ -149,7 +149,9 @@ else
 
     async void NavigateToLanguageDashboard(Guid languageId)
     {
-        NavigationManager.NavigateTo($"/language-dashboard/{languageId}");
+        var enrollment = userEnrollments.Enrollments.Find(x => x.LanguageId == languageId);
+
+        NavigationManager.NavigateTo($"/language-dashboard/{enrollment.EnrollmentId}");
     }
 
     private void NavigateToLogin()

@@ -1,0 +1,217 @@
+﻿@page "/chapter-dashboard/{Id}"
+@using LingoLabs.App.Auth
+@using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Contracts.LanguageContracts
+@using LingoLabs.App.ViewModel.LanguageModels
+@using LingoLabs.App.ViewModel.MudBlazor
+@using Microsoft.AspNetCore.Components.Authorization
+@using MudBlazor
+@using MatBlazor
+@using System.Net.Http.Json
+@using ViewModel.MudBlazor
+@inject NavigationManager NavigationManager
+@inject CustomStateProvider authStateProvider
+@inject HttpClient httpClient
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject IJSRuntime JSRuntime
+
+
+<div class="d-flex justify-content-around bg-secondary mb-3 align-items-center" style="width: 100%; height: 250px; margin-top: -10px; background: linear-gradient(to right, #2563EB, #36A7FC); position: relative; z-index: 1;">
+    <img src="/images/homepage/line.png" style="position: absolute; top: 0; left: -45px; max-width: 150px;">
+    <img src="/images/homepage/line.png" style="position: absolute; top: 0; left: -30px; max-width: 150px;">
+    <img src="/images/homepage/line.png" style="position: absolute; top: 0; left: -15px; max-width: 150px;">
+    <img src="/images/homepage/jos.png" style="position: absolute; bottom: 0; right: 0; max-width: 150px;">
+    <img src="/images/homepage/sus.png" style="position: absolute; top: 0; right: 0; max-width: 200px;">
+</div>
+
+@* GET BY ID INFORMATIONS *@
+<MudContainer>
+
+    @if (!IsDataLoaded)
+    {
+        <div class="text-center" style="margin-top: 45px; margin-bottom: 10px;">
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        </div>
+    }
+    else
+    {
+        <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom: 40px;">
+            <div class="col-md-8 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                <div class="row">
+                    <h1 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">@chapter.ChapterName</h1>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!IsDataLoaded)
+    {
+        <div class="text-center" style="margin-top: 45px; margin-bottom: 10px;">
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        </div>
+    }
+    else
+    {
+        @if (!string.IsNullOrEmpty(chapter.ChapterDescription))
+        {
+            <div class="row" style="margin-top: 150px; margin-bottom: 70px;">
+                <div class="col">
+                    <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                        <p style="color: black; font-size: 22px;" class="poppins-semi-bold">@chapter.ChapterDescription</p>
+                    </div>
+                </div>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(chapter.ChapterVideoLink))
+        {
+            <div class="row" style="margin-top: 45px; margin-bottom: 10px;">
+                <div class="col">
+                    <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
+                        <p class="custom-text" style="font-size: 40px; margin-bottom: -3px;">
+                            <span style="color: #FC6F05;"><strong>Hear</strong></span>,
+                            <span style="color: #2563EB;"><strong>understand</strong></span>,
+                            <span style="color: lawngreen;"><strong>express</strong></span>
+                        </p>
+                        <p style="font-size: 25px;">Our video shows you the way</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-bottom: 70px;">
+                <div class="col text-center">
+                    <iframe style="width: 700px; height: 394px; margin-top: 9px;" src="@chapter.ChapterVideoLink" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(chapter.ChapterImageData))
+        {
+            <div class="row" style="margin-top: 70px; margin-bottom: 150px;">
+                <div class="d-flex justify-content-center align-items-center" style="height: 100%;">
+                    <img src="@chapter.ChapterImageData" style="max-width: 700px; height: auto;">
+                </div>
+            </div>
+        }
+
+    }
+</MudContainer>
+
+@* CHAPTERS *@
+<div class="text-center">
+    <h1 style="color: black; font-size: 33px; margin-top: 120px; margin-bottom: 25px;">
+        Discover <span style="color: #FC6F05;">@chapter.ChapterName</span>'s Lessons
+    </h1>
+    <h2 style="font-size: 19px; margin-bottom: 45px;">
+        Explore @chapter.ChapterName's lessons to swiftly elevate your language skills.
+    </h2>
+</div>
+
+@if (chapter.ChapterLessons == null || chapter.ChapterLessons.Count == 0)
+{
+    <MudContainer>
+        <div class="row mx-0 justify-content-md-center" style="margin-bottom:35px;">
+            <div class="col-md-4 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                <div class="row">
+                    <h2 style="color: black; padding: 20px; margin-top: 10px; font-size: 17px;" class="poppins-semi-bold">There are currently no lessons for chapter <strong>@chapter.ChapterName!</strong></h2>
+                </div>
+            </div>
+        </div>
+    </MudContainer>
+} else
+{
+    <div style="margin-bottom: 30px;">
+        @foreach (var languageCompetence in language.LanguageCompetences)
+        {
+            @if (competencesLessons.ContainsKey(languageCompetence.LanguageCompetenceId))
+            {
+                <MudContainer Style="width: 70%; margin-bottom: 20px;">
+                    <MudExpansionPanel Text="@languageCompetence.LanguageCompetenceName" Style="color: #2563EB;">
+                        <MudTimeline TimelineOrientation=TimelineOrientation.Vertical TimelinePosition=TimelinePosition.Top Reverse=false>
+                            @for (int i = 0; i < competencesLessons[languageCompetence.LanguageCompetenceId].Count; i++)
+                            {
+                                var lesson = competencesLessons[languageCompetence.LanguageCompetenceId][i];
+                                string alignment = i % 2 == 0 ? "text-left" : "text-right";
+                                string alignmentForPanel = i % 2 == 0 ? "block-left" : "block-right";
+
+                                <MudTimelineItem Color="Color.Dark" Size="Size.Small" Style="margin-bottom: 7px;">
+                                    <ItemOpposite>
+                                        <MudButton Variant="Variant.Filled" OnClick="() => NavigateToLesson(lesson.LessonId)" Style="background-color: #FC6F05; color: white;">Open</MudButton>
+                                    </ItemOpposite>
+                                    <ItemContent>
+                                        <div class="@alignment">
+                                            <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: black;"><strong>@lesson.LessonTitle</strong></MudText>
+                                            <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@lesson.LessonDescription</strong></MudText>
+                                        </div>
+                                    </ItemContent>
+                                </MudTimelineItem>
+                            }
+                        </MudTimeline>
+                    </MudExpansionPanel>
+                </MudContainer>
+            }
+        }
+    </div>
+}
+
+
+@code {
+    [Inject]
+    public ILanguageDataService LanguageDataService { get; set; }
+    [Inject]
+    public ILanguageLevelDataService LanguageLevelDataService { get; set; }
+    [Inject]
+    public IChapterDataService ChapterDataService { get; set; }
+    private AuthenticationState authState;
+
+    [Parameter]
+    public string Id { get; set; }
+    private Guid CurrentChapterId = Guid.Empty;
+    private ChapterViewModel chapter = new ChapterViewModel();
+    private LanguageViewModel language = new LanguageViewModel();
+    private Dictionary<Guid, List<ListeningLessonViewModel>> competencesLessons = new Dictionary<Guid, List<ListeningLessonViewModel>>();
+    private bool IsDataLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await authStateProvider.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+        var claims = user.Claims.ToList();
+
+        chapter = await ChapterDataService.GetChapterByIdAsync(Guid.Parse(Id));
+
+        if (chapter.ChapterLessons != null && chapter.ChapterLessons.Count != 0)
+        {
+            var languageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(chapter.LanguageLevelId);
+            language = await LanguageDataService.GetLanguageByIdAsync(languageLevel.LanguageId);
+
+            foreach (var languageCompetence in language.LanguageCompetences)
+            {
+                foreach (var lesson in chapter.ChapterLessons)
+                {
+                    if (lesson.LanguageCompetenceId == languageCompetence.LanguageCompetenceId)
+                    {
+                        if (!competencesLessons.ContainsKey(languageCompetence.LanguageCompetenceId))
+                        {
+                            competencesLessons.Add(languageCompetence.LanguageCompetenceId, new List<ListeningLessonViewModel>());
+                        }
+
+                        competencesLessons[languageCompetence.LanguageCompetenceId].Add(lesson);
+                    }
+                }
+            }
+        }
+
+        IsDataLoaded = true;
+    }
+}
+
+@functions{
+    private async Task NavigateToLesson(Guid lessonId)
+    {
+        NavigationManager.NavigateTo($"/lesson-dashboard/{lessonId}");
+        await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+    }
+}

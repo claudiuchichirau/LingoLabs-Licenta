@@ -1,8 +1,13 @@
-﻿@page "/lesson-dashboard"
+﻿@page "/lesson-dashboard/{Id}"
 @using LingoLabs.App.Auth
+@using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Contracts.EnrollmentContracts
 @using LingoLabs.App.Contracts.LanguageContracts
+@using LingoLabs.App.Services.Responses
+@using LingoLabs.App.ViewModel.EnrollmentModels
 @using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
+@using LingoLabs.App.ViewModel.Responses
 @using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @using MatBlazor
@@ -25,29 +30,45 @@
 
 @* GET BY ID INFORMATIONS *@
 <MudContainer>
-    <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom: 40px;">
-        <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
-            <div class="row">
-                <h1 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">@lesson.LessonTitle</h1>
+    @if(!IsDataLoaded)
+    {
+        <div class="text-center" style="margin-top: 45px; margin-bottom: 10px;">
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        </div>
+    } else {
+        <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom: 40px;">
+            <div class="col-md-6 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                <div class="row">
+                    <h1 style="color: #2563EB; padding: 20px; margin-top: 10px;" class="poppins-semi-bold">@lesson.LessonTitle</h1>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="row mx-0 justify-content-between">
-        <div class="col-md-3 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
-            <div class="row">
-                @* <span style="color: #FC6F05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">@lesson.ChapterId</span> *@
-                <span style="color: #FC6F05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">Writing</span>
+        <div class="row mx-0 justify-content-between">
+            <div class="col-md-3 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                <div class="row">
+                    <span style="color: #FC6F05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">@lesson.LanguageLevelName</span>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                <div class="row">
+                    <span style="color: #FC6F05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">@lesson.LanguageCompetenceName</span>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
+                <div class="row">
+                    <span style="color: #FC6F05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">@lesson.ChapterName</span>
+                </div>
             </div>
         </div>
-        <div class="col-md-3 d-flex flex-column align-items-center justify-content-center" style="background-color: #E9EFFD; box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5); z-index: 1; border-radius: 15px;">
-            <div class="row">
-                @* <span style="color: #fc6f05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">@lesson.LanguageCompetenceId</span> *@
-                <span style="color: #FC6F05; padding: 3px; font-size: 20px;" class="poppins-semi-bold">Grammar</span>
-            </div>
-        </div>
-    </div>
+    }
 
+    @if(!IsDataLoaded)
+    {
+        <div class="text-center" style="margin-top: 45px; margin-bottom: 10px;">
+            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+        </div>
+    } else {
     @if (!string.IsNullOrEmpty(lesson.LessonDescription))
     {
         <div class="row" style="margin-top: 70px; margin-bottom: 70px;">
@@ -112,88 +133,96 @@
         </div>
     }
 
-    @* WRITE THE ESSAY *@
-    <div class="container">
-        <div class="row" style="margin-top: 20px; margin-bottom: -20px;">
+    @if (!string.IsNullOrEmpty(lesson.LanguageCompetenceName) && string.Compare(lesson.LanguageCompetenceName, "Writing") == 0)
+    {
+
+        @* WRITE THE ESSAY *@
+        <div class="container">
+            <div class="row" style="margin-top: 20px; margin-bottom: -20px;">
+                <div class="col">
+                    <div style="display: flex; flex-direction: column; justify-content: start; height: 100%;">
+                        <p style="color: black; font-size: 22px;" class="poppins-semi-bold">Start to type your essay here:</p>
+                    </div>
+                </div>
+            </div>
+
+            <MudTextField @bind-Text="sampleText" T="string" Variant="Variant.Text" AutoGrow Lines="1" HelperText="Start to write your essay here!" Style="width: 100%;" />
+
+            <p>@wordCount/100 words</p>
+
+            <div class="row">
+                <div class="col">
+                    <div style="display: flex; flex-direction: column; justify-content: end; height: 100%;">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@isButtonDisabled" OnClick="() => SendWrittenEssay(sampleText)" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> Submit</MudButton>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row" style="margin-top: 85px; margin-bottom: -20px;">
             <div class="col">
                 <div style="display: flex; flex-direction: column; justify-content: start; height: 100%;">
-                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">Start to type your essay here:</p>
+                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">Or, if you prefer, upload pictures of your handwritten essay. We'll take care of the rest!</p>
                 </div>
             </div>
         </div>
 
-        <MudTextField @bind-Text="sampleText" T="string" Variant="Variant.Text" AutoGrow Lines="1" HelperText="Start to write your essay here!" Style="width: 100%;" />
+        @* UPLOAD ESSAY IMAGE       -> doar daca este WRITTING LESSON*@
+        <MudStack Style="width: 100%">
+            <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                           Accept=".png, .jpg"
+                           MaximumFileCount="100"
+                           OnFilesChanged="OnInputFileChanged"
+                           Hidden="@false"
+                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+                           InputStyle="opacity:0"
+                           @ondragenter="@SetDragClass"
+                           @ondragleave="@ClearDragClass"
+                           @ondragend="@ClearDragClass">
+                <ButtonTemplate>
+                    <MudPaper Height="300px"
+                              Outlined="true"
+                              Class="@_dragClass">
+                        <MudText Typo="Typo.h6">
+                            Drag and drop files here or click
+                        </MudText>
+                        @foreach (var file in _fileNames)
+                        {
+                            <MudChip Color="Color.Dark" Text="@file" />
+                        }
+                    </MudPaper>
+                    <MudToolBar DisableGutters="true"
+                                Class="relative d-flex justify-end gap-4 z-30">
+                        <MudButton HtmlTag="label"
+                                   Style="background-color: #2563EB; color: white;"
+                                   for="@context.Id"
+                                   Variant="Variant.Filled">
+                            Open file picker
+                        </MudButton>
+                        <MudButton OnClick="@Upload"
+                                   Style="background-color: #2563EB; color: white;"
+                                   Disabled="@(!_fileNames.Any())"
+                                   Variant="Variant.Filled">
+                            Upload
+                        </MudButton>
+                        <MudButton OnClick="@Clear"
+                                   Color="Color.Error"
+                                   Disabled="@(!_fileNames.Any())"
+                                   Variant="Variant.Filled">
+                            Clear
+                        </MudButton>
+                    </MudToolBar>
+                </ButtonTemplate>
+            </MudFileUpload>
+        </MudStack>
+    }
 
-        <p>@wordCount/100 words</p>
-
-        <div class="row">
-            <div class="col">
-                <div style="display: flex; flex-direction: column; justify-content: end; height: 100%;">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@isButtonDisabled" OnClick="() => SendWrittenEssay(sampleText)" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> Submit</MudButton>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="row" style="margin-top: 85px; margin-bottom: -20px;">
-        <div class="col">
-            <div style="display: flex; flex-direction: column; justify-content: start; height: 100%;">
-                <p style="color: black; font-size: 22px;" class="poppins-semi-bold">Or, if you prefer, upload pictures of your handwritten essay. We'll take care of the rest!</p>
-            </div>
-        </div>
-    </div>
-
-    @* UPLOAD ESSAY IMAGE       -> doar daca este WRITTING LESSON*@
-    <MudStack Style="width: 100%">
-        <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-                       Accept=".png, .jpg"
-                       MaximumFileCount="100"
-                       OnFilesChanged="OnInputFileChanged"
-                       Hidden="@false"
-                       InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
-                       InputStyle="opacity:0"
-                       @ondragenter="@SetDragClass"
-                       @ondragleave="@ClearDragClass"
-                       @ondragend="@ClearDragClass">
-            <ButtonTemplate>
-                <MudPaper Height="300px"
-                          Outlined="true"
-                          Class="@_dragClass">
-                    <MudText Typo="Typo.h6">
-                        Drag and drop files here or click
-                    </MudText>
-                    @foreach (var file in _fileNames)
-                    {
-                        <MudChip Color="Color.Dark" Text="@file" />
-                    }
-                </MudPaper>
-                <MudToolBar DisableGutters="true"
-                            Class="relative d-flex justify-end gap-4 z-30">
-                    <MudButton HtmlTag="label"
-                               Style="background-color: #2563EB; color: white;"
-                               for="@context.Id"
-                               Variant="Variant.Filled">
-                        Open file picker
-                    </MudButton>
-                    <MudButton OnClick="@Upload"
-                               Style="background-color: #2563EB; color: white;"
-                               Disabled="@(!_fileNames.Any())"
-                               Variant="Variant.Filled">
-                        Upload
-                    </MudButton>
-                    <MudButton OnClick="@Clear"
-                               Color="Color.Error"
-                               Disabled="@(!_fileNames.Any())"
-                               Variant="Variant.Filled">
-                        Clear
-                    </MudButton>
-                </MudToolBar>
-            </ButtonTemplate>
-        </MudFileUpload>
-    </MudStack>
-
-   @*  @if (!showQuizResults)
+    @if (!showQuizResults && !string.IsNullOrEmpty(lesson.LanguageCompetenceName) && 
+            string.Compare(lesson.LanguageCompetenceName, "Writing") != 0 && 
+            lesson.LessonQuestions != null && 
+            lesson.LessonQuestions.Count > 0 &&
+            CurrentLessonResultId == Guid.Empty)
     {
         <div class="text-center" style="margin-bottom: 50px;">
             <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
@@ -204,10 +233,9 @@
             </h2>
             <MudButton Variant="Variant.Filled" OnClick="() => StartQuiz()" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Quiz"></MudIcon> START NOW!</MudButton>
         </div>        
-    } *@
-
+    }
+    }
 </MudContainer>
-
 
 
 @* COMPLETE QUIZ *@
@@ -335,15 +363,14 @@
     {
         <div class="row" style="margin-top: 35px; margin-bottom: 50px;">
             <div class="col text-center">
-                @* <MudButton Variant="Variant.Filled" OnClick="() => SubmitQuiz(userQuiz)" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> SUBMIT</MudButton> *@
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> SUBMIT</MudButton>
+                <MudButton Variant="Variant.Filled" OnClick="() => SubmitQuiz(userQuiz)" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> SUBMIT</MudButton>
             </div>
         </div>
     }
 }
 
 @* QUIZ RESULTS *@
-@* @if (showQuizResults)
+@if (showQuizResults)
 {
     <div id="quizResults" class="text-center" style="margin-bottom: 50px;">
         <hr style="width: 20%; border: 1px solid rgba(128, 128, 128, 0.5); margin: auto; margin-top: 50px; margin-bottom: 50px;">
@@ -388,9 +415,9 @@
         }
     </div>
 }
- *@
+
 @* QUIZ RESULTS TABLE *@
-@* @if (showQuizResultsTable)
+@if (showQuizResultsTable)
 {
     <div class="text-center" style="margin-bottom: 50px;">
         <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
@@ -454,7 +481,7 @@
         </MudTable>
     </div>
 }
- *@
+ 
 <style>
     @@keyframes moveArrow {
         0% {
@@ -477,9 +504,84 @@
 
 @code {
     [Inject]
+    public ILanguageDataService languageDataService { get; set; }
+
+    [Inject]
+    public ILanguageLevelDataService languageLevelDataService { get; set; }
+
+    [Inject]
+    public ILanguageCompetenceDataService languageCompetenceDataService { get; set; }
+
+    [Inject]
+    public IChapterDataService chapterDataService { get; set; }
+
+    [Inject]
     public ILessonDataService lessonDataService { get; set; }
+
+    [Inject]
+    public IEnrollmentDataService enrollmentDataService { get; set; }
+
+    [Inject]
+    public ILanguageLevelResultDataService languageLevelResultDataService { get; set; }
+
+    [Inject]
+    public ILanguageCompetenceResultDataService languageCompetenceResultDataService { get; set; }
+
+    [Inject]
+    public IChapterResultDataService chapterResultDataService { get; set; }
+
+    [Inject]
+    public ILessonResultDataService lessonResultDataService { get; set; }
+
+    [Inject]
+    public IQuestionResultDataService questionResultDataService { get; set; }
+
     public LessonViewModel lesson { get; set; } = new LessonViewModel();
     private AuthenticationState authState;
+    private UserEnrollmentsResponse userEnrollments = new UserEnrollmentsResponse();
+
+    [Parameter]
+    public string Id { get; set; }
+    private Guid CurrentLessonId = Guid.Empty;
+    private Guid CurrentLessonResultId = Guid.Empty;
+    private LessonResultViewModel lessonResult = new LessonResultViewModel();
+    private bool IsDataLoaded = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await authStateProvider.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+        var claims = user.Claims.ToList();
+
+        CurrentLessonId = Guid.Parse(Id);
+
+        lesson = await lessonDataService.GetLessonByIdAsync(CurrentLessonId);
+
+        var chapter = await chapterDataService.GetChapterByIdAsync(lesson.ChapterId);
+        var languageLevel = await languageLevelDataService.GetLanguageLevelByIdAsync(chapter.LanguageLevelId);
+        var language = await languageDataService.GetLanguageByIdAsync(languageLevel.LanguageId);
+
+        userEnrollments = await enrollmentDataService.GetAllEnrollmentsByUserIdAsync();
+        var enrollment = userEnrollments.Enrollments.Find(x => x.LanguageId == language.LanguageId);
+
+        if(enrollment != null && enrollment.LanguageLevelResults.Find(x => x.LanguageLevelId == languageLevel.LanguageLevelId) != null)
+        {
+            var languageLevelResult = enrollment.LanguageLevelResults.Find(x => x.LanguageLevelId == languageLevel.LanguageLevelId);
+            if(languageLevelResult != null && languageLevelResult.ChapterResults.Find(x => x.ChapterId == chapter.ChapterId) != null)
+            {
+                var chapterResult = languageLevelResult.ChapterResults.Find(x => x.ChapterId == chapter.ChapterId);
+                if(chapterResult != null && chapterResult.LessonResults.Find(x => x.LessonId == lesson.LessonId) != null)
+                {
+                    lessonResult = chapterResult.LessonResults.Find(x => x.LessonId == lesson.LessonId);
+                    CurrentLessonResultId = lessonResult.LessonResultId;
+                }
+            }
+        }
+
+
+        IsDataLoaded = true;
+    }
 }
 
 @* COMPLETE QUIZ *@
@@ -490,101 +592,6 @@
     // private LessonElement lesson = new LessonElement();
     private UserQuizElement userQuiz = new UserQuizElement();
 
-    protected override async Task OnInitializedAsync()
-    {
-        authState = await authStateProvider.GetAuthenticationStateAsync();
-
-        var user = authState.User;
-        var claims = user.Claims.ToList();
-
-        lesson = await lessonDataService.GetLessonByIdAsync(Guid.Parse("991ef7e4-4794-4217-932d-c1ccc448c1a8"));
-    }
-
-    // private async Task PopulateLesson()
-    // {
-    //     lesson = new LessonElement
-    //         {
-    //             LessonId = Guid.NewGuid(),
-    //             ChapterId = Guid.NewGuid(),
-                
-    //             LanguageCompetenceId = Guid.NewGuid(),
-    //             LessonTitle = "Introduction in English",
-    //             LessonDescription = "Welcome to the first lesson of our English language course. This introductory session is designed to ease you into the world of English, starting from the very basics. We'll explore the building blocks of the language, ensuring a solid foundation for your linguistic journey.",
-    //             LessonContent = "Hello and a warm welcome! I hope you're excited to embark on this adventure into the English language. Today, we'll begin with the alphabet, delving into the sounds and pronunciations of each letter. Understanding these fundamentals is crucial as they form the backbone of English communication. \n\nWe'll then transition to basic vocabulary, introducing you to essential words that will be your tools for constructing simple sentences. By the end of this lesson, you'll have a grasp of key phrases and the confidence to use them in everyday conversations.\n\nLet's dive in and start our path to mastering English!",
-    //             LessonVideoLink = "https://www.youtube.com/embed/1y6smkh6c-0",
-    //             LessonImageLink = "https://psenglish.co.uk/wp-content/uploads/2021/11/Do-you-speak-English.jpg",
-    //             LessonTags = new List<string> { "English", "Beginner", "Alphabet", "Vocabulary", "Pronunciation", "Communication", "Conversation" },
-    //             LessonRequirement = "At this Writing English Lesson, your first assignement will be to write a short text about yourself. You will have to use the vocabulary and the grammar rules that you have learned in this lesson. The text should have at least 100 words. You can write your essay in the text field below or you can upload a photo of your essay. Good luck!",
-    //             Questions = new List<QuestionElement>
-    //             {
-    //                 new QuestionElement
-    //                 {
-    //                     QuestionId = Guid.NewGuid(),
-    //                     QuestionRequirement = "What is the first letter of the English alphabet?",
-    //                     QuestionType = QuestionTypeElement.Grila,
-    //                     QuestionPriorityNumber = 1,
-    //                     QuestionChoices = new List<ChoiceElement>
-    //                     {
-    //                         new ChoiceElement
-    //                         {
-    //                             ChoiceId = Guid.NewGuid(),
-    //                             ChoiceContent = "A",
-    //                             IsCorrect = true
-    //                         },
-    //                         new ChoiceElement
-    //                         {
-    //                             ChoiceId = Guid.NewGuid(),
-    //                             ChoiceContent = "B",
-    //                             IsCorrect = false
-    //                         },
-    //                         new ChoiceElement
-    //                         {
-    //                             ChoiceId = Guid.NewGuid(),
-    //                             ChoiceContent = "C",
-    //                             IsCorrect = false
-    //                         },
-    //                         new ChoiceElement
-    //                         {
-    //                             ChoiceId = Guid.NewGuid(),
-    //                             ChoiceContent = "D",
-    //                             IsCorrect = false
-    //                         }
-    //                     }
-    //                 },
-    //                 new QuestionElement
-    //                 {
-    //                     QuestionId = Guid.NewGuid(),
-    //                     QuestionRequirement = "<Apple> is a verb?",
-    //                     QuestionType = QuestionTypeElement.TrueFalse,
-    //                     QuestionPriorityNumber = 2,
-    //                     QuestionChoices = new List<ChoiceElement>
-    //                     {
-    //                         new ChoiceElement
-    //                         {
-    //                             ChoiceId = Guid.NewGuid(),
-    //                             ChoiceContent = "Apple",
-    //                             IsCorrect = false
-    //                         }
-    //                     }
-    //                 },
-    //                 new QuestionElement
-    //                 {
-    //                     QuestionId = Guid.NewGuid(),
-    //                     QuestionRequirement = "The solar system has ____ planets.",
-    //                     QuestionType = QuestionTypeElement.CuvantLipsa,
-    //                     QuestionChoices = new List<ChoiceElement>
-    //                     {
-    //                         new ChoiceElement
-    //                         {
-    //                             ChoiceId = Guid.NewGuid(),
-    //                             ChoiceContent = "8",
-    //                             IsCorrect = true
-    //                         },
-    //                     }
-    //                 }
-    //             }
-    //         };
-    // }
 
     void StartQuiz()
     {
@@ -650,7 +657,8 @@
 
 
 @* SHOW QUIZ RESULTS *@
-@* @functions {
+ @functions {
+    private Snackbar snackbar;
     private bool showQuizResultsTable = false;
     private bool showQuizResults = false;
     private QuizResultsElement quizResultsElement = new QuizResultsElement();
@@ -658,6 +666,7 @@
 
     public async Task SubmitQuiz(UserQuizElement userQuiz)
     {
+
         quizResultsElement = new QuizResultsElement
         {
             LessonId = userQuiz.LessonId,
@@ -694,7 +703,7 @@
 
             if (question.QuestionType == QuestionTypeViewModel.MultipleChoice)
             {
-                questionResult.GrilaCorrectChoiceId = question.QuestionChoices.Find(x => x.IsCorrect).ChoiceId;
+                questionResult.GrilaCorrectChoiceId = question.Choices.Find(x => x.IsCorrect).ChoiceId;
                 if (questionResult.GrilaUserChoiceId == questionResult.GrilaCorrectChoiceId)
                     questionResult.UserAnswerIsCorrect = true;
                 else
@@ -702,7 +711,7 @@
             }
             else if (question.QuestionType == QuestionTypeViewModel.TrueFalse)
             {                
-                questionResult.TrueFalseCorrectValue = question.QuestionChoices[0].IsCorrect;
+                questionResult.TrueFalseCorrectValue = question.Choices[0].IsCorrect;
                 if (questionResult.TrueFalseUserValue == questionResult.TrueFalseCorrectValue)
                     questionResult.UserAnswerIsCorrect = true;
                 else
@@ -711,7 +720,7 @@
             else if (question.QuestionType == QuestionTypeViewModel.MissingWord)
             {
                 List<string> cuvantLipsaCorrectValues = new List<string>();
-                foreach (var choice in question.QuestionChoices)
+                foreach (var choice in question.Choices)
                 {
                     cuvantLipsaCorrectValues.Add(choice.ChoiceContent);
                 }
@@ -734,10 +743,219 @@
         showQuizResults = true;
         showQuizResultsTable = true;
 
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        Snackbar.Add("Quiz submitted successfully!", Severity.Success);
+        double score = CalculateScore();
 
-        CalculateScore();
+        if (score >= 45)
+        {
+            Guid currentLessonResultId = await CreateResultsEntities();
+
+            foreach (QuestionResultElement questionResult in quizResultsElement.questionResultElements)
+            {
+                QuestionResultViewModel createQuestionResult = new QuestionResultViewModel
+                    {
+                        QuestionId = questionResult.QuestionId,
+                        LessonResultId = currentLessonResultId,
+                        IsCorrect = questionResult.UserAnswerIsCorrect
+                    };
+
+                var response = await questionResultDataService.CreateQuestionResultAsync(createQuestionResult);
+
+                if (!response.IsSuccess)
+                {
+                    var errorMessage = "Error creating <QuestionResult> entity: " + response.Message;
+                    if (response.ValidationErrors != null)
+                    {
+                        errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+                    }
+                    snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                    return;
+                }
+            }
+
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+            Snackbar.Add("Quiz submitted successfully!", Severity.Success);
+        }
+    }
+
+    async Task<Guid> CreateResultsEntities()
+    {
+        var chapter = await chapterDataService.GetChapterByIdAsync(lesson.ChapterId);
+        var languageLevel = await languageLevelDataService.GetLanguageLevelByIdAsync(chapter.LanguageLevelId);
+        var languageCompetence = await languageCompetenceDataService.GetLanguageCompetenceByIdAsync(lesson.LanguageCompetenceId);
+        var language = await languageDataService.GetLanguageByIdAsync(languageLevel.LanguageId);
+
+        userEnrollments = await enrollmentDataService.GetAllEnrollmentsByUserIdAsync();
+
+        var enrollment = userEnrollments.Enrollments.Find(x => x.LanguageId == language.LanguageId);
+
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+        ApiResponse<LanguageCompetenceResultResponse> responseCompetenceResult = new ApiResponse<LanguageCompetenceResultResponse>();
+
+        if (enrollment.LanguageCompetenceResults.Find(x => x.LanguageCompetenceId == languageCompetence.LanguageCompetenceId) == null)
+        {
+            LanguageCompetenceResultViewModel languageCompetenceResult = new LanguageCompetenceResultViewModel
+            {
+                LanguageCompetenceId = languageCompetence.LanguageCompetenceId,
+                EnrollmentId = enrollment.EnrollmentId
+            };
+
+            responseCompetenceResult = await languageCompetenceResultDataService.CreateLanguageCompetenceResultAsync(languageCompetenceResult);
+
+            if (!responseCompetenceResult.IsSuccess)
+            {
+                var errorMessage = "Error creating <LanguageCompetenceResult> entity: " + responseCompetenceResult.Message;
+                if (responseCompetenceResult.ValidationErrors != null)
+                {
+                    errorMessage += "\n" + string.Join("\n", responseCompetenceResult.ValidationErrors);
+                }
+                snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                return Guid.Empty;
+            }            
+        }
+
+        if (enrollment.LanguageLevelResults.Find(x => x.LanguageLevelId == languageLevel.LanguageLevelId) == null)
+        {
+            LanguageLevelResultViewModel languageLevelResult = new LanguageLevelResultViewModel
+            {
+                LanguageLevelId = languageLevel.LanguageLevelId,
+                EnrollmentId = enrollment.EnrollmentId,
+            };
+
+            var responseLevelResult = await languageLevelResultDataService.CreateLanguageLevelResultAsync(languageLevelResult);
+
+            if (!responseLevelResult.IsSuccess)
+            {
+                var errorMessage = "Error creating <LanguageLevelResult> entity: " + responseLevelResult.Message;
+                if (responseLevelResult.ValidationErrors != null)
+                {
+                    errorMessage += "\n" + string.Join("\n", responseLevelResult.ValidationErrors);
+                }
+                snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                return Guid.Empty;
+            }
+
+            ChapterResultViewModel chapterResult = new ChapterResultViewModel
+            {
+                ChapterId = chapter.ChapterId,
+                LanguageLevelResultId = responseLevelResult.Data.LanguageLevelResult.LanguageLevelResultId
+            };
+
+            var responseChapterResult = await chapterResultDataService.CreateChapterResultAsync(chapterResult);
+
+            if (!responseChapterResult.IsSuccess)
+            {
+                var errorMessage = "Error creating <ChapterResult> entity: " + responseChapterResult.Message;
+                if (responseChapterResult.ValidationErrors != null)
+                {
+                    errorMessage += "\n" + string.Join("\n", responseChapterResult.ValidationErrors);
+                }
+                snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                return Guid.Empty;
+            }
+
+            LessonResultViewModel lessonResult = new LessonResultViewModel
+            {
+                LessonId = lesson.LessonId,
+                ChapterResultId = responseChapterResult.Data.ChapterResult.ChapterResultId,
+                LanguageCompetenceResultId = responseCompetenceResult.Data.LanguageCompetenceResult.LanguageCompetenceResultId
+            };
+
+            var responseLessonResult = await lessonResultDataService.CreateLessonResultAsync(lessonResult);
+
+            if (!responseLessonResult.IsSuccess)
+            {
+                var errorMessage = "Error creating <LessonResult> entity: " + responseLessonResult.Message;
+                if (responseLessonResult.ValidationErrors != null)
+                {
+                    errorMessage += "\n" + string.Join("\n", responseLessonResult.ValidationErrors);
+                }
+                snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                return Guid.Empty;
+            }
+            return responseLessonResult.Data.LessonResult.LessonResultId;
+        } else
+        {
+            var languageLevelResult = enrollment.LanguageLevelResults.Find(x => x.LanguageLevelId == languageLevel.LanguageLevelId);
+
+            if(languageLevelResult.ChapterResults.Find(x => x.ChapterId == chapter.ChapterId) == null)
+            {
+
+                ChapterResultViewModel chapterResult = new ChapterResultViewModel
+                {
+                    ChapterId = chapter.ChapterId,
+                    LanguageLevelResultId = languageLevelResult.LanguageLevelResultId
+                };
+
+                var responseChapterResult = await chapterResultDataService.CreateChapterResultAsync(chapterResult);
+
+                if (!responseChapterResult.IsSuccess)
+                {
+                    var errorMessage = "Error creating <ChapterResult> entity: " + responseChapterResult.Message;
+                    if (responseChapterResult.ValidationErrors != null)
+                    {
+                        errorMessage += "\n" + string.Join("\n", responseChapterResult.ValidationErrors);
+                    }
+                    snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                    return Guid.Empty;
+                }
+
+                LessonResultViewModel lessonResult = new LessonResultViewModel
+                {
+                    LessonId = lesson.LessonId,
+                    ChapterResultId = responseChapterResult.Data.ChapterResult.ChapterResultId,
+                    LanguageCompetenceResultId = responseCompetenceResult.Data.LanguageCompetenceResult.LanguageCompetenceResultId
+                };
+
+                var responseLessonResult = await lessonResultDataService.CreateLessonResultAsync(lessonResult);
+
+                if (!responseLessonResult.IsSuccess)
+                {
+                    var errorMessage = "Error creating <LessonResult> entity: " + responseLessonResult.Message;
+                    if (responseLessonResult.ValidationErrors != null)
+                    {
+                        errorMessage += "\n" + string.Join("\n", responseLessonResult.ValidationErrors);
+                    }
+                    snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                    return Guid.Empty;
+                }
+
+                return responseLessonResult.Data.LessonResult.LessonResultId;
+            } else
+            {
+                var chapterResult = languageLevelResult.ChapterResults.Find(x => x.ChapterId == chapter.ChapterId);
+
+                if(chapterResult.LessonResults.Find(x => x.LessonId == lesson.LessonId) == null)
+                {
+                    LessonResultViewModel lessonResult = new LessonResultViewModel
+                    {
+                        LessonId = lesson.LessonId,
+                        ChapterResultId = chapterResult.ChapterResultId,
+                        LanguageCompetenceResultId = responseCompetenceResult.Data.LanguageCompetenceResult.LanguageCompetenceResultId
+                    };
+
+                    var responseLessonResult = await lessonResultDataService.CreateLessonResultAsync(lessonResult);
+
+                    if (!responseLessonResult.IsSuccess)
+                    {
+                        var errorMessage = "Error creating <LessonResult> entity: " + responseLessonResult.Message;
+                        if (responseLessonResult.ValidationErrors != null)
+                        {
+                            errorMessage += "\n" + string.Join("\n", responseLessonResult.ValidationErrors);
+                        }
+                        snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                        return Guid.Empty;
+                    }
+
+                    return responseLessonResult.Data.LessonResult.LessonResultId;
+                } else
+                {
+                    var lessonResult = chapterResult.LessonResults.Find(x => x.LessonId == lesson.LessonId); 
+
+                    return lessonResult.LessonResultId;
+                }
+            }
+        }
     }
 
     void TryAgainQuiz()
@@ -774,7 +992,7 @@
 
     private int score;
 
-    void CalculateScore()
+    double CalculateScore()
     {
         score = 0;
         foreach (var questionResult in quizResultsElement.questionResultElements)
@@ -786,10 +1004,12 @@
         }
 
         score = (score * 100) / quizResultsElement.questionResultElements.Count;
+
+        return score;
     }
 }
 
- *@
+
 @* UPLOAD ESSAY IMAGE *@
 @functions {
     #nullable enable

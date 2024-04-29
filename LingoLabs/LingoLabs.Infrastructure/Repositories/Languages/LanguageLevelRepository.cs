@@ -19,6 +19,7 @@ namespace LingoLabs.Infrastructure.Repositories.Languages
                 .Include(level => level.LanguageLevelChapters)
                 .Include(level => level.LanguageLevelTags)
                 .Include(level => level.Language)
+                .Include(level => level.LanguageLevelChapters).ThenInclude(chapter => chapter.ChapterLessons)
                 .FirstOrDefaultAsync(level => level.LanguageLevelId == id);
 
             if (result == null)

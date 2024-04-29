@@ -45,7 +45,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.LanguageLevels.Querie
                         ChapterDescription = chapter.ChapterDescription,
                         ChapterVideoLink = chapter.ChapterVideoLink,
                         ChapterImageData = chapter.ChapterImageData,
-                        ChapterLessons = chapter.ChapterLessons.Select(lesson => new Lessons.Queries.LessonDto
+                        ChapterLessons = chapter.ChapterLessons.Select(lesson => new ListeningLessons.Queries.ListeningLessonDto
                         {
                             LessonId = lesson.LessonId,
                             LessonPriorityNumber = lesson.LessonPriorityNumber,

@@ -3,8 +3,10 @@
 @using LingoLabs.App.Contracts.AuthContracts
 @using LingoLabs.App.Contracts.EnrollmentContracts
 @using LingoLabs.App.Services.AuthServices
+@using LingoLabs.App.ViewModel.EnrollmentModels
 @using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
+@using LingoLabs.App.ViewModel.Responses
 @using MudBlazor
 @using MatBlazor
 @using System.Net.Http.Json
@@ -164,64 +166,97 @@ else
     </h2>
 </div>
 
-<MudContainer>
-    @foreach (var competence in UserLanguageLevels)
-    {
-        <div class="row justify-content-center align-items-center" style="padding: 15px;">
-            <div class="col text-center">
-                <p style="font-size: 22px; color: black;">@competence.LanguageCompetence</p>
-            </div>
-            <div class="col text-left" style="width: 70%; height: 70%;">
-                <MudTimeline TimelineOrientation=TimelineOrientation.Horizontal TimelinePosition=TimelinePosition.Bottom Reverse=false>
-                    @foreach (LanguageLevelViewModel languageLevel in Language.LanguageLevels)
-                    {
-                        if (String.Compare(languageLevel.LanguageLevelName, competence.LanguageLevel) <= 0)
-                        {
-                            <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
-                                <ItemContent>
-                                    <MudAlert Severity="Severity.Success">@languageLevel.LanguageLevelName</MudAlert>
-                                </ItemContent>
-                            </MudTimelineItem>
+@if (IsDataLoaded) {
+    <MudContainer>
+        @foreach (var competence in Language.LanguageCompetences)
+        {
+            <div class="row justify-content-center align-items-center" style="padding: 15px;">
+                <div class="col text-center">
+                    <p style="font-size: 22px; color: black;">@competence.LanguageCompetenceName</p>
+                </div>
+                <div class="col text-left" style="width: 70%; height: 70%;">
+                    <MudTimeline TimelineOrientation=TimelineOrientation.Horizontal TimelinePosition=TimelinePosition.Bottom Reverse=false>
+                        @{
+                            bool found = false;
+                            if (enrollment.UserCompetenceLevelDictionary.ContainsKey(competence.LanguageCompetenceId))
+                            {
+                                @foreach (var level in Language.LanguageLevels)
+                                {
+                                    if (enrollment.UserCompetenceLevelDictionary[competence.LanguageCompetenceId] == level.LanguageLevelId)
+                                    {
+                                        found = true;
+                                        <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+                                            <ItemContent>
+                                                <MudAlert Severity="Severity.Success">@level.LanguageLevelName</MudAlert>
+                                            </ItemContent>
+                                        </MudTimelineItem>
+                                    }
+                                    else if (!found && enrollment.UserCompetenceLevelDictionary[competence.LanguageCompetenceId] != level.LanguageLevelId)
+                                    {
+                                        <MudTimelineItem Color="Color.Success" Variant="Variant.Filled">
+                                            <ItemContent>
+                                                <MudAlert Severity="Severity.Success">@level.LanguageLevelName</MudAlert>
+                                            </ItemContent>
+                                        </MudTimelineItem>
+                                    }
+                                    else if (found && enrollment.UserCompetenceLevelDictionary[competence.LanguageCompetenceId] != level.LanguageLevelId)
+                                    {
+                                        <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
+                                            <ItemContent>
+                                                <MudAlert Severity="Severity.Normal">@level.LanguageLevelName</MudAlert>
+                                            </ItemContent>
+                                        </MudTimelineItem>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                @foreach (var level in Language.LanguageLevels)
+                                {
+                                    <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
+                                        <ItemContent>
+                                            <MudAlert Severity="Severity.Normal">@level.LanguageLevelName</MudAlert>
+                                        </ItemContent>
+                                    </MudTimelineItem>
+                                }
+                            }
                         }
-                        else
-                        {
-                            <MudTimelineItem Color="Color.Dark" Variant="Variant.Filled">
-                                <ItemContent>
-                                    <MudAlert Severity="Severity.Normal">@languageLevel.LanguageLevelName</MudAlert>
-                                </ItemContent>
-                            </MudTimelineItem>
-                        }
-                    }
-                </MudTimeline>
+                    </MudTimeline>
+                </div>
+                <div class="col text-center">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToLanguageCompetence" Style="background-color: #FC6F05; color: white; padding: 10px;">Advance now</MudButton>
+                </div>
             </div>
-            <div class="col text-center">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToLanguageCompetence" Style="background-color: #FC6F05; color: white; padding: 10px;">Advance now</MudButton>
-            </div>
-        </div>
-    }
+        }
 
-    <div class="container-fluid p-3" style="background-color: #E9EFFD; margin-top: 60px;">
-        <div class="row justify-content-center">
-            <div class="col-md-6 text-center">
-                <h2 class="p-2" style="color: #2563EB; margin-left: 76px; font-size: 18px;">Optimize your time and effort by simultaneously improving all your skills.</h2>
-            </div>
-            <div class="col-md-6 d-flex justify-content-center align-items-center">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Start Now</MudButton>
+        <div class="container-fluid p-3" style="background-color: #E9EFFD; margin-top: 60px;">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    <h2 class="p-2" style="color: #2563EB; margin-left: 76px; font-size: 18px;">Optimize your time and effort by simultaneously improving all your skills.</h2>
+                </div>
+                <div class="col-md-6 d-flex justify-content-center align-items-center">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 60%;">Start Now</MudButton>
+                </div>
             </div>
         </div>
+
+        <div style="padding: 15px; margin-bottom: 10px; margin-top: 60px;">
+            <p class="text-center" style="color: black; font-size: 18px;">
+                <MudIcon icon="@Icons.Material.Filled.Checklist" Size=Size.Large Color="Color.Success" />
+                Eager for rapid progress? Assess your knowledge with a quick test and move up to the next level:
+            </p>
+            <div class="text-center">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 25%;">Start the test now!</MudButton>
+            </div>
+        </div>
+    </MudContainer>
+}
+else
+{
+    <div class="text-center" style="margin-top: 45px; margin-bottom: 10px;">
+        <MudProgressCircular Color="Color.Default" Indeterminate="true" />
     </div>
-
-    <div style="padding: 15px; margin-bottom: 10px; margin-top: 60px;">
-        <p class="text-center" style="color: black; font-size: 18px;">
-            <MudIcon icon="@Icons.Material.Filled.Checklist" Size=Size.Large Color="Color.Success" />
-            Eager for rapid progress? Assess your knowledge with a quick test and move up to the next level:
-        </p>
-        <div class="text-center">
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Style="background-color: #2563EB; color: white; padding: 10px; width: 25%;">Start the test now!</MudButton>
-        </div>
-    </div>
-</MudContainer>
-
+}
 
 <style>
     @@keyframes moveArrow {
@@ -251,7 +286,8 @@ else
     [Inject]
     public IEnrollmentDataService EnrollmentDataService { get; set; }
 
-    public LanguageViewModel Language { get; set; } = new LanguageViewModel();
+    private LanguageViewModel Language { get; set; } = new LanguageViewModel();
+    private EnrollmentViewModel enrollment { get; set; } = new EnrollmentViewModel();
     private bool IsDataLoaded = false;
 
     [Parameter]
@@ -272,234 +308,22 @@ else
 
         CurrentEnrollmentId = Guid.Parse(Id);
 
-        var Enrollment = await EnrollmentDataService.GetEnrollmentByIdAsync(CurrentEnrollmentId);
+        enrollment = await EnrollmentDataService.GetEnrollmentByIdAsync(CurrentEnrollmentId);
+        foreach (var userLanguageLevel in enrollment.UserLanguageLevels)
+        {
+            if (!enrollment.UserCompetenceLevelDictionary.ContainsKey(userLanguageLevel.LanguageCompetenceId))
+            {
+                enrollment.UserCompetenceLevelDictionary[userLanguageLevel.LanguageCompetenceId] = userLanguageLevel.LanguageLevelId;
+            }
+        }
 
-        var LanguageId = Enrollment.LanguageId;
+
+        var LanguageId = enrollment.LanguageId;
 
         Language = (await LanguageDataService.GetLanguageByIdAsync(LanguageId));
+
         IsDataLoaded = true;
-
-        await PopulateLanguage();
     }
-
-    private async Task PopulateLanguage()
-    {
-        language = new LanguageElement
-        {
-            LanguageId = Guid.NewGuid(),
-            LanguageName = "English",
-            LanguageDescription = "English is a West Germanic language first spoken in early medieval England, which has become the leading language of international discourse in the 21st century.",
-            LanguageVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-            LanguageFlag = "https://vectorflags.s3-us-west-2.amazonaws.com/flags/uk-circle-01.png",
-            LanguageLevels = new List<LanguageLevelElement>
-            {
-                new LanguageLevelElement
-                {
-                    LanguageLevelId = new Guid("123e4567-e89b-12d3-a456-426614174000"),
-                    LanguageLevelName = "A1",
-                    LanguageLevelAlias = "Beginner",
-                    LanguageLevelDescription = "Can understand and use familiar everyday expressions and very basic phrases aimed at the satisfaction of needs of a concrete type.",
-                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                    LanguageLevelPriorityNumber = 1
-                },
-                new LanguageLevelElement
-                {
-                    LanguageLevelId = new Guid("0e572e8b-835f-4b7a-9a77-2895a6c6c1af"),
-                    LanguageLevelName = "A2",
-                    LanguageLevelAlias = "Elementary",
-                    LanguageLevelDescription = "Can introduce themselves and others and can ask and answer questions about personal details such as where they live, people they know and things they have.",
-                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                    LanguageLevelPriorityNumber = 2
-                },
-                new LanguageLevelElement
-                {
-                    LanguageLevelId = new Guid("550e8400-e29b-41d4-a716-446655440000"),
-                    LanguageLevelName = "B1",
-                    LanguageLevelAlias = "Intermediate",
-                    LanguageLevelDescription = "Can understand the main points of clear standard input on familiar matters regularly encountered in work, school, leisure, etc.",
-                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                    LanguageLevelPriorityNumber = 3
-                },
-                new LanguageLevelElement
-                {
-                    LanguageLevelId = Guid.NewGuid(),
-                    LanguageLevelName = "B2",
-                    LanguageLevelAlias = "Upper Intermediate",
-                    LanguageLevelDescription = "Can interact with a degree of fluency and spontaneity that makes regular interaction with native speakers quite possible without strain for either party.",
-                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                    LanguageLevelPriorityNumber = 4
-                },
-                new LanguageLevelElement
-                {
-                    LanguageLevelId = Guid.NewGuid(),
-                    LanguageLevelName = "C1",
-                    LanguageLevelAlias = "Advanced",
-                    LanguageLevelDescription = "Can understand a wide range of demanding, longer texts, and recognize implicit meaning.",
-                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                    LanguageLevelPriorityNumber = 5
-                },
-                new LanguageLevelElement
-                {
-                    LanguageLevelId = Guid.NewGuid(),
-                    LanguageLevelName = "C2",
-                    LanguageLevelAlias = "Proficiency",
-                    LanguageLevelDescription = "Can understand with ease virtually everything heard or read.",
-                    LanguageLevelVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                    LanguageLevelPriorityNumber = 6
-                }
-            },
-            LanguageCompetences = new List<LanguageCompetenceElement>
-            {
-                new LanguageCompetenceElement
-                {
-                    LanguageCompetenceId = new Guid("a0b1c2d3-4e5f-6789-0a1b-2c3d4e5f6789"),
-                    LanguageCompetenceName = "Listening",
-                    LanguageCompetenceDescription = "Listening is the ability to accurately receive and interpret messages in the communication process.",
-                    LanguageCompetencePriorityNumber = 1
-                },
-                new LanguageCompetenceElement
-                {
-                    LanguageCompetenceId = new Guid("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
-                    LanguageCompetenceName = "Reading",
-                    LanguageCompetenceDescription = "Reading is the ability to understand, interpret, and evaluate written texts.",
-                    LanguageCompetencePriorityNumber = 2
-                },
-                new LanguageCompetenceElement
-                {
-                    LanguageCompetenceId = new Guid("58077344-e110-4b6b-9f8e-6a24c708d011"),
-                    LanguageCompetenceName = "Speaking",
-                    LanguageCompetenceDescription = "Speaking is the ability to produce and articulate sounds that form words and sentences.",
-                    LanguageCompetencePriorityNumber = 3
-                },
-                new LanguageCompetenceElement
-                {
-                    LanguageCompetenceId = new Guid("a36c2e74-f979-4b47-8d7b-6a9b07d7238a"),
-                    LanguageCompetenceName = "Writing",
-                    LanguageCompetenceDescription = "Writing is the ability to convey information through written language.",
-                    LanguageCompetencePriorityNumber = 4
-                }
-            },
-            PlacementTest = new List<QuestionElement>
-            {
-                new QuestionElement
-                {
-                    QuestionId = Guid.NewGuid(),
-                    QuestionPriorityNumber = 1,
-                    QuestionType = QuestionTypeElement.TrueFalse,
-                    QuestionRequirement = "Aveti de facut 2 teme?",
-                    QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
-                    QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                    QuestionChoices = new List<ChoiceElement>
-                    {
-                        new ChoiceElement
-                        {
-                            ChoiceContent = "TrueFalse",
-                            IsCorrect = true
-                        }
-                    }
-                },
-                new QuestionElement
-                {
-                    QuestionId = Guid.NewGuid(),
-                    QuestionPriorityNumber = 2,
-                    QuestionType = QuestionTypeElement.Grila,
-                    QuestionRequirement = "Aveti de facut 2 teme?",
-                    QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
-                    QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                    QuestionChoices = new List<ChoiceElement>
-                    {
-                        new ChoiceElement
-                        {
-                            ChoiceContent = "TrueFalse",
-                            IsCorrect = true
-                        }
-                    }
-                },
-                new QuestionElement
-                {
-                    QuestionId = Guid.NewGuid(),
-                    QuestionPriorityNumber = 3,
-                    QuestionType = QuestionTypeElement.Grila,
-                    QuestionRequirement = "Aveti de facut 2 teme?",
-                    QuestionImageData = "https://www.northwestcareercollege.edu/wp-content/uploads/2022/05/learn-english-.webp",
-                    QuestionVideoLink = "https://www.youtube.com/embed/cOun1gnEhec",
-                    QuestionChoices = new List<ChoiceElement>
-                    {
-                        new ChoiceElement
-                        {
-                            ChoiceContent = "TrueFalse",
-                            IsCorrect = true
-                        }
-                    }
-                }
-            }
-        };
-    }
-
-    // private List<UserLanguageLevelElement> UserLanguageLevels { get; set; } = new List<UserLanguageLevelElement>
-    // {
-    //     new UserLanguageLevelElement
-    //     {
-    //         UserLanguageLevelId = Guid.NewGuid(),
-    //         EnrollmentId = Guid.NewGuid(),
-    //         LanguageLevelId = new Guid("123e4567-e89b-12d3-a456-426614174000"),             // listening -> a1
-    //         LanguageCompetenceId = new Guid("a0b1c2d3-4e5f-6789-0a1b-2c3d4e5f6789"),
-    //     },
-    //     new UserLanguageLevelElement
-    //     {
-    //         UserLanguageLevelId = Guid.NewGuid(),
-    //         EnrollmentId = Guid.NewGuid(),
-    //         LanguageLevelId = new Guid("550e8400-e29b-41d4-a716-446655440000"),             // speaking -> b1
-    //         LanguageCompetenceId = new Guid("58077344-e110-4b6b-9f8e-6a24c708d011"),
-    //     },
-    //     new UserLanguageLevelElement
-    //     {
-    //         UserLanguageLevelId = Guid.NewGuid(),
-    //         EnrollmentId = Guid.NewGuid(),
-    //         LanguageLevelId = new Guid("550e8400-e29b-41d4-a716-446655440000"),             // writing -> b1
-    //         LanguageCompetenceId = new Guid("a36c2e74-f979-4b47-8d7b-6a9b07d7238a"),
-    //     },
-    //     new UserLanguageLevelElement
-    //     {
-    //         UserLanguageLevelId = Guid.NewGuid(),
-    //         EnrollmentId = Guid.NewGuid(),
-    //         LanguageLevelId = new Guid("0e572e8b-835f-4b7a-9a77-2895a6c6c1af"),             // reading -> a2
-    //         LanguageCompetenceId = new Guid("f47ac10b-58cc-4372-a567-0e02b2c3d479"),
-    //     }
-    // };
-
-
-    // USER PROGRESS TABLE
-
-    public class UserLanguageLevel
-    {
-        public string LanguageCompetence { get; set; }
-        public string LanguageLevel { get; set; }
-    }
-
-    private List<UserLanguageLevel> UserLanguageLevels { get; set; } = new List<UserLanguageLevel>
-    {
-        new UserLanguageLevel
-        {
-            LanguageCompetence = "Listening",
-            LanguageLevel = "A1"
-        },
-        new UserLanguageLevel
-        {
-            LanguageCompetence = "Speaking",
-            LanguageLevel = "B1"
-        },
-        new UserLanguageLevel
-        {
-            LanguageCompetence = "Writing",
-            LanguageLevel = "B1"
-        },
-        new UserLanguageLevel
-        {
-            LanguageCompetence = "Reading",
-            LanguageLevel = "A2"
-        }
-    };
 
     void NavigateToLanguageCompetence()
     {
@@ -508,7 +332,6 @@ else
 
     void NavigateToLanguageLevel(Guid languageLevelId)
     {
-        StateService.SetId(languageLevelId);
-        NavigationManager.NavigateTo("/language-level-dashboard");
+        NavigationManager.NavigateTo($"/language-level-dashboard/{languageLevelId}");
     }
 }

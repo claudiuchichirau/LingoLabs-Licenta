@@ -2,6 +2,7 @@
 using LingoLabs.App.Contracts.EnrollmentContracts;
 using LingoLabs.App.Services.Responses;
 using LingoLabs.App.ViewModel.EnrollmentModels;
+using LingoLabs.App.ViewModel.Responses;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -20,12 +21,12 @@ namespace LingoLabs.App.Services.EnrollmentServices
             this.tokenService = tokenService;
         }
 
-        public async Task<ApiResponse<LanguageCompetenceResultViewModel>> CreateLanguageCompetenceResultAsync(LanguageCompetenceResultViewModel createLanguageCompetenceResultViewModel)
+        public async Task<ApiResponse<LanguageCompetenceResultResponse>> CreateLanguageCompetenceResultAsync(LanguageCompetenceResultViewModel createLanguageCompetenceResultViewModel)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
             {
-                return new ApiResponse<LanguageCompetenceResultViewModel>
+                return new ApiResponse<LanguageCompetenceResultResponse>
                 {
                     IsSuccess = false,
                     ValidationErrors = "Authentication token is null."
@@ -38,17 +39,22 @@ namespace LingoLabs.App.Services.EnrollmentServices
 
             if (result.IsSuccessStatusCode)
             {
-                var enrollment = await result.Content.ReadFromJsonAsync<LanguageCompetenceResultViewModel>();
-                return new ApiResponse<LanguageCompetenceResultViewModel>
+                var enrollment = await result.Content.ReadFromJsonAsync<LanguageCompetenceResultResponse>();
+                return new ApiResponse<LanguageCompetenceResultResponse>
                 {
                     IsSuccess = true,
                     Data = enrollment
                 };
             }
-
-            var response = await result.Content.ReadFromJsonAsync<ApiResponse<LanguageCompetenceResultViewModel>>();
-            response!.IsSuccess = result.IsSuccessStatusCode;
-            return response!;
+            else
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<LanguageCompetenceResultResponse>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
         }
 
         public async Task<ApiResponse<LanguageCompetenceResultViewModel>> UpdateLanguageCompetenceResultAsync(LanguageCompetenceResultViewModel updateLanguageCompetenceResultViewModel)

@@ -2,6 +2,7 @@
 using LingoLabs.App.Contracts.EnrollmentContracts;
 using LingoLabs.App.Services.Responses;
 using LingoLabs.App.ViewModel.EnrollmentModels;
+using LingoLabs.App.ViewModel.Responses;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -20,12 +21,12 @@ namespace LingoLabs.App.Services.EnrollmentServices
             this.tokenService = tokenService;
         }
 
-        public async Task<ApiResponse<LessonResultViewModel>> CreateLessonResultAsync(LessonResultViewModel createLessonResultViewModel)
+        public async Task<ApiResponse<LessonResultResponse>> CreateLessonResultAsync(LessonResultViewModel createLessonResultViewModel)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
             {
-                return new ApiResponse<LessonResultViewModel>
+                return new ApiResponse<LessonResultResponse>
                 {
                     IsSuccess = false,
                     ValidationErrors = "Authentication token is null."
@@ -38,17 +39,22 @@ namespace LingoLabs.App.Services.EnrollmentServices
 
             if (result.IsSuccessStatusCode)
             {
-                var enrollment = await result.Content.ReadFromJsonAsync<LessonResultViewModel>();
-                return new ApiResponse<LessonResultViewModel>
+                var enrollment = await result.Content.ReadFromJsonAsync<LessonResultResponse>();
+                return new ApiResponse<LessonResultResponse>
                 {
                     IsSuccess = true,
                     Data = enrollment
                 };
             }
-
-            var response = await result.Content.ReadFromJsonAsync<ApiResponse<LessonResultViewModel>>();
-            response!.IsSuccess = result.IsSuccessStatusCode;
-            return response!;
+            else
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<LessonResultResponse>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
+            }
         }
 
         public async Task<ApiResponse<LessonResultViewModel>> UpdateLessonResultAsync(LessonResultViewModel updateLessonResultViewModel)

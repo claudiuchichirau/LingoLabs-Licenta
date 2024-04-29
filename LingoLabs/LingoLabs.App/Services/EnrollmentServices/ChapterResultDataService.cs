@@ -2,6 +2,7 @@
 using LingoLabs.App.Contracts.EnrollmentContracts;
 using LingoLabs.App.Services.Responses;
 using LingoLabs.App.ViewModel.EnrollmentModels;
+using LingoLabs.App.ViewModel.Responses;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -20,12 +21,12 @@ namespace LingoLabs.App.Services.EnrollmentServices
             this.tokenService = tokenService;
         }
 
-        public async Task<ApiResponse<ChapterResultViewModel>> CreateChapterResultAsync(ChapterResultViewModel createChapterResultViewModel)
+        public async Task<ApiResponse<ChapterResultResponse>> CreateChapterResultAsync(ChapterResultViewModel createChapterResultViewModel)
         {
             var token = await tokenService.GetTokenAsync();
             if (token == null)
             {
-                return new ApiResponse<ChapterResultViewModel>
+                return new ApiResponse<ChapterResultResponse>
                 {
                     IsSuccess = false,
                     ValidationErrors = "Authentication token is null."
@@ -38,17 +39,21 @@ namespace LingoLabs.App.Services.EnrollmentServices
 
             if (result.IsSuccessStatusCode)
             {
-                var enrollment = await result.Content.ReadFromJsonAsync<ChapterResultViewModel>();
-                return new ApiResponse<ChapterResultViewModel>
+                var enrollment = await result.Content.ReadFromJsonAsync<ChapterResultResponse>();
+                return new ApiResponse<ChapterResultResponse>
                 {
                     IsSuccess = true,
                     Data = enrollment
                 };
+            } else
+            {
+                var content = await result.Content.ReadAsStringAsync();
+                return new ApiResponse<ChapterResultResponse>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = content
+                };
             }
-
-            var response = await result.Content.ReadFromJsonAsync<ApiResponse<ChapterResultViewModel>>();
-            response!.IsSuccess = result.IsSuccessStatusCode;
-            return response!;
         }
 
         public async Task<ApiResponse<ChapterResultViewModel>> UpdateChapterResultAsync(ChapterResultViewModel updateChapterResultViewModel)

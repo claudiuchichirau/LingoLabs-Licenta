@@ -45,7 +45,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
 
                 var lessonsSorted = chapter.Value.ChapterLessons
                     .OrderBy(lesson => lesson.LessonPriorityNumber ?? int.MaxValue)
-                    .Select(lesson => new Lessons.Queries.LessonDto
+                    .Select(lesson => new ListeningLessons.Queries.ListeningLessonDto
                     {
                         LessonId = lesson.LessonId,
                         LessonPriorityNumber = lesson.LessonPriorityNumber,

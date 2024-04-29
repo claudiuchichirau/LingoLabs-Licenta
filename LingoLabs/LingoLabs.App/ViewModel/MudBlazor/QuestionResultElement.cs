@@ -1,11 +1,12 @@
-﻿using System.Security.Cryptography.X509Certificates;
+﻿using LingoLabs.App.ViewModel.LanguageModels;
+using System.Security.Cryptography.X509Certificates;
 
 namespace LingoLabs.App.ViewModel.MudBlazor
 {
     public class QuestionResultElement
     {
         public Guid QuestionId { get; set; }
-        public QuestionTypeElement QuestionType { get; set; }
+        public QuestionTypeViewModel QuestionType { get; set; }
         public string QuestionRequirement { get; set; } = string.Empty;
         public Guid? GrilaCorrectChoiceId { get; set; }
         public Guid? GrilaUserChoiceId { get; set; }
