@@ -577,14 +577,11 @@ else if (IsUSerLanguageLevelsInfoLoaded == false && showQuizResults == true)
         showSubmitButton = false;
         showQuizResultsTable = true;
 
-
-        // CREATE RESULTS
-
         EnrollmentViewModel enrollmentViewModel = new EnrollmentViewModel
-        {
-            LanguageId = CurrentLanguageId,
-            UserId = UserId,
-        };
+            {
+                LanguageId = CurrentLanguageId,
+                UserId = UserId,
+            };
 
         var response = await EnrollmentDataService.CreateEnrollmentAsync(enrollmentViewModel);
         CurrentEnrollmentId = response.Data.EnrollmentId;
@@ -732,7 +729,7 @@ else if (IsUSerLanguageLevelsInfoLoaded == false && showQuizResults == true)
 
     void NavigateToLanguageDashboard()
     {
-        NavigationManager.NavigateTo($"/language-dashboard/{CurrentLanguageId}");
+        NavigationManager.NavigateTo($"/language-dashboard/{CurrentEnrollmentId}");
     }
 }
 

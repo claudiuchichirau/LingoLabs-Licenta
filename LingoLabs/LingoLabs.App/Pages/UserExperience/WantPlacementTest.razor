@@ -1,11 +1,16 @@
 ﻿@page "/want-placement-test/{Id}"
+@using LingoLabs.App.Auth
+@using LingoLabs.App.Contracts.EnrollmentContracts
 @using LingoLabs.App.Services.AuthServices
+@using LingoLabs.App.ViewModel.EnrollmentModels
 @using LingoLabs.App.ViewModel.MudBlazor
+@using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
 @using MatBlazor
 @using System.Net.Http.Json
 @using ViewModel.MudBlazor
 @inject NavigationManager NavigationManager
+@inject CustomStateProvider authStateProvider
 @inject HttpClient httpClient
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
@@ -37,14 +42,27 @@
 </MudContainer>
 
 @code {
+    [Inject]
+    public IEnrollmentDataService EnrollmentDataService { get; set; }
     [Parameter]
     public string Id { get; set; }
+    private AuthenticationState authState;
     Guid LanguageId = Guid.Empty;
+    Guid UserId = Guid.Empty;
+    Guid CurrentEnrollmentId = Guid.Empty;
+    private Snackbar snackbar;
 }
 
 @functions {
     protected override async Task OnInitializedAsync()
     {
+        authState = await authStateProvider.GetAuthenticationStateAsync();
+
+        var user = authState.User;
+        var claims = user.Claims.ToList();
+        var userId = claims.Find(x => x.Type == "nameid").Value;
+        UserId = Guid.Parse(userId);
+
         LanguageId = Guid.Parse(Id);
     }
 
@@ -53,8 +71,31 @@
         NavigationManager.NavigateTo($"/placement-test/{LanguageId}");
     }
 
-    void NavigateToLanguageDashboard()
+    async void NavigateToLanguageDashboard()
     {
-        NavigationManager.NavigateTo($"/language-dashboard/{LanguageId}");
+        EnrollmentViewModel enrollmentViewModel = new EnrollmentViewModel
+            {
+                LanguageId = LanguageId,
+                UserId = UserId,
+            };
+
+        var response = await EnrollmentDataService.CreateEnrollmentAsync(enrollmentViewModel);
+        CurrentEnrollmentId = response.Data.EnrollmentId;
+
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+        if (!response.IsSuccess)
+        {
+            var errorMessage = "An error occurred while submitting the quiz. Please try again later: " + response.Message;
+            if (response.ValidationErrors != null)
+            {
+                errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+            }
+            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+            return;
+        }
+        else
+        {
+            NavigationManager.NavigateTo($"/language-dashboard/{CurrentEnrollmentId}");
+        }
     }
 }

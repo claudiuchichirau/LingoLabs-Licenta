@@ -1,6 +1,7 @@
 ﻿@page "/language-dashboard/{Id}"
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Contracts.EnrollmentContracts
 @using LingoLabs.App.Services.AuthServices
 @using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
@@ -247,12 +248,16 @@ else
     [Inject]
     public IAuthenticationService AuthenticationService { get; set; }
 
+    [Inject]
+    public IEnrollmentDataService EnrollmentDataService { get; set; }
+
     public LanguageViewModel Language { get; set; } = new LanguageViewModel();
     private bool IsDataLoaded = false;
 
     [Parameter]
     public string Id { get; set; }
-    Guid LanguageId = Guid.Empty;
+    Guid CurrentEnrollmentId = Guid.Empty;
+    Guid CurrentLanguageId = Guid.Empty;
 }
 
 @functions {
@@ -265,7 +270,11 @@ else
         var user = authState.User;
         var claims = user.Claims.ToList();
 
-        LanguageId = Guid.Parse(Id);
+        CurrentEnrollmentId = Guid.Parse(Id);
+
+        var Enrollment = await EnrollmentDataService.GetEnrollmentByIdAsync(CurrentEnrollmentId);
+
+        var LanguageId = Enrollment.LanguageId;
 
         Language = (await LanguageDataService.GetLanguageByIdAsync(LanguageId));
         IsDataLoaded = true;

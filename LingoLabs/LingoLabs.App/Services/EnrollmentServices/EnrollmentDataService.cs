@@ -67,7 +67,7 @@ namespace LingoLabs.App.Services.EnrollmentServices
 
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             var result = await httpClient.DeleteAsync($"{RequestUri}/{enrollmentId}");
-            if (result.IsSuccessStatusCode)
+            if (!result.IsSuccessStatusCode)
             {
                 var content = await result.Content.ReadAsStringAsync();
                 return new ApiResponse<EnrollmentViewModel>
