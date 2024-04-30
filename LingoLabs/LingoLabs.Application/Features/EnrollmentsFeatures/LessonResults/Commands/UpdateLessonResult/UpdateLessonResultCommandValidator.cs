@@ -9,6 +9,10 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
             RuleFor(x => x.LessonResultId)
                 .NotEmpty().WithMessage("LessonResultId is required")
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} must not be empty.");
+
+            RuleFor(x => x.IsCompleted)
+                .NotNull().WithMessage("IsCompleted is required");
+
         }
     }
 }

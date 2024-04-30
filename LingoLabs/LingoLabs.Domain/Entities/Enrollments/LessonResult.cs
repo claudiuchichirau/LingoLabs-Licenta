@@ -21,7 +21,7 @@ namespace LingoLabs.Domain.Entities.Enrollments
             LessonId = lessonId;
             ChapterResultId = chapterResultId;
             LanguageCompetenceResultId = languageCompetenceResultId;
-            IsCompleted = false;
+            IsCompleted = isCompleted;
         }
 
         public static Result<LessonResult> Create(Guid lessonId, Guid chapterResultId, Guid languageCompetenceResultId, bool isCompleted)

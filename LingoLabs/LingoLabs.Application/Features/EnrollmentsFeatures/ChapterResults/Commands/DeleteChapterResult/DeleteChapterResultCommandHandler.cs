@@ -11,7 +11,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
         private readonly IChapterResultRepository chapterResultRepository;
         private readonly DeleteLessonResultCommandHandler deleteLessonResultCommandHandler;
 
-        public DeleteChapterResultCommandHandler(IChapterResultRepository chapterResultRepository, DeleteLessonResultCommandHandler deleteLanguageCompetenceResultCommandHandler)
+        public DeleteChapterResultCommandHandler(IChapterResultRepository chapterResultRepository, DeleteLessonResultCommandHandler deleteLessonResultCommandHandler)
         {
             this.chapterResultRepository = chapterResultRepository;
             this.deleteLessonResultCommandHandler = deleteLessonResultCommandHandler;

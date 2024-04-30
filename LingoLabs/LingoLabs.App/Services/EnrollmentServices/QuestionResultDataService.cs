@@ -2,6 +2,7 @@
 using LingoLabs.App.Contracts.EnrollmentContracts;
 using LingoLabs.App.Services.Responses;
 using LingoLabs.App.ViewModel.EnrollmentModels;
+using LingoLabs.App.ViewModel.LanguageModels;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -38,17 +39,28 @@ namespace LingoLabs.App.Services.EnrollmentServices
 
             if (result.IsSuccessStatusCode)
             {
-                var enrollment = await result.Content.ReadFromJsonAsync<QuestionResultViewModel>();
+                var questionResult = await result.Content.ReadFromJsonAsync<QuestionResultViewModel>();
                 return new ApiResponse<QuestionResultViewModel>
                 {
                     IsSuccess = true,
-                    Data = enrollment
+                    Data = questionResult
                 };
             }
 
             var response = await result.Content.ReadFromJsonAsync<ApiResponse<QuestionResultViewModel>>();
-            response!.IsSuccess = result.IsSuccessStatusCode;
-            return response!;
+            if (response != null)
+            {
+                response.IsSuccess = result.IsSuccessStatusCode;
+                return response;
+            }
+            else
+            {
+                return new ApiResponse<QuestionResultViewModel>
+                {
+                    IsSuccess = false,
+                    ValidationErrors = response.ValidationErrors
+                };
+            }
         }
 
         public async Task<ApiResponse<QuestionResultViewModel>> UpdateQuestionResultAsync(QuestionResultViewModel updateQuestionResultViewModel)

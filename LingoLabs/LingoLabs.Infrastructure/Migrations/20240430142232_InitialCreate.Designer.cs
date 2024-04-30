@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LingoLabs.Infrastructure.Migrations
 {
     [DbContext(typeof(LingoLabsDbContext))]
-    [Migration("20240420185041_InitialCreate")]
+    [Migration("20240430142232_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

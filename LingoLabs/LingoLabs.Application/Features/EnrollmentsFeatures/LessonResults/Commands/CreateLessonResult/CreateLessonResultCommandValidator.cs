@@ -20,6 +20,9 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .NotNull()
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} is required.");
+
+            RuleFor(p => p.IsCompleted)
+                .NotNull().WithMessage("{PropertyName} is required.");
         }
     }
 }

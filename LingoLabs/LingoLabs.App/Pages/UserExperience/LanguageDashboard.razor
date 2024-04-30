@@ -332,6 +332,7 @@ else
 
     void NavigateToLanguageLevel(Guid languageLevelId)
     {
-        NavigationManager.NavigateTo($"/language-level-dashboard/{languageLevelId}");
+        Guid languageLevelResultId = enrollment.LanguageLevelResults.Find(x => x.LanguageLevelId == languageLevelId).LanguageLevelResultId;
+        NavigationManager.NavigateTo($"/language-level-dashboard/{languageLevelResultId}");
     }
 }

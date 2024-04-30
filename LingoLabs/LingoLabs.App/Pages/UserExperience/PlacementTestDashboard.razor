@@ -409,6 +409,8 @@ else if (IsUSerLanguageLevelsInfoLoaded == false && showQuizResults == true)
     [Inject]
     private IEnrollmentDataService EnrollmentDataService { get; set; }
     [Inject]
+    private ILanguageCompetenceResultDataService LanguageCompetenceResultDataService { get; set; }
+    [Inject]
     private ILanguageLevelResultDataService LanguageLevelResultDataService { get; set; }
     [Inject]
     private IChapterResultDataService ChapterResultDataService { get; set; }
@@ -577,6 +579,9 @@ else if (IsUSerLanguageLevelsInfoLoaded == false && showQuizResults == true)
         showSubmitButton = false;
         showQuizResultsTable = true;
 
+
+        //  CREATE RESULTS ENTITIES
+
         EnrollmentViewModel enrollmentViewModel = new EnrollmentViewModel
             {
                 LanguageId = CurrentLanguageId,
@@ -601,6 +606,106 @@ else if (IsUSerLanguageLevelsInfoLoaded == false && showQuizResults == true)
         {
             Snackbar.Add("Quiz submitted successfully!", Severity.Success);
         }
+
+        foreach (var competence in language.LanguageCompetences)
+        {
+            LanguageCompetenceResultViewModel languageCompetenceResultViewModel = new LanguageCompetenceResultViewModel
+                {
+                    EnrollmentId = CurrentEnrollmentId,
+                    LanguageCompetenceId = competence.LanguageCompetenceId,
+                };
+
+            var responseLanguageCompetenceResult = await LanguageCompetenceResultDataService.CreateLanguageCompetenceResultAsync(languageCompetenceResultViewModel);
+
+            if (!responseLanguageCompetenceResult.IsSuccess)
+            {
+                var errorMessage = "An error occurred while submitting the quiz. Please try again later: " + responseLanguageCompetenceResult.Message;
+                if (responseLanguageCompetenceResult.ValidationErrors != null)
+                {
+                    errorMessage += "\n" + string.Join("\n", responseLanguageCompetenceResult.ValidationErrors);
+                }
+                snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                return;
+            }
+        }
+
+        foreach (var level in language.LanguageLevels)
+        {
+            LanguageLevelResultViewModel languageLevelResultViewModel = new LanguageLevelResultViewModel
+                {
+                    EnrollmentId = CurrentEnrollmentId,
+                    LanguageLevelId = level.LanguageLevelId,
+                };
+
+            var responseLanguageLevelResult = await LanguageLevelResultDataService.CreateLanguageLevelResultAsync(languageLevelResultViewModel);
+
+            if (!responseLanguageLevelResult.IsSuccess)
+            {
+                var errorMessage = "An error occurred while submitting the quiz. Please try again later: " + responseLanguageLevelResult.Message;
+                if (responseLanguageLevelResult.ValidationErrors != null)
+                {
+                    errorMessage += "\n" + string.Join("\n", responseLanguageLevelResult.ValidationErrors);
+                }
+                snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                return;
+            }
+
+            var languageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(level.LanguageLevelId);
+
+            foreach (var chapter in languageLevel.LanguageChapters)
+            {
+                ChapterResultViewModel chapterResultViewModel = new ChapterResultViewModel
+                    {
+                        LanguageLevelResultId = responseLanguageLevelResult.Data.LanguageLevelResult.LanguageLevelResultId,
+                        ChapterId = chapter.ChapterId,
+                    };
+
+                var responseChapterResult = await ChapterResultDataService.CreateChapterResultAsync(chapterResultViewModel);
+
+                if (!responseChapterResult.IsSuccess)
+                {
+                    var errorMessage = "An error occurred while submitting the quiz. Please try again later: " + responseChapterResult.Message;
+                    if (responseChapterResult.ValidationErrors != null)
+                    {
+                        errorMessage += "\n" + string.Join("\n", responseChapterResult.ValidationErrors);
+                    }
+                    snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                    return;
+                }
+
+                var chapterDetails = await ChapterDataService.GetChapterByIdAsync(chapter.ChapterId);
+
+                foreach (var lesson in chapterDetails.ChapterLessons)
+                {
+                    var updatedEnrollment = await EnrollmentDataService.GetEnrollmentByIdAsync(CurrentEnrollmentId);
+                    var languageCompetenceResult = updatedEnrollment.LanguageCompetenceResults.FirstOrDefault(x => x.LanguageCompetenceId == lesson.LanguageCompetenceId);
+
+                    LessonResultViewModel lessonResultViewModel = new LessonResultViewModel
+                        {
+                            LessonId = lesson.LessonId,
+                            ChapterResultId = responseChapterResult.Data.ChapterResult.ChapterResultId,
+                            LanguageCompetenceResultId = languageCompetenceResult.LanguageCompetenceResultId,
+                            IsCompleted = false
+                        };
+
+                    var responseLessonResult = await LessonResultDataService.CreateLessonResultAsync(lessonResultViewModel);
+
+                    if (!responseLessonResult.IsSuccess)
+                    {
+                        var errorMessage = "An error occurred while submitting the quiz. Please try again later: " + responseLessonResult.Message;
+                        if (responseLessonResult.ValidationErrors != null)
+                        {
+                            errorMessage += "\n" + string.Join("\n", responseLessonResult.ValidationErrors);
+                        }
+                        snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                        return;
+                    }
+                }
+            }
+        }
+
+
+
 
         CalculateScore(correctAnswers);
         CalculateUserLanguageLevels(userQuestionResponses);

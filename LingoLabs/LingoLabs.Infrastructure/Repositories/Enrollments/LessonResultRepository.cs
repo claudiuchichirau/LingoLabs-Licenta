@@ -18,7 +18,7 @@ namespace LingoLabs.Infrastructure.Repositories.Enrollments
             var lessonResult = await context.LessonResults
                 .Include(lr => lr.QuestionResults)
                 .Include(lr => lr.Lesson)
-                .Include(lr => lr.ChapterResultId)
+                .Include(lr => lr.ChapterResult)
                 .FirstOrDefaultAsync(lr => lr.LessonResultId == id);
 
             if(lessonResult == null)

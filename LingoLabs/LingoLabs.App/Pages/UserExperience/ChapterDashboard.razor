@@ -1,7 +1,9 @@
 ﻿@page "/chapter-dashboard/{Id}"
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
+@using LingoLabs.App.Contracts.EnrollmentContracts
 @using LingoLabs.App.Contracts.LanguageContracts
+@using LingoLabs.App.ViewModel.EnrollmentModels
 @using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
@@ -163,12 +165,17 @@
     public ILanguageLevelDataService LanguageLevelDataService { get; set; }
     [Inject]
     public IChapterDataService ChapterDataService { get; set; }
+    [Inject]
+    public IChapterResultDataService ChapterResultDataService { get; set; }
+
     private AuthenticationState authState;
 
     [Parameter]
     public string Id { get; set; }
     private Guid CurrentChapterId = Guid.Empty;
+    private Guid CurrentChapterResultId = Guid.Empty;
     private ChapterViewModel chapter = new ChapterViewModel();
+    private ChapterResultViewModel chapterResult = new ChapterResultViewModel();
     private LanguageViewModel language = new LanguageViewModel();
     private Dictionary<Guid, List<ListeningLessonViewModel>> competencesLessons = new Dictionary<Guid, List<ListeningLessonViewModel>>();
     private bool IsDataLoaded = false;
@@ -180,7 +187,11 @@
         var user = authState.User;
         var claims = user.Claims.ToList();
 
-        chapter = await ChapterDataService.GetChapterByIdAsync(Guid.Parse(Id));
+        CurrentChapterResultId = Guid.Parse(Id);
+        chapterResult = await ChapterResultDataService.GetChapterResultByIdAsync(CurrentChapterResultId);
+        CurrentChapterId = chapterResult.ChapterId;
+
+        chapter = await ChapterDataService.GetChapterByIdAsync(CurrentChapterId);
 
         if (chapter.ChapterLessons != null && chapter.ChapterLessons.Count != 0)
         {
@@ -211,7 +222,8 @@
 @functions{
     private async Task NavigateToLesson(Guid lessonId)
     {
-        NavigationManager.NavigateTo($"/lesson-dashboard/{lessonId}");
+        var lessoonResult = chapterResult.LessonResults.FirstOrDefault(x => x.LessonId == lessonId);
+        NavigationManager.NavigateTo($"/lesson-dashboard/{lessoonResult.LessonResultId}");
         await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
     }
 }

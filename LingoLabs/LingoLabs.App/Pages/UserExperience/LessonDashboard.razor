@@ -222,7 +222,8 @@
             string.Compare(lesson.LanguageCompetenceName, "Writing") != 0 && 
             lesson.LessonQuestions != null && 
             lesson.LessonQuestions.Count > 0 &&
-            CurrentLessonResultId == Guid.Empty)
+            lessonResult.IsCompleted == false &&
+            IsDataLoaded == true)
     {
         <div class="text-center" style="margin-bottom: 50px;">
             <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
@@ -414,6 +415,20 @@
             </div>
         }
     </div>
+
+    <div class="text-center" style="margin-bottom: 50px;">
+        <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
+            Not Happy with Your <span style="color: #FC6F05;">Results</span>?
+        </h1>
+        <h2 style="font-size: 19px; margin-bottom: 30px;">
+            Give it another shot and retake the quiz now! Your next attempt could be the one that tops the score chart!
+        </h2>
+    </div>
+
+    <div class="text-center">
+        <MudButton Icon="@Icons.Material.Filled.ChangeCircle" Style="background-color: red; color: white; margin-top: 15px;" Class="text-center align-items-center justify-content-center" OnClick="TryAgainQuiz">Try Again Now</MudButton>
+    </div>
+
 }
 
 @* QUIZ RESULTS TABLE *@
@@ -438,32 +453,38 @@
             <HeaderContent>
                 <MudTh Class="text-center">Question Type</MudTh>
                 <MudTh Class="text-center">Question Requirement</MudTh>
-                <MudTh Class="text-center">Your Answer</MudTh>
-                <MudTh Class="text-center">Correct Answer</MudTh>
+                @if(!lessonResult.IsCompleted)
+                {
+                    <MudTh Class="text-center">Your Answer</MudTh>
+                    <MudTh Class="text-center">Correct Answer</MudTh>
+                }
                 <MudTh Class="text-center">Is Correct</MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Question Type" Class="text-center">@context.QuestionType</MudTd>
                 <MudTd DataLabel="Question Requirement" Class="text-center">@context.QuestionRequirement</MudTd>
 
-                @if (context.QuestionType == QuestionTypeViewModel.MultipleChoice)
+                @if (!lessonResult.IsCompleted)
                 {
-                    <MudTd DataLabel="Your Answer" Class="text-center">@context.GrilaUserChoiceId</MudTd>
-                    <MudTd DataLabel="Correct Answer" Class="text-center">@context.GrilaCorrectChoiceId</MudTd>
-                }
-                else if (context.QuestionType == QuestionTypeViewModel.TrueFalse)
-                {
-                    <MudTd DataLabel="Your Answer" Class="text-center">@context.TrueFalseUserValue</MudTd>
-                    <MudTd DataLabel="Correct Answer" Class="text-center">@context.TrueFalseCorrectValue</MudTd>
-                }
-                else if (context.QuestionType == QuestionTypeViewModel.MissingWord)
-                {
-                    <MudTd DataLabel="Your Answer" Class="text-center">@context.CuvantLipsaUserValue</MudTd>
+                    @if (context.QuestionType == QuestionTypeViewModel.MultipleChoice)
+                    {
+                        <MudTd DataLabel="Your Answer" Class="text-center">@context.GrilaUserChoiceId</MudTd>
+                        <MudTd DataLabel="Correct Answer" Class="text-center">@context.GrilaCorrectChoiceId</MudTd>
+                    }
+                    else if (context.QuestionType == QuestionTypeViewModel.TrueFalse)
+                    {
+                        <MudTd DataLabel="Your Answer" Class="text-center">@context.TrueFalseUserValue</MudTd>
+                        <MudTd DataLabel="Correct Answer" Class="text-center">@context.TrueFalseCorrectValue</MudTd>
+                    }
+                    else if (context.QuestionType == QuestionTypeViewModel.MissingWord)
+                    {
+                        <MudTd DataLabel="Your Answer" Class="text-center">@context.CuvantLipsaUserValue</MudTd>
 
-                    List<string> cuvantLipsaCorrectValues = context.CuvantLipsaCorrectValues;
-                    string cuvantLipsaCorrectValuesString = string.Join(" / ", cuvantLipsaCorrectValues);
+                        List<string> cuvantLipsaCorrectValues = context.CuvantLipsaCorrectValues;
+                        string cuvantLipsaCorrectValuesString = string.Join(" / ", cuvantLipsaCorrectValues);
 
-                    <MudTd DataLabel="Correct Answer" Class="text-center">@cuvantLipsaCorrectValuesString</MudTd>
+                        <MudTd DataLabel="Correct Answer" Class="text-center">@cuvantLipsaCorrectValuesString</MudTd>
+                    }
                 }
 
                 @if (@context.UserAnswerIsCorrect)
@@ -536,7 +557,9 @@
     [Inject]
     public IQuestionResultDataService questionResultDataService { get; set; }
 
-    public LessonViewModel lesson { get; set; } = new LessonViewModel();
+    [Inject]
+    public IQuestionDataService questionDataService { get; set; }
+
     private AuthenticationState authState;
     private UserEnrollmentsResponse userEnrollments = new UserEnrollmentsResponse();
 
@@ -544,6 +567,7 @@
     public string Id { get; set; }
     private Guid CurrentLessonId = Guid.Empty;
     private Guid CurrentLessonResultId = Guid.Empty;
+    private LessonViewModel lesson { get; set; } = new LessonViewModel();
     private LessonResultViewModel lessonResult = new LessonResultViewModel();
     private bool IsDataLoaded = false;
 
@@ -554,7 +578,9 @@
         var user = authState.User;
         var claims = user.Claims.ToList();
 
-        CurrentLessonId = Guid.Parse(Id);
+        CurrentLessonResultId = Guid.Parse(Id);
+        lessonResult = await lessonResultDataService.GetLessonResultByIdAsync(CurrentLessonResultId);
+        CurrentLessonId = lessonResult.LessonId;
 
         lesson = await lessonDataService.GetLessonByIdAsync(CurrentLessonId);
 
@@ -562,23 +588,42 @@
         var languageLevel = await languageLevelDataService.GetLanguageLevelByIdAsync(chapter.LanguageLevelId);
         var language = await languageDataService.GetLanguageByIdAsync(languageLevel.LanguageId);
 
-        userEnrollments = await enrollmentDataService.GetAllEnrollmentsByUserIdAsync();
-        var enrollment = userEnrollments.Enrollments.Find(x => x.LanguageId == language.LanguageId);
-
-        if(enrollment != null && enrollment.LanguageLevelResults.Find(x => x.LanguageLevelId == languageLevel.LanguageLevelId) != null)
+        if (lessonResult.IsCompleted == true)
         {
-            var languageLevelResult = enrollment.LanguageLevelResults.Find(x => x.LanguageLevelId == languageLevel.LanguageLevelId);
-            if(languageLevelResult != null && languageLevelResult.ChapterResults.Find(x => x.ChapterId == chapter.ChapterId) != null)
+            quizResultsElement = new QuizResultsElement
             {
-                var chapterResult = languageLevelResult.ChapterResults.Find(x => x.ChapterId == chapter.ChapterId);
-                if(chapterResult != null && chapterResult.LessonResults.Find(x => x.LessonId == lesson.LessonId) != null)
+                LessonId = lesson.LessonId,
+                questionResultElements = new List<QuestionResultElement>()
+            };
+
+            foreach (var questionResult in lessonResult.QuestionResults)
+            {
+                var question = await questionDataService.GetQuestionByIdAsync(questionResult.QuestionId);
+
+                quizResultsElement.questionResultElements.Add(new QuestionResultElement
                 {
-                    lessonResult = chapterResult.LessonResults.Find(x => x.LessonId == lesson.LessonId);
-                    CurrentLessonResultId = lessonResult.LessonResultId;
+                    QuestionId = question.QuestionId,
+                    QuestionType = question.QuestionType,
+                    QuestionRequirement = question.QuestionRequirement,
+                    UserAnswerIsCorrect = questionResult.IsCorrect,
+                });
+            }
+
+            score = 0;
+            foreach (var questionResult in lessonResult.QuestionResults)
+            {
+                if (questionResult.IsCorrect)
+                {
+                    score++;
                 }
             }
-        }
 
+            score = (score * 100) / lessonResult.QuestionResults.Count;
+
+
+            showQuizResults = true;
+            showQuizResultsTable = true;
+        }
 
         IsDataLoaded = true;
     }
@@ -747,214 +792,56 @@
 
         if (score >= 45)
         {
-            Guid currentLessonResultId = await CreateResultsEntities();
+
+            List<QuestionResultViewModel> questionResults = new List<QuestionResultViewModel>();
 
             foreach (QuestionResultElement questionResult in quizResultsElement.questionResultElements)
             {
                 QuestionResultViewModel createQuestionResult = new QuestionResultViewModel
                     {
                         QuestionId = questionResult.QuestionId,
-                        LessonResultId = currentLessonResultId,
+                        LessonResultId = CurrentLessonResultId,
                         IsCorrect = questionResult.UserAnswerIsCorrect
                     };
 
-                var response = await questionResultDataService.CreateQuestionResultAsync(createQuestionResult);
+                questionResults.Add(createQuestionResult);
+                // var response = await questionResultDataService.CreateQuestionResultAsync(createQuestionResult);
 
-                if (!response.IsSuccess)
-                {
-                    var errorMessage = "Error creating <QuestionResult> entity: " + response.Message;
-                    if (response.ValidationErrors != null)
-                    {
-                        errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
-                    }
-                    snackbar = Snackbar.Add(errorMessage, Severity.Error);
-                    return;
-                }
+                // if (!response.IsSuccess)
+                // {
+                //     var errorMessage = "Error creating <QuestionResult> entity: " + response.Message;
+                //     if (response.ValidationErrors != null)
+                //     {
+                //         errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+                //     }
+                //     snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                //     return;
+                // }
             }
 
-            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-            Snackbar.Add("Quiz submitted successfully!", Severity.Success);
-        }
-    }
-
-    async Task<Guid> CreateResultsEntities()
-    {
-        var chapter = await chapterDataService.GetChapterByIdAsync(lesson.ChapterId);
-        var languageLevel = await languageLevelDataService.GetLanguageLevelByIdAsync(chapter.LanguageLevelId);
-        var languageCompetence = await languageCompetenceDataService.GetLanguageCompetenceByIdAsync(lesson.LanguageCompetenceId);
-        var language = await languageDataService.GetLanguageByIdAsync(languageLevel.LanguageId);
-
-        userEnrollments = await enrollmentDataService.GetAllEnrollmentsByUserIdAsync();
-
-        var enrollment = userEnrollments.Enrollments.Find(x => x.LanguageId == language.LanguageId);
-
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-
-        ApiResponse<LanguageCompetenceResultResponse> responseCompetenceResult = new ApiResponse<LanguageCompetenceResultResponse>();
-
-        if (enrollment.LanguageCompetenceResults.Find(x => x.LanguageCompetenceId == languageCompetence.LanguageCompetenceId) == null)
-        {
-            LanguageCompetenceResultViewModel languageCompetenceResult = new LanguageCompetenceResultViewModel
-            {
-                LanguageCompetenceId = languageCompetence.LanguageCompetenceId,
-                EnrollmentId = enrollment.EnrollmentId
-            };
-
-            responseCompetenceResult = await languageCompetenceResultDataService.CreateLanguageCompetenceResultAsync(languageCompetenceResult);
-
-            if (!responseCompetenceResult.IsSuccess)
-            {
-                var errorMessage = "Error creating <LanguageCompetenceResult> entity: " + responseCompetenceResult.Message;
-                if (responseCompetenceResult.ValidationErrors != null)
-                {
-                    errorMessage += "\n" + string.Join("\n", responseCompetenceResult.ValidationErrors);
-                }
-                snackbar = Snackbar.Add(errorMessage, Severity.Error);
-                return Guid.Empty;
-            }            
-        }
-
-        if (enrollment.LanguageLevelResults.Find(x => x.LanguageLevelId == languageLevel.LanguageLevelId) == null)
-        {
-            LanguageLevelResultViewModel languageLevelResult = new LanguageLevelResultViewModel
-            {
-                LanguageLevelId = languageLevel.LanguageLevelId,
-                EnrollmentId = enrollment.EnrollmentId,
-            };
-
-            var responseLevelResult = await languageLevelResultDataService.CreateLanguageLevelResultAsync(languageLevelResult);
-
-            if (!responseLevelResult.IsSuccess)
-            {
-                var errorMessage = "Error creating <LanguageLevelResult> entity: " + responseLevelResult.Message;
-                if (responseLevelResult.ValidationErrors != null)
-                {
-                    errorMessage += "\n" + string.Join("\n", responseLevelResult.ValidationErrors);
-                }
-                snackbar = Snackbar.Add(errorMessage, Severity.Error);
-                return Guid.Empty;
-            }
-
-            ChapterResultViewModel chapterResult = new ChapterResultViewModel
-            {
-                ChapterId = chapter.ChapterId,
-                LanguageLevelResultId = responseLevelResult.Data.LanguageLevelResult.LanguageLevelResultId
-            };
-
-            var responseChapterResult = await chapterResultDataService.CreateChapterResultAsync(chapterResult);
-
-            if (!responseChapterResult.IsSuccess)
-            {
-                var errorMessage = "Error creating <ChapterResult> entity: " + responseChapterResult.Message;
-                if (responseChapterResult.ValidationErrors != null)
-                {
-                    errorMessage += "\n" + string.Join("\n", responseChapterResult.ValidationErrors);
-                }
-                snackbar = Snackbar.Add(errorMessage, Severity.Error);
-                return Guid.Empty;
-            }
-
-            LessonResultViewModel lessonResult = new LessonResultViewModel
+            var newLesssonResult = new LessonResultViewModel
             {
                 LessonId = lesson.LessonId,
-                ChapterResultId = responseChapterResult.Data.ChapterResult.ChapterResultId,
-                LanguageCompetenceResultId = responseCompetenceResult.Data.LanguageCompetenceResult.LanguageCompetenceResultId
+                IsCompleted = true,
+                LessonResultId = CurrentLessonResultId,
+                QuestionResults = questionResults
             };
 
-            var responseLessonResult = await lessonResultDataService.CreateLessonResultAsync(lessonResult);
+            var responseLessonResult = await lessonResultDataService.UpdateLessonResultAsync(newLesssonResult);
 
             if (!responseLessonResult.IsSuccess)
             {
-                var errorMessage = "Error creating <LessonResult> entity: " + responseLessonResult.Message;
+                var errorMessage = "Error updating <LessonResult> entity: " + responseLessonResult.Message;
                 if (responseLessonResult.ValidationErrors != null)
                 {
                     errorMessage += "\n" + string.Join("\n", responseLessonResult.ValidationErrors);
                 }
                 snackbar = Snackbar.Add(errorMessage, Severity.Error);
-                return Guid.Empty;
+                return;
             }
-            return responseLessonResult.Data.LessonResult.LessonResultId;
-        } else
-        {
-            var languageLevelResult = enrollment.LanguageLevelResults.Find(x => x.LanguageLevelId == languageLevel.LanguageLevelId);
 
-            if(languageLevelResult.ChapterResults.Find(x => x.ChapterId == chapter.ChapterId) == null)
-            {
-
-                ChapterResultViewModel chapterResult = new ChapterResultViewModel
-                {
-                    ChapterId = chapter.ChapterId,
-                    LanguageLevelResultId = languageLevelResult.LanguageLevelResultId
-                };
-
-                var responseChapterResult = await chapterResultDataService.CreateChapterResultAsync(chapterResult);
-
-                if (!responseChapterResult.IsSuccess)
-                {
-                    var errorMessage = "Error creating <ChapterResult> entity: " + responseChapterResult.Message;
-                    if (responseChapterResult.ValidationErrors != null)
-                    {
-                        errorMessage += "\n" + string.Join("\n", responseChapterResult.ValidationErrors);
-                    }
-                    snackbar = Snackbar.Add(errorMessage, Severity.Error);
-                    return Guid.Empty;
-                }
-
-                LessonResultViewModel lessonResult = new LessonResultViewModel
-                {
-                    LessonId = lesson.LessonId,
-                    ChapterResultId = responseChapterResult.Data.ChapterResult.ChapterResultId,
-                    LanguageCompetenceResultId = responseCompetenceResult.Data.LanguageCompetenceResult.LanguageCompetenceResultId
-                };
-
-                var responseLessonResult = await lessonResultDataService.CreateLessonResultAsync(lessonResult);
-
-                if (!responseLessonResult.IsSuccess)
-                {
-                    var errorMessage = "Error creating <LessonResult> entity: " + responseLessonResult.Message;
-                    if (responseLessonResult.ValidationErrors != null)
-                    {
-                        errorMessage += "\n" + string.Join("\n", responseLessonResult.ValidationErrors);
-                    }
-                    snackbar = Snackbar.Add(errorMessage, Severity.Error);
-                    return Guid.Empty;
-                }
-
-                return responseLessonResult.Data.LessonResult.LessonResultId;
-            } else
-            {
-                var chapterResult = languageLevelResult.ChapterResults.Find(x => x.ChapterId == chapter.ChapterId);
-
-                if(chapterResult.LessonResults.Find(x => x.LessonId == lesson.LessonId) == null)
-                {
-                    LessonResultViewModel lessonResult = new LessonResultViewModel
-                    {
-                        LessonId = lesson.LessonId,
-                        ChapterResultId = chapterResult.ChapterResultId,
-                        LanguageCompetenceResultId = responseCompetenceResult.Data.LanguageCompetenceResult.LanguageCompetenceResultId
-                    };
-
-                    var responseLessonResult = await lessonResultDataService.CreateLessonResultAsync(lessonResult);
-
-                    if (!responseLessonResult.IsSuccess)
-                    {
-                        var errorMessage = "Error creating <LessonResult> entity: " + responseLessonResult.Message;
-                        if (responseLessonResult.ValidationErrors != null)
-                        {
-                            errorMessage += "\n" + string.Join("\n", responseLessonResult.ValidationErrors);
-                        }
-                        snackbar = Snackbar.Add(errorMessage, Severity.Error);
-                        return Guid.Empty;
-                    }
-
-                    return responseLessonResult.Data.LessonResult.LessonResultId;
-                } else
-                {
-                    var lessonResult = chapterResult.LessonResults.Find(x => x.LessonId == lesson.LessonId); 
-
-                    return lessonResult.LessonResultId;
-                }
-            }
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+            Snackbar.Add("Quiz submitted successfully!", Severity.Success);
         }
     }
 

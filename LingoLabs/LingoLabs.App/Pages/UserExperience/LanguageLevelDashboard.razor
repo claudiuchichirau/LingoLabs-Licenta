@@ -1,5 +1,7 @@
 ﻿@page "/language-level-dashboard/{Id}"
+@using LingoLabs.App.Contracts.EnrollmentContracts
 @using LingoLabs.App.Contracts.LanguageContracts
+@using LingoLabs.App.ViewModel.EnrollmentModels
 @using LingoLabs.App.ViewModel.LanguageModels
 @using LingoLabs.App.ViewModel.MudBlazor
 @using MudBlazor
@@ -153,16 +155,28 @@
 @code {
     [Inject]
     public ILanguageLevelDataService LanguageLevelDataService { get; set; }
+    [Inject]
+    public ILanguageLevelResultDataService LanguageLevelResultDataService { get; set; }
+    [Inject]
+    public IChapterResultDataService ChapterResultDataService { get; set; }
+    [Inject]
+    public ILessonResultDataService LessonResultDataService { get; set; }
+    [Inject]
+    public ILessonDataService LessonDataService { get; set; }
 
     [Parameter]
     public string Id { get; set; }
     private Guid CurrentLanguageLevelId = Guid.Empty;
+    private Guid CurrentLanguageLevelResultId = Guid.Empty;
+    private LanguageLevelResultViewModel languageLevelResult = new LanguageLevelResultViewModel();
     private LanguageLevelViewModel languageLevel = new LanguageLevelViewModel();
     private bool IsDataLoaded = false;
 
     protected override async Task OnInitializedAsync()
     {
-        CurrentLanguageLevelId = Guid.Parse(Id);
+        CurrentLanguageLevelResultId = Guid.Parse(Id);
+        languageLevelResult = await LanguageLevelResultDataService.GetLanguageLevelResultByIdAsync(CurrentLanguageLevelResultId);
+        CurrentLanguageLevelId = languageLevelResult.LanguageLevelId;
         languageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(CurrentLanguageLevelId);
 
         IsDataLoaded = true;
@@ -172,12 +186,17 @@
 @functions {
     private void NavigateToChapterDashboard(Guid chapterId)
     {
-        NavigationManager.NavigateTo($"/chapter-dashboard/{chapterId}");
+        var chapterResult = languageLevelResult.ChapterResults.FirstOrDefault(x => x.ChapterId == chapterId);
+        NavigationManager.NavigateTo($"/chapter-dashboard/{chapterResult.ChapterResultId}");
     }
 
     private async Task NavigateToLesson(Guid lessonId)
     {
-        NavigationManager.NavigateTo($"/lesson-dashboard/{lessonId}");
+        var lesson = await LessonDataService.GetLessonByIdAsync(lessonId);
+        var chapterResult = languageLevelResult.ChapterResults.FirstOrDefault(x => x.ChapterId == lesson.ChapterId);
+        var updatedChapterResult = await ChapterResultDataService.GetChapterResultByIdAsync(chapterResult.ChapterResultId);
+        var lessoonResult = updatedChapterResult.LessonResults.FirstOrDefault(x => x.LessonId == lessonId);
+        NavigationManager.NavigateTo($"/lesson-dashboard/{lessoonResult.LessonResultId}");
         await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
     }
 }

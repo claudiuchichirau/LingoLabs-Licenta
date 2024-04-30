@@ -18,8 +18,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Com
                 .NotEqual(Guid.Empty).WithMessage("{PropertyName} is required.");
 
             RuleFor(p => p.IsCorrect)
-                .NotEmpty().WithMessage("{PropertyName} is required")
-                .NotNull();
+                .NotNull().WithMessage("{PropertyName} is required");
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿@page "/want-placement-test/{Id}"
 @using LingoLabs.App.Auth
+@using LingoLabs.App.Contracts.AuthContracts
 @using LingoLabs.App.Contracts.EnrollmentContracts
+@using LingoLabs.App.Contracts.LanguageContracts
 @using LingoLabs.App.Services.AuthServices
 @using LingoLabs.App.ViewModel.EnrollmentModels
 @using LingoLabs.App.ViewModel.MudBlazor
@@ -43,7 +45,35 @@
 
 @code {
     [Inject]
-    public IEnrollmentDataService EnrollmentDataService { get; set; }
+    public ILanguageDataService languageDataService { get; set; }
+
+    [Inject]
+    public ILanguageLevelDataService languageLevelDataService { get; set; }
+
+    [Inject]
+    public ILanguageCompetenceDataService languageCompetenceDataService { get; set; }
+
+    [Inject]
+    public IChapterDataService chapterDataService { get; set; }
+
+    [Inject]
+    public ILessonDataService lessonDataService { get; set; }
+
+    [Inject]
+    public IEnrollmentDataService enrollmentDataService { get; set; }
+
+    [Inject]
+    public ILanguageLevelResultDataService languageLevelResultDataService { get; set; }
+
+    [Inject]
+    public ILanguageCompetenceResultDataService languageCompetenceResultDataService { get; set; }
+
+    [Inject]
+    public IChapterResultDataService chapterResultDataService { get; set; }
+
+    [Inject]
+    public ILessonResultDataService lessonResultDataService { get; set; }
+
     [Parameter]
     public string Id { get; set; }
     private AuthenticationState authState;
@@ -79,7 +109,7 @@
                 UserId = UserId,
             };
 
-        var response = await EnrollmentDataService.CreateEnrollmentAsync(enrollmentViewModel);
+        var response = await enrollmentDataService.CreateEnrollmentAsync(enrollmentViewModel);
         CurrentEnrollmentId = response.Data.EnrollmentId;
 
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
@@ -93,9 +123,106 @@
             snackbar = Snackbar.Add(errorMessage, Severity.Error);
             return;
         }
-        else
+        
+        var language = await languageDataService.GetLanguageByIdAsync(LanguageId);
+
+        foreach (var competence in language.LanguageCompetences)
         {
-            NavigationManager.NavigateTo($"/language-dashboard/{CurrentEnrollmentId}");
+            LanguageCompetenceResultViewModel languageCompetenceResultViewModel = new LanguageCompetenceResultViewModel
+            {
+                EnrollmentId = CurrentEnrollmentId,
+                LanguageCompetenceId = competence.LanguageCompetenceId,
+            };
+
+            var responseLanguageCompetenceResult = await languageCompetenceResultDataService.CreateLanguageCompetenceResultAsync(languageCompetenceResultViewModel);
+
+            if (!responseLanguageCompetenceResult.IsSuccess)
+            {
+                var errorMessage = "An error occurred while submitting the quiz. Please try again later: " + responseLanguageCompetenceResult.Message;
+                if (responseLanguageCompetenceResult.ValidationErrors != null)
+                {
+                    errorMessage += "\n" + string.Join("\n", responseLanguageCompetenceResult.ValidationErrors);
+                }
+                snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                return;
+            }
         }
+
+        foreach (var level in language.LanguageLevels)
+        {
+            LanguageLevelResultViewModel languageLevelResultViewModel = new LanguageLevelResultViewModel
+            {
+                EnrollmentId = CurrentEnrollmentId,
+                LanguageLevelId = level.LanguageLevelId,
+            };
+
+            var responseLanguageLevelResult = await languageLevelResultDataService.CreateLanguageLevelResultAsync(languageLevelResultViewModel);
+
+            if (!responseLanguageLevelResult.IsSuccess)
+            {
+                var errorMessage = "An error occurred while submitting the quiz. Please try again later: " + responseLanguageLevelResult.Message;
+                if (responseLanguageLevelResult.ValidationErrors != null)
+                {
+                    errorMessage += "\n" + string.Join("\n", responseLanguageLevelResult.ValidationErrors);
+                }
+                snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                return;
+            }
+
+            var languageLevel = await languageLevelDataService.GetLanguageLevelByIdAsync(level.LanguageLevelId);
+
+            foreach (var chapter in languageLevel.LanguageChapters)
+            {
+                ChapterResultViewModel chapterResultViewModel = new ChapterResultViewModel
+                {
+                    LanguageLevelResultId = responseLanguageLevelResult.Data.LanguageLevelResult.LanguageLevelResultId,
+                    ChapterId = chapter.ChapterId,
+                };
+
+                var responseChapterResult = await chapterResultDataService.CreateChapterResultAsync(chapterResultViewModel);
+
+                if (!responseChapterResult.IsSuccess)
+                {
+                    var errorMessage = "An error occurred while submitting the quiz. Please try again later: " + responseChapterResult.Message;
+                    if (responseChapterResult.ValidationErrors != null)
+                    {
+                        errorMessage += "\n" + string.Join("\n", responseChapterResult.ValidationErrors);
+                    }
+                    snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                    return;
+                }
+
+                var chapterDetails = await chapterDataService.GetChapterByIdAsync(chapter.ChapterId);
+
+                foreach (var lesson in chapterDetails.ChapterLessons)
+                {
+                    var updatedEnrollment = await enrollmentDataService.GetEnrollmentByIdAsync(CurrentEnrollmentId);
+                    var languageCompetenceResult = updatedEnrollment.LanguageCompetenceResults.FirstOrDefault(x => x.LanguageCompetenceId == lesson.LanguageCompetenceId);
+
+                    LessonResultViewModel lessonResultViewModel = new LessonResultViewModel
+                    {
+                        LessonId = lesson.LessonId,
+                        ChapterResultId = responseChapterResult.Data.ChapterResult.ChapterResultId,
+                        LanguageCompetenceResultId = languageCompetenceResult.LanguageCompetenceResultId,
+                        IsCompleted = false,
+                    };
+
+                    var responseLessonResult = await lessonResultDataService.CreateLessonResultAsync(lessonResultViewModel);
+
+                    if (!responseLessonResult.IsSuccess)
+                    {
+                        var errorMessage = "An error occurred while submitting the quiz. Please try again later: " + responseLessonResult.Message;
+                        if (responseLessonResult.ValidationErrors != null)
+                        {
+                            errorMessage += "\n" + string.Join("\n", responseLessonResult.ValidationErrors);
+                        }
+                        snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                        return;
+                    }
+                }
+            }
+        }
+
+        NavigationManager.NavigateTo($"/language-dashboard/{CurrentEnrollmentId}");
     }
 }
