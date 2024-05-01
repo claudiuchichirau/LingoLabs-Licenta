@@ -1,7 +1,7 @@
-﻿using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Commands.UpdateQuestionResult;
+﻿using LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Commands.UpdateChapterResult;
+using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Commands.UpdateQuestionResult;
 using LingoLabs.Application.Features.EnrollmentsFeatures.QuestionResults.Queries;
 using LingoLabs.Application.Persistence.Enrollments;
-using LingoLabs.Domain.Entities.Enrollments;
 using MediatR;
 
 namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.UpdateLessonResult
@@ -9,12 +9,16 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
     public class UpdateLessonResultCommandHandler : IRequestHandler<UpdateLessonResultCommand, UpdateLessonResultCommandResponse>
     {
         private readonly ILessonResultRepository lessonResultRepository;
+        private readonly IChapterResultRepository chapterResultRepository;
         private readonly UpdateQuestionResultCommandHandler updateQuestionResultCommandHandler;
+        private readonly UpdateChapterResultCommandHandler updateChapterResultCommandHandler;
 
-        public UpdateLessonResultCommandHandler(ILessonResultRepository lessonResultRepository, UpdateQuestionResultCommandHandler updateQuestionResultCommandHandler)
+        public UpdateLessonResultCommandHandler(ILessonResultRepository lessonResultRepository, IChapterResultRepository chapterResultRepository, UpdateQuestionResultCommandHandler updateQuestionResultCommandHandler, UpdateChapterResultCommandHandler updateChapterResultCommandHandler)
         {
             this.lessonResultRepository = lessonResultRepository;
+            this.chapterResultRepository = chapterResultRepository;
             this.updateQuestionResultCommandHandler = updateQuestionResultCommandHandler;
+            this.updateChapterResultCommandHandler = updateChapterResultCommandHandler;
         }
         public async Task<UpdateLessonResultCommandResponse> Handle(UpdateLessonResultCommand request, CancellationToken cancellationToken)
         {
@@ -73,6 +77,46 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
             lessonResult.Value.UpdateLessonResult(request.IsCompleted);
 
             await lessonResultRepository.UpdateAsync(lessonResult.Value);
+
+            var chapterResult = await chapterResultRepository.FindByIdAsync(lessonResult.Value.ChapterResultId);
+
+            if (!chapterResult.IsSuccess)
+            {
+                return new UpdateLessonResultCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { chapterResult.Error }
+                };
+            }
+
+            bool IsChapteResultCompleted = true;
+            foreach (var chapterLessonResult in chapterResult.Value.LessonResults)
+            {
+                if (!chapterLessonResult.IsCompleted)
+                {
+                    IsChapteResultCompleted = false;
+                }
+            }
+
+            if (IsChapteResultCompleted)
+            {
+                var updateChapterResultCommand = new UpdateChapterResultCommand
+                {
+                    ChapterResultId = chapterResult.Value.ChapterResultId,
+                    IsCompleted = true
+                };
+
+                var updateChapterResultCommandResponse = await updateChapterResultCommandHandler.Handle(updateChapterResultCommand, cancellationToken);
+
+                if (!updateChapterResultCommandResponse.Success)
+                {
+                    return new UpdateLessonResultCommandResponse
+                    {
+                        Success = false,
+                        ValidationsErrors = updateChapterResultCommandResponse.ValidationsErrors
+                    };
+                }
+            }
 
             return new UpdateLessonResultCommandResponse
             {

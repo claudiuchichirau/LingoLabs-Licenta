@@ -16,5 +16,6 @@ namespace LingoLabs.App.ViewModel.LanguageModels
         public List<ListeningLessonViewModel>? ChapterLessons { get; set; } = [];
         public List<EntityTagViewModel> ChapterKeyWords { get; set; } = [];
         public string LanguageLevelName { get; set; } = string.Empty;
+        public bool IsCompleted { get; set; }
     }
 }

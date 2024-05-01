@@ -348,45 +348,51 @@ else
         </MudExpansionPanels>
         }
 
+        @if (userUnEnrollments != null && userUnEnrollments.Any() && userUnEnrollments.Count > 0)
+        {
+            <div class="text-left">
+                <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 100px;" class="poppins-semi-bold">Alte cursuri</h1>
+            </div>
 
+            <div class="container p-3">
+                <div class="row justify-content-center">
 
-        <div class="text-left">
-            <h1 style="color: black; font-size: 33px; padding: 15px; margin-left: 80px; margin-top: 100px;" class="poppins-semi-bold">Alte cursuri</h1>
-        </div>
-
-        <div class="container p-3">
-            <div class="row justify-content-center">
-
-                @foreach (var language in userUnEnrollments)
-                {
-                    <div class="col-md-4">
-                        <div class="card m-3">
-                            <img class="card-img-top" src="@language.LanguageFlag" style="max-height: 200px; width:auto; display: block; margin: auto; margin-top: 15px;">
-                            <div class="card-body">
-                                <h5 class="card-title text-center">@language.LanguageName</h5>
-                                <div class="row">
-                                    <div class="col text-center">
-                                        <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: @language.LanguageLevelCount</p>
+                    @foreach (var language in userUnEnrollments)
+                    {
+                        <div class="col-md-4">
+                            <div class="card m-3">
+                                <img class="card-img-top" src="@language.LanguageFlag" style="max-height: 200px; width:auto; display: block; margin: auto; margin-top: 15px;">
+                                <div class="card-body">
+                                    <h5 class="card-title text-center">@language.LanguageName</h5>
+                                    <div class="row">
+                                        <div class="col text-center">
+                                            <p><MudIcon Icon="@Icons.Material.Filled.Assignment" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Nivele: @language.LanguageLevelCount</p>
+                                        </div>
+                                        <div class="col text-center">
+                                            <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: @language.LessonCount</p>
+                                        </div>
                                     </div>
-                                    <div class="col text-center">
-                                        <p><MudIcon Icon="@Icons.Material.Filled.MenuBook" Style="font-size: 16px; color: #2563EB; margin-top: -5px;" /> Lecții: @language.LessonCount</p>
-                                    </div>
-                                </div>
 
-                                <div style="display: flex; justify-content: center;">
-                                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToWantPlacementTest(language.LanguageId)" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                                    <div style="display: flex; justify-content: center;">
+                                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => NavigateToWantPlacementTest(language.LanguageId)" Style="background-color: #FC6F05; color: white; padding: 10px;">Începe Cursul</MudButton>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    }
+
+                    <div style="display: flex; justify-content: center;">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToCourses" Style="background-color: #FC6F05; color: white; padding: 10px; margin-top: 15px;">Vezi toate cursurile</MudButton>
                     </div>
-                }
 
-                <div style="display: flex; justify-content: center;">
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToCourses" Style="background-color: #FC6F05; color: white; padding: 10px; margin-top: 15px;">Vezi toate cursurile</MudButton>
                 </div>
-
             </div>
-        </div>
+        } else
+        {
+            <div style="display: flex; justify-content: center; margin-top: 40px; margin-bottom: 65px;">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToCourses" Style="background-color: #FC6F05; color: white; padding: 10px; margin-top: 15px;">Vezi toate cursurile</MudButton>
+            </div>
+        }
     }    
 }
 

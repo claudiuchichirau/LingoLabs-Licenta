@@ -19,5 +19,6 @@ namespace LingoLabs.App.ViewModel.LanguageModels
         public List<EntityTagViewModel> LanguageLeveKeyWords { get; set; } = [];
         public List<UserLanguageLevelViewModel> UserLanguageLevels { get; set; } = [];
         public string LanguageName { get; set; } = string.Empty;
+        public bool IsCompleted { get; set; }
     }
 }

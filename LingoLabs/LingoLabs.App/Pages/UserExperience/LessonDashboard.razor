@@ -416,19 +416,21 @@
         }
     </div>
 
-    <div class="text-center" style="margin-bottom: 50px;">
-        <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
-            Not Happy with Your <span style="color: #FC6F05;">Results</span>?
-        </h1>
-        <h2 style="font-size: 19px; margin-bottom: 30px;">
-            Give it another shot and retake the quiz now! Your next attempt could be the one that tops the score chart!
-        </h2>
-    </div>
-
-    <div class="text-center">
-        <MudButton Icon="@Icons.Material.Filled.ChangeCircle" Style="background-color: red; color: white; margin-top: 15px;" Class="text-center align-items-center justify-content-center" OnClick="TryAgainQuiz">Try Again Now</MudButton>
-    </div>
-
+    @if (score < 100)
+    {
+        <div class="text-center" style="margin-bottom: 50px;">
+            <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
+                Not Happy with Your <span style="color: #FC6F05;">Results</span>?
+            </h1>
+            <h2 style="font-size: 19px; margin-bottom: 30px;">
+                Give it another shot and retake the quiz now! Your next attempt could be the one that tops the score chart!
+            </h2>
+        </div>    
+        
+        <div class="text-center">
+            <MudButton Icon="@Icons.Material.Filled.ChangeCircle" Style="background-color: red; color: white;" Class="text-center align-items-center justify-content-center" OnClick="TryAgainQuiz">Try Again Now</MudButton>
+        </div>
+    }
 }
 
 @* QUIZ RESULTS TABLE *@
@@ -443,7 +445,7 @@
         </h2>
     </div>
 
-    <div class="container" style="margin-bottom: 20px;">
+    <div class="container" style="margin-bottom: 50px;">
         <MudTable Items="@quizResultsElement.questionResultElements" Bordered="@bordered" Filter="new Func<QuestionResultElement,bool>(FilterFunc1)">
             <ToolBarContent>
                 <MudText Typo="Typo.h6">Your Quiz Answers</MudText>
@@ -500,6 +502,10 @@
                 <MudTablePager />
             </PagerContent>
         </MudTable>
+    </div>
+
+    <div class="text-center" style="margin-bottom: 60px;">
+        <MudButton Icon="@Icons.Material.Filled.NavigateNext" Style="background-color: #FC6F05; color: white;" Class="text-center align-items-center justify-content-center" OnClick="NavigateToNextLesson">Next Lesson</MudButton>
     </div>
 }
  
@@ -797,35 +803,73 @@
 
             foreach (QuestionResultElement questionResult in quizResultsElement.questionResultElements)
             {
-                QuestionResultViewModel createQuestionResult = new QuestionResultViewModel
+                if (!lessonResult.IsCompleted)
+                {
+                    QuestionResultViewModel createQuestionResult = new QuestionResultViewModel
+                        {
+                            QuestionId = questionResult.QuestionId,
+                            LessonResultId = CurrentLessonResultId,
+                            IsCorrect = questionResult.UserAnswerIsCorrect
+                        };
+
+                    questionResults.Add(createQuestionResult);
+
+                    var response = await questionResultDataService.CreateQuestionResultAsync(createQuestionResult);
+
+                    if (!response.IsSuccess)
                     {
-                        QuestionId = questionResult.QuestionId,
-                        LessonResultId = CurrentLessonResultId,
-                        IsCorrect = questionResult.UserAnswerIsCorrect
-                    };
+                        var errorMessage = "Error creating <QuestionResult> entity: " + response.Message;
+                        if (response.ValidationErrors != null)
+                        {
+                            errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+                        }
+                        snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                        return;
+                    }
+                } else
+                {
+                    var questionResultId = lessonResult.QuestionResults.Find(x => x.QuestionId == questionResult.QuestionId).QuestionResultId;
+                    QuestionResultViewModel createQuestionResult = new QuestionResultViewModel
+                        {
+                            QuestionResultId = questionResultId,
+                            QuestionId = questionResult.QuestionId,
+                            LessonResultId = CurrentLessonResultId,
+                            IsCorrect = questionResult.UserAnswerIsCorrect
+                        };
 
-                questionResults.Add(createQuestionResult);
-                // var response = await questionResultDataService.CreateQuestionResultAsync(createQuestionResult);
-
-                // if (!response.IsSuccess)
-                // {
-                //     var errorMessage = "Error creating <QuestionResult> entity: " + response.Message;
-                //     if (response.ValidationErrors != null)
-                //     {
-                //         errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
-                //     }
-                //     snackbar = Snackbar.Add(errorMessage, Severity.Error);
-                //     return;
-                // }
+                    questionResults.Add(createQuestionResult);
+                }
+                lessonResult = await lessonResultDataService.GetLessonResultByIdAsync(CurrentLessonResultId);
+                StateHasChanged();
             }
 
-            var newLesssonResult = new LessonResultViewModel
+            var newLesssonResult = new LessonResultViewModel();
+
+            if (!lessonResult.IsCompleted)
             {
-                LessonId = lesson.LessonId,
-                IsCompleted = true,
-                LessonResultId = CurrentLessonResultId,
-                QuestionResults = questionResults
-            };
+                newLesssonResult = new LessonResultViewModel
+                    {
+                        LessonId = lesson.LessonId,
+                        IsCompleted = true,
+                        LessonResultId = CurrentLessonResultId
+                    };
+            }
+            else
+            {
+                newLesssonResult = new LessonResultViewModel
+                    {
+                        LessonId = lesson.LessonId,
+                        IsCompleted = true,
+                        LessonResultId = CurrentLessonResultId,
+                        QuestionResults = questionResults.Select(q => new QuestionResultViewModel
+                        {   
+                            QuestionResultId = q.QuestionResultId,
+                            QuestionId = q.QuestionId,
+                            LessonResultId = CurrentLessonResultId,
+                            IsCorrect = q.IsCorrect
+                        }).ToList()
+                    };
+            }
 
             var responseLessonResult = await lessonResultDataService.UpdateLessonResultAsync(newLesssonResult);
 
@@ -893,6 +937,30 @@
         score = (score * 100) / quizResultsElement.questionResultElements.Count;
 
         return score;
+    }
+
+    private async void NavigateToNextLesson()
+    {
+        var chapter = await chapterDataService.GetChapterByIdAsync(lesson.ChapterId);
+        Guid nextLessonId = Guid.Empty;
+        bool isNextLesson = false;
+        foreach (var chapterLesson in chapter.ChapterLessons)
+        {
+            if (isNextLesson)
+            {
+                nextLessonId = chapterLesson.LessonId;
+                break;
+            }
+            if (chapterLesson.LessonId == lesson.LessonId)
+            {
+                isNextLesson = true;
+            }
+        }
+        var chapterResult = await chapterResultDataService.GetChapterResultByIdAsync(lessonResult.ChapterResultId);
+        var nextLessonResultId = chapterResult.LessonResults.Find(x => x.LessonId == nextLessonId).LessonResultId;
+        NavigationManager.NavigateTo($"/lesson-dashboard/{nextLessonResultId}", true);
+        CurrentLessonResultId = nextLessonResultId;
+        StateHasChanged();
     }
 }
 

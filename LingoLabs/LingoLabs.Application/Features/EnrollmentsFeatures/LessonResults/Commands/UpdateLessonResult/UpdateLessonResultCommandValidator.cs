@@ -12,7 +12,6 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Comma
 
             RuleFor(x => x.IsCompleted)
                 .NotNull().WithMessage("IsCompleted is required");
-
         }
     }
 }

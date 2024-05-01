@@ -1,4 +1,5 @@
-﻿using LingoLabs.Application.Persistence.Enrollments;
+﻿using LingoLabs.Application.Features.EnrollmentsFeatures.LanguageLevelResults.Commands.UpdateLanguageLevelResult;
+using LingoLabs.Application.Persistence.Enrollments;
 using MediatR;
 
 namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Commands.UpdateChapterResult
@@ -6,10 +7,14 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
     public class UpdateChapterResultCommandHandler : IRequestHandler<UpdateChapterResultCommand, UpdateChapterResultCommandResponse>
     {
         private readonly IChapterResultRepository chapterResultRepository;
+        private readonly ILanguageLevelResultRepository languageLevelResultRepository;
+        private readonly UpdateLanguageLevelResultCommandHandler updateLanguageLevelResultCommandHandler;
 
-        public UpdateChapterResultCommandHandler(IChapterResultRepository chapterResultRepository)
+        public UpdateChapterResultCommandHandler(IChapterResultRepository chapterResultRepository, ILanguageLevelResultRepository languageLevelResultRepository, UpdateLanguageLevelResultCommandHandler updateLanguageLevelResultCommandHandler)
         {
             this.chapterResultRepository = chapterResultRepository;
+            this.languageLevelResultRepository = languageLevelResultRepository;
+            this.updateLanguageLevelResultCommandHandler = updateLanguageLevelResultCommandHandler;
         }
         public async Task<UpdateChapterResultCommandResponse> Handle(UpdateChapterResultCommand request, CancellationToken cancellationToken)
         {
@@ -40,6 +45,47 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.ChapterResults.Comm
             chapterResult.Value.UpdateChapterResult(request.IsCompleted);
 
             await chapterResultRepository.UpdateAsync(chapterResult.Value);
+
+            var languageLevelResult = await languageLevelResultRepository.FindByIdAsync(chapterResult.Value.LanguageLevelResultId);
+
+            if (!languageLevelResult.IsSuccess)
+            {
+                return new UpdateChapterResultCommandResponse
+                {
+                    Success = false,
+                    ValidationsErrors = new List<string> { languageLevelResult.Error }
+                };
+            }
+
+            bool IsLanguageLevelResultCompleted = true;
+            foreach(var languageChaperResult in languageLevelResult.Value.ChapterResults)
+            {
+                if(!languageChaperResult.IsCompleted)
+                {
+                    IsLanguageLevelResultCompleted = false;
+                    break;
+                }
+            }
+
+            if (IsLanguageLevelResultCompleted)
+            {
+                var updateLanguageLevelResultCommand = new UpdateLanguageLevelResultCommand
+                {
+                    LanguageLevelResultId = languageLevelResult.Value.LanguageLevelResultId,
+                    IsCompleted = true
+                };
+
+                var updateLanguageLevelResultCommandResponse = await updateLanguageLevelResultCommandHandler.Handle(updateLanguageLevelResultCommand, cancellationToken);
+
+                if (!updateLanguageLevelResultCommandResponse.Success)
+                {
+                    return new UpdateChapterResultCommandResponse
+                    {
+                        Success = false,
+                        ValidationsErrors = updateLanguageLevelResultCommandResponse.ValidationsErrors
+                    };
+                }
+            }
 
             return new UpdateChapterResultCommandResponse
             {

@@ -26,5 +26,6 @@ namespace LingoLabs.App.ViewModel.LanguageModels
         public string LanguageLevelName { get; set; } = string.Empty;
         public List<QuestionViewModel> LessonQuestions { get; set; } = [];
         public List<EntityTagViewModel> LessonTags { get; set; } = [];
+        public bool IsCompleted { get; set; }
     }
 }

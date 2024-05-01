@@ -2,6 +2,7 @@
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
 @using LingoLabs.App.Contracts.EnrollmentContracts
+@using LingoLabs.App.Contracts.LanguageContracts
 @using LingoLabs.App.Services.AuthServices
 @using LingoLabs.App.ViewModel.EnrollmentModels
 @using LingoLabs.App.ViewModel.LanguageModels
@@ -141,15 +142,64 @@ else
                 LanguageLevelViewModel languageLevel = Language.LanguageLevels[i];
                 string alignment = i % 2 == 0 ? "text-left" : "text-right";
 
-                <MudTimelineItem Size="Size.Small">
-                    <ItemContent>
-                        <div class="@alignment">
-                            <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px;"><span style="color: #2563EB;">@languageLevel.LanguageLevelName</span> - <span style="color: #FC6F05;">@languageLevel.LanguageLevelAlias</span></MudText>
-                            <MudText Style="color: black; font-size: 17px;"><strong>@languageLevel.LanguageLevelDescription</strong></MudText>
-                            <MudButton OnClick="() => NavigateToLanguageLevel(languageLevel.LanguageLevelId)" Style="margin-top: 5px; background-color: #2563EB; color: white;">See More</MudButton>
-                        </div>
-                    </ItemContent>
-                </MudTimelineItem>
+                if (i == 0 && languageLevel.IsCompleted == false)
+                {
+                    <MudTimelineItem Color="Color.Dark" Size="Size.Small" Style="margin-bottom: 7px;">
+                        <ItemOpposite>
+                            <MudButton Variant="Variant.Filled" OnClick="() => NavigateToLanguageLevel(languageLevel.LanguageLevelId)" Style="background-color: #FC6F05; color: white;">Open</MudButton>
+                        </ItemOpposite>
+                        <ItemContent>
+                            <div class="@alignment">
+                                <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px;"><span style="color: #2563EB;">@languageLevel.LanguageLevelName</span> - <span style="color: #FC6F05;">@languageLevel.LanguageLevelAlias</span></MudText>
+                                <MudText Style="color: black; font-size: 17px;"><strong>@languageLevel.LanguageLevelDescription</strong></MudText>
+                            </div>
+                        </ItemContent>
+                    </MudTimelineItem>
+                }
+                else if (!languageLevel.IsCompleted && lastLanguageLevelCompleted == false)
+                {
+                    <MudTimelineItem Color="Color.Dark" Size="Size.Small" Style="margin-bottom: 7px;">
+                        <ItemOpposite>
+                            <MudButton Variant="Variant.Filled" OnClick="() => NavigateToLanguageLevel(languageLevel.LanguageLevelId)" Disabled="true" Style="background-color: gray; color: white;">Open</MudButton>
+                        </ItemOpposite>
+                        <ItemContent>
+                            <div class="@alignment">
+                                <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px;"><span style="color: #2563EB;">@languageLevel.LanguageLevelName</span> - <span style="color: #FC6F05;">@languageLevel.LanguageLevelAlias</span></MudText>
+                                <MudText Style="color: black; font-size: 17px;"><strong>@languageLevel.LanguageLevelDescription</strong></MudText>
+                            </div>
+                        </ItemContent>
+                    </MudTimelineItem>
+                }
+                else if (!languageLevel.IsCompleted && lastLanguageLevelCompleted == true)
+                {
+                    <MudTimelineItem Color="Color.Dark" Size="Size.Small" Style="margin-bottom: 7px;">
+                        <ItemOpposite>
+                            <MudButton Variant="Variant.Filled" OnClick="() => NavigateToLanguageLevel(languageLevel.LanguageLevelId)" Style="background-color: #FC6F05; color: white;">Open</MudButton>
+                        </ItemOpposite>
+                        <ItemContent>
+                            <div class="@alignment">
+                                <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px;"><span style="color: #2563EB;">@languageLevel.LanguageLevelName</span> - <span style="color: #FC6F05;">@languageLevel.LanguageLevelAlias</span></MudText>
+                                <MudText Style="color: black; font-size: 17px;"><strong>@languageLevel.LanguageLevelDescription</strong></MudText>
+                            </div>
+                        </ItemContent>
+                    </MudTimelineItem>
+                    lastLanguageLevelCompleted = false;
+                }
+                else if (languageLevel.IsCompleted)
+                {
+                    <MudTimelineItem Color="Color.Success" Size="Size.Small" Style="margin-bottom: 7px;">
+                        <ItemOpposite>
+                            <MudButton Variant="Variant.Filled" OnClick="() => NavigateToLanguageLevel(languageLevel.LanguageLevelId)" Color="Color.Success" Style="color: white;">Open</MudButton>
+                        </ItemOpposite>
+                        <ItemContent>
+                            <div class="@alignment">
+                                <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px;"><span style="color: #2563EB;">@languageLevel.LanguageLevelName</span> - <span style="color: #FC6F05;">@languageLevel.LanguageLevelAlias</span></MudText>
+                                <MudText Style="color: black; font-size: 17px;"><strong>@languageLevel.LanguageLevelDescription</strong></MudText>
+                            </div>
+                        </ItemContent>
+                    </MudTimelineItem>
+                    lastLanguageLevelCompleted = true;
+                }
             }
         </MudTimeline>
     </MudContainer>
@@ -286,9 +336,16 @@ else
     [Inject]
     public IEnrollmentDataService EnrollmentDataService { get; set; }
 
+    [Inject]
+    public ILanguageLevelResultDataService languageLevelResultDataService { get; set; }
+
+    [Inject]
+    public ILanguageLevelDataService LanguageLevelDataService { get; set; }
+
     private LanguageViewModel Language { get; set; } = new LanguageViewModel();
     private EnrollmentViewModel enrollment { get; set; } = new EnrollmentViewModel();
     private bool IsDataLoaded = false;
+    bool lastLanguageLevelCompleted = false;
 
     [Parameter]
     public string Id { get; set; }
@@ -321,6 +378,27 @@ else
         var LanguageId = enrollment.LanguageId;
 
         Language = (await LanguageDataService.GetLanguageByIdAsync(LanguageId));
+
+        foreach (var languageLevel in Language.LanguageLevels)
+        {
+            var languageLevelResult = enrollment.LanguageLevelResults.Find(x => x.LanguageLevelId == languageLevel.LanguageLevelId);
+            var newLanguageLevelResult = await languageLevelResultDataService.GetLanguageLevelResultByIdAsync(languageLevelResult.LanguageLevelResultId);
+            var newLanguageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(languageLevel.LanguageLevelId);
+            bool isLanguageLevelCompleted = true;
+            foreach (var chapter in newLanguageLevel.LanguageChapters)
+            {
+                var chapterResult = newLanguageLevelResult.ChapterResults.Find(x => x.ChapterId == chapter.ChapterId);
+                if(chapterResult.IsCompleted == false)
+                {
+                    isLanguageLevelCompleted = false;
+                    break;
+                }
+            }
+            if (isLanguageLevelCompleted && newLanguageLevel.LanguageChapters != null && newLanguageLevel.LanguageChapters.Count > 0)
+            {
+                languageLevel.IsCompleted = true;
+            }
+        }
 
         IsDataLoaded = true;
     }

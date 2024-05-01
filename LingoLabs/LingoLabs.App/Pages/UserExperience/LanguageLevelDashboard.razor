@@ -99,35 +99,141 @@
         string alignment = i % 2 == 0 ? "text-left" : "text-right";
         string alignmentForPanel = i % 2 == 0 ? "block-left" : "block-right";
 
-        <MudTimelineItem Color="Color.Dark" Size="Size.Small">
-            <ItemOpposite>
-                <MudButton Variant="Variant.Filled" OnClick="() => NavigateToChapterDashboard(chapter.ChapterId)" Style="background-color: #FC6F05; color: white;">OPEN</MudButton>
-            </ItemOpposite>
-            <ItemContent>
-                <div class="@alignment">
-                    <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: #2563EB;"><strong>@chapter.ChapterName</strong></MudText>
-                    <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@chapter.ChapterDescription</strong></MudText>
 
-                    @{
-                        var panelText = $"{chapter.ChapterName}'s Lessons";
-                    }
+        if (!chapter.IsCompleted && (i == 0))
+        {
+            <MudTimelineItem Color="Color.Dark" Size="Size.Small">
+                <ItemOpposite>
+                    <MudButton Variant="Variant.Filled" OnClick="() => NavigateToChapterDashboard(chapter.ChapterId)" Style="background-color: #FC6F05; color: white;">Open</MudButton>
+                </ItemOpposite>
+                <ItemContent>
+                    <div class="@alignment">
+                        <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: #2563EB;"><strong>@chapter.ChapterName</strong></MudText>
+                        <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@chapter.ChapterDescription</strong></MudText>
 
-                    <MudExpansionPanels Class="@alignmentForPanel" Style="width: 55%; margin-top: 5px;">
+                        @{
+                            var panelText = $"{chapter.ChapterName}'s Lessons";
+                        }
+
+                        <MudExpansionPanels Class="@alignmentForPanel" Style="width: 55%; margin-top: 5px;">
                             <MudExpansionPanel Text="@panelText" Style="color: dark;">
                                 @foreach (ListeningLessonViewModel lesson in chapter.ChapterLessons)
                                 {
                                     <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 17px;">
                                         <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Style="color: #FC6F05;" Size="Size.Small"></MudIcon>
-                                        <MudLink OnClick="@( () => NavigateToLesson(@lesson.LessonId) )">
-                                            <strong class="hover-link">@lesson.LessonTitle</strong>
-                                        </MudLink>
+                                        <strong class="hover-link">@lesson.LessonTitle</strong>
+                                        @* <MudLink OnClick="@( () => NavigateToLesson(@lesson.LessonId) )">
+                            <strong class="hover-link">@lesson.LessonTitle</strong>
+                            </MudLink> *@
                                     </MudText>
                                 }
                             </MudExpansionPanel>
-                    </MudExpansionPanels>
-                </div>
-            </ItemContent>
-        </MudTimelineItem>
+                        </MudExpansionPanels>
+                    </div>
+                </ItemContent>
+            </MudTimelineItem>
+        }
+        else if (!chapter.IsCompleted && LastChapterCompleted == false)
+        {
+            <MudTimelineItem Color="Color.Dark" Size="Size.Small">
+                <ItemOpposite>
+                    <MudButton Variant="Variant.Filled" OnClick="() => NavigateToChapterDashboard(chapter.ChapterId)" Disabled="true"  Style="background-color: gray; color: white;">Open</MudButton>
+                </ItemOpposite>
+                <ItemContent>
+                    <div class="@alignment">
+                        <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: #2563EB;"><strong>@chapter.ChapterName</strong></MudText>
+                        <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@chapter.ChapterDescription</strong></MudText>
+
+                        @{
+                            var panelText = $"{chapter.ChapterName}'s Lessons";
+                        }
+
+                        <MudExpansionPanels Class="@alignmentForPanel" Style="width: 55%; margin-top: 5px;">
+                            <MudExpansionPanel Text="@panelText" Style="color: dark;">
+                                @foreach (ListeningLessonViewModel lesson in chapter.ChapterLessons)
+                                {
+                                    <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 17px;">
+                                        <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Style="color: #FC6F05;" Size="Size.Small"></MudIcon>
+                                        <strong class="hover-link">@lesson.LessonTitle</strong>
+                                        @* <MudLink OnClick="@( () => NavigateToLesson(@lesson.LessonId) )">
+                            <strong class="hover-link">@lesson.LessonTitle</strong>
+                            </MudLink> *@
+                                    </MudText>
+                                }
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
+                    </div>
+                </ItemContent>
+            </MudTimelineItem>
+        }
+        else if (!chapter.IsCompleted && LastChapterCompleted == true)
+        {
+            <MudTimelineItem Color="Color.Dark" Size="Size.Small">
+                <ItemOpposite>
+                    <MudButton Variant="Variant.Filled" OnClick="() => NavigateToChapterDashboard(chapter.ChapterId)" Style="background-color: #FC6F05; color: white;">Open</MudButton>
+                </ItemOpposite>
+                <ItemContent>
+                    <div class="@alignment">
+                        <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: #2563EB;"><strong>@chapter.ChapterName</strong></MudText>
+                        <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@chapter.ChapterDescription</strong></MudText>
+
+                        @{
+                            var panelText = $"{chapter.ChapterName}'s Lessons";
+                        }
+
+                        <MudExpansionPanels Class="@alignmentForPanel" Style="width: 55%; margin-top: 5px;">
+                            <MudExpansionPanel Text="@panelText" Style="color: dark;">
+                                @foreach (ListeningLessonViewModel lesson in chapter.ChapterLessons)
+                                {
+                                    <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 17px;">
+                                        <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Style="color: #FC6F05;" Size="Size.Small"></MudIcon>
+                                        <strong class="hover-link">@lesson.LessonTitle</strong>
+                                        @* <MudLink OnClick="@( () => NavigateToLesson(@lesson.LessonId) )">
+                            <strong class="hover-link">@lesson.LessonTitle</strong>
+                            </MudLink> *@
+                                    </MudText>
+                                }
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
+                    </div>
+                </ItemContent>
+            </MudTimelineItem>
+            LastChapterCompleted = false;
+        }
+        else if (chapter.IsCompleted)
+        {
+            <MudTimelineItem Color="Color.Success" Size="Size.Small">
+                <ItemOpposite>
+                    <MudButton Variant="Variant.Filled" OnClick="() => NavigateToChapterDashboard(chapter.ChapterId)" Color="Color.Success" Style="color: white;">Open</MudButton>
+                </ItemOpposite>
+                <ItemContent>
+                    <div class="@alignment">
+                        <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: #2563EB;"><strong>@chapter.ChapterName</strong></MudText>
+                        <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@chapter.ChapterDescription</strong></MudText>
+
+                        @{
+                            var panelText = $"{chapter.ChapterName}'s Lessons";
+                        }
+
+                        <MudExpansionPanels Class="@alignmentForPanel" Style="width: 55%; margin-top: 5px;">
+                            <MudExpansionPanel Text="@panelText" Style="color: dark;">
+                                @foreach (ListeningLessonViewModel lesson in chapter.ChapterLessons)
+                                {
+                                    <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 17px;">
+                                        <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Style="color: #FC6F05;" Size="Size.Small"></MudIcon>
+                                        <strong class="hover-link">@lesson.LessonTitle</strong>
+                                        @* <MudLink OnClick="@( () => NavigateToLesson(@lesson.LessonId) )">
+                                <strong class="hover-link">@lesson.LessonTitle</strong>
+                                </MudLink> *@
+                                    </MudText>
+                                }
+                            </MudExpansionPanel>
+                        </MudExpansionPanels>
+                    </div>
+                </ItemContent>
+            </MudTimelineItem>
+            LastChapterCompleted = true;
+        }
     }
     @* TO DO: culoare verde la bulina daca ChapterResult.IsCompleted = true, gri altfel + butonul OPEN sa fie disabled *@
 </MudTimeline>
@@ -146,9 +252,9 @@
         color: #2563EB;
     }
 
-    .hover-link:hover {
+    /* .hover-link:hover {
         color: #02497E;
-    }
+    } */
 
 </style>
 
@@ -171,6 +277,7 @@
     private LanguageLevelResultViewModel languageLevelResult = new LanguageLevelResultViewModel();
     private LanguageLevelViewModel languageLevel = new LanguageLevelViewModel();
     private bool IsDataLoaded = false;
+    private bool LastChapterCompleted = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -178,6 +285,15 @@
         languageLevelResult = await LanguageLevelResultDataService.GetLanguageLevelResultByIdAsync(CurrentLanguageLevelResultId);
         CurrentLanguageLevelId = languageLevelResult.LanguageLevelId;
         languageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(CurrentLanguageLevelId);
+
+        foreach (var chapter in languageLevel.LanguageChapters)
+        {
+            var chapterResult = languageLevelResult.ChapterResults.FirstOrDefault(x => x.ChapterId == chapter.ChapterId);
+            if (chapterResult != null)
+            {
+                chapter.IsCompleted = chapterResult.IsCompleted;
+            }
+        }
 
         IsDataLoaded = true;
     }

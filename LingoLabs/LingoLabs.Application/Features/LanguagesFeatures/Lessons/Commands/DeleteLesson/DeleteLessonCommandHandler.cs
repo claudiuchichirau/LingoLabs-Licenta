@@ -1,5 +1,7 @@
-﻿using LingoLabs.Application.Features.LanguagesFeatures.EntityTags.Commands.DeleteEntityTag;
+﻿using LingoLabs.Application.Features.EnrollmentsFeatures.LessonResults.Commands.DeleteLessonResult;
+using LingoLabs.Application.Features.LanguagesFeatures.EntityTags.Commands.DeleteEntityTag;
 using LingoLabs.Application.Features.LanguagesFeatures.LanguageCompetences.Commands.DeleteLanguageCompetence;
+using LingoLabs.Application.Persistence.Enrollments;
 using LingoLabs.Application.Persistence.Languages;
 using LingoLabs.Domain.Entities.Languages;
 using MediatR;
@@ -9,12 +11,16 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Dele
     public class DeleteLessonCommandHandler : IRequestHandler<DeleteLessonCommand, DeleteLessonCommandResponse>
     {
         private readonly ILessonRepository lessonRepository;
+        private readonly ILessonResultRepository lessonResultRepository;
         private readonly DeleteEntityTagCommandHandler deleteEntityTagCommandHandler;
+        private readonly DeleteLessonResultCommandHandler deleteLessonResultCommandHandler;
 
-        public DeleteLessonCommandHandler(ILessonRepository lessonRepository, DeleteEntityTagCommandHandler deleteEntityTagCommandHandler)
+        public DeleteLessonCommandHandler(ILessonRepository lessonRepository, DeleteEntityTagCommandHandler deleteEntityTagCommandHandler, ILessonResultRepository lessonResultRepository, DeleteLessonResultCommandHandler deleteLessonResultCommandHandler)
         {
             this.lessonRepository = lessonRepository;
+            this.lessonResultRepository = lessonResultRepository;
             this.deleteEntityTagCommandHandler = deleteEntityTagCommandHandler;
+            this.deleteLessonResultCommandHandler = deleteLessonResultCommandHandler;
         }
         public async Task<DeleteLessonCommandResponse> Handle(DeleteLessonCommand request, CancellationToken cancellationToken)
         {
@@ -54,6 +60,23 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Lessons.Commands.Dele
                     {
                         Success = false,
                         ValidationsErrors = deleteEntityTagCommandResponse.ValidationsErrors
+                    };
+                }
+            }
+
+            var lessonResults = await lessonResultRepository.GetLessonResultsByLessonId(request.LessonId);
+
+            foreach (var lessonResult in lessonResults)
+            {
+                var deleteLessonResultCommand = new DeleteLessonResultCommand { LessonResultId = lessonResult.LessonResultId };
+                var deleteLessonResultCommandResponse = await deleteLessonResultCommandHandler.Handle(deleteLessonResultCommand, cancellationToken);
+
+                if (!deleteLessonResultCommandResponse.Success)
+                {
+                    return new DeleteLessonCommandResponse
+                    {
+                        Success = false,
+                        ValidationsErrors = deleteLessonResultCommandResponse.ValidationsErrors
                     };
                 }
             }

@@ -129,25 +129,72 @@
             @if (competencesLessons.ContainsKey(languageCompetence.LanguageCompetenceId))
             {
                 <MudContainer Style="width: 70%; margin-bottom: 20px;">
-                    <MudExpansionPanel Text="@languageCompetence.LanguageCompetenceName" Style="color: #2563EB;">
+                    <MudExpansionPanel Text="@languageCompetence.LanguageCompetenceName" Style="color: #2563EB;" IsExpanded="true">
                         <MudTimeline TimelineOrientation=TimelineOrientation.Vertical TimelinePosition=TimelinePosition.Top Reverse=false>
                             @for (int i = 0; i < competencesLessons[languageCompetence.LanguageCompetenceId].Count; i++)
                             {
                                 var lesson = competencesLessons[languageCompetence.LanguageCompetenceId][i];
+                                bool lessonIsCompleted = lesson.IsCompleted;
                                 string alignment = i % 2 == 0 ? "text-left" : "text-right";
                                 string alignmentForPanel = i % 2 == 0 ? "block-left" : "block-right";
 
-                                <MudTimelineItem Color="Color.Dark" Size="Size.Small" Style="margin-bottom: 7px;">
-                                    <ItemOpposite>
-                                        <MudButton Variant="Variant.Filled" OnClick="() => NavigateToLesson(lesson.LessonId)" Style="background-color: #FC6F05; color: white;">Open</MudButton>
-                                    </ItemOpposite>
-                                    <ItemContent>
-                                        <div class="@alignment">
-                                            <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: black;"><strong>@lesson.LessonTitle</strong></MudText>
-                                            <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@lesson.LessonDescription</strong></MudText>
-                                        </div>
-                                    </ItemContent>
-                                </MudTimelineItem>
+                                if (i == 0 && lesson.IsCompleted == false)
+                                {
+                                    <MudTimelineItem Color="Color.Dark" Size="Size.Small" Style="margin-bottom: 7px;">
+                                        <ItemOpposite>
+                                            <MudButton Variant="Variant.Filled" OnClick="() => NavigateToLesson(lesson.LessonId)" Style="background-color: #FC6F05; color: white;">Open</MudButton>
+                                        </ItemOpposite>
+                                        <ItemContent>
+                                            <div class="@alignment">
+                                                <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: black;"><strong>@lesson.LessonTitle</strong></MudText>
+                                                <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@lesson.LessonDescription</strong></MudText>
+                                            </div>
+                                        </ItemContent>
+                                    </MudTimelineItem>
+                                } else if (!lesson.IsCompleted && LastLessonCompleted == false)
+                                {
+                                    <MudTimelineItem Color="Color.Dark" Size="Size.Small" Style="margin-bottom: 7px;">
+                                        <ItemOpposite>
+                                            <MudButton Variant="Variant.Filled" OnClick="() => NavigateToLesson(lesson.LessonId)" Disabled="true" Style="background-color: gray; color: white;">Open</MudButton>
+                                        </ItemOpposite>
+                                        <ItemContent>
+                                            <div class="@alignment">
+                                                <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: black;"><strong>@lesson.LessonTitle</strong></MudText>
+                                                <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@lesson.LessonDescription</strong></MudText>
+                                            </div>
+                                        </ItemContent>
+                                    </MudTimelineItem>
+                                }
+                                else if (!lesson.IsCompleted && LastLessonCompleted == true)
+                                {
+                                    <MudTimelineItem Color="Color.Dark" Size="Size.Small" Style="margin-bottom: 7px;">
+                                        <ItemOpposite>
+                                            <MudButton Variant="Variant.Filled" OnClick="() => NavigateToLesson(lesson.LessonId)" Style="background-color: #FC6F05; color: white;">Open</MudButton>
+                                        </ItemOpposite>
+                                        <ItemContent>
+                                            <div class="@alignment">
+                                                <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: black;"><strong>@lesson.LessonTitle</strong></MudText>
+                                                <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@lesson.LessonDescription</strong></MudText>
+                                            </div>
+                                        </ItemContent>
+                                    </MudTimelineItem>
+                                    LastLessonCompleted = false;
+                                }
+                                else if(lesson.IsCompleted)
+                                {
+                                    <MudTimelineItem Color="Color.Success" Size="Size.Small" Style="margin-bottom: 7px;">
+                                        <ItemOpposite>
+                                            <MudButton Variant="Variant.Filled" OnClick="() => NavigateToLesson(lesson.LessonId)" Color="Color.Success" Style="color: white;">Open</MudButton>
+                                        </ItemOpposite>
+                                        <ItemContent>
+                                            <div class="@alignment">
+                                                <MudText Typo="Typo.h6" GutterBottom="true" Style="font-size: 25px; color: black;"><strong>@lesson.LessonTitle</strong></MudText>
+                                                <MudText Typo="Typo.h5" Style="color: black; font-size: 17px; margin-bottom: 5px;"><strong>@lesson.LessonDescription</strong></MudText>
+                                            </div>
+                                        </ItemContent>
+                                    </MudTimelineItem>
+                                    LastLessonCompleted = true;
+                                }
                             }
                         </MudTimeline>
                     </MudExpansionPanel>
@@ -167,6 +214,8 @@
     public IChapterDataService ChapterDataService { get; set; }
     [Inject]
     public IChapterResultDataService ChapterResultDataService { get; set; }
+    [Inject]
+    public ILessonResultDataService LessonResultDataService { get; set; }
 
     private AuthenticationState authState;
 
@@ -179,6 +228,7 @@
     private LanguageViewModel language = new LanguageViewModel();
     private Dictionary<Guid, List<ListeningLessonViewModel>> competencesLessons = new Dictionary<Guid, List<ListeningLessonViewModel>>();
     private bool IsDataLoaded = false;
+    private bool LastLessonCompleted = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -202,6 +252,10 @@
             {
                 foreach (var lesson in chapter.ChapterLessons)
                 {
+                    Guid lessonResultId = chapterResult.LessonResults.FirstOrDefault(x => x.LessonId == lesson.LessonId).LessonResultId;
+                    var lessonResult = await LessonResultDataService.GetLessonResultByIdAsync(lessonResultId);
+                    lesson.IsCompleted = lessonResult.IsCompleted;
+
                     if (lesson.LanguageCompetenceId == languageCompetence.LanguageCompetenceId)
                     {
                         if (!competencesLessons.ContainsKey(languageCompetence.LanguageCompetenceId))

@@ -5,5 +5,6 @@ namespace LingoLabs.Application.Persistence.Enrollments
 {
     public interface ILessonResultRepository: IAsyncRepository<LessonResult>
     {
+        Task<List<LessonResult>> GetLessonResultsByLessonId(Guid lessonId);
     }
 }

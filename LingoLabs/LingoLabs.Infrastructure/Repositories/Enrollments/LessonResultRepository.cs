@@ -26,5 +26,15 @@ namespace LingoLabs.Infrastructure.Repositories.Enrollments
 
             return Result<LessonResult>.Success(lessonResult);
         }
+
+        public async Task<List<LessonResult>> GetLessonResultsByLessonId(Guid lessonId)
+        {
+            return await context.LessonResults
+                .Include(lr => lr.QuestionResults)
+                .Include(lr => lr.Lesson)
+                .Include(lr => lr.ChapterResult)
+                .Where(lr => lr.LessonId == lessonId)
+                .ToListAsync();
+        }
     }
 }

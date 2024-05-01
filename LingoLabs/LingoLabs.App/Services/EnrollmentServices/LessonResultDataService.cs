@@ -74,7 +74,8 @@ namespace LingoLabs.App.Services.EnrollmentServices
             var lessonResultViewModel = new
             {
                 updateLessonResultViewModel.LessonResultId,
-                updateLessonResultViewModel.IsCompleted
+                updateLessonResultViewModel.IsCompleted,
+                updateLessonResultViewModel.QuestionResults
             };
 
             var result = await httpClient.PutAsJsonAsync(RequestUri, lessonResultViewModel);
