@@ -5,6 +5,7 @@
 @using LingoLabs.App.Contracts.LanguageContracts
 @using LingoLabs.App.ViewModel.EnrollmentModels
 @using LingoLabs.App.ViewModel.LanguageModels
+@using LingoLabs.App.ViewModel.LanguageModels.EnrollmentModels
 @using LingoLabs.App.ViewModel.MudBlazor
 @using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
@@ -100,7 +101,39 @@
     }
 </MudContainer>
 
-@* CHAPTERS *@
+@if(chapterResult.IsCompleted)
+{
+    <div id="quizResults" class="text-center" style="margin-top: 25px; margin-bottom: 50px;">
+        <hr style="width: 20%; border: 1px solid rgba(128, 128, 128, 0.5); margin: auto; margin-top: 50px; margin-bottom: 50px;">
+
+        <p style="font-size: 19px; margin-bottom: 30px;">
+            Congratulations! You've passed the @chapter.ChapterName Chapter with flying colors.<br>
+            Keep up the good work and continue to improve your skills. 😊
+        </p>
+
+        <span style="color: black; font-size: 19px; margin-top: 80px; margin-bottom: 15px;">
+            Result
+        </span>
+        <h1 style="color: black; font-size: 37px; margin-bottom: 15px;">
+            Your Chapter Score: <span style="color: #FC6F05;">@chapterFinalScore%</span>
+        </h1>
+
+        @if (chapterFinalScore >= 70)
+        {
+            <img src="images/quiz/best-score.png">
+        }
+        else if (chapterFinalScore < 70 && chapterFinalScore >= 45)
+        {
+            <img src="images/quiz/middle-score.png">
+        }
+
+        <div class="text-center" style="margin-top: 15px;">
+            <MudButton Style="background-color: #FC6F05; color: white; margin-top: 35px;" Class="text-center align-items-center justify-content-center" OnClick="NavigateToLanguageLevelDashboard"><MudIcon Icon="@Icons.Material.Filled.NavigateNext" /> Discover New Challenges</MudButton>
+        </div>
+    </div>
+}
+
+@* LESSONS *@
 <div class="text-center">
     <h1 style="color: black; font-size: 33px; margin-top: 120px; margin-bottom: 25px;">
         Discover <span style="color: #FC6F05;">@chapter.ChapterName</span>'s Lessons
@@ -131,6 +164,8 @@
                 <MudContainer Style="width: 70%; margin-bottom: 20px;">
                     <MudExpansionPanel Text="@languageCompetence.LanguageCompetenceName" Style="color: #2563EB;" IsExpanded="true">
                         <MudTimeline TimelineOrientation=TimelineOrientation.Vertical TimelinePosition=TimelinePosition.Top Reverse=false>
+                            @{bool AreAllLessonsCompleted = true;}
+
                             @for (int i = 0; i < competencesLessons[languageCompetence.LanguageCompetenceId].Count; i++)
                             {
                                 var lesson = competencesLessons[languageCompetence.LanguageCompetenceId][i];
@@ -151,6 +186,7 @@
                                             </div>
                                         </ItemContent>
                                     </MudTimelineItem>
+                                    AreAllLessonsCompleted = false;
                                 } else if (!lesson.IsCompleted && LastLessonCompleted == false)
                                 {
                                     <MudTimelineItem Color="Color.Dark" Size="Size.Small" Style="margin-bottom: 7px;">
@@ -164,6 +200,7 @@
                                             </div>
                                         </ItemContent>
                                     </MudTimelineItem>
+                                    AreAllLessonsCompleted = false;
                                 }
                                 else if (!lesson.IsCompleted && LastLessonCompleted == true)
                                 {
@@ -179,6 +216,7 @@
                                         </ItemContent>
                                     </MudTimelineItem>
                                     LastLessonCompleted = false;
+                                    AreAllLessonsCompleted = false;
                                 }
                                 else if(lesson.IsCompleted)
                                 {
@@ -195,6 +233,11 @@
                                     </MudTimelineItem>
                                     LastLessonCompleted = true;
                                 }
+                            }
+
+                            @if (AreAllLessonsCompleted && !LanguageCompetenceViewed.Any(x => x.Equals(languageCompetence.LanguageCompetenceId)))
+                            {
+                                UpdateUserLanguageLevel(languageCompetence.LanguageCompetenceId);
                             }
                         </MudTimeline>
                     </MudExpansionPanel>
@@ -216,6 +259,12 @@
     public IChapterResultDataService ChapterResultDataService { get; set; }
     [Inject]
     public ILessonResultDataService LessonResultDataService { get; set; }
+    [Inject]
+    public IEnrollmentDataService EnrollmentDataService { get; set; }
+    [Inject]
+    public ILanguageLevelResultDataService LanguageLevelResultDataService { get; set; }
+    [Inject]
+    public IUserLanguageLevelDataService UserLanguageLevelDataService { get; set; }
 
     private AuthenticationState authState;
 
@@ -229,6 +278,9 @@
     private Dictionary<Guid, List<ListeningLessonViewModel>> competencesLessons = new Dictionary<Guid, List<ListeningLessonViewModel>>();
     private bool IsDataLoaded = false;
     private bool LastLessonCompleted = false;
+    private double chapterFinalScore = 0;
+    private Snackbar snackbar;
+    private List<Guid> LanguageCompetenceViewed = new List<Guid>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -269,6 +321,32 @@
             }
         }
 
+        if (chapterResult.IsCompleted)
+        {
+            chapterFinalScore = 0;
+            foreach (var lessonResult in chapterResult.LessonResults)
+            {
+                double lessonScore = 0;
+                var lessonResultData = await LessonResultDataService.GetLessonResultByIdAsync(lessonResult.LessonResultId);
+                foreach (var questionResult in lessonResultData.QuestionResults)
+                {
+                    if (questionResult.IsCorrect)
+                    {
+                        lessonScore++;
+                    }
+                }
+
+                chapterFinalScore += (lessonScore / lessonResultData.QuestionResults.Count);
+            }
+
+            chapterFinalScore = Math.Round(chapterFinalScore / chapterResult.LessonResults.Count * 100, 2);
+
+            if (Double.IsNaN(chapterFinalScore))
+            {
+                chapterFinalScore = 100;
+            }
+        }
+
         IsDataLoaded = true;
     }
 }
@@ -279,5 +357,97 @@
         var lessoonResult = chapterResult.LessonResults.FirstOrDefault(x => x.LessonId == lessonId);
         NavigationManager.NavigateTo($"/lesson-dashboard/{lessoonResult.LessonResultId}");
         await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+    }
+
+    private async Task NavigateToLanguageLevelDashboard()
+    {
+        NavigationManager.NavigateTo($"/language-level-dashboard/{chapterResult.LanguageLevelResultId}");
+    }
+
+    private async Task UpdateUserLanguageLevel(Guid languageCompetenceId)
+    {
+        LanguageCompetenceViewed.Add(languageCompetenceId);
+
+        var languageLevel = await LanguageLevelDataService.GetLanguageLevelByIdAsync(chapter.LanguageLevelId);
+        var languageCompetence = language.LanguageCompetences.FirstOrDefault(x => x.LanguageCompetenceId == languageCompetenceId);
+
+        Guid lastChapterIdWithLanguageCompetenceLesson = Guid.Empty;
+        var reversedChapters = languageLevel.LanguageChapters.ToList();
+        reversedChapters.Reverse();
+        foreach (var chapterCompetence in reversedChapters)
+        {
+            var chapterData = await ChapterDataService.GetChapterByIdAsync(chapterCompetence.ChapterId);
+            foreach(var lessonData in chapterData.ChapterLessons)
+            {
+                if(lessonData.LanguageCompetenceId == languageCompetence.LanguageCompetenceId && lastChapterIdWithLanguageCompetenceLesson == Guid.Empty)
+                {
+                    lastChapterIdWithLanguageCompetenceLesson = chapterData.ChapterId;
+                    break;
+                }
+            }
+
+            if(lastChapterIdWithLanguageCompetenceLesson != Guid.Empty)
+            {
+                break;
+            }
+        }
+
+        if(lastChapterIdWithLanguageCompetenceLesson != CurrentChapterId)
+        {
+            return;
+        }
+
+        var languageLevelResult = await LanguageLevelResultDataService.GetLanguageLevelResultByIdAsync(chapterResult.LanguageLevelResultId);
+        var enrollment = await EnrollmentDataService.GetEnrollmentByIdAsync(languageLevelResult.EnrollmentId);
+
+        var countLevels = enrollment.UserLanguageLevels.Count;
+
+        if (enrollment.UserLanguageLevels.Find(x => x.LanguageCompetenceId == languageCompetenceId) == null)
+        {
+            var userLanguageLevel = new UserLanguageLevelViewModel
+            {
+                EnrollmentId = enrollment.EnrollmentId,
+                LanguageCompetenceId = languageCompetenceId,
+                LanguageLevelId = languageLevel.LanguageLevelId,
+            };
+
+            var response = await UserLanguageLevelDataService.CreateUserLanguageLevelAsync(userLanguageLevel);
+
+            if(!response.IsSuccess)
+            {
+                var errorMessage = "An error occurred while creating user language level. Please try again later: " + response.Message;
+                if (response.ValidationErrors != null)
+                {
+                    errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+                }
+                snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                return;
+            }
+            enrollment = await EnrollmentDataService.GetEnrollmentByIdAsync(languageLevelResult.EnrollmentId);
+            StateHasChanged();
+        }
+        else if (enrollment.UserLanguageLevels.Find(x => x.LanguageCompetenceId == languageCompetenceId && x.LanguageLevelId == languageLevel.LanguageLevelId) == null)
+        {
+            var userLanguageLevel = enrollment.UserLanguageLevels.Find(x => x.LanguageCompetenceId == languageCompetenceId);
+
+            var updateUserLanguageLevel = new UserLanguageLevelViewModel
+            {
+                UserLanguageLevelId = userLanguageLevel.UserLanguageLevelId,
+                LanguageLevelId = languageLevel.LanguageLevelId,
+            };
+
+            var response = await UserLanguageLevelDataService.UpdateUserLanguageLevelAsync(updateUserLanguageLevel);
+
+            if (!response.IsSuccess)
+            {
+                var errorMessage = "An error occurred while updating user language level. Please try again later: " + response.Message;
+                if (response.ValidationErrors != null)
+                {
+                    errorMessage += "\n" + string.Join("\n", response.ValidationErrors);
+                }
+                snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                return;
+            }
+        }
     }
 }

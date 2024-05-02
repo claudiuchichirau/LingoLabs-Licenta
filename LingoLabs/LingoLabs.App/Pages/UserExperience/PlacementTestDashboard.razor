@@ -811,7 +811,48 @@ else if (IsUSerLanguageLevelsInfoLoaded == false && showQuizResults == true)
                 }
                 else
                 {
-                    snackbar = Snackbar.Add("User language level saved successfully!", Severity.Success); 
+                    var enrollment = await EnrollmentDataService.GetEnrollmentByIdAsync(CurrentEnrollmentId);
+                    bool foundLanguageLevel = false;
+                    foreach (var languageLevelResult in enrollment.LanguageLevelResults)
+                    {
+                        if (languageLevelResult.LanguageLevelId == highestPassedLevelId.Value && !foundLanguageLevel)
+                        {
+                            foundLanguageLevel = true;
+
+                            var languageLevelResultData = await LanguageLevelResultDataService.GetLanguageLevelResultByIdAsync(languageLevelResult.LanguageLevelResultId);
+                            foreach (var chapterResult in languageLevelResultData.ChapterResults)
+                            {
+                                var chapterResultData = await ChapterResultDataService.GetChapterResultByIdAsync(chapterResult.ChapterResultId);
+                                foreach (var lessonResult in chapterResultData.LessonResults)
+                                {
+                                    var lessonData = await LessonDataService.GetLessonByIdAsync(lessonResult.LessonId);
+                                    if (lessonData.LanguageCompetenceId == languageCompetence.LanguageCompetenceId)
+                                    {
+                                        LessonResultViewModel lessonResultViewModel = new LessonResultViewModel
+                                        {
+                                            LessonResultId = lessonResult.LessonResultId,
+                                            IsCompleted = true
+                                        };
+
+                                        var responseLessonResult = await LessonResultDataService.UpdateLessonResultAsync(lessonResultViewModel);
+
+                                        if (!responseLessonResult.IsSuccess)
+                                        {
+                                            var errorMessage = "An error occurred while saving the lesson result. Please try again later: " + responseLessonResult.Message;
+                                            if (responseLessonResult.ValidationErrors != null)
+                                            {
+                                                errorMessage += "\n" + string.Join("\n", responseLessonResult.ValidationErrors);
+                                            }
+                                            snackbar = Snackbar.Add(errorMessage, Severity.Error);
+                                            return;
+                                        }
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
+                    }
                 }
             }
         }

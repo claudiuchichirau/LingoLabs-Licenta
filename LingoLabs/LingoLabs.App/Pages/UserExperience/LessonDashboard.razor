@@ -434,7 +434,7 @@
 }
 
 @* QUIZ RESULTS TABLE *@
-@if (showQuizResultsTable)
+@if (showQuizResultsTable && !IsLessonFromPlacementTest)
 {
     <div class="text-center" style="margin-bottom: 50px;">
         <h1 style="color: black; font-size: 33px; margin-top: 80px; margin-bottom: 15px;">
@@ -466,12 +466,14 @@
                 <MudTd DataLabel="Question Type" Class="text-center">@context.QuestionType</MudTd>
                 <MudTd DataLabel="Question Requirement" Class="text-center">@context.QuestionRequirement</MudTd>
 
-                @if (!lessonResult.IsCompleted)
+                @if (QuizJustSubmitted)
                 {
                     @if (context.QuestionType == QuestionTypeViewModel.MultipleChoice)
                     {
-                        <MudTd DataLabel="Your Answer" Class="text-center">@context.GrilaUserChoiceId</MudTd>
-                        <MudTd DataLabel="Correct Answer" Class="text-center">@context.GrilaCorrectChoiceId</MudTd>
+                        var yourAnswerContent = lesson.LessonQuestions.Find(x => x.QuestionId == context.QuestionId).Choices.Find(x => x.ChoiceId == context.GrilaUserChoiceId).ChoiceContent;
+                        var correctAnswerContent = lesson.LessonQuestions.Find(x => x.QuestionId == context.QuestionId).Choices.Find(x => x.ChoiceId == context.GrilaCorrectChoiceId).ChoiceContent;
+                        <MudTd DataLabel="Your Answer" Class="text-center">@yourAnswerContent</MudTd>
+                        <MudTd DataLabel="Correct Answer" Class="text-center">@correctAnswerContent</MudTd>
                     }
                     else if (context.QuestionType == QuestionTypeViewModel.TrueFalse)
                     {
@@ -504,8 +506,12 @@
         </MudTable>
     </div>
 
-    <div class="text-center" style="margin-bottom: 60px;">
-        <MudButton Icon="@Icons.Material.Filled.NavigateNext" Style="background-color: #FC6F05; color: white;" Class="text-center align-items-center justify-content-center" OnClick="NavigateToNextLesson">Next Lesson</MudButton>
+    <div class="d-flex justify-content-evenly" style="margin-bottom: 60px;">
+        @* @if (lesson.LessonId != chapter.ChapterLessons.Last().LessonId)
+        {
+            <MudButton Style="background-color: #FC6F05; color: white;" Class="text-center align-items-center justify-content-center" OnClick="NavigateToNextLesson"><MudIcon Icon="@Icons.Material.Filled.NavigateNext" /> Next Lesson</MudButton>
+        } *@
+        <MudButton Style="background-color: #FC6F05; color: white;" Class="text-center align-items-center justify-content-center" OnClick="NavigateToNextChapterDashboard"><MudIcon Icon="@Icons.Material.Filled.SettingsBackupRestore" /> Back to Chapter Dashboard</MudButton>
     </div>
 }
  
@@ -574,8 +580,11 @@
     private Guid CurrentLessonId = Guid.Empty;
     private Guid CurrentLessonResultId = Guid.Empty;
     private LessonViewModel lesson { get; set; } = new LessonViewModel();
+    private ChapterViewModel chapter { get; set; } = new ChapterViewModel();
     private LessonResultViewModel lessonResult = new LessonResultViewModel();
     private bool IsDataLoaded = false;
+    private bool QuizJustSubmitted = false;
+    private bool IsLessonFromPlacementTest = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -590,7 +599,7 @@
 
         lesson = await lessonDataService.GetLessonByIdAsync(CurrentLessonId);
 
-        var chapter = await chapterDataService.GetChapterByIdAsync(lesson.ChapterId);
+        chapter = await chapterDataService.GetChapterByIdAsync(lesson.ChapterId);
         var languageLevel = await languageLevelDataService.GetLanguageLevelByIdAsync(chapter.LanguageLevelId);
         var language = await languageDataService.GetLanguageByIdAsync(languageLevel.LanguageId);
 
@@ -623,8 +632,13 @@
                     score++;
                 }
             }
+            score = Math.Round(score / lessonResult.QuestionResults.Count * 100, 2);
 
-            score = (score * 100) / lessonResult.QuestionResults.Count;
+            if (Double.IsNaN(score))
+            {
+                score = 100;
+                IsLessonFromPlacementTest = true;
+            }
 
 
             showQuizResults = true;
@@ -886,6 +900,7 @@
 
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
             Snackbar.Add("Quiz submitted successfully!", Severity.Success);
+            QuizJustSubmitted = true;
         }
     }
 
@@ -921,7 +936,7 @@
         return false;
     }
 
-    private int score;
+    private double score;
 
     double CalculateScore()
     {
@@ -961,6 +976,13 @@
         NavigationManager.NavigateTo($"/lesson-dashboard/{nextLessonResultId}", true);
         CurrentLessonResultId = nextLessonResultId;
         StateHasChanged();
+    }
+
+    private async void NavigateToNextChapterDashboard()
+    {
+        var chapter = await chapterDataService.GetChapterByIdAsync(lesson.ChapterId);
+        var chapterResult = await chapterResultDataService.GetChapterResultByIdAsync(lessonResult.ChapterResultId);
+        NavigationManager.NavigateTo($"/chapter-dashboard/{chapterResult.ChapterResultId}");
     }
 }
 

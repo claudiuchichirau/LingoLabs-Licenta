@@ -82,6 +82,39 @@
     }
 </MudContainer>
 
+
+@if (languageLevelResult.IsCompleted)
+{
+    <div id="quizResults" class="text-center" style="margin-top: 25px; margin-bottom: 50px;">
+        <hr style="width: 20%; border: 1px solid rgba(128, 128, 128, 0.5); margin: auto; margin-top: 50px; margin-bottom: 50px;">
+
+        <p style="font-size: 19px; margin-bottom: 30px;">
+            Congratulations! You've passed the @languageLevel.LanguageLevelName Language Level with flying colors.<br>
+            Keep up the good work and continue to improve your skills. 😊
+        </p>
+
+        <span style="color: black; font-size: 19px; margin-top: 80px; margin-bottom: 15px;">
+            Result
+        </span>
+        <h1 style="color: black; font-size: 37px; margin-bottom: 15px;">
+            Your Chapter Score: <span style="color: #FC6F05;">@languageLevelFinalScore%</span>
+        </h1>
+
+        @if (languageLevelFinalScore >= 70)
+        {
+            <img src="images/quiz/best-score.png">
+        }
+        else if (languageLevelFinalScore < 70 && languageLevelFinalScore >= 45)
+        {
+            <img src="images/quiz/middle-score.png">
+        }
+
+        <div class="text-center" style="margin-top: 15px;">
+            <MudButton Style="background-color: #FC6F05; color: white; margin-top: 35px;" Class="text-center align-items-center justify-content-center" OnClick="NavigateToLanguageDashboard"><MudIcon Icon="@Icons.Material.Filled.NavigateNext" /> Discover New Challenges</MudButton>
+        </div>
+    </div>
+}
+
 @* CHAPTERS *@
 <div class="text-center">
     <h1 style="color: black; font-size: 33px; margin-top: 120px; margin-bottom: 25px;">
@@ -278,6 +311,7 @@
     private LanguageLevelViewModel languageLevel = new LanguageLevelViewModel();
     private bool IsDataLoaded = false;
     private bool LastChapterCompleted = false;
+    private double languageLevelFinalScore = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -292,6 +326,36 @@
             if (chapterResult != null)
             {
                 chapter.IsCompleted = chapterResult.IsCompleted;
+            }
+        }
+
+        if(languageLevelResult.IsCompleted)
+        {
+            languageLevelFinalScore = 0;
+            foreach (var chapterResult in languageLevelResult.ChapterResults)
+            {
+                double chapterScore = 0;
+                var chapterResultData = await ChapterResultDataService.GetChapterResultByIdAsync(chapterResult.ChapterResultId);
+                foreach (var lessonResult in chapterResultData.LessonResults)
+                {
+                    double lessonScore = 0;
+                    var lessonResultData = await LessonResultDataService.GetLessonResultByIdAsync(lessonResult.LessonResultId);
+                    foreach (var questionResult in lessonResultData.QuestionResults)
+                    {
+                        if (questionResult.IsCorrect)
+                        {
+                            lessonScore++;
+                        }
+                    }
+                    chapterScore+= lessonScore / lessonResultData.QuestionResults.Count;
+                }
+                languageLevelFinalScore += chapterScore / chapterResultData.LessonResults.Count;
+            }
+            languageLevelFinalScore = Math.Round(languageLevelFinalScore / languageLevel.LanguageChapters.Count * 100, 2);
+
+            if (Double.IsNaN(languageLevelFinalScore))
+            {
+                languageLevelFinalScore = 100;
             }
         }
 
@@ -314,5 +378,10 @@
         var lessoonResult = updatedChapterResult.LessonResults.FirstOrDefault(x => x.LessonId == lessonId);
         NavigationManager.NavigateTo($"/lesson-dashboard/{lessoonResult.LessonResultId}");
         await JSRuntime.InvokeVoidAsync("window.scrollTo", 0, 0);
+    }
+
+    private void NavigateToLanguageDashboard()
+    {
+        NavigationManager.NavigateTo($"/language-dashboard/{languageLevelResult.EnrollmentId}");
     }
 }

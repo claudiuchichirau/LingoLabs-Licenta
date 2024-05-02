@@ -40,6 +40,7 @@ namespace LingoLabs.Application.Features.EnrollmentsFeatures.Enrollments.Queries
 
                     UserLanguageLevels = enrollment.Value.UserLanguageLevels.Select(UserLanguageLevels => new UserLanguageLevels.Queries.UserLanguageLevelDto
                     {
+                        UserLanguageLevelId = UserLanguageLevels.UserLanguageLevelId,
                         EnrollmentId = UserLanguageLevels.EnrollmentId,
                         LanguageCompetenceId = UserLanguageLevels.LanguageCompetenceId,
                         LanguageLevelId = UserLanguageLevels.LanguageLevelId

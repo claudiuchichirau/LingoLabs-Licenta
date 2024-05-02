@@ -130,6 +130,8 @@ namespace LingoLabs.App.Services.EnrollmentServices
                 updateUserLanguageLevelViewModel.LanguageLevelId
             };
 
+            var id = updateUserLanguageLevelViewModel.UserLanguageLevelId;
+
             var result = await httpClient.PutAsJsonAsync(RequestUri, userLanguageLevelViewModel);
 
             if (!result.IsSuccessStatusCode)
