@@ -8,16 +8,50 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <COMReference Include="InteropExtensionLib">
+      <WrapperTool>tlbimp</WrapperTool>
+      <VersionMinor>0</VersionMinor>
+      <VersionMajor>1</VersionMajor>
+      <Guid>c3d19104-7a67-4eb0-b459-d5b2e734d430</Guid>
+      <Lcid>0</Lcid>
+      <Isolated>false</Isolated>
+      <EmbedInteropTypes>true</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AppGates.Net.BrowserInterop" Version="1.0.0.1616872109" />
     <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="BrowserInterop" Version="1.1.2" />
+    <PackageReference Include="Emgu.CV" Version="4.9.0.5494" />
+    <PackageReference Include="Emgu.CV.Bitmap" Version="4.9.0.5494" />
+    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.9.0.5494" />
+    <PackageReference Include="IronOcr" Version="2024.5.25" />
+    <PackageReference Include="IronOcr.Languages.MiddleEnglish" Version="2020.11.2" />
+    <PackageReference Include="Leadtools.Ocr" Version="23.0.0.1" />
+    <PackageReference Include="LeptonicaSharp" Version="1.77.0.1" />
+    <PackageReference Include="Libgdiplus.rntime.osx_arm64" Version="6.1.2" />
     <PackageReference Include="MatBlazor" Version="2.10.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.2" PrivateAssets="all" />
     <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="8.0.0" />
     <PackageReference Include="MudBlazor" Version="6.16.0" />
+    <PackageReference Include="OpenCV" Version="2.4.11" />
+    <PackageReference Include="OpenCvSharp4" Version="4.9.0.20240103" />
+    <PackageReference Include="OpenCvSharp4.Extensions" Version="4.9.0.20240103" />
+    <PackageReference Include="OpenCvSharp4.runtime.centos7-x64" Version="4.0.0.20190129" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.9.0.20240103" />
+    <PackageReference Include="OpenCvSharp4Extern" Version="1.0.0" />
+    <PackageReference Include="pythonnet" Version="3.0.3" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.4" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.4" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.7.0" />
+    <PackageReference Include="Tesseract" Version="5.2.0" />
+    <PackageReference Include="Tesseract.Drawing" Version="5.2.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +60,138 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\fonts\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Admin\.nuget\packages\tesseract\5.2.0\build\\..\x64\leptonica-1.82.0.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Admin\.nuget\packages\tesseract\5.2.0\build\\..\x64\tesseract50.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Admin\.nuget\packages\tesseract\5.2.0\build\\..\x86\leptonica-1.82.0.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Admin\.nuget\packages\tesseract\5.2.0\build\\..\x86\tesseract50.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\BusinessCard.Names.en.dic" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\BusinessCard.Titles.en.dic" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\US_Cities.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.Cmc7.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.Mrz.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.Micr.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.Field.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.es.dic" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.es.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.it.dic" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.it.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.fr.dic" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.fr.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.de.dic" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.de.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.en.dic" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.en.bin2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.en.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.icr.en.p1.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.icr.en.p2.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.icr.en.p3.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.icr.en.p4.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.icr.en.p5.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.icr.en.p6.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.icr.en.p7.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.icr.en.p8.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="C:\Users\Admin\.nuget\packages\leadtools.ocr.languages.main.net\23.0.0.1\build\net7.0\..\..\content\OcrLEADRuntime\LEAD.Binarize.bin" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Admin\.nuget\packages\ironocr.languages.middleenglish\2020.11.2\build\\..\OcrData\MiddleEnglish.ocrdata" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="C:\Users\Admin\.nuget\packages\ironocr.languages.middleenglish\2020.11.2\build\\..\OcrData\MiddleEnglish.ocrdata" />
   </ItemGroup>
 
 </Project>

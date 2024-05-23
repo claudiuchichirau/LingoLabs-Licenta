@@ -1,4 +1,8 @@
 ﻿@page "/lesson-dashboard/{Id}"
+@using Emgu.CV
+@using Emgu.CV.CvEnum
+@using Emgu.CV.Structure
+@using Emgu.CV.Util
 @using LingoLabs.App.Auth
 @using LingoLabs.App.Contracts.AuthContracts
 @using LingoLabs.App.Contracts.EnrollmentContracts
@@ -10,9 +14,23 @@
 @using LingoLabs.App.ViewModel.Responses
 @using Microsoft.AspNetCore.Components.Authorization
 @using MudBlazor
+@using Microsoft.AspNetCore.Components.Forms
 @using MatBlazor
 @using System.Net.Http.Json
-@using ViewModel.MudBlazor
+@using System.Drawing
+@using System.IO;
+@using System.Threading.Tasks;
+@using OpenCvSharp
+@using SixLabors.ImageSharp;
+@using SixLabors.ImageSharp.PixelFormats;
+@using SixLabors.ImageSharp.Processing;
+@using System.Drawing.Imaging
+@using System.Runtime.InteropServices
+@using ViewModel.MudBlazor;
+@using Python.Runtime;
+@using IronOcr;
+@using Tesseract;
+@using Microsoft.Extensions.Hosting;
 @inject NavigationManager NavigationManager
 @inject CustomStateProvider authStateProvider
 @inject HttpClient httpClient
@@ -33,7 +51,7 @@
     @if(!IsDataLoaded)
     {
         <div class="text-center" style="margin-top: 45px; margin-bottom: 10px;">
-            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+            <MudProgressCircular Color="MudBlazor.Color.Default" Indeterminate="true" />
         </div>
     } else {
         <div class="row mx-0 justify-content-md-center" style="margin-top: -175px; margin-bottom: 40px;">
@@ -66,7 +84,7 @@
     @if(!IsDataLoaded)
     {
         <div class="text-center" style="margin-top: 45px; margin-bottom: 10px;">
-            <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+            <MudProgressCircular Color="MudBlazor.Color.Default" Indeterminate="true" />
         </div>
     } else {
     @if (!string.IsNullOrEmpty(lesson.LessonDescription))
@@ -153,7 +171,7 @@
             <div class="row">
                 <div class="col">
                     <div style="display: flex; flex-direction: column; justify-content: end; height: 100%;">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@isButtonDisabled" OnClick="() => SendWrittenEssay(sampleText)" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> Submit</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Disabled="@isButtonDisabled" OnClick="() => SendWrittenEssay(sampleText)" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> Submit</MudButton>
                     </div>
                 </div>
             </div>
@@ -187,9 +205,9 @@
                         <MudText Typo="Typo.h6">
                             Drag and drop files here or click
                         </MudText>
-                        @foreach (var file in _fileNames)
+                        @foreach (var file in _files)
                         {
-                            <MudChip Color="Color.Dark" Text="@file" />
+                            <MudChip Color="MudBlazor.Color.Dark" Text="@file.Name" />
                         }
                     </MudPaper>
                     <MudToolBar DisableGutters="true"
@@ -202,13 +220,13 @@
                         </MudButton>
                         <MudButton OnClick="@Upload"
                                    Style="background-color: #2563EB; color: white;"
-                                   Disabled="@(!_fileNames.Any())"
+                                       Disabled="@(!_files.Any())"
                                    Variant="Variant.Filled">
                             Upload
                         </MudButton>
                         <MudButton OnClick="@Clear"
-                                   Color="Color.Error"
-                                   Disabled="@(!_fileNames.Any())"
+                                   Color="MudBlazor.Color.Error"
+                                       Disabled="@(!_files.Any())"
                                    Variant="Variant.Filled">
                             Clear
                         </MudButton>
@@ -232,7 +250,7 @@
             <h2 style="font-size: 19px; margin-bottom: 30px;">
                 Get ready to test your knowledge with our comprehensive quiz. Spanning a minimum of 10 questions, each designed to challenge and enhance your understanding of the lesson. Good luck!
             </h2>
-            <MudButton Variant="Variant.Filled" OnClick="() => StartQuiz()" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Quiz"></MudIcon> START NOW!</MudButton>
+            <MudButton Variant="Variant.Filled" OnClick="() => StartQuiz()" Color="MudBlazor.Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Quiz"></MudIcon> START NOW!</MudButton>
         </div>        
     }
     }
@@ -262,14 +280,14 @@
             <PreviousButtonTemplate>
                 <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
                     <span class="mud-icon-button-label">
-                        <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipPrevious" Color="@Color.Inherit" />
+                        <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipPrevious" Color="@MudBlazor.Color.Inherit" />
                     </span>
                 </div>
             </PreviousButtonTemplate>
             <NextButtonTemplate>
                 <div Class="mud-button-root mud-icon-button mud-icon-button-color-inherit mud-ripple mud-ripple-icon">
                     <span class="mud-icon-button-label">
-                        <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipNext" Color="@Color.Inherit" />
+                        <MudIcon Class="mud-ripple mud-ripple-icon mud-icon-button-size-medium" Icon="@Icons.Material.Filled.SkipNext" Color="@MudBlazor.Color.Inherit" />
                     </span>
                 </div>
             </NextButtonTemplate>
@@ -296,7 +314,7 @@
                                     @foreach (ChoiceViewModel choice in question.Choices)
                                     {
                                         <div style="display: flex; justify-content: center;">
-                                            <MudButton Color="Color.Primary" Variant="Variant.Outlined" Style="@(choice.ChoiceId == userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceId ? "color: white; border-color: #2563EB; background-color: #2563EB; padding: 10px; font-size: 20px;" : "color: #2563EB; border-color: #2563EB; background-color: white; padding: 10px; font-size: 20px;")" OnClick="() => {SelectAnswer(question, choice); CheckAllQuestionsCompleted();}">
+                                            <MudButton Color="MudBlazor.Color.Primary" Variant="Variant.Outlined" Style="@(choice.ChoiceId == userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceId ? "color: white; border-color: #2563EB; background-color: #2563EB; padding: 10px; font-size: 20px;" : "color: #2563EB; border-color: #2563EB; background-color: white; padding: 10px; font-size: 20px;")" OnClick="() => {SelectAnswer(question, choice); CheckAllQuestionsCompleted();}">
                                                 @choice.ChoiceContent
                                             </MudButton>
                                         </div>
@@ -320,12 +338,12 @@
 
                                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 35px; margin-top: 25px; justify-items: center;">
                                     <div style="display: flex; justify-content: center;">
-                                        <MudButton Color="Color.Primary" Variant="Variant.Outlined" Style="@(userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceIsCorrect == true ? "color: white; border-color: green; background-color: green; padding: 10px; font-size: 20px;" : "color: green; border-color: green; background-color: white; padding: 10px; font-size: 20px;")" OnClick='() => {SelectAnswer(question, true); CheckAllQuestionsCompleted();}'>
+                                        <MudButton Color="MudBlazor.Color.Primary" Variant="Variant.Outlined" Style="@(userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceIsCorrect == true ? "color: white; border-color: green; background-color: green; padding: 10px; font-size: 20px;" : "color: green; border-color: green; background-color: white; padding: 10px; font-size: 20px;")" OnClick='() => {SelectAnswer(question, true); CheckAllQuestionsCompleted();}'>
                                             True
                                         </MudButton>
                                     </div>
                                     <div style="display: flex; justify-content: center;">
-                                        <MudButton Color="Color.Primary" Variant="Variant.Outlined" Style="@(userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceIsCorrect == false ? "color: white; border-color: red; background-color: red; padding: 10px; font-size: 20px;" : "color: red; border-color: red; background-color: white; padding: 10px; font-size: 20px;")" OnClick='() => {SelectAnswer(question, false); CheckAllQuestionsCompleted();}'>
+                                        <MudButton Color="MudBlazor.Color.Primary" Variant="Variant.Outlined" Style="@(userQuiz.UserQuestions.Find(x => x.QuestionId == question.QuestionId).ChoiceIsCorrect == false ? "color: white; border-color: red; background-color: red; padding: 10px; font-size: 20px;" : "color: red; border-color: red; background-color: white; padding: 10px; font-size: 20px;")" OnClick='() => {SelectAnswer(question, false); CheckAllQuestionsCompleted();}'>
                                             False
                                         </MudButton>
                                     </div>
@@ -364,7 +382,7 @@
     {
         <div class="row" style="margin-top: 35px; margin-bottom: 50px;">
             <div class="col text-center">
-                <MudButton Variant="Variant.Filled" OnClick="() => SubmitQuiz(userQuiz)" Color="Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> SUBMIT</MudButton>
+                <MudButton Variant="Variant.Filled" OnClick="() => SubmitQuiz(userQuiz)" Color="MudBlazor.Color.Primary" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> SUBMIT</MudButton>
             </div>
         </div>
     }
@@ -450,7 +468,7 @@
             <ToolBarContent>
                 <MudText Typo="Typo.h6">Your Quiz Answers</MudText>
                 <MudSpacer />
-                <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+                <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="MudBlazor.Size.Medium" Class="mt-0"></MudTextField>
             </ToolBarContent>
             <HeaderContent>
                 <MudTh Class="text-center">Question Type</MudTh>
@@ -987,16 +1005,18 @@
 }
 
 
+
+
 @* UPLOAD ESSAY IMAGE *@
 @functions {
     #nullable enable
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
     private string _dragClass = DefaultDragClass;
-    private readonly List<string> _fileNames = new();
+    private readonly List<IBrowserFile> _files = new();
 
     private async Task Clear()
     {
-        _fileNames.Clear();
+        _files.Clear();
         ClearDragClass();
         await Task.Delay(100);
     }
@@ -1005,17 +1025,25 @@
     {
         ClearDragClass();
         var files = e.GetMultipleFiles();
-        foreach (var file in files)
-        {
-            _fileNames.Add(file.Name);
-        }
+        _files.AddRange(files);
     }
 
-    private void Upload()
+    private async Task Upload()
     {
-        // Upload the files here
-        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
-        Snackbar.Add("Files uploaded successfully!", Severity.Success);
+        try
+        {
+            foreach (var file in _files)
+            {
+                using var memoryStream = new MemoryStream();
+                await file.OpenReadStream().CopyToAsync(memoryStream);
+                var fileBytes = memoryStream.ToArray(); // Convert the file to a byte array
+                await SendBytesToPythonServer(fileBytes); // Send the byte array to the Python server
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     private void SetDragClass()
@@ -1025,6 +1053,33 @@
         => _dragClass = DefaultDragClass;
 
 
+    private async Task SendBytesToPythonServer(byte[] data)
+    {
+        try
+        {
+            using var client = new HttpClient();
+            var content = new ByteArrayContent(data);
+            var response = await client.PostAsync("http://localhost:5100/upload-image", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Server response: {result}");
+            }
+            else
+            {
+                Console.WriteLine($"Error: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
+    }
+
+}
+
+@functions{
     // WRITE YOUR ESSAY
     string sampleText = "";
     int wordCount => string.IsNullOrWhiteSpace(sampleText) ? 0 : sampleText.Split(' ').Length;
