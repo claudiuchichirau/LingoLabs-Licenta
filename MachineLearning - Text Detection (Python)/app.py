@@ -3,11 +3,13 @@ from flask_cors import CORS
 from tensorflow.keras.models import load_model
 from imutils.contours import sort_contours
 import io
+import os
 import imutils
 import traceback
 import cv2
 import cv2 as cv
 import numpy as np
+import base64
 # import tensorflow as tf
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -31,7 +33,7 @@ def upload_image():
             print ('No. of Lines',len(textLines))
             wordsList = wordSegment(textLines)
             print ('No. of Words',len(wordsList))
-            counter = 0
+            wordCounter = 0
             for word in wordsList:
                 print ('LetterGray shape: ',word.shape)
                 gray = cv.cvtColor(word, cv.COLOR_BGR2GRAY)
@@ -54,24 +56,26 @@ def upload_image():
         ##--------------------Make histogram-------------------------------------###   
                 
                 colcnt = histogram(letter2, upper_baseline, lower_baseline, w)
-                print('\n\nColcnt: ',colcnt)
+                # print('\n\nColcnt: ',colcnt)
         ###------------------------Visualize segmentation------------------------------#####        
                 ## Tuning Parameters
-                min_pixel_threshold = 30
-                min_separation_threshold = 27
+                min_pixel_threshold = 29
+                min_separation_threshold = 30
                 min_round_letter_threshold = 190
                 
                 seg = visualize(letter2, upper_baseline, lower_baseline, min_pixel_threshold, min_separation_threshold, min_round_letter_threshold, colcnt, word, h)
-                wordImgList = segmentCharacters(seg,word)
-                for i in wordImgList:
-                    cv.imwrite("./result/characters/" + str(counter) +".jpeg",i)
-                    counter=counter+1
+                charactersList = segmentCharacters(seg,word)
+
+                wordFolder = f"./result/characters/word-{wordCounter}"
+                os.makedirs(wordFolder, exist_ok=True)
+
+                counter = 0
+                for i in charactersList:
+                    cv.imwrite(os.path.join(wordFolder, f"char-{counter}.jpeg"), i)
+                    counter += 1
+                wordCounter += 1
                 
         ###---------------------------------------------------------------------------#####        
-                
-            print('Original Image')         
-            plt.imshow(img)
-            plt.show()
 
         except Exception as e:
             print ('Error Message ',e)
@@ -81,7 +85,27 @@ def upload_image():
 
         traceback.print_exc() 
 
-        return 'Image received and processed successfully', 200
+        big_list = []  # The big list to hold all small lists
+        try:
+            wordCounter = 0
+
+            for wordFolder in os.listdir("./result/characters"):
+                small_list = []  # The small list to hold all characters of a word
+                for filename in os.listdir(os.path.join("./result/characters", wordFolder)):
+                    with open(os.path.join("./result/characters", wordFolder, filename), 'rb') as f:
+                        image_data = f.read()
+                        # Encode image data to base64
+                        image_base64 = base64.b64encode(image_data).decode('utf-8')
+                        small_list.append(image_base64)
+                big_list.append(small_list)
+                wordCounter += 1
+        except Exception as e:
+            print ('Error Message ',e)
+            pass
+        
+        print('\n\n\t\tURMEAZA SA TRIMIT\n\n')
+
+        return {'message': 'Image received and processed successfully', 'data': big_list}, 200
     except Exception as ex:
         return str(ex), 500  # Return an error message if something goes wrong
 
@@ -273,8 +297,8 @@ def baselines(letter2, upoints, dpoints, h, w):
             lb = meand
             cv.line(letter2,(0,meand),(w,meand),(255,0,0),2)
             
-        plt.imshow(letter2)
-        plt.show()
+        # plt.imshow(letter2)
+        # plt.show()
         return meanu, lb
     except Exception as ex:
         print('Error in baseline calculation' + str(ex))
@@ -283,111 +307,133 @@ def baselines(letter2, upoints, dpoints, h, w):
 def histogram(letter2, upper_baseline, lower_baseline, w):
     ##------------Making Histograms (Default)------------------------######
     cropped = letter2[upper_baseline:lower_baseline,0:w]
-    plt.imshow(cropped)
-    plt.show()
+    #plt.imshow(cropped)
+    #plt.show()
     colcnt = np.sum(cropped==255, axis=0)
     x = list(range(len(colcnt)))
     plt.plot(colcnt)
     plt.fill_between(x, colcnt, 1, facecolor='blue', alpha=0.5)
-    plt.show()  
+    # plt.show()  
     return colcnt     
 
-def visualize(letter2, upper_baseline, lower_baseline, min_pixel_threshold, min_separation_threshold, min_round_letter_threshold, colcnt, letterGray, h):
+def visualize(letter2, upper_baseline, lower_baseline, min_pixel_threshold, min_separation_threshold, min_round_letter_threshold, colcnt, letterGray, h):  
     seg = []
     seg1 = []
     seg2 = []
     ## Check if pixel count is less than min_pixel_threshold, add segmentation point
     for i in range(len(colcnt)):
       if(colcnt[i] > min_pixel_threshold):
-         print('Am adaugat in sg1 coloana',i,' cu colcnt: ', colcnt[i])
+         # print('Am adaugat in sg1 coloana',i,' cu colcnt: ', colcnt[i])
          seg1.append(i)
 
-    print('\n\nseg1 is: ', seg1)
+    # print('\n\nseg1 is: ', seg1)
           
     ## Check if 2 consequtive seg points are greater than min_separation_threshold in distance
     for i in range(len(seg1)-1):
-        if(seg1[i+1]-seg1[i] > min_separation_threshold):
-            seg2.append(seg1[i])
+        if seg1[i+1] - seg1[i] > 1:
+            print('linia :', seg1[i], ' cu colcnt :', colcnt[seg1[i]], ' si linia :', seg1[i+1], ' cu colcnt :', colcnt[seg1[i+1]])
+            if(seg1[i+1] - seg1[i] > min_separation_threshold):
+                seg2.append(seg1[i])
+                print('\t\tAm adaugat pt ca dif = ', seg1[i+1]-seg1[i])
         # print('At seg2 where i: ', i, ' the difference is: ', seg1[i+1]-seg1[i])
 
     print('\n\nseg2 is: ', seg2)
 
     ##------------Modified segmentation for removing circles----------------------------###            
-    arr=[]
-    for i in (seg2):
-        arr1 = []
-        j = upper_baseline
-        while(j <= lower_baseline):
-            if(letterGray[j,i] == 255):
-                arr1.append(1)
-            else:
-                arr1.append(0)
-            j+=1
-        arr.append(arr1)
-    print('At arr Seg here: ', seg2)
+    # arr=[]
+    # for i in (seg2):
+    #     arr1 = []
+    #     j = upper_baseline
+    #     while(j <= lower_baseline):
+    #         if(letterGray[j,i] == 255):
+    #             arr1.append(1)
+    #         else:
+    #             arr1.append(0)
+    #         j+=1
+    #     arr.append(arr1)
+    # print('At arr Seg here: ', arr)
     
-    ones = []
-    for i in (arr):
-        ones1 = []
-        for j in range(len(i)):
-            if (i[j] == 1):
-                ones1.append([j])
-        ones.append(ones1)
+    # ones = []
+    # for i in (arr):
+    #     ones1 = []
+    #     for j in range(len(i)):
+    #         if (i[j] == 1):
+    #             ones1.append([j])
+    #     ones.append(ones1)
     
-    diffarr = []
-    for i in (ones):
-        diff = i[len(i)-1][0] - i[0][0]
-        diffarr.append(diff)
-    print('Difference array: ',diffarr)
+    # diffarr = []
+    # for i in (ones):
+    #     diff = i[len(i)-1][0] - i[0][0]
+    #     diffarr.append(diff)
+    # print('Difference array: ',diffarr)
     
-    for i in range(len(seg2)):
-        if(diffarr[i] < min_round_letter_threshold):
-            seg.append(seg2[i])
+    # for i in range(len(seg2)):
+    #     if(diffarr[i] < min_round_letter_threshold):
+    #         seg.append(seg2[i])
     ##---------------------------------------------------------------------------##
     ## Make the Cut 
-    for i in range(len(seg)):
-        letter3 = cv.line(letter2,(seg[i],0),(seg[i],h),(255,0,0),2)
+
+    for i in range(len(seg2)):
+        seg2[i] = seg2[i] + 8
+
+    if len(seg2) == 0:
+        letter3 = letter2
+        # print("No segmentation points found, keeping the original image.")
+    else:
+        letter3 = letter2.copy()
+        for i in range(len(seg2)):
+            letter3 = cv.line(letter3, (seg2[i], 0), (seg2[i], h), (255, 0, 0), 2)
+        # print("Segmentation applied.")
     
     print("Does it work::::")
-    plt.imshow(letter3)
-    plt.show()
-    return seg 
+    #plt.imshow(letter3)
+    #plt.show()
+    return seg2 
 
 def segmentCharacters(seg,lettergray):
     s=0
     wordImgList = []
     fn = 0
+
+    print('\n\nlen(seg): ', len(seg))
     for i in range(len(seg)):
+        print('\tAt i: ', i)
         if i==0:
             s=seg[i]
             if s > 15:
                 wordImg = lettergray[0:,0:s]
                 cntx=np.count_nonzero(wordImg == 255) 
                 print ('count',cntx)
-                plt.imshow(wordImg)
-                plt.show()
+                #plt.imshow(wordImg)
+                #plt.show()
                 fn=fn+1
             else:
                 continue
-        elif (i != (len(seg)-1)):
+        elif (i != (len(seg))):
             if seg[i]-s > 15:
                 wordImg = lettergray[0:,s:seg[i]]
                 cntx=np.count_nonzero(wordImg == 255) 
                 print ('count',cntx)
-                plt.imshow(wordImg)
-                plt.show()
+                #plt.imshow(wordImg)
+                #plt.show()
                 fn=fn+1
                 s=seg[i]
             else:
                 continue
-        else:
-            wordImg = lettergray[0:,seg[len(seg)-1]:]
-            cntx=np.count_nonzero(wordImg == 255) 
-            print ('count',cntx)
-            plt.imshow(wordImg)
-            plt.show()
-            fn=fn+1
         wordImgList.append(wordImg)
+
+    if len(seg) > 0:
+        wordImg = lettergray[0:,seg[len(seg)-1]:]
+    else:
+        wordImg = lettergray[0:,0:]
+
+    cntx=np.count_nonzero(wordImg == 255) 
+    print ('count ultimul',cntx)
+    #plt.imshow(wordImg)
+    #plt.show()
+    fn=fn+1
+    wordImgList.append(wordImg)
+
 
     return wordImgList
 

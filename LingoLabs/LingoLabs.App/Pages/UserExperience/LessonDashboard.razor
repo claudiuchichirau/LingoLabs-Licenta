@@ -1063,7 +1063,6 @@
 
             if (response.IsSuccessStatusCode)
             {
-                var result = await response.Content.ReadAsStringAsync();
                 Console.WriteLine($"Server response: {result}");
             }
             else
