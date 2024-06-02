@@ -9,6 +9,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.ListeningLessons.Quer
         public string LessonTitle { get; set; } = default!;
         public string? LessonDescription { get; set; } = string.Empty;
         public string? LessonContent { get; set; } = string.Empty;
+        public string? LessonRequirement { get; set; } = string.Empty;
         public string? LessonImageData { get; set; } = string.Empty;
         public string? LessonVideoLink { get; set; } = string.Empty;
         public Guid ChapterId { get; set; }

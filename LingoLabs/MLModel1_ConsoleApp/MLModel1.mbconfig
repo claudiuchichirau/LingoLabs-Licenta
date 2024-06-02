@@ -1,0 +1,66 @@
+﻿{
+  "Scenario": "ImageClassification",
+  "DataSource": {
+    "Type": "Folder",
+    "Version": 1,
+    "FolderPath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\MachineLearning - Text Detection (Python)\\ML_Images-SmallLetters\\without_train_or_test"
+  },
+  "Environment": {
+    "Type": "LocalCPU",
+    "Version": 1
+  },
+  "RunHistory": {
+    "Version": 3,
+    "Type": "Result",
+    "Trials": [
+      {
+        "Version": 1,
+        "Type": "Trial",
+        "TrainerName": "ImageClassificationMulti",
+        "Score": 0.94404591104734581,
+        "RuntimeInSeconds": 3688.802,
+        "Parameter": {
+          "_SCHEMA_": "e0 * e1 * e2",
+          "e0": {
+            "OutputColumnName": "Label",
+            "InputColumnName": "Label",
+            "AddKeyValueAnnotationsAsText": false
+          },
+          "e1": {
+            "LabelColumnName": "Label",
+            "ScoreColumnName": "Score",
+            "FeatureColumnName": "ImageSource",
+            "Arch": "ResnetV250",
+            "BatchSize": 10,
+            "Epoch": 200
+          },
+          "e2": {
+            "OutputColumnName": "PredictedLabel",
+            "InputColumnName": "PredictedLabel"
+          }
+        }
+      }
+    ],
+    "Estimators": {
+      "e0": "MapValueToKey",
+      "e1": "ImageClassificationMulti",
+      "e2": "MapKeyToValue"
+    },
+    "Schema": "e0 * e1 * e2",
+    "MetricName": "MicroAccuracy",
+    "ModelFilePath": "D:\\Folder Claudiu\\Facultate FII UAIC\\Anul 3 (2023 - 2024)\\Licență\\LingoLabs-Licenta\\LingoLabs\\LingoLabs_ML\\MLModel1.mlnet"
+  },
+  "Type": "TrainingConfig",
+  "Version": 5,
+  "TrainingOption": {
+    "Version": 2,
+    "Subsampling": false,
+    "Type": "ClassificationTrainingOption",
+    "TrainingTime": 0,
+    "ValidationOption": {
+      "Version": 0,
+      "Type": "TrainValidateSplitValidationOption",
+      "SplitRatio": 0.2
+    }
+  }
+}

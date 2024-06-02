@@ -378,6 +378,7 @@ else {
                         <MudTextField T="string" Label="Titlu" @bind-Value="editLesson.LessonTitle"></MudTextField>
                         <MudTextField T="string" Label="Descriere" @bind-Value="editLesson.LessonDescription"></MudTextField>
                         <MudTextField T="string" Label="Conținut" @bind-Value="editLesson.LessonContent"></MudTextField>
+                        <MudTextField T="string" Label="Cerinţă" @bind-Value="editLesson.LessonRequirement"></MudTextField>
                         <MudTextField T="string" Label="Link Video" @bind-Value="editLesson.LessonVideoLink"></MudTextField>
                         <MudTextField T="string" Label="Link Imagine" @bind-Value="editLesson.LessonImageData"></MudTextField>
                         <MudTextField T="int?" Label="Nr. Crt." @bind-Value="editLesson.LessonPriorityNumber"></MudTextField>
@@ -861,6 +862,7 @@ else {
         if (editLesson.LessonTitle == lessonBeforeEdit.LessonTitle
             && editLesson.LessonDescription == lessonBeforeEdit.LessonDescription
             && editLesson.LessonContent == lessonBeforeEdit.LessonContent
+            && editLesson.LessonRequirement == lessonBeforeEdit.LessonRequirement
             && editLesson.LessonVideoLink == lessonBeforeEdit.LessonVideoLink
             && editLesson.LessonImageData == lessonBeforeEdit.LessonImageData
             && editLesson.LessonPriorityNumber == lessonBeforeEdit.LessonPriorityNumber)

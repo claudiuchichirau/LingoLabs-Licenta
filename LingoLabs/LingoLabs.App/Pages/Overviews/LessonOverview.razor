@@ -114,6 +114,22 @@ else {
 
         <div class="text-left">
             <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
+                Cerință:&emsp;
+                @if (!string.IsNullOrEmpty(lesson.LessonRequirement))
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">
+                        @lesson.LessonRequirement
+                    </span>
+                }
+                else
+                {
+                    <span style="font-size: 21px; color: #2563EB; text-align: justify;">-</span>
+                }
+            </h1>
+        </div>
+
+        <div class="text-left">
+            <h1 style="color: black; font-size: 33px; padding: 5px; margin-left: 75px;" class="poppins-semi-bold">
                 Nr. Crt.:&emsp;
                 @if (lesson.LessonPriorityNumber != 0 || lesson.LessonPriorityNumber != null)
                 {

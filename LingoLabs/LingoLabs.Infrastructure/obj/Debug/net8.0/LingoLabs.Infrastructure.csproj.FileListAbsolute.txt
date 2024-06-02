@@ -31,9 +31,9 @@ D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Li
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\obj\Debug\net8.0\LingoLabs.Infrastructure.AssemblyInfo.cs
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\obj\Debug\net8.0\LingoLabs.Infrastructure.csproj.CoreCompileInputs.cache
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\obj\Debug\net8.0\LingoLabs.Infrastructure.sourcelink.json
+D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\obj\Debug\net8.0\LingoLab.87FEAF87.Up2Date
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\obj\Debug\net8.0\LingoLabs.Infrastructure.dll
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\obj\Debug\net8.0\refint\LingoLabs.Infrastructure.dll
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\obj\Debug\net8.0\LingoLabs.Infrastructure.pdb
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\obj\Debug\net8.0\LingoLabs.Infrastructure.genruntimeconfig.cache
 D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\obj\Debug\net8.0\ref\LingoLabs.Infrastructure.dll
-D:\Folder Claudiu\Facultate FII UAIC\Anul 3 (2023 - 2024)\Licență\LingoLabs-Licenta\LingoLabs\LingoLabs.Infrastructure\obj\Debug\net8.0\LingoLab.87FEAF87.Up2Date

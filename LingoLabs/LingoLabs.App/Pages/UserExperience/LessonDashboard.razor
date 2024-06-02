@@ -20,12 +20,17 @@
 @using System.Drawing
 @using System.IO;
 @using System.Threading.Tasks;
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
 @using OpenCvSharp
 @using SixLabors.ImageSharp;
 @using SixLabors.ImageSharp.PixelFormats;
 @using SixLabors.ImageSharp.Processing;
 @using System.Drawing.Imaging
 @using System.Runtime.InteropServices
+@using System.Text.Json
+@using System.Text
+@using System.Net.Http.Headers
 @using ViewModel.MudBlazor;
 @using Python.Runtime;
 @using IronOcr;
@@ -153,88 +158,149 @@
 
     @if (!string.IsNullOrEmpty(lesson.LanguageCompetenceName) && string.Compare(lesson.LanguageCompetenceName, "Writing") == 0)
     {
+        @if(!startedHandwritingRecognition && !finishedHandwritingRecognition)
+        {
+            @* WRITE THE ESSAY *@
+            <div class="container">
+                <div class="row" style="margin-top: 20px; margin-bottom: -20px;">
+                    <div class="col">
+                        <div style="display: flex; flex-direction: column; justify-content: start; height: 100%;">
+                            <p style="color: black; font-size: 22px;" class="poppins-semi-bold">Start to type your essay here:</p>
+                        </div>
+                    </div>
+                </div>
 
-        @* WRITE THE ESSAY *@
-        <div class="container">
-            <div class="row" style="margin-top: 20px; margin-bottom: -20px;">
+                <MudTextField @bind-Text="sampleText" T="string" Variant="Variant.Text" AutoGrow Lines="1" HelperText="Start to write your essay here!" Style="width: 100%;" />
+
+                <p>@wordCount/100 words</p>
+
+                <div class="row">
+                    <div class="col">
+                        <div style="display: flex; flex-direction: column; justify-content: end; height: 100%;">
+                            <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Disabled="@isButtonDisabled" OnClick="() => SendWrittenEssay(sampleText)" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> Submit</MudButton>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row" style="margin-top: 85px; margin-bottom: -20px;">
                 <div class="col">
                     <div style="display: flex; flex-direction: column; justify-content: start; height: 100%;">
-                        <p style="color: black; font-size: 22px;" class="poppins-semi-bold">Start to type your essay here:</p>
+                        <p style="color: black; font-size: 22px;" class="poppins-semi-bold">Or, if you prefer, upload pictures of your handwritten essay. We'll take care of the rest!</p>
                     </div>
                 </div>
             </div>
 
-            <MudTextField @bind-Text="sampleText" T="string" Variant="Variant.Text" AutoGrow Lines="1" HelperText="Start to write your essay here!" Style="width: 100%;" />
-
-            <p>@wordCount/100 words</p>
-
-            <div class="row">
-                <div class="col">
-                    <div style="display: flex; flex-direction: column; justify-content: end; height: 100%;">
-                        <MudButton Variant="Variant.Filled" Color="MudBlazor.Color.Primary" Disabled="@isButtonDisabled" OnClick="() => SendWrittenEssay(sampleText)" Style="background-color: #FC6F05; color: white; padding: 10px;"><MudIcon Icon="@Icons.Material.Filled.Send"></MudIcon> Submit</MudButton>
-                    </div>
+            @* UPLOAD ESSAY IMAGE       -> doar daca este WRITTING LESSON*@
+            <MudStack Style="width: 100%">
+                <MudFileUpload T="IReadOnlyList<IBrowserFile>"
+                               Accept=".png, .jpg"
+                               MaximumFileCount="100"
+                               OnFilesChanged="OnInputFileChanged"
+                               Hidden="@false"
+                               InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
+                               InputStyle="opacity:0"
+                               @ondragenter="@SetDragClass"
+                               @ondragleave="@ClearDragClass"
+                               @ondragend="@ClearDragClass">
+                    <ButtonTemplate>
+                        <MudPaper Height="300px"
+                                  Outlined="true"
+                                  Class="@_dragClass">
+                            <MudText Typo="Typo.h6">
+                                Drag and drop files here or click
+                            </MudText>
+                            @foreach (var file in _files)
+                            {
+                                <MudChip Color="MudBlazor.Color.Dark" Text="@file.Name" />
+                            }
+                        </MudPaper>
+                        <MudToolBar DisableGutters="true"
+                                    Class="relative d-flex justify-end gap-4 z-30">
+                            <MudButton HtmlTag="label"
+                                       Style="background-color: #2563EB; color: white;"
+                                       for="@context.Id"
+                                       Variant="Variant.Filled">
+                                Open file picker
+                            </MudButton>
+                            <MudButton OnClick="@Upload"
+                                       Style="background-color: #2563EB; color: white;"
+                                           Disabled="@(!_files.Any())"
+                                       Variant="Variant.Filled">
+                                Upload
+                            </MudButton>
+                            <MudButton OnClick="@Clear"
+                                       Color="MudBlazor.Color.Error"
+                                           Disabled="@(!_files.Any())"
+                                       Variant="Variant.Filled">
+                                Clear
+                            </MudButton>
+                        </MudToolBar>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </MudStack>
+        }
+        else if(startedHandwritingRecognition && !finishedHandwritingRecognition)
+        {
+            <div class="text-center" style="margin-top: 45px; margin-bottom: 10px;">
+                <MudProgressCircular Color="MudBlazor.Color.Default" Indeterminate="true" />
+                <p style="font-size: 19px; margin-bottom: 80px;">One moment, I'm scoring a goal against spelling mistakes...</p>
                 </div>
-            </div>
-        </div>
+            }
+            else if (startedHandwritingRecognition && finishedHandwritingRecognition)
+            {
+                <div class="text-center" style="margin-bottom: 50px;">
+                    <hr style="width: 20%; border: 1px solid rgba(128, 128, 128, 0.5); margin: auto; margin-top: 50px; margin-bottom: 50px;">
 
+                    <p style="color: black; font-size: 19px; margin-bottom: 15px;">Your Essay Content:</p>
+                    <p style="color: black; font-size: 28px; margin-bottom: 85px;">@correctedText</p>
 
-        <div class="row" style="margin-top: 85px; margin-bottom: -20px;">
-            <div class="col">
-                <div style="display: flex; flex-direction: column; justify-content: start; height: 100%;">
-                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">Or, if you prefer, upload pictures of your handwritten essay. We'll take care of the rest!</p>
+                    @if (finalScore >= 45)
+                    {
+                        <p style="font-size: 19px; margin-bottom: 70px;">
+                            Congratulations! You've passed the lesson with flying colors.<br>
+                            Keep up the good work and continue to improve your skills. 😊
+                        </p>
+                    }
+                    else
+                    {
+                        <p style="font-size: 19px; margin-bottom: 70px;">
+                            Don't worry if you didn't pass this time. Review your answers, learn from your mistakes, and try again.<br>
+                            You've got this! 💪
+                        </p>
+                    }
+
+                    <span style="color: black; font-size: 19px; margin-top: 80px; margin-bottom: 15px;">
+                        Result
+                    </span>
+                    <h1 style="color: black; font-size: 37px; margin-bottom: 55px;">
+                        Your Essay Score: <span style="color: #FC6F05;">@finalScore%</span>
+                    </h1>
+                    <p style="color: black; font-size: 19px; margin-bottom: 35px;">
+                        @score_explanation
+                    </p>
+
+                    @if (finalScore >= 70)
+                    {
+                        <img src="images/quiz/best-score.png">
+                    }
+                    else if (finalScore < 70 && finalScore >= 45)
+                    {
+                        <img src="images/quiz/middle-score.png">
+                    }
+                    @* else
+                    {
+                        <div>
+                            <img src="images/quiz/low-score.png">
+                        </div>
+                        <div>
+                            <MudButton Icon="@Icons.Material.Filled.ChangeCircle" Style="background-color: red; color: white; margin-top: 35px;" Class="text-center align-items-center justify-content-center" OnClick="TryAgainQuiz">Try Again Now</MudButton>
+                        </div>
+                    } *@
                 </div>
-            </div>
-        </div>
-
-        @* UPLOAD ESSAY IMAGE       -> doar daca este WRITTING LESSON*@
-        <MudStack Style="width: 100%">
-            <MudFileUpload T="IReadOnlyList<IBrowserFile>"
-                           Accept=".png, .jpg"
-                           MaximumFileCount="100"
-                           OnFilesChanged="OnInputFileChanged"
-                           Hidden="@false"
-                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20"
-                           InputStyle="opacity:0"
-                           @ondragenter="@SetDragClass"
-                           @ondragleave="@ClearDragClass"
-                           @ondragend="@ClearDragClass">
-                <ButtonTemplate>
-                    <MudPaper Height="300px"
-                              Outlined="true"
-                              Class="@_dragClass">
-                        <MudText Typo="Typo.h6">
-                            Drag and drop files here or click
-                        </MudText>
-                        @foreach (var file in _files)
-                        {
-                            <MudChip Color="MudBlazor.Color.Dark" Text="@file.Name" />
-                        }
-                    </MudPaper>
-                    <MudToolBar DisableGutters="true"
-                                Class="relative d-flex justify-end gap-4 z-30">
-                        <MudButton HtmlTag="label"
-                                   Style="background-color: #2563EB; color: white;"
-                                   for="@context.Id"
-                                   Variant="Variant.Filled">
-                            Open file picker
-                        </MudButton>
-                        <MudButton OnClick="@Upload"
-                                   Style="background-color: #2563EB; color: white;"
-                                       Disabled="@(!_files.Any())"
-                                   Variant="Variant.Filled">
-                            Upload
-                        </MudButton>
-                        <MudButton OnClick="@Clear"
-                                   Color="MudBlazor.Color.Error"
-                                       Disabled="@(!_files.Any())"
-                                   Variant="Variant.Filled">
-                            Clear
-                        </MudButton>
-                    </MudToolBar>
-                </ButtonTemplate>
-            </MudFileUpload>
-        </MudStack>
-    }
+            }
+        }
 
     @if (!showQuizResults && !string.IsNullOrEmpty(lesson.LanguageCompetenceName) && 
             string.Compare(lesson.LanguageCompetenceName, "Writing") != 0 && 
@@ -663,6 +729,11 @@
             showQuizResultsTable = true;
         }
 
+        if (!string.IsNullOrEmpty(lesson.LessonRequirement))
+        {
+            lessonRequirement = lesson.LessonRequirement;
+        }
+
         IsDataLoaded = true;
     }
 }
@@ -1009,10 +1080,15 @@
 
 @* UPLOAD ESSAY IMAGE *@
 @functions {
-    #nullable enable
     private const string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
     private string _dragClass = DefaultDragClass;
     private readonly List<IBrowserFile> _files = new();
+    private string lessonRequirement = string.Empty;
+    private bool startedHandwritingRecognition = false;
+    private bool finishedHandwritingRecognition = false;
+    private string correctedText = string.Empty;
+    private int finalScore = 0;
+    private string score_explanation = string.Empty;
 
     private async Task Clear()
     {
@@ -1058,12 +1134,24 @@
         try
         {
             using var client = new HttpClient();
-            var content = new ByteArrayContent(data);
+            var content = new MultipartFormDataContent();
+            var imageContent = new ByteArrayContent(data);
+            imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
+            content.Add(imageContent, "image", "image.jpg");
+            content.Add(new StringContent(lessonRequirement), "lessonRequirement");
+
+            startedHandwritingRecognition = true;
+            StateHasChanged();
             var response = await client.PostAsync("http://localhost:5100/upload-image", content);
 
             if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Server response: {result}");
+                var result = await response.Content.ReadAsStringAsync();
+
+                dynamic jsonResponse = JObject.Parse(result);
+                correctedText = jsonResponse.corrected_text;
+                finalScore = (int)jsonResponse.final_score;
+                score_explanation = jsonResponse.score_explanation; 
             }
             else
             {
@@ -1072,8 +1160,10 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Exception: {ex.Message}");
+             Console.WriteLine($"Exception: {ex.Message}");
         }
+        finishedHandwritingRecognition = true;
+        StateHasChanged();
     }
 
 }

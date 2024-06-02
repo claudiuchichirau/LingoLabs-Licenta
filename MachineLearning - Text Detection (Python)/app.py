@@ -1,7 +1,9 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from tensorflow.keras.models import load_model
+from PIL import Image
 from imutils.contours import sort_contours
+from pathlib import Path
 import io
 import os
 import imutils
@@ -10,11 +12,14 @@ import cv2
 import cv2 as cv
 import numpy as np
 import base64
-# import tensorflow as tf
 import matplotlib.pyplot as plt
 import matplotlib as mpl
+import tensorflow as tf
 import pandas as pd
-# import pytesseract
+import requests
+import urllib.parse
+from openai import OpenAI
+
 
 
 app = Flask(__name__)
@@ -23,19 +28,30 @@ CORS(app)
 @app.route('/upload-image', methods=['POST'])
 def upload_image():
     try:
-        image_bytes = request.data  # Get the byte array from the request
+        clean_directory("./result/characters")
+        clean_directory("./result/words")
+        
+        try:
+            # Remove the uploaded image file
+            if os.path.exists("uploaded_image.jpg"):
+                os.remove("uploaded_image.jpg")
+        except Exception as e:
+            print ('Error Message ',e)
+            return {'message': f'Error occurred: {e}'}, 500
+            pass
+
+        lesson_requirement = request.form['lessonRequirement']
+        image_file = request.files['image']
+        image_bytes = image_file.read()
         image_np = np.frombuffer(image_bytes, dtype=np.uint8)
         image = cv2.imdecode(image_np, cv2.IMREAD_COLOR)
         cv2.imwrite('uploaded_image.jpg', image)  # Save the image as 'uploaded_image.jpg'
 
         try:
             textLines=lineSegment(image)
-            print ('No. of Lines',len(textLines))
             wordsList = wordSegment(textLines)
-            print ('No. of Words',len(wordsList))
             wordCounter = 0
             for word in wordsList:
-                print ('LetterGray shape: ',word.shape)
                 gray = cv.cvtColor(word, cv.COLOR_BGR2GRAY)
                 th, word = cv.threshold(gray, 127, 255, cv.THRESH_BINARY_INV|cv.THRESH_OTSU)
                 # letterGray = fitToSize(word)
@@ -71,7 +87,9 @@ def upload_image():
 
                 counter = 0
                 for i in charactersList:
-                    cv.imwrite(os.path.join(wordFolder, f"char-{counter}.jpeg"), i)
+                    # Inversează culorile imaginii
+                    inverted_image = cv.bitwise_not(i)
+                    cv.imwrite(os.path.join(wordFolder, f"char-{counter}.jpeg"), inverted_image)
                     counter += 1
                 wordCounter += 1
                 
@@ -81,33 +99,114 @@ def upload_image():
             print ('Error Message ',e)
             cv.destroyAllWindows()
             traceback.print_exc()
+            return {'message': f'Error occurred: {e}'}, 500
             pass
 
         traceback.print_exc() 
 
-        big_list = []  # The big list to hold all small lists
+        # big_list = []  # The big list to hold all small lists
         try:
-            wordCounter = 0
+        #     wordCounter = 0
+
+        #     # Încărcarea modelului
+        #     # model = tf.keras.models.load_model('handwriting_recognition_model.h5')
+
+            final_string = ""
+            characters_dir = "D:/Folder Claudiu/Facultate FII UAIC/Anul 3 (2023 - 2024)/Licență/LingoLabs-Licenta/MachineLearning - Text Detection (Python)/result/characters"
 
             for wordFolder in os.listdir("./result/characters"):
-                small_list = []  # The small list to hold all characters of a word
-                for filename in os.listdir(os.path.join("./result/characters", wordFolder)):
-                    with open(os.path.join("./result/characters", wordFolder, filename), 'rb') as f:
-                        image_data = f.read()
-                        # Encode image data to base64
-                        image_base64 = base64.b64encode(image_data).decode('utf-8')
-                        small_list.append(image_base64)
-                big_list.append(small_list)
-                wordCounter += 1
+                word_dir = os.path.join(characters_dir, wordFolder)
+                for filename in os.listdir(word_dir):
+                    image_path = os.path.join(characters_dir, wordFolder, filename)
+                    url = f"https://localhost:56896/predict?imagePath={urllib.parse.quote(image_path)}"
+                    response = requests.post(url, verify=False)
+
+
+                    if response.status_code == 200:
+                        result = response.json()
+                        letter = result["predictedLabel"]
+                        final_string += letter
+                    else:
+                        print(f"Error: {response.status_code}")
+                final_string += " "
+
+            # print('\n\n\t\tFINAL STRING: ', final_string)
+
+            corrected_text, final_score, score_explanation = openAi_correct_text(final_string, lesson_requirement)
+
+            # print('\n\n\t\tURMEAZA SA TRIMIT:\t', corrected_text, '\n\n\t\t', final_score, '\n\n\t\t', score_explanation)
+
+            return jsonify({'corrected_text': corrected_text, 'final_score': final_score, 'score_explanation': score_explanation}), 200
         except Exception as e:
             print ('Error Message ',e)
+            return {'message': f'Error occurred: {e}'}, 500
             pass
-        
-        print('\n\n\t\tURMEAZA SA TRIMIT\n\n')
-
-        return {'message': 'Image received and processed successfully', 'data': big_list}, 200
     except Exception as ex:
+        print ('Error Message ',ex)
         return str(ex), 500  # Return an error message if something goes wrong
+
+
+
+def read_from_file(file_path):
+    with open(file_path, 'r') as file:
+        return file.read().strip()
+
+
+def openAi_correct_text(text, lesson_requirement):
+    relative_path_api_key = '../../openAi_key.txt'  # Exemplu de cale relativă
+    api_key_path = Path(relative_path_api_key).resolve()
+    api_key = read_from_file(api_key_path)
+
+    relative_path_organization_id = '../../openAi_organization-id.txt'  # Exemplu de cale relativă
+    organization_id_path = Path(relative_path_organization_id).resolve()
+    organization_id = read_from_file(organization_id_path)
+
+    relative_path_project_id = '../../openAi_project_id.txt'  # Exemplu de cale relativă
+    project_id_path = Path(relative_path_project_id).resolve()
+    project_id = read_from_file(project_id_path)
+
+    client = OpenAI(
+        api_key = api_key,
+        organization = organization_id,
+        project = project_id,
+    )
+
+    stream = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{
+            "role": "user", 
+            "content": "Please correct the spelling errors in the following text without changing the existing words or adding new ones. The essay must meet the lesson requirement: {}. Here is the text: {}. Please provide only the corrected text without any additional explanation. For example changing 'ky' to 'my' and 'namq' to 'name', etc.".format(lesson_requirement, text)
+            }],
+        stream=True,
+    )
+
+    corrected_text = ""
+
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            corrected_text += chunk.choices[0].delta.content
+
+    stream = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[{
+            "role": "user", 
+            "content": "Please evaluate the following text and return a score from 1 to 100, along with an explanation of the score, based on how well it meets the lesson requirement: {}. Here is the text: {}. The response should follow this pattern: 'score|score explanation'.".format(lesson_requirement, corrected_text)
+            }],
+        stream=True,
+    )
+
+
+    score_answer = ""
+
+    for chunk in stream:
+        if chunk.choices[0].delta.content is not None:
+            score_answer += chunk.choices[0].delta.content
+
+    final_score, score_explanation = score_answer.split('|', 1)
+
+    # print('\n\n\t\tFINAL SCORE: ', final_score, '\n\n\t\tSCORE EXPLANATION: ', score_explanation)
+
+    return corrected_text, final_score, score_explanation
 
 
 def lineSegment(img):
@@ -257,7 +356,7 @@ def baselines(letter2, upoints, dpoints, h, w):
         minyu = min(colu)
         avgu = (maxyu + minyu) // 2
         meanu = np.around(np.mean(colu)).astype(int)
-        print('Upper:: Max, min, avg, mean:: ',maxyu, minyu, avgu, meanu)
+        # print('Upper:: Max, min, avg, mean:: ',maxyu, minyu, avgu, meanu)
         
         ##-------------------------------------------------------------------------------##
         ##-------------------------Creating lower baseline process 1--------------------------##
@@ -269,7 +368,7 @@ def baselines(letter2, upoints, dpoints, h, w):
         minyd = min(cold)
         avgd = (maxyd + minyd) // 2
         meand = np.around(np.mean(cold)).astype(int)
-        print('Lower:: Max, min, avg, mean:: ',maxyd, minyd, avgd, meand)
+        #print('Lower:: Max, min, avg, mean:: ',maxyd, minyd, avgd, meand)
         
         ##-------------------------------------------------------------------------------##
         ##-------------------------Creating lower baseline process 2---------------------------##
@@ -284,7 +383,7 @@ def baselines(letter2, upoints, dpoints, h, w):
                 cn.append(count)
                 count = 0    
         maxindex = cn.index(max(cn))
-        print('Max pixels at: ',maxindex)
+        #print('Max pixels at: ',maxindex)
         
         ##------------------Printing upper and lower baselines-----------------------------##
         
@@ -331,13 +430,11 @@ def visualize(letter2, upper_baseline, lower_baseline, min_pixel_threshold, min_
     ## Check if 2 consequtive seg points are greater than min_separation_threshold in distance
     for i in range(len(seg1)-1):
         if seg1[i+1] - seg1[i] > 1:
-            print('linia :', seg1[i], ' cu colcnt :', colcnt[seg1[i]], ' si linia :', seg1[i+1], ' cu colcnt :', colcnt[seg1[i+1]])
+            #print('linia :', seg1[i], ' cu colcnt :', colcnt[seg1[i]], ' si linia :', seg1[i+1], ' cu colcnt :', colcnt[seg1[i+1]])
             if(seg1[i+1] - seg1[i] > min_separation_threshold):
                 seg2.append(seg1[i])
-                print('\t\tAm adaugat pt ca dif = ', seg1[i+1]-seg1[i])
+                # print('\t\tAm adaugat pt ca dif = ', seg1[i+1]-seg1[i])
         # print('At seg2 where i: ', i, ' the difference is: ', seg1[i+1]-seg1[i])
-
-    print('\n\nseg2 is: ', seg2)
 
     ##------------Modified segmentation for removing circles----------------------------###            
     # arr=[]
@@ -385,7 +482,6 @@ def visualize(letter2, upper_baseline, lower_baseline, min_pixel_threshold, min_
             letter3 = cv.line(letter3, (seg2[i], 0), (seg2[i], h), (255, 0, 0), 2)
         # print("Segmentation applied.")
     
-    print("Does it work::::")
     #plt.imshow(letter3)
     #plt.show()
     return seg2 
@@ -395,15 +491,12 @@ def segmentCharacters(seg,lettergray):
     wordImgList = []
     fn = 0
 
-    print('\n\nlen(seg): ', len(seg))
     for i in range(len(seg)):
-        print('\tAt i: ', i)
         if i==0:
             s=seg[i]
             if s > 15:
                 wordImg = lettergray[0:,0:s]
                 cntx=np.count_nonzero(wordImg == 255) 
-                print ('count',cntx)
                 #plt.imshow(wordImg)
                 #plt.show()
                 fn=fn+1
@@ -413,13 +506,13 @@ def segmentCharacters(seg,lettergray):
             if seg[i]-s > 15:
                 wordImg = lettergray[0:,s:seg[i]]
                 cntx=np.count_nonzero(wordImg == 255) 
-                print ('count',cntx)
                 #plt.imshow(wordImg)
                 #plt.show()
                 fn=fn+1
                 s=seg[i]
             else:
                 continue
+        wordImg = np.pad(wordImg, ((0, 0), (175, 175)), mode='constant', constant_values=0)
         wordImgList.append(wordImg)
 
     if len(seg) > 0:
@@ -428,14 +521,33 @@ def segmentCharacters(seg,lettergray):
         wordImg = lettergray[0:,0:]
 
     cntx=np.count_nonzero(wordImg == 255) 
-    print ('count ultimul',cntx)
     #plt.imshow(wordImg)
     #plt.show()
     fn=fn+1
+    wordImg = np.pad(wordImg, ((0, 0), (175, 175)), mode='constant', constant_values=0)
     wordImgList.append(wordImg)
 
 
     return wordImgList
+
+def clean_directory(directory):
+    try:
+        for root, dirs, files in os.walk(directory, topdown=False):
+            for name in files:
+                os.remove(os.path.join(root, name))
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
+        # for foldername in os.listdir(directory):
+        #         folder_path = os.path.join(directory, foldername)
+        #         # Remove all files in the folder
+        #         for filename in os.listdir(folder_path):
+        #             file_path = os.path.join(folder_path, filename)
+        #             os.remove(file_path)
+        #         # Remove the folder itself
+        #         os.rmdir(folder_path)
+    except Exception as e:
+        print ('Error Message ',e)
+        pass
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5100)

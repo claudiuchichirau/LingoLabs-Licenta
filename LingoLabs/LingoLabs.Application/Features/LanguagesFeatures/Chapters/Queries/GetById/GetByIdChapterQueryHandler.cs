@@ -52,6 +52,7 @@ namespace LingoLabs.Application.Features.LanguagesFeatures.Chapters.Queries.GetB
                         LessonTitle = lesson.LessonTitle,
                         LessonDescription = lesson.LessonDescription,
                         LessonContent = lesson.LessonContent,
+                        LessonRequirement = lesson.LessonRequirement,
                         LessonVideoLink = lesson.LessonVideoLink,
                         LessonImageData = lesson.LessonImageData,
                         ChapterId = lesson.ChapterId,

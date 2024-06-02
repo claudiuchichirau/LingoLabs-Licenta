@@ -104,6 +104,7 @@ namespace LingoLabs.API.Controllers.LanguageControllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> Update(UpdateLessonCommand command)
         {
+            var lessonRequirement = command.LessonRequirement;
             var result = await Mediator.Send(command);
 
             if (!result.Success)
