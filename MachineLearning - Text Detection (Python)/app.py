@@ -1,21 +1,13 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from tensorflow.keras.models import load_model
-from PIL import Image
-from imutils.contours import sort_contours
 from pathlib import Path
 import io
 import os
-import imutils
 import traceback
 import cv2
 import cv2 as cv
 import numpy as np
-import base64
 import matplotlib.pyplot as plt
-import matplotlib as mpl
-import tensorflow as tf
-import pandas as pd
 import requests
 import urllib.parse
 from openai import OpenAI
@@ -48,45 +40,33 @@ def upload_image():
         cv2.imwrite('uploaded_image.jpg', image)  # Save the image as 'uploaded_image.jpg'
 
         try:
-            textLines=lineSegment(image)
-            wordsList = wordSegment(textLines)
+            text_lines = detect_text_lines(image)
+            words_list = detect_words(text_lines)
             wordCounter = 0
-            for word in wordsList:
+            for word in words_list:
                 gray = cv.cvtColor(word, cv.COLOR_BGR2GRAY)
                 th, word = cv.threshold(gray, 127, 255, cv.THRESH_BINARY_INV|cv.THRESH_OTSU)
-                # letterGray = fitToSize(word)
-                letter2 = word.copy()
+                copy_letter = word.copy()
                 word = cv.dilate(word,None,iterations = 4)
 
                 h = word.shape[0]
-                w = word.shape[1]
+                w = word.shape[1] 
                 
-                upoints, dpoints = findCapPoints(word)        
-                meanu, lb = baselines(letter2, upoints, dpoints, h, w)
-                
-        ##-----------Final Baseline row numbers-----------------------####
-        #       Ignore all points avove and below these rows 
-                upper_baseline = meanu
-                lower_baseline = lb
-                
-        ##--------------------Make histogram-------------------------------------###   
-                
-                colcnt = histogram(letter2, upper_baseline, lower_baseline, w)
+                column_count = calc_histogram(copy_letter, w)
                 # print('\n\nColcnt: ',colcnt)
-        ###------------------------Visualize segmentation------------------------------#####        
-                ## Tuning Parameters
+
                 min_pixel_threshold = 29
-                min_separation_threshold = 30
+                min_separation_threshold = 10
                 min_round_letter_threshold = 190
                 
-                seg = visualize(letter2, upper_baseline, lower_baseline, min_pixel_threshold, min_separation_threshold, min_round_letter_threshold, colcnt, word, h)
-                charactersList = segmentCharacters(seg,word)
+                segment_points = detect_characters_lines(copy_letter, min_pixel_threshold, min_separation_threshold, min_round_letter_threshold, column_count, word, h)
+                characters_list = characters_segmentation(segment_points, word)
 
                 wordFolder = f"./result/characters/word-{wordCounter}"
                 os.makedirs(wordFolder, exist_ok=True)
 
                 counter = 0
-                for i in charactersList:
+                for i in characters_list:
                     # Inversează culorile imaginii
                     inverted_image = cv.bitwise_not(i)
                     cv.imwrite(os.path.join(wordFolder, f"char-{counter}.jpeg"), inverted_image)
@@ -104,13 +84,7 @@ def upload_image():
 
         traceback.print_exc() 
 
-        # big_list = []  # The big list to hold all small lists
         try:
-        #     wordCounter = 0
-
-        #     # Încărcarea modelului
-        #     # model = tf.keras.models.load_model('handwriting_recognition_model.h5')
-
             final_string = ""
             characters_dir = "D:/Folder Claudiu/Facultate FII UAIC/Anul 3 (2023 - 2024)/Licență/LingoLabs-Licenta/MachineLearning - Text Detection (Python)/result/characters"
 
@@ -121,7 +95,6 @@ def upload_image():
                     url = f"https://localhost:56896/predict?imagePath={urllib.parse.quote(image_path)}"
                     response = requests.post(url, verify=False)
 
-
                     if response.status_code == 200:
                         result = response.json()
                         letter = result["predictedLabel"]
@@ -130,7 +103,7 @@ def upload_image():
                         print(f"Error: {response.status_code}")
                 final_string += " "
 
-            # print('\n\n\t\tFINAL STRING: ', final_string)
+            print('\n\n\t\tFINAL STRING: ', final_string)
 
             corrected_text, final_score, score_explanation = openAi_correct_text(final_string, lesson_requirement)
 
@@ -150,7 +123,6 @@ def upload_image():
 def read_from_file(file_path):
     with open(file_path, 'r') as file:
         return file.read().strip()
-
 
 def openAi_correct_text(text, lesson_requirement):
     relative_path_api_key = '../../openAi_key.txt'  # Exemplu de cale relativă
@@ -195,7 +167,6 @@ def openAi_correct_text(text, lesson_requirement):
         stream=True,
     )
 
-
     score_answer = ""
 
     for chunk in stream:
@@ -208,58 +179,58 @@ def openAi_correct_text(text, lesson_requirement):
 
     return corrected_text, final_score, score_explanation
 
-
-def lineSegment(img):
-    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    th, threshed = cv.threshold(gray, 127, 255, cv.THRESH_BINARY_INV|cv.THRESH_OTSU)
+def detect_text_lines(image):
+    gray_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    _, binary_image = cv.threshold(gray_image, 127, 255, cv.THRESH_BINARY_INV|cv.THRESH_OTSU)
    
-    upper=[]
-    lower=[]
-    flag=True
-    for i in range(threshed.shape[0]):
-
-        col = threshed[i:i+1,:]
-        cnt=0
+    upper = []
+    lower = []
+    flag = True
+    for i in range(binary_image.shape[0]):
+        column = binary_image[i:i+1,:]
+        pixel_count = np.count_nonzero(column == 255)
         if flag:
-            cnt=np.count_nonzero(col == 255)
-            if cnt >0:
+            if pixel_count >0:
                 upper.append(i)
                 flag=False
         else:
-            cnt=np.count_nonzero(col == 255)
-            if cnt < 7:
+            if pixel_count < 7:
                 lower.append(i)
                 flag=True
-    textLines=[]
-    if len(upper)!= len(lower):lower.append(threshed.shape[0])
+    text_lines = []
+
+    if len(upper)!= len(lower):
+        lower.append(binary_image.shape[0])
+
     # print("\n\nupper: ", upper)
     # print("\n\nlower: ", lower)
+
     for i in range(len(upper)):
-        timg=img[upper[i]:lower[i],0:]
+        line_image = image[upper[i]:lower[i],0:]
         
-        if timg.shape[0]>5:
-            # plt.imshow(timg)
+        if line_image.shape[0]>5:
+            # plt.imshow(line_image)
             # plt.show()
-            timg=cv.resize(timg,((timg.shape[1]*5,timg.shape[0]*8)))
-            textLines.append(timg)
+            line_image=cv.resize(line_image,((line_image.shape[1]*5,line_image.shape[0]*8)))
+            text_lines.append(line_image)
 
-    return textLines
+    return text_lines
 
-def wordSegment(textLines, max_word_spacing=30):
-    wordImgList=[]
-    counter=0
-    cl=0
+def detect_words(text_lines, max_word_spacing=30):
+    word_images = []
+    word_counter=0
+    line_counter=0
 
     try:
-        for txtLine in textLines:
-            gray = cv.cvtColor(txtLine, cv.COLOR_BGR2GRAY)
-            th, threshed = cv.threshold(gray, 100, 255, cv.THRESH_BINARY_INV|cv.THRESH_OTSU)
+        for line_image in text_lines:
+            gray_image = cv.cvtColor(line_image, cv.COLOR_BGR2GRAY)
+            _, threshed = cv.threshold(gray_image, 100, 255, cv.THRESH_BINARY_INV|cv.THRESH_OTSU)
             final_thr = cv.dilate(threshed,None,iterations = 20)
 
-            #plt.imshow(final_thr)
-            #plt.show()
+            # plt.imshow(final_thr)
+            # plt.show()
             
-            contours, hierarchy = cv.findContours(final_thr,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE)
+            contours, _ = cv.findContours(final_thr,cv.RETR_EXTERNAL,cv.CHAIN_APPROX_SIMPLE)
             boundingBoxes = [cv.boundingRect(c) for c in contours]
             (contours, boundingBoxes) = zip(*sorted(zip(contours, boundingBoxes), key=lambda b: b[1][0], reverse=False))
 
@@ -270,20 +241,20 @@ def wordSegment(textLines, max_word_spacing=30):
                 x, y, w, h = cv.boundingRect(cnt)
                 if area > 10000:
                     if prev_x is not None:
-                        # Calculează distanța dintre contururile consecutive
+                        # calculeaza distanta dintre contururile consecutive
                         spacing = x - (prev_x + prev_w)
                         if spacing < max_word_spacing:
-                            # Extrage coordonatele conturului anterior
+                            # extrage coordonatele conturului anterior
                             prev_contour = new_contours.pop()
                             prev_x, prev_y, prev_w, prev_h = cv.boundingRect(prev_contour)
-                            # Actualizează coordonatele și dimensiunile conturului curent
+                            # actualizeaza coordonatele si dimensiunile conturului curent
                             x = min(x, prev_x)
                             y = max(y, prev_y)
                             w = w + prev_w
                             h = max(h, prev_h)
-                            # Creăm un nou contur folosind coordonatele actualizate
+                            # cream un nou contur folosind coordonatele actualizate
                             new_contour = np.array([[[x, y]], [[x + w, y]], [[x + w, y + h]], [[x, y + h]]])
-                            # Adaugă noul contur concatenat în lista new_contours
+                            # adaugam noul contur concatenat în lista new_contours
                             new_contours.append(new_contour)
 
                             prev_x, prev_w = x, w
@@ -297,196 +268,67 @@ def wordSegment(textLines, max_word_spacing=30):
                         prev_x, prev_w = x, w
                         prev_contour = cnt
 
-
-            
             for cnt in new_contours:
                 area = cv.contourArea(cnt)
                 x, y, w, h = cv.boundingRect(cnt)
 
                 if area > 10000:
-                    letterBgr = txtLine[0:txtLine.shape[1], x:x + w]
-                    wordImgList.append(letterBgr)
+                    letterBgr = line_image[0:line_image.shape[1], x:x + w]
+                    word_images.append(letterBgr)
 
-                    #plt.imshow(letterBgr)
-                    #plt.show()
+                    # plt.imshow(letterBgr)
+                    # plt.show()
 
-                    cv.imwrite("./result/words/" + str(counter) + ".jpg", letterBgr)
-                    counter += 1
-            cl += 1
+                    cv.imwrite("./result/words/" + str(word_counter) + ".jpg", letterBgr)
+                    word_counter += 1
+            line_counter += 1
         
-        return wordImgList
+        return word_images
     except Exception as e:
             print ('Error Message ',e)
 
-def fitToSize(thresh1):
-    mask = thresh1 > 0
-    coords = np.argwhere(mask)
-
-    x0, y0 = coords.min(axis=0)
-    x1, y1 = coords.max(axis=0) + 1   # slices are exclusive at the top
-    cropped = thresh1[x0:x1,y0:y1]
-    return cropped
-
-def findCapPoints(img):
-    cpoints=[]
-    dpoints=[]
-    for i in range(img.shape[1]):
-        col = img[:,i:i+1]
-        k = col.shape[0]
-        while k > 0:
-            if col[k-1]==255:
-                dpoints.append((i,k))
-                break
-            k-=1
-        
-        for j in range(col.shape[0]):
-            if col[j]==255:
-                cpoints.append((i,j))
-                break
-    return cpoints,dpoints
-
-def baselines(letter2, upoints, dpoints, h, w):
-    ##-------------------------Creating upper baseline-------------------------------##
-    try:
-        colu = []
-        for i in range(len(upoints)):
-            colu.append(upoints[i][1])
-        
-        maxyu = max(colu)
-        minyu = min(colu)
-        avgu = (maxyu + minyu) // 2
-        meanu = np.around(np.mean(colu)).astype(int)
-        # print('Upper:: Max, min, avg, mean:: ',maxyu, minyu, avgu, meanu)
-        
-        ##-------------------------------------------------------------------------------##
-        ##-------------------------Creating lower baseline process 1--------------------------##
-        cold = []
-        for i in range(len(dpoints)):
-            cold.append(dpoints[i][1])
-        
-        maxyd = max(cold)
-        minyd = min(cold)
-        avgd = (maxyd + minyd) // 2
-        meand = np.around(np.mean(cold)).astype(int)
-        #print('Lower:: Max, min, avg, mean:: ',maxyd, minyd, avgd, meand)
-        
-        ##-------------------------------------------------------------------------------##
-        ##-------------------------Creating lower baseline process 2---------------------------##
-        cn = []
-        count = 0
-
-        for i in range(h):
-            for j in range(w):
-                if(letter2[i,j] == 255):
-                    count+=1
-            if(count != 0):
-                cn.append(count)
-                count = 0    
-        maxindex = cn.index(max(cn))
-        #print('Max pixels at: ',maxindex)
-        
-        ##------------------Printing upper and lower baselines-----------------------------##
-        
-        cv.line(letter2,(0,meanu),(w,meanu),(255,0,0),2)
-        lb = 0
-        if(maxindex > meand):
-            lb = maxindex
-            cv.line(letter2,(0,maxindex),(w,maxindex),(255,0,0),2)
-        else:
-            lb = meand
-            cv.line(letter2,(0,meand),(w,meand),(255,0,0),2)
-            
-        # plt.imshow(letter2)
-        # plt.show()
-        return meanu, lb
-    except Exception as ex:
-        print('Error in baseline calculation' + str(ex))
-        pass
-
-def histogram(letter2, upper_baseline, lower_baseline, w):
-    ##------------Making Histograms (Default)------------------------######
-    cropped = letter2[upper_baseline:lower_baseline,0:w]
-    #plt.imshow(cropped)
-    #plt.show()
-    colcnt = np.sum(cropped==255, axis=0)
-    x = list(range(len(colcnt)))
-    plt.plot(colcnt)
-    plt.fill_between(x, colcnt, 1, facecolor='blue', alpha=0.5)
+def calc_histogram(image, width):
+    cropped_image = image[:, 0:width]
+    # plt.imshow(cropped)
+    # plt.show()
+    column_count = np.sum(cropped_image==255, axis=0)
+    x_values = list(range(len(column_count)))
+    plt.plot(column_count)
+    plt.fill_between(x_values, column_count, 1, facecolor='blue', alpha=0.5)
     # plt.show()  
-    return colcnt     
+    return column_count     
 
-def visualize(letter2, upper_baseline, lower_baseline, min_pixel_threshold, min_separation_threshold, min_round_letter_threshold, colcnt, letterGray, h):  
-    seg = []
-    seg1 = []
-    seg2 = []
+def detect_characters_lines(copy_letter, min_pixel_threshold, min_separation_threshold, min_round_letter_threshold, colcnt, letterGray, h):  
+    # seg = []
+    segment_points_1 = []
+    segment_points_2 = []
     ## Check if pixel count is less than min_pixel_threshold, add segmentation point
     for i in range(len(colcnt)):
       if(colcnt[i] > min_pixel_threshold):
-         # print('Am adaugat in sg1 coloana',i,' cu colcnt: ', colcnt[i])
-         seg1.append(i)
-
-    # print('\n\nseg1 is: ', seg1)
+         segment_points_1.append(i)
           
-    ## Check if 2 consequtive seg points are greater than min_separation_threshold in distance
-    for i in range(len(seg1)-1):
-        if seg1[i+1] - seg1[i] > 1:
-            #print('linia :', seg1[i], ' cu colcnt :', colcnt[seg1[i]], ' si linia :', seg1[i+1], ' cu colcnt :', colcnt[seg1[i+1]])
-            if(seg1[i+1] - seg1[i] > min_separation_threshold):
-                seg2.append(seg1[i])
-                # print('\t\tAm adaugat pt ca dif = ', seg1[i+1]-seg1[i])
-        # print('At seg2 where i: ', i, ' the difference is: ', seg1[i+1]-seg1[i])
+    # verifica daca distanta dintre doua pct consecutive este mai mare decat min_separation_threshold
+    for i in range(len(segment_points_1)-1):
+        if segment_points_1[i+1] - segment_points_1[i] > 1:
+            if(segment_points_1[i+1] - segment_points_1[i] > min_separation_threshold):
+                segment_points_2.append(segment_points_1[i])
+ 
+    # adaugam un mic offset pentru a crea o mica separare intre litere, sa nu fie prea apropiate
+    for i in range(len(segment_points_2)):
+        segment_points_2[i] = segment_points_2[i] + 8
 
-    ##------------Modified segmentation for removing circles----------------------------###            
-    # arr=[]
-    # for i in (seg2):
-    #     arr1 = []
-    #     j = upper_baseline
-    #     while(j <= lower_baseline):
-    #         if(letterGray[j,i] == 255):
-    #             arr1.append(1)
-    #         else:
-    #             arr1.append(0)
-    #         j+=1
-    #     arr.append(arr1)
-    # print('At arr Seg here: ', arr)
-    
-    # ones = []
-    # for i in (arr):
-    #     ones1 = []
-    #     for j in range(len(i)):
-    #         if (i[j] == 1):
-    #             ones1.append([j])
-    #     ones.append(ones1)
-    
-    # diffarr = []
-    # for i in (ones):
-    #     diff = i[len(i)-1][0] - i[0][0]
-    #     diffarr.append(diff)
-    # print('Difference array: ',diffarr)
-    
-    # for i in range(len(seg2)):
-    #     if(diffarr[i] < min_round_letter_threshold):
-    #         seg.append(seg2[i])
-    ##---------------------------------------------------------------------------##
-    ## Make the Cut 
-
-    for i in range(len(seg2)):
-        seg2[i] = seg2[i] + 8
-
-    if len(seg2) == 0:
-        letter3 = letter2
-        # print("No segmentation points found, keeping the original image.")
+    if len(segment_points_2) == 0:
+        letter3 = copy_letter
     else:
-        letter3 = letter2.copy()
-        for i in range(len(seg2)):
-            letter3 = cv.line(letter3, (seg2[i], 0), (seg2[i], h), (255, 0, 0), 2)
-        # print("Segmentation applied.")
+        letter3 = copy_letter.copy()
+        for i in range(len(segment_points_2)):
+            letter3 = cv.line(letter3, (segment_points_2[i], 0), (segment_points_2[i], h), (255, 0, 0), 2)
     
-    #plt.imshow(letter3)
-    #plt.show()
-    return seg2 
+    # plt.imshow(letter3)
+    # plt.show()
+    return segment_points_2 
 
-def segmentCharacters(seg,lettergray):
+def characters_segmentation(seg,lettergray):
     s=0
     wordImgList = []
     fn = 0
@@ -497,8 +339,8 @@ def segmentCharacters(seg,lettergray):
             if s > 15:
                 wordImg = lettergray[0:,0:s]
                 cntx=np.count_nonzero(wordImg == 255) 
-                #plt.imshow(wordImg)
-                #plt.show()
+                # plt.imshow(wordImg)
+                # plt.show()
                 fn=fn+1
             else:
                 continue
@@ -506,8 +348,8 @@ def segmentCharacters(seg,lettergray):
             if seg[i]-s > 15:
                 wordImg = lettergray[0:,s:seg[i]]
                 cntx=np.count_nonzero(wordImg == 255) 
-                #plt.imshow(wordImg)
-                #plt.show()
+                # plt.imshow(wordImg)
+                # plt.show()
                 fn=fn+1
                 s=seg[i]
             else:
@@ -521,8 +363,8 @@ def segmentCharacters(seg,lettergray):
         wordImg = lettergray[0:,0:]
 
     cntx=np.count_nonzero(wordImg == 255) 
-    #plt.imshow(wordImg)
-    #plt.show()
+    # plt.imshow(wordImg)
+    # plt.show()
     fn=fn+1
     wordImg = np.pad(wordImg, ((0, 0), (175, 175)), mode='constant', constant_values=0)
     wordImgList.append(wordImg)
@@ -551,3 +393,38 @@ def clean_directory(directory):
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5100)
+
+
+
+
+
+
+
+def detect_text_lines(image):
+    gray_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    _, binary_image = cv.threshold(gray_image, 127, 255, cv.THRESH_BINARY_INV|cv.THRESH_OTSU)
+   
+    flag = True
+    for i in range(binary_image.shape[0]):
+        column = binary_image[i:i+1,:]
+        pixel_count = np.count_nonzero(column == 255)
+        if flag:    # daca suntem la inceputul unei linii
+            if pixel_count >0:
+                upper.append(i)
+                flag=False
+        else:   # daca suntem in interiorul unei linii (nr mix de pixeli)
+            if pixel_count < 7:
+                lower.append(i)
+                flag=True
+    text_lines = []
+
+    if len(upper)!= len(lower):
+        lower.append(binary_image.shape[0])
+
+    for i in range(len(upper)):
+        line_image = image[upper[i]:lower[i],0:]    # extrage imaginea liniei
+        if line_image.shape[0]>5:
+            line_image=cv.resize(line_image,((line_image.shape[1]*5,line_image.shape[0]*8)))
+            text_lines.append(line_image)
+
+    return text_lines

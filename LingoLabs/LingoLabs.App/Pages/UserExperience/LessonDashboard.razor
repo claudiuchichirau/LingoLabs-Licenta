@@ -130,7 +130,7 @@
         <div class="row" style="margin-top: 70px; margin-bottom: 70px;">
             <div class="col">
                 <div class="text-center" style="display: flex; flex-direction: column; justify-content: center; height: 100%;">
-                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">@lesson.LessonContent</p>
+                    <p style="color: black; font-size: 22px;" class="poppins-semi-bold">@((MarkupString)lesson.LessonContent)</p>
                 </div>
             </div>
         </div>
@@ -246,61 +246,61 @@
             <div class="text-center" style="margin-top: 45px; margin-bottom: 10px;">
                 <MudProgressCircular Color="MudBlazor.Color.Default" Indeterminate="true" />
                 <p style="font-size: 19px; margin-bottom: 80px;">One moment, I'm scoring a goal against spelling mistakes...</p>
-                </div>
-            }
-            else if (startedHandwritingRecognition && finishedHandwritingRecognition)
-            {
-                <div class="text-center" style="margin-bottom: 50px;">
-                    <hr style="width: 20%; border: 1px solid rgba(128, 128, 128, 0.5); margin: auto; margin-top: 50px; margin-bottom: 50px;">
-
-                    <p style="color: black; font-size: 19px; margin-bottom: 15px;">Your Essay Content:</p>
-                    <p style="color: black; font-size: 28px; margin-bottom: 85px;">@correctedText</p>
-
-                    @if (finalScore >= 45)
-                    {
-                        <p style="font-size: 19px; margin-bottom: 70px;">
-                            Congratulations! You've passed the lesson with flying colors.<br>
-                            Keep up the good work and continue to improve your skills. 😊
-                        </p>
-                    }
-                    else
-                    {
-                        <p style="font-size: 19px; margin-bottom: 70px;">
-                            Don't worry if you didn't pass this time. Review your answers, learn from your mistakes, and try again.<br>
-                            You've got this! 💪
-                        </p>
-                    }
-
-                    <span style="color: black; font-size: 19px; margin-top: 80px; margin-bottom: 15px;">
-                        Result
-                    </span>
-                    <h1 style="color: black; font-size: 37px; margin-bottom: 55px;">
-                        Your Essay Score: <span style="color: #FC6F05;">@finalScore%</span>
-                    </h1>
-                    <p style="color: black; font-size: 19px; margin-bottom: 35px;">
-                        @score_explanation
-                    </p>
-
-                    @if (finalScore >= 70)
-                    {
-                        <img src="images/quiz/best-score.png">
-                    }
-                    else if (finalScore < 70 && finalScore >= 45)
-                    {
-                        <img src="images/quiz/middle-score.png">
-                    }
-                    @* else
-                    {
-                        <div>
-                            <img src="images/quiz/low-score.png">
-                        </div>
-                        <div>
-                            <MudButton Icon="@Icons.Material.Filled.ChangeCircle" Style="background-color: red; color: white; margin-top: 35px;" Class="text-center align-items-center justify-content-center" OnClick="TryAgainQuiz">Try Again Now</MudButton>
-                        </div>
-                    } *@
-                </div>
-            }
+            </div>
         }
+        else if (startedHandwritingRecognition && finishedHandwritingRecognition)
+        {
+            <div class="text-center" style="margin-bottom: 50px;">
+                <hr style="width: 20%; border: 1px solid rgba(128, 128, 128, 0.5); margin: auto; margin-top: 50px; margin-bottom: 50px;">
+
+                <p style="color: black; font-size: 19px; margin-bottom: 15px;">Your Essay Content:</p>
+                <p style="color: black; font-size: 28px; margin-bottom: 85px;">@correctedText</p>
+
+                @if (finalScore >= 45)
+                {
+                    <p style="font-size: 19px; margin-bottom: 70px;">
+                        Congratulations! You've passed the lesson with flying colors.<br>
+                        Keep up the good work and continue to improve your skills. 😊
+                    </p>
+                }
+                else
+                {
+                    <p style="font-size: 19px; margin-bottom: 70px;">
+                        Don't worry if you didn't pass this time. Review your answers, learn from your mistakes, and try again.<br>
+                        You've got this! 💪
+                    </p>
+                }
+
+                <span style="color: black; font-size: 19px; margin-top: 80px; margin-bottom: 15px;">
+                    Result
+                </span>
+                <h1 style="color: black; font-size: 37px; margin-bottom: 55px;">
+                    Your Essay Score: <span style="color: #FC6F05;">@finalScore%</span>
+                </h1>
+                <p style="color: black; font-size: 19px; margin-bottom: 35px;">
+                    @score_explanation
+                </p>
+
+                @if (finalScore >= 70)
+                {
+                    <img src="images/quiz/best-score.png">
+                }
+                else if (finalScore < 70 && finalScore >= 45)
+                {
+                    <img src="images/quiz/middle-score.png">
+                }
+                @* else
+                {
+                    <div>
+                        <img src="images/quiz/low-score.png">
+                    </div>
+                    <div>
+                        <MudButton Icon="@Icons.Material.Filled.ChangeCircle" Style="background-color: red; color: white; margin-top: 35px;" Class="text-center align-items-center justify-content-center" OnClick="TryAgainQuiz">Try Again Now</MudButton>
+                    </div>
+                } *@
+            </div>
+        }
+    }
 
     @if (!showQuizResults && !string.IsNullOrEmpty(lesson.LanguageCompetenceName) && 
             string.Compare(lesson.LanguageCompetenceName, "Writing") != 0 && 
@@ -1134,6 +1134,8 @@
         try
         {
             using var client = new HttpClient();
+            client.Timeout = TimeSpan.FromSeconds(600);
+
             var content = new MultipartFormDataContent();
             var imageContent = new ByteArrayContent(data);
             imageContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/jpeg");
@@ -1152,17 +1154,18 @@
                 correctedText = jsonResponse.corrected_text;
                 finalScore = (int)jsonResponse.final_score;
                 score_explanation = jsonResponse.score_explanation; 
+                finishedHandwritingRecognition = true;
             }
             else
             {
                 Console.WriteLine($"Error: {response.StatusCode}");
+                finishedHandwritingRecognition = true;
             }
         }
         catch (Exception ex)
         {
              Console.WriteLine($"Exception: {ex.Message}");
         }
-        finishedHandwritingRecognition = true;
         StateHasChanged();
     }
 
