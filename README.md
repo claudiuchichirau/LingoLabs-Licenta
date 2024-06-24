@@ -1,1 +1,1 @@
-# LingoLabs---Licen-
+# LingoLabs---Licență-
