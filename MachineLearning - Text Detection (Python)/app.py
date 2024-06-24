@@ -393,38 +393,3 @@ def clean_directory(directory):
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5100)
-
-
-
-
-
-
-
-def detect_text_lines(image):
-    gray_image = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
-    _, binary_image = cv.threshold(gray_image, 127, 255, cv.THRESH_BINARY_INV|cv.THRESH_OTSU)
-   
-    flag = True
-    for i in range(binary_image.shape[0]):
-        column = binary_image[i:i+1,:]
-        pixel_count = np.count_nonzero(column == 255)
-        if flag:    # daca suntem la inceputul unei linii
-            if pixel_count >0:
-                upper.append(i)
-                flag=False
-        else:   # daca suntem in interiorul unei linii (nr mix de pixeli)
-            if pixel_count < 7:
-                lower.append(i)
-                flag=True
-    text_lines = []
-
-    if len(upper)!= len(lower):
-        lower.append(binary_image.shape[0])
-
-    for i in range(len(upper)):
-        line_image = image[upper[i]:lower[i],0:]    # extrage imaginea liniei
-        if line_image.shape[0]>5:
-            line_image=cv.resize(line_image,((line_image.shape[1]*5,line_image.shape[0]*8)))
-            text_lines.append(line_image)
-
-    return text_lines
